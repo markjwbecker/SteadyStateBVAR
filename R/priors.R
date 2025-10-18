@@ -30,4 +30,8 @@ priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars){
   
   Lambda_pr_mean = c(Lambda)
   Lambda_pr_cov = diag(Lambda_pr_vars)
+  priors=list(Gamma_d_pr_mean=Gamma_d_pr_mean,
+              Gamma_d_pr_cov=Gamma_d_pr_cov,
+              Lambda_pr_mean=Lambda_pr_mean, 
+              Lambda_pr_cov=Lambda_pr_cov)
 }
