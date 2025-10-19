@@ -90,7 +90,7 @@ inflation and interest rates, and lower pre-crisis unmeployment rate
 
 Now we need to specify the prior variances for the steady state
 coefficients. Let us put a strong prior on inflation, since the Swedish
-central bank has a 2% inflation target. For the other variables, we can
+central bank has a 2% CPIF inflation target. For the other variables, we can
 just put unit variances. We assume prior independence of the steady
 states. Note that the variances are for the elements in
 vec(Lambda_pr_means).
