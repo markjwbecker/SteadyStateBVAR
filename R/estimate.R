@@ -7,7 +7,7 @@ estimate <- function(stan_data, n_chains, iter, warmup, H, X_pred) {
               chains=n_chains,
               iter=iter,
               warmup=warmup,
-              verbose=TRUE)
+              verbose=FALSE)
   
   return(fit)
 }
