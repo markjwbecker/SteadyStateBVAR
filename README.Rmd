@@ -18,38 +18,34 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of SteadyStateBVAR is to ...
+This package provides estimation and forecasting of the Steady-State BVAR(p) model by Mattias Villani.
 
 ## Installation
 
 You can install the development version of SteadyStateBVAR from [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("pak")
-pak::pak("markjwbecker/SteadyStateBVAR")
+#install.packages("devtools")
+devtools::install_github("markjwbecker/SteadyStateBVAR")
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Let us first load the library and some Swedish macro data.
 
-```{r example}
-devtools::load_all()
-#library(SteadyStateBVAR)
-## basic example code
+```{r example, message=FALSE, warning=FALSE}
+library(SteadyStateBVAR)
+data("swe_macro")
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`? You can include R chunks like so:
+Lets plot the Swedish macro data consisting of CPIF inflation, unemployment rate and the 3-month interest rate.
 
 ```{r cars}
-summary(cars)
+plot.ts(Y)
 ```
+We now do some setup
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
+```{r setup}
 plot(pressure)
 ```
 
