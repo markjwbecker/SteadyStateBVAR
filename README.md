@@ -6,27 +6,37 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-This package provides estimation and forecasting of the Steady-State
-BVAR(p) model by Mattias Villani.
+With this package the user can estimate the Steady-State BVAR(p) model
+by Mattias Villani, and also produce forecasts with the estimated model.
 
 ## Installation
 
 You can install the development version of SteadyStateBVAR from
-[GitHub](https://github.com/) with:
+[GitHub](https://github.com/markjwbecker/SteadyStateBVAR) with:
 
-``` r
-#install.packages("devtools")
-devtools::install_github("markjwbecker/SteadyStateBVAR")
-```
+    #> ── R CMD build ─────────────────────────────────────────────────────────────────
+    #>       ✔  checking for file 'C:\Users\markj\AppData\Local\Temp\RtmpghN6Pc\remotes2ad467a06fed\markjwbecker-SteadyStateBVAR-d90c64c/DESCRIPTION'
+    #>       ─  preparing 'SteadyStateBVAR':
+    #>    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
+    #>       ─  checking for LF line-endings in source and make files and shell scripts
+    #>   ─  checking for empty or unneeded directories
+    #>      NB: this package now depends on R (>=        NB: this package now depends on R (>= 3.5.0)
+    #>        WARNING: Added dependency on R >= 3.5.0 because serialized objects in
+    #>      serialize/load version 3 cannot be read in older versions of R.
+    #>      File(s) containing such objects:
+    #>        'SteadyStateBVAR/data/swe_macro.rda'
+    #>        'SteadyStateBVAR/data/us_macro.rda'
+    #>        'SteadyStateBVAR/inst/STEADYSTATEBVAR.rds'
+    #> ─  building 'SteadyStateBVAR_0.1.0.tar.gz'
+    #>      
+    #> 
 
 ## Example
 
-Let us first load the library and some Swedish macro data.
+Let us load the library and also load a Swedish macro data set.
 
 ``` r
-devtools::load_all()
-print("install complete")
-#> [1] "install complete"
+library(SteadyStateBVAR)
 data("swe_macro")
 ```
 
@@ -37,10 +47,10 @@ unemployment rate (u) and 3-month interest rate (R).
 plot.ts(Y)
 ```
 
-<img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" /> The
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" /> The
 estimation period includes the Swedish financial crisis at the beginning
 of the 90s and the subsequent shift in monetary policy to inflation
-targeting. To accommodate this x_t (exogenos variables at time t)
+targeting. To accommodate this x_t (exogenous variables at time t)
 includes a constant term and a dummy for the pre-crisis period.
 
 ``` r
@@ -62,7 +72,7 @@ values lambda1=0.2 and lambda2=0.5. Futhermore, we need to specify the
 prior mean for the first own lag of the variables. For variables in
 differences, we set to zero (inflation) and for variables in levels
 (unemployment and interest rate) we set to 0.9 to reflect a persistent
-but stationary
+but stationary series.
 
 ``` r
 lambda1=0.2
@@ -76,12 +86,12 @@ column of Lambda, determines the difference in steady states between the
 first and second regime.
 
 ``` r
-Lambda_pr_means <- matrix(c(2,4, #inflation
+Lambda_pr_means <- matrix(c(2, 4, #inflation
                             7,-3, #unemployment rate
-                            3,8),#interest rate
-                          nrow=stan_data$m,
-                          ncol=stan_data$d,
-                          byrow=TRUE)
+                            3, 8),#interest rate
+                            nrow=stan_data$m,
+                            ncol=stan_data$d,
+                            byrow=TRUE)
 ```
 
 The prior on the constant terms in the steady-state VAR are thus
@@ -94,13 +104,15 @@ Now we need to specify the prior variances for the steady state
 coefficients. Let us put a strong prior on inflation, since the Swedish
 central bank has a 2% inflation target. For the other variables, we can
 just put 1 as the variance. We assume prior independence of the steady
-states.
+states. Note that the variances are for the elements in
+vec(Lambda_pr_means).
 
 ``` r
 Lambda_pr_vars <- c(0.1,rep(1,5))
 ```
 
-Now we input the above to the priors function
+Now we input the above to the priors function and then attach the priors
+to the “stan_data”.
 
 ``` r
 priors <- priors(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars)
@@ -108,28 +120,28 @@ stan_data <- c(stan_data, priors)
 ```
 
 At last, we need to specify our forecast horizon, and also provide the
-fit function with the future exogenous variables. In this case, x_t for
-all future periods will be (1,0)’, since we are not in t \<= 1993Q4.
+fit function with the future exogenous variables. In this case, x_t’ for
+all future periods will be (1,0), since we are not in t \<= 1993Q4.
 
 ``` r
 H <- 40
-X_pred <- cbind(rep(1, H), 1)
+X_pred <- cbind(rep(1, H), 0)
 ```
 
-And now let us estimate the model (this will take some time)
+And now let us estimate the model (this will take some time).
 
 ``` r
 rstan_options(auto_write = TRUE)
 options(mc.cores=parallel::detectCores())
-fit <- estimate(stan_data, n_chains=4, iter=4000, warmup=1000, H=H, X_pred=X_pred)
+fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
 ```
 
-And plot the forecasts
+And plot the forecasts along with the interval. Here I choose the mean
+as the forecast, but median is also possible. For the interval, I choose
+a 95% prediction interval.
 
 ``` r
-plot_forecast(fit, Y)
+plot_forecast(fit, Y, ci=0.95,fcst_type=c("mean"))
 ```
 
 <img src="man/figures/README-forecast_plot-1.png" width="100%" />
-
-We can see the forecasts along with the 95% credible interval.
