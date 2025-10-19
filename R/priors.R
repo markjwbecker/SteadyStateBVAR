@@ -1,9 +1,8 @@
-library(bvartools)
-
 priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars){
-  obj <- gen_var(as.ts(Y), p)
   m = ncol(Y)
-  mp <- minnesota_prior(
+  
+  obj <- gen_var(as.ts(Y), p)
+  mp <- bvartools::minnesota_prior(
   obj,
   kappa0 = lambda1^2,
   kappa1 = lambda2^2,
