@@ -2,8 +2,13 @@ Package: SteadyStateBVAR
 Type: Package
 Title: A package for estimating the Steady-State BVAR(p) model with Stan
 Version: 0.1.0
-Author: Mark Becker
-Maintainer: mark.jw.becker@gmail.com
+Authors@R: 
+    person(
+      given = "Mark",
+      family = "Becker",
+      email = "mark.jw.becker@gmail.com",
+      role = c("aut", "cre")
+    )
 Description: This package uses Stan to estimate the Steady-State BVAR(p) model, by Mattias Villani.
 License: MIT
 Encoding: UTF-8
