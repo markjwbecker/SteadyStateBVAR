@@ -29,11 +29,12 @@ priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars){
   
   Lambda_pr_mean = c(Lambda_pr_means)
   Lambda_pr_cov = diag(Lambda_pr_vars)
-  
-  stan_data$Gamma_d_pr_mean <- Gamma_d_pr_mean
-  stan_data$Gamma_d_pr_cov <- Gamma_d_pr_cov
-  stan_data$Lambda_pr_mean <- Lambda_pr_mean
-  stan_data$Lambda_pr_cov <- Lambda_pr_cov
-  stan_data$Psi_pr_scale <- Psi_pr_scale
-  stan_data$gamma <- 5
+  prior <- list()
+  prior$Gamma_d_pr_mean <- Gamma_d_pr_mean
+  prior$Gamma_d_pr_cov <- Gamma_d_pr_cov
+  prior$Lambda_pr_mean <- Lambda_pr_mean
+  prior$Lambda_pr_cov <- Lambda_pr_cov
+  prior$Psi_pr_scale <- Psi_pr_scale
+  prior$gamma <- 5
+  return(prior)
 }

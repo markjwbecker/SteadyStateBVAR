@@ -1,8 +1,8 @@
 estimate <- function(stan_data, n_chains, iter, warmup, H, X_pred) {
   stan_data$H <- H
   stan_data$X_pred <- X_pred
-  
-  fit <- stan(file="/inst/STEADYSTATEBVAR.stan",
+  stan_file <- system.file("STEADYSTATEBVAR.stan", package = "SteadyStateBVAR")
+  fit <- stan(stan_file,
               data=stan_data,
               chains=n_chains,
               iter=iter,
