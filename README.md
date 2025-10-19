@@ -11,25 +11,11 @@ by Mattias Villani, and also produce forecasts with the estimated model.
 
 ## Installation
 
-You can install the development version of SteadyStateBVAR from
-[GitHub](https://github.com/markjwbecker/SteadyStateBVAR) with:
+You can install the development version of SteadyStateBVAR with:
 
-    #> ── R CMD build ─────────────────────────────────────────────────────────────────
-    #>       ✔  checking for file 'C:\Users\markj\AppData\Local\Temp\RtmpghN6Pc\remotes2ad467a06fed\markjwbecker-SteadyStateBVAR-d90c64c/DESCRIPTION'
-    #>       ─  preparing 'SteadyStateBVAR':
-    #>    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
-    #>       ─  checking for LF line-endings in source and make files and shell scripts
-    #>   ─  checking for empty or unneeded directories
-    #>      NB: this package now depends on R (>=        NB: this package now depends on R (>= 3.5.0)
-    #>        WARNING: Added dependency on R >= 3.5.0 because serialized objects in
-    #>      serialize/load version 3 cannot be read in older versions of R.
-    #>      File(s) containing such objects:
-    #>        'SteadyStateBVAR/data/swe_macro.rda'
-    #>        'SteadyStateBVAR/data/us_macro.rda'
-    #>        'SteadyStateBVAR/inst/STEADYSTATEBVAR.rds'
-    #> ─  building 'SteadyStateBVAR_0.1.0.tar.gz'
-    #>      
-    #> 
+``` r
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+```
 
 ## Example
 
@@ -40,8 +26,8 @@ library(SteadyStateBVAR)
 data("swe_macro")
 ```
 
-Lets plot the Swedish macro data consisting of CPIF inflation (pi),
-unemployment rate (u) and 3-month interest rate (R).
+The Swedish macro data set consists of CPIF inflation (pi), unemployment
+rate (u) and 3-month interest rate (R).
 
 ``` r
 plot.ts(Y)
@@ -55,7 +41,7 @@ includes a constant term and a dummy for the pre-crisis period.
 
 ``` r
 bp = 27 #breakpoint at 1993Q4
-dummy <- c(rep(1,bp),rep(0,nrow(Y)-bp)) #1 if t<=1993Q4, 0 if t>1993Q4
+dummy <- c(rep(1,bp), rep(0,nrow(Y)-bp)) #1 if t<=1993Q4, 0 if t>1993Q4
 ```
 
 Now we do some setup. Since this is quarterly data, for simplicity, let
@@ -77,7 +63,7 @@ but stationary series.
 ``` r
 lambda1=0.2
 lambda2=0.2
-fol_pm=c(0,0.9,0.9)
+fol_pm=c(0, 0.9, 0.9)
 ```
 
 Now to specify the prior for the steady states. The first column of
@@ -88,7 +74,7 @@ first and second regime.
 ``` r
 Lambda_pr_means <- matrix(c(2, 4, #inflation
                             7,-3, #unemployment rate
-                            3, 8),#interest rate
+                            1, 10),#interest rate
                             nrow=stan_data$m,
                             ncol=stan_data$d,
                             byrow=TRUE)
@@ -103,19 +89,19 @@ inflation and interest rates, and lower pre-crisis unmeployment rate
 Now we need to specify the prior variances for the steady state
 coefficients. Let us put a strong prior on inflation, since the Swedish
 central bank has a 2% inflation target. For the other variables, we can
-just put 1 as the variance. We assume prior independence of the steady
+just put unit variances. We assume prior independence of the steady
 states. Note that the variances are for the elements in
 vec(Lambda_pr_means).
 
 ``` r
-Lambda_pr_vars <- c(0.1,rep(1,5))
+Lambda_pr_vars <- c(0.1, rep(1,5))
 ```
 
 Now we input the above to the priors function and then attach the priors
 to the “stan_data”.
 
 ``` r
-priors <- priors(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars)
+priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda_pr_means, Lambda_pr_vars)
 stan_data <- c(stan_data, priors)
 ```
 
@@ -141,7 +127,7 @@ as the forecast, but median is also possible. For the interval, I choose
 a 95% prediction interval.
 
 ``` r
-plot_forecast(fit, Y, ci=0.95,fcst_type=c("mean"))
+plot_forecast(fit, Y, ci=0.95, fcst_type = c("mean"))
 ```
 
 <img src="man/figures/README-forecast_plot-1.png" width="100%" />
