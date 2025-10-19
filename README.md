@@ -7,7 +7,9 @@
 <!-- badges: end -->
 
 With this package the user can estimate the Steady-State BVAR(p) model
-by Mattias Villani, and also produce forecasts with the estimated model. It assumes you have Stan up and running, otherwise please see https://mc-stan.org/install/.
+by Mattias Villani, and also produce forecasts with the estimated model.
+
+\textbf{It assumes you have Stan up and running, otherwise please see https://mc-stan.org/install/.}
 
 ## Installation
 
