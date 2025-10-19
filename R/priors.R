@@ -27,7 +27,7 @@ priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars){
   gamma=m+2
   Psi_pr_scale = (gamma-m-1)*diag_vars
   
-  Lambda_pr_mean = c(Lambda)
+  Lambda_pr_mean = c(Lambda_pr_means)
   Lambda_pr_cov = diag(Lambda_pr_vars)
   
   stan_data$Gamma_d_pr_mean <- Gamma_d_pr_mean
