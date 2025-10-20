@@ -60,19 +60,19 @@ Now for the priors. We need to specify cross equation tightness (lambda1) and ov
 
 ```{r}
 lambda1=0.2
-lambda2=0.2
+lambda2=0.5
 fol_pm=c(0, 0.9, 0.9)
 ```
 
 Now to specify the prior for the steady states. The first column of Lambda represents the steady state in the latter regime. The second column of Lambda, determines the difference in steady states between the first and second regime.
 
 ```{r}
-Lambda_pr_means <- matrix(c(2, 4, #inflation
-                            7,-3, #unemployment rate
-                            1, 10),#interest rate
-                            nrow=stan_data$m,
-                            ncol=stan_data$d,
-                            byrow=TRUE)
+Lambda <- matrix(c(2, 4, #inflation
+                   7,-3, #unemployment rate
+                   1, 10),#interest rate
+                   nrow=stan_data$m,
+                   ncol=stan_data$d,
+                   byrow=TRUE)
 ```
 
 The prior on the constant terms in the steady-state VAR are thus centered on the perceived post-crisis steady state (column 1) and the prior on the dummy variable coefficients reflects the higher pre-crisis inflation and interest rates, and lower pre-crisis unmeployment rate (column 2).
@@ -86,7 +86,7 @@ Lambda_pr_vars <- c(0.1, rep(1,5))
 Now we input the above to the priors function and then attach the priors to the "stan_data".
 
 ```{r}
-priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda_pr_means, Lambda_pr_vars)
+priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda, Lambda_pr_vars)
 stan_data <- c(stan_data, priors)
 ```
 
@@ -109,5 +109,13 @@ fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pre
 And plot the forecasts along with the interval. Here I choose the mean as the forecast, but median is also possible. For the interval, I choose a 95\% prediction interval.
 
 ```{r forecast_plot, fig.width=10, fig.height=10}
-plot_forecast(fit, Y, ci=0.95, fcst_type = c("mean"))
+# Standard plot
+plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
+```
+Now if the inflation variable used is specified in terms of annualized (not annual) quarterly inflation rate where 400*ln(CPI_t/CPI_t-1), then we can plot in terms of annual inflation (instead of annualized quarterly inflation). This is useful because central banks specify their inflation targets in terms of annual inflation (Year over Year), and not annualized quarter on quarter inflation (like we have here). For example, the Riksbank has a 2\% annual CPIF inflation target, and with this option we can directly compare our forecasts to the actual target variable of the Riksbank.
+
+The user just needs to specify "plot_annual_inf" to be "TRUE" and also specify which index in Y belongs to the inflation variable.
+```{r, fig.width=10, fig.height=10}
+# Annualized inflation plot for column 1
+plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
 ```

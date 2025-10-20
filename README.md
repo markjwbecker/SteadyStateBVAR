@@ -9,8 +9,6 @@
 With this package the user can estimate the Steady-State BVAR(p) model
 by Mattias Villani, and also produce forecasts with the estimated model.
 
-It assumes you have Stan up and running, otherwise please see https://mc-stan.org/install/.
-
 ## Installation
 
 You can install the development version of SteadyStateBVAR with:
@@ -64,7 +62,7 @@ but stationary series.
 
 ``` r
 lambda1=0.2
-lambda2=0.2
+lambda2=0.5
 fol_pm=c(0, 0.9, 0.9)
 ```
 
@@ -74,12 +72,12 @@ column of Lambda, determines the difference in steady states between the
 first and second regime.
 
 ``` r
-Lambda_pr_means <- matrix(c(2, 4, #inflation
-                            7,-3, #unemployment rate
-                            1, 10),#interest rate
-                            nrow=stan_data$m,
-                            ncol=stan_data$d,
-                            byrow=TRUE)
+Lambda <- matrix(c(2, 4, #inflation
+                   7,-3, #unemployment rate
+                   1, 10),#interest rate
+                   nrow=stan_data$m,
+                   ncol=stan_data$d,
+                   byrow=TRUE)
 ```
 
 The prior on the constant terms in the steady-state VAR are thus
@@ -90,7 +88,7 @@ inflation and interest rates, and lower pre-crisis unmeployment rate
 
 Now we need to specify the prior variances for the steady state
 coefficients. Let us put a strong prior on inflation, since the Swedish
-central bank has a 2% CPIF inflation target. For the other variables, we can
+central bank has a 2% inflation target. For the other variables, we can
 just put unit variances. We assume prior independence of the steady
 states. Note that the variances are for the elements in
 vec(Lambda_pr_means).
@@ -103,7 +101,7 @@ Now we input the above to the priors function and then attach the priors
 to the “stan_data”.
 
 ``` r
-priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda_pr_means, Lambda_pr_vars)
+priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda, Lambda_pr_vars)
 stan_data <- c(stan_data, priors)
 ```
 
@@ -129,7 +127,27 @@ as the forecast, but median is also possible. For the interval, I choose
 a 95% prediction interval.
 
 ``` r
-plot_forecast(fit, Y, ci=0.95, fcst_type = c("mean"))
+# Standard plot
+plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
 ```
 
-<img src="man/figures/README-forecast_plot-1.png" width="100%" />
+<img src="man/figures/README-forecast_plot-1.png" width="100%" /> Now if
+the inflation variable used is specified in terms of annualized (not
+annual) quarterly inflation rate where 400\*ln(CPI_t/CPI_t-1), then we
+can plot in terms of annual inflation (instead of annualized quarterly
+inflation). This is useful because central banks specify their inflation
+targets in terms of annual inflation (Year over Year), and not
+annualized quarter on quarter inflation (like we have here). For
+example, the Riksbank has a 2% annual CPIF inflation target, and with
+this option we can directly compare our forecasts to the actual target
+variable of the Riksbank.
+
+The user just needs to specify “plot_annual_inf” to be “TRUE” and also
+specify which index in Y belongs to the inflation variable.
+
+``` r
+# Annualized inflation plot for column 1
+plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
+```
+
+<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
