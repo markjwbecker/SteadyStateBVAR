@@ -112,9 +112,19 @@ And plot the forecasts along with the interval. Here I choose the mean as the fo
 # Standard plot
 plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
 ```
-Now if the inflation variable used is specified in terms of annualized (not annual) quarterly inflation rate where 400*ln(CPI_t/CPI_t-1), then we can plot in terms of annual inflation (instead of annualized quarterly inflation). This is useful because central banks specify their inflation targets in terms of annual inflation (Year over Year), and not annualized quarter on quarter inflation (like we have here). For example, the Riksbank has a 2\% annual CPIF inflation target, and with this option we can directly compare our forecasts to the actual target variable of the Riksbank.
+Now for the very special use case where the Steady-State BVAR model contains an inflation variable, on a quarterly frequency, where inflation (CPIF inflation in this case) is specified in terms of annualized quarterly rates of change
 
-The user just needs to specify "plot_annual_inf" to be "TRUE" and also specify which index in Y belongs to the inflation variable.
+$$
+400ln(CPI_t/CPI_{t-1})
+$$
+The plotting function has a method to directly plot the forecasts in terms of annual/yearly (not the same as annualized) inflation, which is the true target variable for central banks, i.e.
+
+$$
+100ln(CPI_t/CPI_{t-4})
+$$
+This allows the user to directly compare the inflation forecasts with the actual target variable of the central bank (yearly inflation).
+
+The user just needs to specify "plot_annual_inf" to be "TRUE" and also specify which index in Y belongs to the inflation variable. Note again that for this to make sense, the inflation variable should be annualized quarterly rate of change in the price index, constructed with a difference in logarithms.
 ```{r, fig.width=10, fig.height=10}
 # Annualized inflation plot for column 1
 plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
