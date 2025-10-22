@@ -34,7 +34,21 @@ The model is
 $$
 y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
 $$
-where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}$'s are stacked such that $\mathbf{\Gamma}\prime_d=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
+
+where $e_t \sim N(0,\Psi)$.
+
+In the stan code the $\mathbf{\phi}$'s are stacked such that
+
+$$
+\mathbf{\Gamma}=
+\begin{bmatrix}
+\mathbf{\phi}'_1 \\ 
+\vdots  \\
+\mathbf{\phi}'_p
+\end{bmatrix}.
+$$
+
+The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}$ and $\mathbf{\Psi}$. Note here that $\mathbf{\Lambda} x_t$ is the **steady state**.
 
 ## Example
 
@@ -57,7 +71,7 @@ $\pi_t=400 \ln(CPIF_t/CPIF_{t-1})$
 The estimation period includes the Swedish financial crisis at the beginning of the 90s and the subsequent shift in monetary policy to inflation targeting. To accommodate this $x_t$ (exogenous variables at time $t$) includes a constant term and a dummy for the pre-crisis period, i.e.
 
 $$
-x\prime_{t} =
+x'_{t} =
 \left\{
 \begin{array}{ll}
 \begin{pmatrix}1,1\end{pmatrix} & \text{if } t \le 1993Q4 \\
@@ -118,7 +132,7 @@ priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda, Lambda_pr_vars)
 stan_data <- c(stan_data, priors)
 ```
 
-At last, we need to specify our forecast horizon, and also provide the fit function with the future exogenous variables. In this case, $x\prime_t$ for all future periods will be $\begin{pmatrix}1,0\end{pmatrix}$, since we are not in $t \leq 1993Q4$.
+At last, we need to specify our forecast horizon, and also provide the fit function with the future exogenous variables. In this case, $x'_t$ for all future periods will be $\begin{pmatrix}1,0\end{pmatrix}$, since we are not in $t \leq 1993Q4$.
 
 ```{r}
 H <- 40
