@@ -27,7 +27,9 @@ $$
 
 where $e_t \sim N(0,\Psi)$.
 
-In the stan code the $\mathbf{\phi}$’s are stacked such that $\mathbf{\Gamma}\prime=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
+In the stan code the $\mathbf{\phi}$’s are stacked such that
+
+$$\mathbf{\Gamma}\prime=\begin{bmatrix}\mathbf{\phi}_1,\dots ,\mathbf{\phi}_p\end{bmatrix}$$
 
 ## Example
 
