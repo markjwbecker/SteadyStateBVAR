@@ -30,9 +30,11 @@ where $e_t \sim N(0,\Psi)$
 In the stan code the $\mathbf{\phi}$’s are stacked such that
 
 $$
-\mathbf{\Gamma}\prime=
+\mathbf{\Gamma}'=
 \begin{bmatrix}
-\mathbf{\phi}_1\prime \\ \vdots  \\ \mathbf{\phi}\prime_p
+\mathbf{\phi}'_1 \\ 
+\vdots  \\
+\mathbf{\phi}'_p
 \end{bmatrix}
 $$
 
