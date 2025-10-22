@@ -7,7 +7,7 @@
 <!-- badges: end -->
 
 With this package the user can estimate the Steady-State BVAR(p) model
-by Mattias Villani, and also produce forecasts with the estimated model.
+by Mattias Villani.
 
 ## Installation
 
@@ -23,9 +23,9 @@ The model is
 
 $$
 y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
-$$ where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}'s$
+$$ where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}$’s
 are stacked such that
-$\mathbf{\Gamma}'_d=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
+$\mathbf{\Gamma}\prime_d=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
 
 ## Example
 
@@ -44,8 +44,7 @@ plot.ts(Y)
 ```
 
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" /> Note
-here that CPIF inflation is the annualized quarterly growth rate,
-i.e. (CPIF_t/CPIF\_{t-1})
+here that CPIF inflation is the annualized quarterly growth rate, i.e.
 
 $\pi_t=400 \ln(CPIF_t/CPIF_{t-1})$
 
@@ -56,11 +55,13 @@ time $t$) includes a constant term and a dummy for the pre-crisis
 period, i.e.
 
 $$
-x'_{t} =
-\begin{cases}
-\begin{pmatrix}1,1\end{pmatrix}, & \text{if } t \le 1993Q4, \\
-\begin{pmatrix}1,0\end{pmatrix}, & \text{if } t > 1993Q4.
-\end{cases}
+x\prime_{t} =
+\left\{
+\begin{array}{ll}
+\begin{pmatrix}1,1\end{pmatrix} & \text{if } t \le 1993Q4 \\
+\begin{pmatrix}1,0\end{pmatrix} & \text{if } t > 1993Q4
+\end{array}
+\right.
 $$
 
 ``` r
@@ -89,7 +90,10 @@ coefficients, the prior means are zero.
 ``` r
 lambda1=0.2
 lambda2=0.5
-fol_pm=c(0, 0.9, 0.9) #first own lag prior mean
+#first own lag prior means
+fol_pm=c(0,   #inflation
+         0.9, #unemployment rate
+         0.9) #interest rate
 ```
 
 Now to specify the prior for the steady states. The first column of
@@ -100,7 +104,7 @@ first and second regime.
 ``` r
 Lambda <- matrix(c(2, 4, #inflation
                    7,-3, #unemployment rate
-                   1, 10),#interest rate
+                   3, 8),#interest rate
                    nrow=stan_data$m,
                    ncol=stan_data$d,
                    byrow=TRUE)
@@ -134,9 +138,9 @@ stan_data <- c(stan_data, priors)
 ```
 
 At last, we need to specify our forecast horizon, and also provide the
-fit function with the future exogenous variables. In this case, $x'_t$
-for all future periods will be $\begin{pmatrix}1,0\end{pmatrix}$, since
-we are not in $t \leq 1993Q4$.
+fit function with the future exogenous variables. In this case,
+$x\prime_t$ for all future periods will be
+$\begin{pmatrix}1,0\end{pmatrix}$, since we are not in $t \leq 1993Q4$.
 
 ``` r
 H <- 40

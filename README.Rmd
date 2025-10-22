@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-With this package the user can estimate the Steady-State BVAR(p) model by Mattias Villani, and also produce forecasts with the estimated model.
+With this package the user can estimate the Steady-State BVAR(p) model by Mattias Villani.
 
 ## Installation
 
@@ -34,7 +34,7 @@ The model is
 $$
 y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
 $$
-where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}'s$ are stacked such that $\mathbf{\Gamma}'_d=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
+where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}$'s are stacked such that $\mathbf{\Gamma}\prime_d=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
 
 ## Example
 
@@ -47,21 +47,23 @@ data("swe_macro")
 
 The Swedish macro data set consists of quarterly observations of CPIF inflation (pi), unemployment rate (u) and 3-month interest rate (R).
 
-```{r}
+```{r, fig.width=8, fig.height=8}
 plot.ts(Y)
 ```
-Note here that CPIF inflation is the annualized quarterly growth rate, i.e.  \ln(CPIF_t/CPIF_{t-1})
+Note here that CPIF inflation is the annualized quarterly growth rate, i.e.
 
 $\pi_t=400 \ln(CPIF_t/CPIF_{t-1})$
 
 The estimation period includes the Swedish financial crisis at the beginning of the 90s and the subsequent shift in monetary policy to inflation targeting. To accommodate this $x_t$ (exogenous variables at time $t$) includes a constant term and a dummy for the pre-crisis period, i.e.
 
 $$
-x'_{t} =
-\begin{cases}
-\begin{pmatrix}1,1\end{pmatrix}, & \text{if } t \le 1993Q4, \\
-\begin{pmatrix}1,0\end{pmatrix}, & \text{if } t > 1993Q4.
-\end{cases}
+x\prime_{t} =
+\left\{
+\begin{array}{ll}
+\begin{pmatrix}1,1\end{pmatrix} & \text{if } t \le 1993Q4 \\
+\begin{pmatrix}1,0\end{pmatrix} & \text{if } t > 1993Q4
+\end{array}
+\right.
 $$
 
 ```{r}
@@ -81,7 +83,10 @@ Now for the priors. For the dynamic regression coefficients, we use the Minnesot
 ```{r}
 lambda1=0.2
 lambda2=0.5
-fol_pm=c(0, 0.9, 0.9) #first own lag prior mean
+#first own lag prior means
+fol_pm=c(0,   #inflation
+         0.9, #unemployment rate
+         0.9) #interest rate
 ```
 
 Now to specify the prior for the steady states. The first column of Lambda represents the steady state in the latter regime. The second column of Lambda, determines the difference in steady states between the first and second regime.
@@ -89,7 +94,7 @@ Now to specify the prior for the steady states. The first column of Lambda repre
 ```{r}
 Lambda <- matrix(c(2, 4, #inflation
                    7,-3, #unemployment rate
-                   1, 10),#interest rate
+                   3, 8),#interest rate
                    nrow=stan_data$m,
                    ncol=stan_data$d,
                    byrow=TRUE)
@@ -113,7 +118,7 @@ priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda, Lambda_pr_vars)
 stan_data <- c(stan_data, priors)
 ```
 
-At last, we need to specify our forecast horizon, and also provide the fit function with the future exogenous variables. In this case, $x'_t$ for all future periods will be $\begin{pmatrix}1,0\end{pmatrix}$, since we are not in $t \leq 1993Q4$.
+At last, we need to specify our forecast horizon, and also provide the fit function with the future exogenous variables. In this case, $x\prime_t$ for all future periods will be $\begin{pmatrix}1,0\end{pmatrix}$, since we are not in $t \leq 1993Q4$.
 
 ```{r}
 H <- 40
@@ -130,13 +135,13 @@ fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pre
 
 Note here 'fit' is a 'stanfit' object, so we can use the plot function in rstan for 'stanfit' objects. Let us plot the posterior distribution of the (post crisis) steady state of inflation (i.e. the posterior of the unconditional mean of post crisis inflation).
 
-```{r}
+```{r, fig.width=5, fig.height=5}
 stan_dens(fit, pars = "Lambda[1,1]")
 ```
 
 Now lets plot the forecasts along with a $95\%$ prediction interval. Here I choose the mean of the posterior distribution as the actual forecast/point prediction, but the median is also possible.
 
-```{r forecast_plot, fig.width=10, fig.height=10}
+```{r forecast_plot, fig.width=8, fig.height=8}
 plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
 ```
 
@@ -150,7 +155,7 @@ Because of the fact that the actual targets are on an annual basis, but often in
 
 The user just needs to specify "plot_annual_inf" to be "TRUE" and also specify which index in Y belongs to the inflation variable.
 
-```{r, fig.width=10, fig.height=10}
+```{r, fig.width=8, fig.height=8}
 #the annualized quarterly inflation rate is transformed to annual inflation
 plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
 ```
