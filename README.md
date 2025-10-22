@@ -37,10 +37,10 @@ begin{bmatrix}
 $$
 
 $$
-\begin{matrix}
+\begin{bmatrix}
 1 & 2 & 3\\
 a & b & c
-\end{matrix}	
+\end{bmatrix}	
 $$
 ## Example
 
