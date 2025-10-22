@@ -22,10 +22,10 @@ remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = 
 The model is
 
 $$
-y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
+y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t,
 $$
 
-where $e_t \sim N(0,\Psi)$
+where $e_t \sim N(0,\Psi)$.
 
 In the stan code the $\mathbf{\phi}$’s are stacked such that
 
@@ -35,9 +35,10 @@ $$
 \mathbf{\phi}'_1 \\ 
 \vdots  \\
 \mathbf{\phi}'_p
-\end{bmatrix}
+\end{bmatrix}.
 $$
 
+The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}, \mathbf{\Psi}$
 ## Example
 
 Let us load the library and also load a Swedish macro data set.
