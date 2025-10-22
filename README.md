@@ -38,7 +38,7 @@ $$
 \end{bmatrix}.
 $$
 
-The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}, \mathbf{\Psi}$
+The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}$ and $\mathbf{\Psi}$. Note here that $\mathbf{\Lambda} x_t$ is the \textbf{steady state}.
 ## Example
 
 Let us load the library and also load a Swedish macro data set.
