@@ -25,13 +25,13 @@ $$
 y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
 $$
 
-where $e_t \sim N(0,\Psi)$.
+where $e_t \sim N(0,\Psi)$
 
 In the stan code the $\mathbf{\phi}$’s are stacked such that
 
 $$
 \mathbf{\Gamma}\prime
-begin{bmatrix}
+\begin{bmatrix}
 \mathbf{\phi}\prime_1 \\ \vdots  \\ \mathbf{\phi}\prime_p
 \end{bmatrix}
 $$
