@@ -32,18 +32,12 @@ In the stan code the $\mathbf{\phi}$’s are stacked such that
 $$
 \mathbf{\Gamma}'=
 \begin{bmatrix}
-\mathbf{\phi}'_1 \\ 
+\mathbf{\phi}^\prime_1 \\ 
 \vdots  \\
-\mathbf{\phi}'_p
+\mathbf{\phi}^\prime_p
 \end{bmatrix}
 $$
 
-$$
-\begin{bmatrix}
-1 & 2 & 3\\
-a & b & c
-\end{bmatrix}	
-$$
 ## Example
 
 Let us load the library and also load a Swedish macro data set.
