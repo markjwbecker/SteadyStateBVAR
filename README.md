@@ -27,9 +27,7 @@ $$
 
 where $e_t \sim N(0,\Psi)$.
 
-In the stan code the $\mathbf{\phi}$’s are stacked such that
-
-$\mathbf{\Gamma}\prime=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
+In the stan code the $\mathbf{\phi}$’s are stacked such that $\mathbf{\Gamma}\prime=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
 
 ## Example
 
@@ -60,12 +58,10 @@ period, i.e.
 
 $$
 x\prime_{t} =
-\left\{
-\begin{array}{ll}
+\begin{cases}
 \begin{pmatrix}1,1\end{pmatrix} & \text{if } t \le 1993Q4 \\
 \begin{pmatrix}1,0\end{pmatrix} & \text{if } t > 1993Q4
-\end{array}
-\right.
+\end{cases}
 $$
 
 ``` r
@@ -123,11 +119,13 @@ to the unconditional mean
 
 $$
 E(y_t)=\mu_t=\mathbf{\Lambda} x_t
-$$ Now we need to specify the prior variances for the steady state
-coefficients. Let us put a strong prior on inflation, since the Swedish
+$$
+
+Now we need to specify the prior variances for the steady state
+coefficients. Let us put a strong prior on inflation $(\textrm{prior variance} = 0.1)$, since the Swedish
 central bank has a $2\%$ inflation target. For the other variables, we
 can just put unit variances. We assume prior independence of the steady
-states. Note that the variances are for the elements in $vec (\Lambda)$.
+states. Note that the variances are for the elements in $vec (\mathbf{\Lambda})$.
 
 ``` r
 Lambda_pr_vars <- c(0.1, rep(1,5))
