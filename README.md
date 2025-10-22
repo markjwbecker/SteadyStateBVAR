@@ -25,9 +25,11 @@ $$
 y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
 $$
 
-where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}$’s
-are stacked such that
-$\mathbf{\Gamma}\prime_d=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
+where $e_t \sim N(0,\Psi)$.
+
+In the stan code the $\mathbf{\phi}$’s are stacked such that
+
+$\mathbf{\Gamma}\prime=\begin{bmatrix}\mathbf{\phi}_1,\dots,\mathbf{\phi}_p\end{bmatrix}$.
 
 ## Example
 
