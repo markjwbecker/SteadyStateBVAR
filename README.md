@@ -29,8 +29,14 @@ where $e_t \sim N(0,\Psi)$.
 
 In the stan code the $\mathbf{\phi}$’s are stacked such that
 
-$$\mathbf{\Gamma}\prime=\begin{bmatrix}\mathbf{\phi}^{\prime_1} \\ \vdots  \\ \mathbf{\phi}^{\prime}_p\end{bmatrix}$$
+$$\mathbf{\Gamma}^{\prime}=\begin{bmatrix}\mathbf{\phi}^{\prime_1} \\ \vdots  \\ \mathbf{\phi}^{\prime}_p\end{bmatrix}$$
 
+$$
+\begin{matrix}
+1 & 2 & 3\\
+a & b & c
+\end{matrix}	
+$$
 ## Example
 
 Let us load the library and also load a Swedish macro data set.
