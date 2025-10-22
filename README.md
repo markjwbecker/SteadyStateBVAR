@@ -30,11 +30,11 @@ where $e_t \sim N(0,\Psi)$
 In the stan code the $\mathbf{\phi}$’s are stacked such that
 
 $$
-\mathbf{\Gamma}'=
+\mathbf{\Gamma}=
 \begin{bmatrix}
-\mathbf{\phi}^\prime_1 \\ 
+\mathbf{\phi}'_1 \\ 
 \vdots  \\
-\mathbf{\phi}^\prime_p
+\mathbf{\phi}'_p
 \end{bmatrix}
 $$
 
@@ -66,7 +66,7 @@ time $t$) includes a constant term and a dummy for the pre-crisis
 period, i.e.
 
 $$
-x\prime_{t} =
+x'_{t} =
 \begin{cases}
 \begin{pmatrix}1,1\end{pmatrix} & \text{if } t \le 1993Q4 \\
 \begin{pmatrix}1,0\end{pmatrix} & \text{if } t > 1993Q4
@@ -150,7 +150,7 @@ stan_data <- c(stan_data, priors)
 
 At last, we need to specify our forecast horizon, and also provide the
 fit function with the future exogenous variables. In this case,
-$x\prime_t$ for all future periods will be
+$x'_t$ for all future periods will be
 $\begin{pmatrix}1,0\end{pmatrix}$, since we are not in $t \leq 1993Q4$.
 
 ``` r
