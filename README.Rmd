@@ -119,7 +119,7 @@ The prior (means) on the constant terms in the steady-state VAR are thus centere
 $$
 E(y_t)=\mu_t=\mathbf{\Lambda} x_t
 $$
-Now we need to specify the prior variances for the steady state coefficients. Let us put a strong prior on inflation, since the Swedish central bank has a $2\%$ inflation target. For the other variables, we can just put unit variances. We assume prior independence of the steady states. Note that the variances are for the elements in $vec (\Lambda)$.
+Now we need to specify the prior variances for the steady state coefficients. Let us put a strong prior on inflation, since the Swedish central bank has a $2%$ inflation target. For the other variables, we can just put unit variances. We assume prior independence of the steady states. Note that the variances are for the elements in $vec (\Lambda)$.
 
 ```{r}
 Lambda_pr_vars <- c(0.1, rep(1,5))
@@ -153,7 +153,7 @@ Note here 'fit' is a 'stanfit' object, so we can use the plot function in rstan 
 stan_dens(fit, pars = "Lambda[1,1]")
 ```
 
-Now lets plot the forecasts along with a $95\%$ prediction interval. Here I choose the mean of the posterior distribution as the actual forecast/point prediction, but the median is also possible.
+Now lets plot the forecasts along with a $95%$ prediction interval. Here I choose the mean of the posterior distribution as the actual forecast/point prediction, but the median is also possible.
 
 ```{r forecast_plot, fig.width=8, fig.height=8}
 plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
@@ -163,7 +163,7 @@ The Steady-State BVAR model most often contains an inflation variable in the sys
 
 *The inflation rate over the longer run is primarily determined by monetary policy, and hence the Committee can specify a longer-run goal for inflation. The Committee reaffirms its judgment that inflation at the rate of 2 percent, as measured by the annual change in the price index for personal consumption expenditures, is most consistent over the longer run with the Federal Reserve’s statutory maximum employment and price stability mandates.*
 
-As such, the inflation target of the Federal Reserve is a steady state annual inflation of $2\%$. Similarly, as mentioned, the Swedish Riksbank has an inflation target of $2\%$ annual CPIF inflation.
+As such, the inflation target of the Federal Reserve is a steady state annual inflation of $2%$. Similarly, as mentioned, the Swedish Riksbank has an inflation target of $2%$ annual CPIF inflation.
 
 Because of the fact that the actual targets are on an annual basis, but often in macroeconometric models the inflation is specified in terms of (annualized) quarterly growth rate, the plot function has options to transform the inflation forecasts to an annual basis, to facilitate comparison with inflation targets. The transformation is simply done by summing up forecasts up to fourth differences.
 
