@@ -42,11 +42,10 @@ The Swedish macro data set consists of CPIF inflation (pi), unemployment rate (u
 ```{r}
 plot.ts(Y)
 ```
-Note here that CPIF inflation is the annualized quarterly growth rate, i.e.
+Note here that CPIF inflation is the annualized quarterly growth rate, i.e.  \ln(CPIF_t/CPIF_{t-1})
 
-$$
-\pi_t=400 \ln(CPIF_t/CPIF_{t-1})
-$$
+$\pi_t=400 \ln(CPIF_t/CPIF_{t-1})$
+
 The estimation period includes the Swedish financial crisis at the beginning of the 90s and the subsequent shift in monetary policy to inflation targeting. To accommodate this x_t (exogenous variables at time t) includes a constant term and a dummy for the pre-crisis period.
 
 ```{r}
@@ -107,7 +106,7 @@ And now let us estimate the model (this will take some time).
 ```{r, results='hide'}
 rstan_options(auto_write = TRUE)
 options(mc.cores=parallel::detectCores())
-fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+fit <- estimate(stan_data, n_chains=4, iter=500, warmup=250, H=H, X_pred=X_pred)
 ```
 
 

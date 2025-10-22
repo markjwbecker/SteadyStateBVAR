@@ -36,9 +36,9 @@ plot.ts(Y)
 <img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" /> Note
 here that CPIF inflation is the annualized quarterly growth rate, i.e.
 
-$$
-\pi_t=400 \ln(CPIF_t/CPIF_{t-1})
-$$ The estimation period includes the Swedish financial crisis at the
+$\pi_t=400 \ln(CPIF_t/CPIF_{t-1})$
+
+The estimation period includes the Swedish financial crisis at the
 beginning of the 90s and the subsequent shift in monetary policy to
 inflation targeting. To accommodate this x_t (exogenous variables at
 time t) includes a constant term and a dummy for the pre-crisis period.
