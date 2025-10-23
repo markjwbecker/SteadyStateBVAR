@@ -157,7 +157,7 @@ stan_data <- c(stan_data, priors)
 
 At last, we need to specify our forecast horizon, and also provide the
 fit function with the future exogenous variables. In this case, $x'_t$
-for all future periods will be $\begin{pmatrix} 1 &0 \end{pmatrix}$,
+for all future periods will be $\begin{pmatrix} 1 & 0 \end{pmatrix}$,
 since we are not in $t \leq 1993Q4$.
 
 ``` r
