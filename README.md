@@ -17,7 +17,7 @@ You can install the development version of SteadyStateBVAR with:
 remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 
-## The model
+## The Steady State BVAR(p) model
 
 The model is
 
@@ -25,9 +25,8 @@ $$
 y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
 $$
 
-where $e_t \sim N(0,\Psi)$.
-
-In the stan code the $\mathbf{\phi}$’s are stacked such that
+where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}$’s are
+stacked such that
 
 $$
 \mathbf{\Gamma}=
@@ -39,8 +38,11 @@ $$
 $$
 
 The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}$ and
-$\mathbf{\Psi}$. Note here that $\mathbf{\Lambda} x_t$ is the **steady
-state**.
+$\mathbf{\Psi}$. Note here that
+
+$$E(y_t)=\mu_t=\mathbf{\Lambda} x_t$$
+
+is the **steady state**.
 
 ## Example
 
@@ -71,12 +73,10 @@ period, i.e.
 
 $$
 x'_{t} =
-\left\{
-\begin{array}{ll}
+\begin{cases}
 \begin{pmatrix}1,1\end{pmatrix} & \text{if } t \le 1993Q4 \\
 \begin{pmatrix}1,0\end{pmatrix} & \text{if } t > 1993Q4
-\end{array}
-\right.
+\end{cases}
 $$
 
 ``` r
@@ -134,7 +134,9 @@ to the unconditional mean
 
 $$
 E(y_t)=\mu_t=\mathbf{\Lambda} x_t
-$$ Now we need to specify the prior variances for the steady state
+$$
+
+Now we need to specify the prior variances for the steady state
 coefficients. Let us put a strong prior on inflation, since the Swedish
 central bank has a $2%$ inflation target. For the other variables, we
 can just put unit variances. We assume prior independence of the steady
@@ -167,7 +169,7 @@ And now let us estimate the model (this will take some time).
 ``` r
 rstan_options(auto_write = TRUE)
 options(mc.cores=parallel::detectCores())
-fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
+#fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
 ```
 
 Note here ‘fit’ is a ‘stanfit’ object, so we can use the plot function
@@ -176,20 +178,16 @@ of the (post crisis) steady state of inflation (i.e. the posterior of
 the unconditional mean of post crisis inflation).
 
 ``` r
-stan_dens(fit, pars = "Lambda[1,1]")
+#stan_dens(fit, pars = "Lambda[1,1]")
 ```
-
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
 
 Now lets plot the forecasts along with a $95%$ prediction interval. Here
 I choose the mean of the posterior distribution as the actual
 forecast/point prediction, but the median is also possible.
 
 ``` r
-plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
+#plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
 ```
-
-<img src="man/figures/README-forecast_plot-1.png" width="100%" />
 
 The Steady-State BVAR model most often contains an inflation variable in
 the system, precisely for the reason that we usually have very
@@ -221,10 +219,8 @@ specify which index in Y belongs to the inflation variable.
 
 ``` r
 #the annualized quarterly inflation rate is transformed to annual inflation
-plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
+#plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
 ```
-
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
 
 Please note that for this to make sense, the inflation variable used in
 the model must be the annualized quarterly growth rate of some price

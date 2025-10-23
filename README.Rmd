@@ -27,7 +27,7 @@ You can install the development version of SteadyStateBVAR with:
 ```{r, message=FALSE, warning=FALSE, results='hide'}
 remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
-## The model
+## The Steady State BVAR(p) model
 
 The model is
 
@@ -35,9 +35,7 @@ $$
 y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
 $$
 
-where $e_t \sim N(0,\Psi)$.
-
-In the stan code the $\mathbf{\phi}$'s are stacked such that
+where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}$'s are stacked such that
 
 $$
 \mathbf{\Gamma}=
@@ -48,7 +46,11 @@ $$
 \end{bmatrix}.
 $$
 
-The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}$ and $\mathbf{\Psi}$. Note here that $\mathbf{\Lambda} x_t$ is the **steady state**.
+The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}$ and $\mathbf{\Psi}$. Note here that
+
+$$E(y_t)=\mu_t=\mathbf{\Lambda} x_t$$
+
+is the **steady state**.
 
 ## Example
 
@@ -61,7 +63,7 @@ data("swe_macro")
 
 The Swedish macro data set consists of quarterly observations of CPIF inflation (pi), unemployment rate (u) and 3-month interest rate (R).
 
-```{r, fig.width=5, fig.height=5}
+```{r, fig.width=8, fig.height=8}
 plot.ts(Y)
 ```
 Note here that CPIF inflation is the annualized quarterly growth rate, i.e.
@@ -70,14 +72,13 @@ $\pi_t=400 \ln(CPIF_t/CPIF_{t-1})$
 
 The estimation period includes the Swedish financial crisis at the beginning of the 90s and the subsequent shift in monetary policy to inflation targeting. To accommodate this $x_t$ (exogenous variables at time $t$) includes a constant term and a dummy for the pre-crisis period, i.e.
 
+
 $$
 x'_{t} =
-\left\{
-\begin{array}{ll}
+\begin{cases}
 \begin{pmatrix}1,1\end{pmatrix} & \text{if } t \le 1993Q4 \\
 \begin{pmatrix}1,0\end{pmatrix} & \text{if } t > 1993Q4
-\end{array}
-\right.
+\end{cases}
 $$
 
 ```{r}
@@ -116,9 +117,11 @@ Lambda <- matrix(c(2, 4, #inflation
 
 The prior (means) on the constant terms in the steady-state VAR are thus centered on the perceived post-crisis steady state (column 1) and the prior (means) on the dummy variable coefficients reflects the higher pre-crisis inflation and interest rates, and lower pre-crisis unemployment rate (column 2). Note that the long run forecasts converge to the unconditional mean
 
+
 $$
 E(y_t)=\mu_t=\mathbf{\Lambda} x_t
 $$
+
 Now we need to specify the prior variances for the steady state coefficients. Let us put a strong prior on inflation, since the Swedish central bank has a $2%$ inflation target. For the other variables, we can just put unit variances. We assume prior independence of the steady states. Note that the variances are for the elements in $vec (\Lambda)$.
 
 ```{r}
@@ -144,19 +147,19 @@ And now let us estimate the model (this will take some time).
 ```{r, results='hide'}
 rstan_options(auto_write = TRUE)
 options(mc.cores=parallel::detectCores())
-fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
+#fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
 ```
 
 Note here 'fit' is a 'stanfit' object, so we can use the plot function in rstan for 'stanfit' objects. Let us plot the posterior distribution of the (post crisis) steady state of inflation (i.e. the posterior of the unconditional mean of post crisis inflation).
 
-```{r, fig.width=3, fig.height=3}
-stan_dens(fit, pars = "Lambda[1,1]")
+```{r, fig.width=8, fig.height=8}
+#stan_dens(fit, pars = "Lambda[1,1]")
 ```
 
 Now lets plot the forecasts along with a $95%$ prediction interval. Here I choose the mean of the posterior distribution as the actual forecast/point prediction, but the median is also possible.
 
-```{r forecast_plot, fig.width=4, fig.height=8}
-plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
+```{r forecast_plot, fig.width=8, fig.height=8}
+#plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
 ```
 
 The Steady-State BVAR model most often contains an inflation variable in the system, precisely for the reason that we usually have very informative priors about the steady state values of inflation, since it is very common for central banks across the world to have inflation targets. For example the Federal Reserve:
@@ -171,7 +174,7 @@ The user just needs to specify "plot_annual_inf" to be "TRUE" and also specify w
 
 ```{r, fig.width=4, fig.height=8}
 #the annualized quarterly inflation rate is transformed to annual inflation
-plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
+#plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
 ```
 
 Please note that for this to make sense, the inflation variable used in the model must be the annualized quarterly growth rate of some price index $P_t$ specified as
