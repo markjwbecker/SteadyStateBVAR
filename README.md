@@ -114,12 +114,16 @@ fol_pm=c(0,   #inflation
 Now to specify the prior for the steady states. The first column of
 Lambda represents the steady state in the latter regime. The second
 column of Lambda, determines the difference in steady states between the
-first and second regime.
+first and second regime. We know that the Swedish central bank has a 2%
+(annual) CPIF inflation target after the first regime, so we set the
+prior mean of element 1,1 of $\mathbf{\Lambda}$, i.e. second regime
+steady state inflation to be 2%. For unemployment and interest rate, we
+just choose something since this is just a demonstration.
 
 ``` r
 Lambda <- matrix(c(2, 4, #inflation
-                   7,-3, #unemployment rate
-                   3, 8),#interest rate
+                   6,-2, #unemployment rate
+                   4, 7),#interest rate
                    nrow=stan_data$m,
                    ncol=stan_data$d,
                    byrow=TRUE)
@@ -137,8 +141,8 @@ E(y_t)=\mu_t=\mathbf{\Lambda} x_t
 $$
 
 Now we need to specify the prior variances for the steady state
-coefficients. Let us put a strong prior on inflation, since the Swedish
-central bank has a 2% (annual) CPIF inflation target. For the other
+coefficients. For inflation we put a strong prior, i.e. the prior
+variance for post crisis steady state inflation is $0.1$. For the other
 variables, we can just put unit variances. We assume prior independence
 of the steady states. Note that the variances are for the elements in
 $vec (\Lambda)$.
@@ -158,8 +162,9 @@ stan_data <- c(stan_data, priors)
 At last, we need to specify our forecast horizon, and also provide the
 fit function with the future exogenous variables. In this case
 
-$$x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}$$ for all future periods,
-since we are not in $t \leq 1993Q4$.
+$$
+x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}
+$$ for all future periods, since we are not in $t \leq 1993Q4$.
 
 ``` r
 H <- 40
