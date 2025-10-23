@@ -130,7 +130,7 @@ centered on the perceived post-crisis steady state (column 1) and the
 prior (means) on the dummy variable coefficients reflects the higher
 pre-crisis inflation and interest rates, and lower pre-crisis
 unemployment rate (column 2). Note that the long run forecasts converge
-to the unconditional mean
+to the unconditional mean (steady state)
 
 $$
 E(y_t)=\mu_t=\mathbf{\Lambda} x_t
@@ -156,8 +156,9 @@ stan_data <- c(stan_data, priors)
 ```
 
 At last, we need to specify our forecast horizon, and also provide the
-fit function with the future exogenous variables. In this case,
-$x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}$ for all future periods,
+fit function with the future exogenous variables. In this case
+
+$$x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}$$ for all future periods,
 since we are not in $t \leq 1993Q4$.
 
 ``` r

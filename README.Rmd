@@ -115,7 +115,7 @@ Lambda <- matrix(c(2, 4, #inflation
                    byrow=TRUE)
 ```
 
-The prior (means) on the constant terms in the steady-state VAR are thus centered on the perceived post-crisis steady state (column 1) and the prior (means) on the dummy variable coefficients reflects the higher pre-crisis inflation and interest rates, and lower pre-crisis unemployment rate (column 2). Note that the long run forecasts converge to the unconditional mean
+The prior (means) on the constant terms in the steady-state VAR are thus centered on the perceived post-crisis steady state (column 1) and the prior (means) on the dummy variable coefficients reflects the higher pre-crisis inflation and interest rates, and lower pre-crisis unemployment rate (column 2). Note that the long run forecasts converge to the unconditional mean (steady state)
 
 
 $$
@@ -135,7 +135,10 @@ priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda, Lambda_pr_vars)
 stan_data <- c(stan_data, priors)
 ```
 
-At last, we need to specify our forecast horizon, and also provide the fit function with the future exogenous variables. In this case, $x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}$ for all future periods, since we are not in $t \leq 1993Q4$.
+At last, we need to specify our forecast horizon, and also provide the fit function with the future exogenous variables. In this case
+
+$$x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}$$
+for all future periods, since we are not in $t \leq 1993Q4$.
 
 ```{r}
 H <- 40
