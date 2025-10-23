@@ -173,8 +173,8 @@ fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pr
 ```
 
 Note here ‘fit’ is a ‘stanfit’ object, so we can use the plot function
-in rstan for ‘stanfit’ objects. Let us plot the posterior distribution
-of the (post crisis) steady state of inflation (i.e. the posterior of
+in rstan. Let us plot the posterior distribution of the (post
+crisis/second regime) steady state of inflation (i.e. the posterior of
 the unconditional mean of post crisis inflation).
 
 ``` r
@@ -183,8 +183,8 @@ stan_dens(fit, pars = "Lambda[1,1]")
 
 <img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
 
-Now lets plot the forecasts along with a $95%$ prediction interval. Here
-I choose the mean of the posterior distribution as the actual
+Now lets plot the forecasts along with a $95\%$ prediction interval.
+Here I choose the mean of the posterior distribution as the actual
 forecast/point prediction, but the median is also possible.
 
 ``` r
@@ -208,8 +208,8 @@ longer run with the Federal Reserve’s statutory maximum employment and
 price stability mandates.*
 
 As such, the inflation target of the Federal Reserve is a steady state
-annual inflation of $2%$. Similarly, as mentioned, the Swedish Riksbank
-has an inflation target of $2%$ annual CPIF inflation.
+annual inflation of $2\%$. Similarly, as mentioned, the Swedish Riksbank
+has an inflation target of $2\%$ annual CPIF inflation.
 
 Because of the fact that the actual targets are on an annual basis, but
 often in macroeconometric models the inflation is specified in terms of
