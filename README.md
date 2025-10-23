@@ -164,7 +164,9 @@ fit function with the future exogenous variables. In this case
 
 $$
 x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}
-$$ for all future periods, since we are not in $t \leq 1993Q4$.
+$$
+
+for all future periods, since we are not in $t \leq 1993Q4$.
 
 ``` r
 H <- 40

@@ -140,6 +140,7 @@ At last, we need to specify our forecast horizon, and also provide the fit funct
 $$
 x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}
 $$
+
 for all future periods, since we are not in $t \leq 1993Q4$.
 
 ```{r}
