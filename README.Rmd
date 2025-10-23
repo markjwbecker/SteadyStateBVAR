@@ -61,7 +61,7 @@ data("swe_macro")
 
 The Swedish macro data set consists of quarterly observations of CPIF inflation (pi), unemployment rate (u) and 3-month interest rate (R).
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=5, fig.height=5}
 plot.ts(Y)
 ```
 Note here that CPIF inflation is the annualized quarterly growth rate, i.e.
@@ -144,18 +144,18 @@ And now let us estimate the model (this will take some time).
 ```{r, results='hide'}
 rstan_options(auto_write = TRUE)
 options(mc.cores=parallel::detectCores())
-fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
 ```
 
 Note here 'fit' is a 'stanfit' object, so we can use the plot function in rstan for 'stanfit' objects. Let us plot the posterior distribution of the (post crisis) steady state of inflation (i.e. the posterior of the unconditional mean of post crisis inflation).
 
-```{r, fig.width=5, fig.height=5}
+```{r, fig.width=3, fig.height=3}
 stan_dens(fit, pars = "Lambda[1,1]")
 ```
 
 Now lets plot the forecasts along with a $95%$ prediction interval. Here I choose the mean of the posterior distribution as the actual forecast/point prediction, but the median is also possible.
 
-```{r forecast_plot, fig.width=8, fig.height=8}
+```{r forecast_plot, fig.width=4, fig.height=8}
 plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
 ```
 
@@ -169,7 +169,7 @@ Because of the fact that the actual targets are on an annual basis, but often in
 
 The user just needs to specify "plot_annual_inf" to be "TRUE" and also specify which index in Y belongs to the inflation variable.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=4, fig.height=8}
 #the annualized quarterly inflation rate is transformed to annual inflation
 plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
 ```

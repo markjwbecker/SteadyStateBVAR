@@ -22,7 +22,7 @@ remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = 
 The model is
 
 $$
-y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t,
+y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
 $$
 
 where $e_t \sim N(0,\Psi)$.
@@ -38,7 +38,10 @@ $$
 \end{bmatrix}.
 $$
 
-The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}$ and $\mathbf{\Psi}$. Note here that $\mathbf{\Lambda} x_t$ is the **steady state**.
+The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}$ and
+$\mathbf{\Psi}$. Note here that $\mathbf{\Lambda} x_t$ is the **steady
+state**.
+
 ## Example
 
 Let us load the library and also load a Swedish macro data set.
@@ -68,10 +71,12 @@ period, i.e.
 
 $$
 x'_{t} =
-\begin{cases}
+\left\{
+\begin{array}{ll}
 \begin{pmatrix}1,1\end{pmatrix} & \text{if } t \le 1993Q4 \\
 \begin{pmatrix}1,0\end{pmatrix} & \text{if } t > 1993Q4
-\end{cases}
+\end{array}
+\right.
 $$
 
 ``` r
@@ -129,13 +134,11 @@ to the unconditional mean
 
 $$
 E(y_t)=\mu_t=\mathbf{\Lambda} x_t
-$$
-
-Now we need to specify the prior variances for the steady state
-coefficients. Let us put a strong prior on inflation $(\textrm{prior variance} = 0.1)$, since the Swedish
-central bank has a $2\%$ inflation target. For the other variables, we
+$$ Now we need to specify the prior variances for the steady state
+coefficients. Let us put a strong prior on inflation, since the Swedish
+central bank has a $2%$ inflation target. For the other variables, we
 can just put unit variances. We assume prior independence of the steady
-states. Note that the variances are for the elements in $vec (\mathbf{\Lambda})$.
+states. Note that the variances are for the elements in $vec (\Lambda)$.
 
 ``` r
 Lambda_pr_vars <- c(0.1, rep(1,5))
@@ -150,9 +153,9 @@ stan_data <- c(stan_data, priors)
 ```
 
 At last, we need to specify our forecast horizon, and also provide the
-fit function with the future exogenous variables. In this case,
-$x'_t$ for all future periods will be
-$\begin{pmatrix}1,0\end{pmatrix}$, since we are not in $t \leq 1993Q4$.
+fit function with the future exogenous variables. In this case, $x'_t$
+for all future periods will be $\begin{pmatrix}1,0\end{pmatrix}$, since
+we are not in $t \leq 1993Q4$.
 
 ``` r
 H <- 40
@@ -164,7 +167,7 @@ And now let us estimate the model (this will take some time).
 ``` r
 rstan_options(auto_write = TRUE)
 options(mc.cores=parallel::detectCores())
-fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
 ```
 
 Note here ‘fit’ is a ‘stanfit’ object, so we can use the plot function
@@ -178,8 +181,8 @@ stan_dens(fit, pars = "Lambda[1,1]")
 
 <img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
 
-Now lets plot the forecasts along with a $95\%$ prediction interval.
-Here I choose the mean of the posterior distribution as the actual
+Now lets plot the forecasts along with a $95%$ prediction interval. Here
+I choose the mean of the posterior distribution as the actual
 forecast/point prediction, but the median is also possible.
 
 ``` r
@@ -203,8 +206,8 @@ longer run with the Federal Reserve’s statutory maximum employment and
 price stability mandates.*
 
 As such, the inflation target of the Federal Reserve is a steady state
-annual inflation of $2\%$. Similarly, as mentioned, the Swedish Riksbank
-has an inflation target of $2\%$ annual CPIF inflation.
+annual inflation of $2%$. Similarly, as mentioned, the Swedish Riksbank
+has an inflation target of $2%$ annual CPIF inflation.
 
 Because of the fact that the actual targets are on an annual basis, but
 often in macroeconometric models the inflation is specified in terms of
