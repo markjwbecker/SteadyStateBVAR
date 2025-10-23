@@ -138,9 +138,10 @@ $$
 
 Now we need to specify the prior variances for the steady state
 coefficients. Let us put a strong prior on inflation, since the Swedish
-central bank has a $2%$ inflation target. For the other variables, we
-can just put unit variances. We assume prior independence of the steady
-states. Note that the variances are for the elements in $vec (\Lambda)$.
+central bank has a $2$% (annual) CPIF inflation target. For the other
+variables, we can just put unit variances. We assume prior independence
+of the steady states. Note that the variances are for the elements in
+$vec (\Lambda)$.
 
 ``` r
 Lambda_pr_vars <- c(0.1, rep(1,5))
@@ -169,7 +170,7 @@ And now let us estimate the model (this will take some time).
 ``` r
 rstan_options(auto_write = TRUE)
 options(mc.cores=parallel::detectCores())
-fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
+#fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
 ```
 
 Note here ‘fit’ is a ‘stanfit’ object, so we can use the plot function
@@ -178,20 +179,16 @@ crisis/second regime) steady state of inflation (i.e. the posterior of
 the unconditional mean of post crisis inflation).
 
 ``` r
-stan_dens(fit, pars = "Lambda[1,1]")
+#stan_dens(fit, pars = "Lambda[1,1]")
 ```
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
-
-Now lets plot the forecasts along with a $95\%$ prediction interval.
-Here I choose the mean of the posterior distribution as the actual
+Now lets plot the forecasts along with a $95$% prediction interval. Here
+I choose the mean of the posterior distribution as the actual
 forecast/point prediction, but the median is also possible.
 
 ``` r
-plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
+#plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
 ```
-
-<img src="man/figures/README-forecast_plot-1.png" width="100%" />
 
 The Steady-State BVAR model most often contains an inflation variable in
 the system, precisely for the reason that we usually have very
@@ -208,8 +205,8 @@ longer run with the Federal Reserve’s statutory maximum employment and
 price stability mandates.*
 
 As such, the inflation target of the Federal Reserve is a steady state
-annual inflation of $2\%$. Similarly, as mentioned, the Swedish Riksbank
-has an inflation target of $2\%$ annual CPIF inflation.
+annual inflation of $2$%. Similarly, as mentioned, the Swedish Riksbank
+has an inflation target of $2$% annual CPIF inflation.
 
 Because of the fact that the actual targets are on an annual basis, but
 often in macroeconometric models the inflation is specified in terms of
@@ -223,10 +220,8 @@ specify which index in Y belongs to the inflation variable.
 
 ``` r
 #the annualized quarterly inflation rate is transformed to annual inflation
-plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
+#plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
 ```
-
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
 
 Please note that for this to make sense, the inflation variable used in
 the model must be the annualized quarterly growth rate of some price
