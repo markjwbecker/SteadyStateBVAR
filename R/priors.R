@@ -1,4 +1,4 @@
-priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars){
+priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars,Jeffrey){
   m = ncol(Y)
   
   obj <- gen_var(as.ts(Y), p)
@@ -23,9 +23,13 @@ priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars){
   arfit <- arima(Y[, i], order = c(p, 0, 0), method = "CSS")
   diag_vars[i, i] <- arfit$sigma2
   }
-  
-  gamma=m+2
-  Psi_pr_scale = (gamma-m-1)*diag_vars
+  if (Jeffrey == TRUE){
+    gamma=0
+    Psi_pr_scale = matrix(0,m,m)
+  } else {
+    gamma=m+2
+    Psi_pr_scale = (gamma-m-1)*diag_vars
+  }
   
   Lambda_pr_mean = c(Lambda_pr_means)
   Lambda_pr_cov = diag(Lambda_pr_vars)
@@ -35,6 +39,6 @@ priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars){
   prior$Lambda_pr_mean <- Lambda_pr_mean
   prior$Lambda_pr_cov <- Lambda_pr_cov
   prior$Psi_pr_scale <- Psi_pr_scale
-  prior$gamma <- 5
+  prior$gamma <- gamma
   return(prior)
 }
