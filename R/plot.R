@@ -1,4 +1,4 @@
-plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), plot_annual_inf=FALSE, inf_idx=NULL) {
+plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), growth_rate_idx=NULL) {
   posterior <- rstan::extract(fit)
   Y_pred <- posterior$Y_pred
   Y_pred_m <- apply(Y_pred, c(2, 3), fcst_type)
@@ -13,15 +13,21 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), plot_a
   time_hist <- time(Y)
   time_fore <- seq(tail(time_hist, 1) + 1/4, by = 1/4, length.out = H)
   
-  par(mfrow = c(ncol(Y), 1))
-  
+  if (ncol(Y) < 4){
+    par(mfrow = c(ncol(Y), 1))
+  } else if ((ncol(Y) < 9)){
+    par(mfrow = c(4,2))
+  } else {
+    par(mfrow = c(1,1))
+  }
+  on.exit(par(mfrow = c(1,1)))
   for (i in 1:ncol(Y)) {
     smply <- Y[, i]
     fcst_m <- Y_pred_m[, i]
     fcst_lower <- Y_pred_lower[, i]
     fcst_upper <- Y_pred_upper[, i]
     
-    if(plot_annual_inf && !is.null(inf_idx) && i == inf_idx) {
+    if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
       
       annual_hist <- rep(NA, length(smply))
       for(t in 4:length(smply)){
