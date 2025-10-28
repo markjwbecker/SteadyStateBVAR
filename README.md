@@ -14,231 +14,175 @@ by Mattias Villani.
 You can install the development version of SteadyStateBVAR with:
 
 ``` r
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 
-## The Steady State BVAR(p) model
+## Introduction
 
-The model is
-
-$$
-y_t = \mathbf{\Lambda} x_t + \mathbf{\phi_1}(y_{t-1}-\mathbf{\Lambda} x_{t-1})+\dots+\mathbf{\phi}_p(y_{t-p}-\mathbf{\Lambda} x_{t-p})+e_t
-$$
-
-where $e_t \sim N(0,\Psi)$. In the stan code the $\mathbf{\phi}$’s are
-stacked such that
+The Steady State BVAR($p$) model is
 
 $$
-\mathbf{\Gamma}=
+y_t = \Psi x_t + A_1(y_{t-1}-\Psi x_{t-1})+\dots+A_p(y_{t-p}-\Psi x_{t-p})+u_t
+$$
+
+where $y_t$ is a $k$-dimensional vector of time series at time $t$, and
+$x_t$ is a $q$-dimensional vector of deterministic variables, and
+$u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also,
+$A_i$ for $i=1,\dots,p$ is $(k \times k)$, and $\Psi$ is $(k \times q)$.
+Note here that
+
+$$
+E(y_t)=\mu_t=\Psi x_t
+$$
+
+is the **steady state**. We can stack the $A$’s in the $(kp \times k)$
+matrix $\beta$
+
+$$
+\beta=
 \begin{bmatrix}
-\mathbf{\phi}'_1 \\ 
+A'_1 \\ 
 \vdots  \\
-\mathbf{\phi}'_p
+A'_p
 \end{bmatrix}
 $$
 
-The stan program estimates $\mathbf{\Gamma}, \mathbf{\Lambda}$ and
-$\mathbf{\Psi}$. Note here that
-
-$$E(y_t)=\mu_t=\mathbf{\Lambda} x_t$$
-
-is the **steady state**.
-
-## Example
-
-Let us load the library and also load a Swedish macro data set.
-
-``` r
-library(SteadyStateBVAR)
-data("swe_macro")
-```
-
-The Swedish macro data set consists of quarterly observations of CPIF
-inflation (pi), unemployment rate (u) and 3-month interest rate (R).
-
-``` r
-plot.ts(Y)
-```
-
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" /> Note
-here that CPIF inflation is the annualized quarterly growth rate, i.e.
-
-$\pi_t=400 \ln(CPIF_t/CPIF_{t-1})$
-
-The estimation period includes the Swedish financial crisis at the
-beginning of the 90s and the subsequent shift in monetary policy to
-inflation targeting. To accommodate this $x_t$ (exogenous variables at
-time $t$) includes a constant term and a dummy for the pre-crisis
-period, i.e.
+We can then rewrite the model as a nonlinear regression
 
 $$
-x'_{t} =
+y_t' =x_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t'
+$$
+
+where $w_t'=(y_{t-1}',\dots,y_{t-p}')$ is a $kp$-dimensional vector of
+lagged endogenous variables, and $q_t'=(x_{t-1}',\dots,x_{t-p}')$ is a
+$qp$-dimensional vector of lagged exogenous (deterministic) variables,
+$I_p$ is the $(p \times p)$ identity matrix and $\otimes$ denotes the
+Kronecker product. This is how the likelihood is written in the Stan
+code. The goal is to estimate $\beta, \Psi$ and $\Sigma_u$, therefore
+priors are needed. Starting with $\beta$, we use the Minnesota prior
+where
+
+$$
+\textrm{vec}(\beta) \sim N_{kpk}\left[\textrm{vec}(\beta_0),\Sigma_{\textrm{vec}(\beta)}\right]
+$$
+
+First for $\beta_0$, the Minnesota prior sets all elements to $0$,
+except for the elements that relate to the first own lags of the
+variables, which are often set to $0.9$ or $1$ for level variables or
+also to $0$ for growth rate variables. Further,
+$\Sigma_{\textrm{vec}(\beta)}$ is a diagonal matrix containing the prior
+variances for the elements in $\beta$. The prior is constructed such
+that for the autoregressive coefficient $A_{\ell}^{(i,j)}$ which is
+element $\left(i,j\right)$ of $A_{\ell}$ for $\ell=1,\dots,p,$ the prior
+variance is given by
+
+$$
+\textrm{Var}\left(A_{l}^{(i,j)}\right)=
 \begin{cases}
-\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 1993Q4 \\
-\begin{pmatrix}1 &0\end{pmatrix} & \text{if } t > 1993Q4
+\left(\frac{\lambda_1}{\ell}\right)^2 & \text{if } i = j \\
+\left(\frac{\lambda_1 \lambda_2}{\ell}\right)^2 \frac{\sigma_i^2}{\sigma_j^2}& \text{if } i \neq j
 \end{cases}
 $$
 
-``` r
-bp = 27 #breakpoint at 1993Q4
-dummy <- c(rep(1,bp), rep(0,nrow(Y)-bp)) #1 if t<=1993Q4, 0 if t>1993Q4
-```
-
-Now we do some setup. Since this is quarterly data, for simplicity, let
-us assume $p=4$ is a good choice for the lag length.
-
-``` r
-p=4
-stan_data <- BVAR_setup(Y, p, det=c("c&d"), dummy=dummy) #c&d = constant and dummy
-```
-
-Now for the priors. For the dynamic regression coefficients, we use the
-Minnesota prior. For that, we need to specify cross equation tightness
-$(\lambda_1)$ and overall tightness $(\lambda_2)$. Let us choose some
-common values $\lambda_1=0.2$ and $\lambda_2=0.5$. Furthermore, we need
-to specify the prior mean for the first own lag of the variables. For
-variables in differences, we set to zero (inflation) and for variables
-in levels (unemployment and interest rate) we set to $0.9$ to reflect
-persistent but stationary series. For all of the other regression
-coefficients, the prior means are zero.
-
-``` r
-lambda1=0.2
-lambda2=0.5
-#first own lag prior means
-fol_pm=c(0,   #inflation
-         0.9, #unemployment rate
-         0.9) #interest rate
-```
-
-Now to specify the prior for the steady states. The first column of
-Lambda represents the steady state in the latter regime. The second
-column of Lambda, determines the difference in steady states between the
-first and second regime. We know that the Swedish central bank has a 2%
-(annual) CPIF inflation target after the first regime, so we set the
-prior mean of element 1,1 of $\mathbf{\Lambda}$, i.e. second regime
-steady state inflation to be 2%. For unemployment and interest rate, we
-just choose something since this is just a demonstration.
-
-``` r
-Lambda <- matrix(c(2, 4, #inflation
-                   6,-2, #unemployment rate
-                   4, 7),#interest rate
-                   nrow=stan_data$m,
-                   ncol=stan_data$d,
-                   byrow=TRUE)
-```
-
-The prior (means) on the constant terms in the steady-state VAR are thus
-centered on the perceived post-crisis steady state (column 1) and the
-prior (means) on the dummy variable coefficients reflects the higher
-pre-crisis inflation and interest rates, and lower pre-crisis
-unemployment rate (column 2). Note that the long run forecasts converge
-to the unconditional mean (steady state)
+Here $\lambda_1$ and $\lambda_2$ are scalar hyperparameters where the
+former is known as the overall tightness, and the latter as the
+cross-equation tightness. Furthermore, $\sigma_i^2$ is the $(i,i)$:th
+element of $\Sigma_u$, which we do not know, and therefore replace with
+an estimate. In this package, it is replaced by the least squares
+residual variance from a univariate autoregression for variable $i$ with
+$p$ lags (including any potential deterministic variables). Moving on to
+$\Psi$ the prior we use is
 
 $$
-E(y_t)=\mu_t=\mathbf{\Lambda} x_t
+\textrm{vec}(\Psi) \sim N_{kq}\left[\textrm{vec}(\Psi_0),\Sigma_{\textrm{vec}(\Psi)}\right]
 $$
 
-Now we need to specify the prior variances for the steady state
-coefficients. For inflation we put a strong prior, i.e. the prior
-variance for post crisis steady state inflation is $0.1$. For the other
-variables, we can just put unit variances. We assume prior independence
-of the steady states. Note that the variances are for the elements in
-$vec (\Lambda)$.
-
-``` r
-Lambda_pr_vars <- c(0.1, rep(1,5))
-```
-
-Now we input the above to the priors function and then attach the priors
-to the “stan_data”.
-
-``` r
-priors <- priors(Y, p, lambda1, lambda2, fol_pm, Lambda, Lambda_pr_vars)
-stan_data <- c(stan_data, priors)
-```
-
-At last, we need to specify our forecast horizon, and also provide the
-fit function with the future exogenous variables. In this case
+It is assumed that $\Sigma_{\textrm{vec}(\Psi)}$ is a diagonal matrix.
+At last, the prior for $\Sigma_u$ is
 
 $$
-x'_t = \begin{pmatrix} 1 & 0 \end{pmatrix}
+\Sigma_u \sim IW(V_0,m_0)
 $$
 
-for all future periods, since we are not in $t \leq 1993Q4$.
+Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of
+freedom. Since Stan does not allow the usual noninformative prior
+$\left|\Sigma \right|^{-(k+1)/2}$, we will instead specify an
+uninformative prior by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where
+$\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$)
+(including any potential deterministic regressors), and $m_0=k+2$.
+
+## Example
+
+We will now replicate the model in the empirical analysis in Section 4.1
+in Villani (2009). First let us load the library and also load the data
 
 ``` r
-H <- 40
-X_pred <- cbind(rep(1, H), 0)
+#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+library(SteadyStateBVAR)
+data("villani2009")
+yt <- xt #villani uses xt to denote the endogenous variables
 ```
 
-And now let us estimate the model (this will take some time).
+The data set contains quarterly data for Sweden over the time period
+1980Q1–2005Q4. The seven variables are: trade-weighted measures of
+foreign GDP growth $(\Delta y_f)$, CPI inflation $(\pi_f)$ and the
+3-month interest rate $(i_f)$, the corresponding domestic variables
+($\Delta y$, $\pi$ and $i$), and the level of the real exchange rate
+defined as $q=s+p_f-p$, where $p_f$ and $p$ are the foreign and domestic
+CPI levels (in logs) and $s$ is the (log of the) trade weighted nominal
+exchange rate. As such we have
+
+$$
+y_t=
+\begin{pmatrix}
+\Delta y_f \\
+\pi_f \\
+i_f \\
+\Delta y \\
+\pi \\
+i \\
+q
+\end{pmatrix}
+$$
+
+The growth rate variables are specified in terms of quarterly rates of
+change, i.e. for a variable $z$, we have
+$100 \ln \left(\frac{z_t}{z_{t-1}}\right)$. To simplify the prior
+selection for the steady states later, we can multiply the growth rate
+series by $4$ to instead get annualized quarterly rates of change. We do
+that and then we can plot the data.
 
 ``` r
-rstan_options(auto_write = TRUE)
-options(mc.cores=parallel::detectCores())
-fit <- estimate(stan_data, n_chains=8, iter=10000, warmup=5000, H=H, X_pred=X_pred)
+growth_idx <- c(1, 2, 4, 5)
+yt[, growth_idx] <- yt[, growth_idx] * 4
+plot.ts(yt)
 ```
 
-Note here ‘fit’ is a ‘stanfit’ object, so we can use the plot function
-in rstan. Let us plot the posterior distribution of the (post
-crisis/second regime) steady state of inflation (i.e. the posterior of
-the unconditional mean of post crisis inflation).
+<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
 
-``` r
-stan_dens(fit, pars = "Lambda[1,1]")
-```
+The estimation period includes the Swedish financial crisis at the
+beginning of the 90s and the subsequent shift in monetary policy to
+inflation targeting and flexible exchange rate. To accommodate this
+$x_t$ (deterministic variables at time $t$) includes a constant term and
+a dummy for the pre-crisis period, i.e.
 
-<img src="man/figures/README-unnamed-chunk-12-1.png" width="100%" />
+$$
+x_{t}' =
+\begin{cases}
+\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 1992Q4 \\
+\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 1992Q4
+\end{cases}
+$$
 
-Now lets plot the forecasts along with a 95% prediction interval. Here I
-choose the mean of the posterior distribution as the actual
-forecast/point prediction, but the median is also possible.
+To formulate a prior on $\Psi$, note that the specification of $x_t$
+implies the following parametrization of the steady state:
 
-``` r
-plot_forecast(fit, Y, ci=0.95, fcst_type="mean")
-```
+$$
+\mu_t =
+\begin{cases}
+\psi_1 + \psi_2 & \text{if } t \le 1992Q4 \\
+\psi_1 & \text{if } t > 1992Q4
+\end{cases}
+$$
 
-<img src="man/figures/README-forecast_plot-1.png" width="100%" />
-
-The Steady-State BVAR model most often contains an inflation variable in
-the system, precisely for the reason that we usually have very
-informative priors about the steady state values of inflation, since it
-is very common for central banks across the world to have inflation
-targets. For example the Federal Reserve:
-
-*The inflation rate over the longer run is primarily determined by
-monetary policy, and hence the Committee can specify a longer-run goal
-for inflation. The Committee reaffirms its judgment that inflation at
-the rate of 2 percent, as measured by the annual change in the price
-index for personal consumption expenditures, is most consistent over the
-longer run with the Federal Reserve’s statutory maximum employment and
-price stability mandates.*
-
-As such, the inflation target of the Federal Reserve is a steady state
-annual inflation of 2%. Similarly, as mentioned, the Swedish Riksbank
-has an inflation target of 2% annual CPIF inflation.
-
-Because of the fact that the actual targets are on an annual basis, but
-often in macroeconometric models the inflation is specified in terms of
-(annualized) quarterly growth rate, the plot function has options to
-transform the inflation forecasts to an annual basis, to facilitate
-comparison with inflation targets. The transformation is simply done by
-summing up forecasts up to fourth differences.
-
-The user just needs to specify “plot_annual_inf” to be “TRUE” and also
-specify which index in Y belongs to the inflation variable.
-
-``` r
-#the annualized quarterly inflation rate is transformed to annual inflation
-plot_forecast(fit, Y, ci=0.95, fcst_type="mean", plot_annual_inf=TRUE, inf_idx=1)
-```
-
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" />
-
-Please note that for this to make sense, the inflation variable used in
-the model must be the annualized quarterly growth rate of some price
-index $P_t$ specified as
-
-$\pi_t=400 \ln(P_t/P_{t-1})$
+where $\psi_i$ is the $i$:th column of $\Psi$.
