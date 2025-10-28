@@ -1,44 +1,55 @@
-priors <- function(Y,p,lambda1,lambda2,fol_pm,Lambda_pr_means,Lambda_pr_vars,Jeffrey){
-  m = ncol(Y)
+priors <- function(yt, p,lambda1, lambda2, fol_pm, Psi_0, vec_Psi_vars, dummy=NULL){
+  k = ncol(Y)
   
-  obj <- gen_var(as.ts(Y), p)
+  if (is.null(dummy)){
+    obj <- bvartools::gen_var(as.ts(yt), p)
+  } else {
+    obj <- bvartools::gen_var(as.ts(yt), p,
+                              exogen=dummy,
+                              s=0)
+  }
+  
   mp <- bvartools::minnesota_prior(
-  obj,
-  kappa0 = lambda1^2,
-  kappa1 = lambda2^2,
-  sigma = "AR"
+    obj,
+    kappa0 = lambda1^2,
+    kappa1 = lambda2^2,
+    sigma = "AR"
   )
   
-  tmp <- diag(solve(mp$v_i)[1:(m*p*m),1:(m*p*m)])
-  tmp_mat <- matrix(tmp,m*p,m,byrow=TRUE)
-  Gamma_d_pr_cov <- diag(c(tmp_mat))
-  mat <- matrix(0, nrow = m*p, ncol = m)
-  for (i in 1:m){
+  tmp <- diag(solve(mp$v_i)[1:(k*p*k),1:(k*p*k)])
+  tmp_mat <- matrix(tmp,k*p,k,byrow=TRUE)
+  Sigma_vec_beta <- diag(c(tmp_mat))
+  mat <- matrix(0, nrow = k*p, ncol = k)
+  for (i in 1:k){
     mat[i,i] <- fol_pm[i]
   }
-  Gamma_d_pr_mean = c(mat)
+  vec_beta_0 = c(mat)
   
-  diag_vars <- matrix(0, m, m)
-  for (i in 1:m) {
-  arfit <- arima(Y[, i], order = c(p, 0, 0), method = "CSS")
-  diag_vars[i, i] <- arfit$sigma2
-  }
-  if (Jeffrey == TRUE){
-    gamma=0
-    Psi_pr_scale = matrix(0,m,m)
-  } else {
-    gamma=m+2
-    Psi_pr_scale = (gamma-m-1)*diag_vars
-  }
   
-  Lambda_pr_mean = c(Lambda_pr_means)
-  Lambda_pr_cov = diag(Lambda_pr_vars)
-  prior <- list()
-  prior$Gamma_d_pr_mean <- Gamma_d_pr_mean
-  prior$Gamma_d_pr_cov <- Gamma_d_pr_cov
-  prior$Lambda_pr_mean <- Lambda_pr_mean
-  prior$Lambda_pr_cov <- Lambda_pr_cov
-  prior$Psi_pr_scale <- Psi_pr_scale
-  prior$gamma <- gamma
-  return(prior)
+  mp2 <- bvartools::minnesota_prior(
+    obj,
+    kappa0 = lambda1^2,
+    kappa1 = lambda2^2,
+    sigma = "VAR"
+  )
+  
+  Sigma_u_hat = solve(mp2$sigma_i)
+  m_0=k+2
+  V_0 = (m_0-k-1)*Sigma_u_hat
+  
+  vec_Psi_0 = c(Psi_0)
+  Sigma_vec_Psi = diag(vec_Psi_vars)
+  
+  priors <- list()
+  
+  prior$vec_beta_0 <- vec_beta_0
+  prior$Sigma_vec_beta <- Sigma_vec_beta
+  
+  prior$vec_Psi_0 <- vec_Psi_0
+  prior$Sigma_vec_Psi <- Sigma_vec_Psi
+  
+  prior$V_0 <- V_0
+  prior$m_0 <- m_0
+  
+  return(priors)
 }
