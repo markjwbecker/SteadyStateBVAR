@@ -20,6 +20,7 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), growth
   } else {
     par(mfcol = c(1,1))
   }
+  par(mfcol = c(1,1))
   on.exit(par(mfrow = c(1,1)))
   for (i in 1:ncol(Y)) {
     smply <- Y[, i]
@@ -64,10 +65,10 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), growth
       lower_full <- c(tail(annual_hist, 1), annual_lower)
       upper_full <- c(tail(annual_hist, 1), annual_upper)
       
-      ylim <- range(c(annual_hist, annual_lower, annual_upper),na.rm=TRUE)
+      ylim <- range(c(annual_lower, annual_upper),na.rm=TRUE)
       
       plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"), xlab = "Time", ylab = NULL,
-              xlim = c(time_hist[1], tail(time_fore, 1)),
+              xlim = c(1998,2008),
               ylim = ylim,col = "black", lwd = 2)
       
       polygon(
@@ -86,10 +87,10 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), growth
       lower_full <- c(tail(smply, 1), fcst_lower)
       upper_full <- c(tail(smply, 1), fcst_upper)
       
-      ylim <- range(c(smply, lower_full, upper_full))
+      ylim <- range(c(lower_full, upper_full))
       
       plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
-              xlim = c(time_hist[1], tail(time_fore, 1)),
+              xlim = c(1998,2008),
               ylim = ylim,col = "black", lwd = 2)
       
       polygon(
