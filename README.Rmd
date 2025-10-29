@@ -100,7 +100,7 @@ Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. Sin
 We will now replicate the model in the empirical analysis in Section 4.1 in Villani (2009). First let us load the library and also load the data
 
 ```{r example, message=FALSE, warning=FALSE}
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 library(SteadyStateBVAR)
 data("villani2009")
 yt <- xt #villani uses xt to denote the endogenous variables
@@ -213,9 +213,6 @@ vec_Psi_vars <- c(ppi(2,3)$var,
                   ppi(4.3,5.7)$var,
                   ppi(3,5.5)$var,
                   ppi(-0.5,0.5)$var)
-
-
-
 ```
 Let us check out the prior means in
 ```{r, fig.width=8, fig.height=8}
@@ -234,8 +231,7 @@ Like in Villani (2009), to incorporate that Sweden is a small economy and theref
 ```{r, fig.width=8, fig.height=8}
 n1 <- 3 #first 3 variables are foreign in yt
 n2 <- 4 #the other 4 are domestic
-n <- n1 + n2
-p = 4
+n <- stan_data$k
 
 tmp <- matrix(1, n*p, n)
 
@@ -255,13 +251,27 @@ t(tmp)[,1:7]
 Now we supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model.
 
 ```{r, fig.width=8, fig.height=8}
-#H <- 8
-#X_pred <- cbind(rep(1, H), 0)
-#fit <- estimate(stan_data, n_chains=4, iter=2000, warmup=500, H=H, X_pred=X_pred)
+H <- 8
+X_pred <- cbind(rep(1, H), 0)
+fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+```
+
+Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
+
+```{r, fig.width=8, fig.height=8}
+params <- c("beta", "Psi", "Sigma_u")
+posterior_draws = rstan::extract(fit)
+
+for (param in params) {
+  draws <- posterior_draws[[param]]
+  mean_matrix <- round(apply(draws, c(2,3), mean), 2)
+  cat("\n", paste0(param, "_posterior_mean"), "\n")
+  print(mean_matrix)
+}
 ```
 
 Lets plot the forecast. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For the variables in annualized quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates.
 
 ```{r, fig.width=8, fig.height=8}
-#plot_forecast(fit, yt, ci=0.95, fcst_type="mean",growth_rate_idx=c(1,2,4,5))
+plot_forecast(fit, yt, ci=0.95, fcst_type="mean",growth_rate_idx=c(1,2,4,5))
 ```

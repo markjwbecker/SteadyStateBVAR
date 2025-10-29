@@ -117,22 +117,7 @@ We will now replicate the model in the empirical analysis in Section 4.1
 in Villani (2009). First let us load the library and also load the data
 
 ``` r
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
-#> ── R CMD build ─────────────────────────────────────────────────────────────────
-#>       ✔  checking for file 'C:\Users\markj\AppData\Local\Temp\Rtmp4WiPWN\remotes3ad0a801fad\markjwbecker-SteadyStateBVAR-fc646e4/DESCRIPTION'
-#>       ─  preparing 'SteadyStateBVAR':
-#>    checking DESCRIPTION meta-information ...  ✔  checking DESCRIPTION meta-information
-#>       ─  checking for LF line-endings in source and make files and shell scripts
-#>   ─  checking for empty or unneeded directories
-#>      NB: this package now depends on R (>=        NB: this package now depends on R (>= 3.5.0)
-#>        WARNING: Added dependency on R >= 3.5.0 because serialized objects in
-#>      serialize/load version 3 cannot be read in older versions of R.
-#>      File(s) containing such objects:
-#>        'SteadyStateBVAR/data/villani2009.rda'
-#>        'SteadyStateBVAR/inst/STEADYSTATEBVAR.rds'
-#> ─  building 'SteadyStateBVAR_0.1.0.tar.gz'
-#>      
-#> 
+#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 library(SteadyStateBVAR)
 data("villani2009")
 yt <- xt #villani uses xt to denote the endogenous variables
@@ -305,8 +290,7 @@ upper right submatrix in each $A_i, i =1,\dots,k$, to the zero matrix.
 ``` r
 n1 <- 3 #first 3 variables are foreign in yt
 n2 <- 4 #the other 4 are domestic
-n <- n1 + n2
-p = 4
+n <- stan_data$k
 
 tmp <- matrix(1, n*p, n)
 
@@ -335,9 +319,77 @@ Now we supply our forecast horizon $H$, and also the deterministic
 variables for the future periods and then we fit the model.
 
 ``` r
-#H <- 8
-#X_pred <- cbind(rep(1, H), 0)
-#fit <- estimate(stan_data, n_chains=4, iter=2000, warmup=500, H=H, X_pred=X_pred)
+H <- 8
+X_pred <- cbind(rep(1, H), 0)
+fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+```
+
+Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
+
+``` r
+params <- c("beta", "Psi", "Sigma_u")
+posterior_draws = rstan::extract(fit)
+
+for (param in params) {
+  draws <- posterior_draws[[param]]
+  mean_matrix <- round(apply(draws, c(2,3), mean), 2)
+  cat("\n", paste0(param, "_posterior_mean"), "\n")
+  print(mean_matrix)
+}
+#> 
+#>  beta_posterior_mean 
+#>        
+#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>    [1,]  0.18  0.03  0.00  0.12  0.08 -0.03  0.00
+#>    [2,] -0.01  0.32  0.07  0.13 -0.09  0.00  0.00
+#>    [3,] -0.02  0.16  0.92 -0.16  0.24  0.04  0.00
+#>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.03  0.00
+#>    [5,]  0.00  0.00  0.00  0.00  0.08  0.02  0.00
+#>    [6,]  0.00  0.00  0.00  0.00  0.09  0.75  0.00
+#>    [7,]  0.00  0.00  0.00  4.73 16.13  0.57  0.95
+#>    [8,]  0.03 -0.01  0.03  0.02 -0.02  0.03  0.00
+#>    [9,]  0.00  0.01  0.01  0.00 -0.03 -0.04  0.00
+#>   [10,] -0.06 -0.03 -0.01  0.00  0.18  0.08  0.00
+#>   [11,]  0.00  0.00  0.00  0.12 -0.01  0.04  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.01  0.00
+#>   [13,]  0.00  0.00  0.00 -0.03  0.05  0.04  0.00
+#>   [14,]  0.00  0.00  0.00  2.21 -1.55  0.36 -0.04
+#>   [15,]  0.01 -0.01  0.00  0.02 -0.02  0.00  0.00
+#>   [16,] -0.02  0.06  0.00  0.00  0.09  0.01  0.00
+#>   [17,] -0.01 -0.01  0.03  0.01  0.01  0.03  0.00
+#>   [18,]  0.00  0.00  0.00  0.07  0.01 -0.01  0.00
+#>   [19,]  0.00  0.00  0.00  0.00  0.02  0.00  0.00
+#>   [20,]  0.00  0.00  0.00  0.03 -0.01  0.00  0.00
+#>   [21,]  0.00  0.00  0.00 -0.58  0.11 -0.65 -0.01
+#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.01  0.00
+#>   [23,] -0.01  0.17 -0.01  0.00  0.01  0.00  0.00
+#>   [24,]  0.00  0.00 -0.02  0.01 -0.01  0.03  0.00
+#>   [25,]  0.00  0.00  0.00 -0.09  0.01  0.01  0.00
+#>   [26,]  0.00  0.00  0.00  0.00  0.06  0.00  0.00
+#>   [27,]  0.00  0.00  0.00  0.01 -0.02  0.00  0.00
+#>   [28,]  0.00  0.00  0.00 -0.63 -0.27 -0.19 -0.01
+#> 
+#>  Psi_posterior_mean 
+#>       
+#>        [,1]  [,2]
+#>   [1,] 2.28  0.33
+#>   [2,] 2.01  1.83
+#>   [3,] 4.93  2.01
+#>   [4,] 2.32 -0.14
+#>   [5,] 1.96  4.56
+#>   [6,] 4.29  4.47
+#>   [7,] 3.92 -0.10
+#> 
+#>  Sigma_u_posterior_mean 
+#>       
+#>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
+#>   [1,]  2.24 -0.13 0.04  1.06 -0.11  0.00  0.00
+#>   [2,] -0.13  1.27 0.18  0.09  1.76  0.15  0.00
+#>   [3,]  0.04  0.18 0.46  0.04  0.66  0.10  0.00
+#>   [4,]  1.06  0.09 0.04  2.77 -0.68 -0.05  0.00
+#>   [5,] -0.11  1.76 0.66 -0.68  8.46  0.42 -0.01
+#>   [6,]  0.00  0.15 0.10 -0.05  0.42  1.38 -0.01
+#>   [7,]  0.00  0.00 0.00  0.00 -0.01 -0.01  0.00
 ```
 
 Lets plot the forecast. Lets select a 95% prediction interval and the
@@ -346,5 +398,7 @@ annualized quarter on quarter growth rates, we transform the historical
 data and predictions to yearly growth rates.
 
 ``` r
-#plot_forecast(fit, yt, ci=0.95, fcst_type="mean",growth_rate_idx=c(1,2,4,5))
+plot_forecast(fit, yt, ci=0.95, fcst_type="mean",growth_rate_idx=c(1,2,4,5))
 ```
+
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-3.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-4.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-5.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-6.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-7.png" width="100%" />
