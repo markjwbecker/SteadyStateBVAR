@@ -36,7 +36,7 @@ $$
 y_t = \Psi x_t + A_1(y_{t-1}-\Psi x_{t-1})+\dots+A_p(y_{t-p}-\Psi x_{t-p})+u_t
 $$
 
-where $y_t$ is a $k$-dimensional vector of time series at time $t$, and $x_t$ is a $q$-dimensional vector of deterministic variables, and $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also, $A_i$ for $i=1,\dots,p$ is $(k \times k)$, and $\Psi$ is $(k \times q)$. Note here that
+where $y_t$ is a $k$-dimensional vector of time series at time $t$, and $x_t$ is a $q$-dimensional vector of deterministic variables at time $t$, and $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also, $A_i$ for $i=1,\dots,p$ is $(k \times k)$, and $\Psi$ is $(k \times q)$. Note here that
 
 
 $$
@@ -100,7 +100,7 @@ Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. Sin
 We will now replicate the model in the empirical analysis in Section 4.1 in Villani (2009). First let us load the library and also load the data
 
 ```{r example, message=FALSE, warning=FALSE}
-#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 library(SteadyStateBVAR)
 data("villani2009")
 yt <- xt #villani uses xt to denote the endogenous variables
@@ -128,7 +128,7 @@ yt[, growth_idx] <- yt[, growth_idx] * 4
 plot.ts(yt)
 ```
 
-The estimation period includes the Swedish financial crisis at the beginning of the 90s and the subsequent shift in monetary policy to inflation targeting and flexible exchange rate. To accommodate this $x_t$ (deterministic variables at time $t$) includes a constant term and a dummy for the pre-crisis period, i.e.
+To model the Swedish financial crisis at the beginning of the 90s and the subsequent shift in monetary policy to inflation targeting and flexible exchange rate, $x_t$ (deterministic variables at time $t$) includes a constant term and a dummy for the pre-crisis period, i.e.
 
 
 $$
@@ -138,6 +138,11 @@ x_{t}' =
 \begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 1992Q4
 \end{cases}
 $$
+
+```{r, fig.width=8, fig.height=8}
+bp = 52 #breakpoint at 1992Q4
+dum_var <- c(rep(1,bp), rep(0,nrow(xt)-bp)) #1 if t<=1992Q4, 0 if t>1992Q4
+```
 
 To formulate a prior on $\Psi$, note that the specification of $x_t$ implies the following parametrization of the steady state:
 
@@ -150,4 +155,113 @@ $$
 \end{cases}
 $$
 
-where $\psi_i$ is the $i$:th column of $\Psi$.
+where $\psi_i$ is the $i$:th column of $\Psi$. More on this soon. First we assume $p=4$ is a good lag length for our model. Then we do some setup.
+
+```{r, fig.width=8, fig.height=8}
+p=4
+stan_data <- BVAR_setup(yt, p, deterministic="constant_and_dummy", dummy=dum_var)
+```
+
+Now let us specify the priors. First we choose overall tightness $\lambda_1=0.2$ and cross equation tightness $\lambda_2=0.5$. We then specify the prior means for the first own lags of the variables. For variables in growth rates, we set the prior mean to $0$, for variables in levels, we set the prior mean to 0.9.
+
+```{r, fig.width=8, fig.height=8}
+lambda1=0.2 #overall tightness
+lambda2=0.5 #cross equation tightness
+
+#first own lag prior mean
+fol_pm=c(0,   #delta y_f
+         0,   #pi_f
+         0.9, #i_f
+         0,   #delta y
+         0,   #pi
+         0.9, #i
+         0.9  #q
+)
+```
+
+Now for the steady state priors, we set them according to the 95% prior probability intervals in Villani (2009). The 'ppi()' function is useful here, simply input the 95% prior probability interval and then the function outputs the prior mean and variance.
+
+```{r, fig.width=8, fig.height=8}
+Psi_0 <- matrix(c(
+                  ppi(2,3)$mean,
+                  ppi(1.5,2.5)$mean,
+                  ppi(4.5,5.5)$mean, 
+                  ppi(2,2.5)$mean,
+                  ppi(1.7,2.3)$mean,
+                  ppi(4,4.5)$mean,
+                  ppi(3.85,4)$mean,
+                  ppi(-1,1)$mean,
+                  ppi(1.5,2.5)$mean,
+                  ppi(1.5,2.5)$mean,
+                  ppi(-1,1)$mean,
+                  ppi(4.3,5.7)$mean,
+                  ppi(3,5.5)$mean,
+                  ppi(-0.5,0.5)$mean
+                  ), nrow=stan_data$k, ncol=stan_data$q)
+
+vec_Psi_vars <- c(ppi(2,3)$var,
+                  ppi(1.5,2.5)$var,
+                  ppi(4.5,5.5)$var, 
+                  ppi(2,2.5)$var,
+                  ppi(1.7,2.3)$var,
+                  ppi(4,4.5)$var,
+                  ppi(3.85,4)$var,
+                  ppi(-1,1)$var,
+                  ppi(1.5,2.5)$var,
+                  ppi(1.5,2.5)$var,
+                  ppi(-1,1)$var,
+                  ppi(4.3,5.7)$var,
+                  ppi(3,5.5)$var,
+                  ppi(-0.5,0.5)$var)
+
+
+
+```
+Let us check out the prior means in
+```{r, fig.width=8, fig.height=8}
+Psi_0
+```
+So if we are "after" 1992Q4, the steady state prior for variable $i$ is row $i$ column $1$. If we are before or at 1992Q4 the steady state prior for variable $i$ is row $i$ column $1$ + column $2$. Now lets input our priors and then append them to 'stan_data'. We also need to attach the dummy variable.
+
+
+```{r, fig.width=8, fig.height=8}
+priors <- priors(yt, p, lambda1, lambda2, fol_pm, Psi_0, vec_Psi_vars, dummy=dum_var)
+stan_data <- c(stan_data, priors)
+```
+
+Like in Villani (2009), to incorporate that Sweden is a small economy and therefore not likely to affect the foreign economy, we restrict the upper right submatrix in each $A_i, i =1,\dots,k$, to the zero matrix. 
+
+```{r, fig.width=8, fig.height=8}
+n1 <- 3 #first 3 variables are foreign in yt
+n2 <- 4 #the other 4 are domestic
+n <- n1 + n2
+p = 4
+
+tmp <- matrix(1, n*p, n)
+
+for(i in 1:p){
+  rows <- ((i-1)*n + n1 + 1) : (i*n)
+  cols <- 1:n1
+  tmp[rows, cols] <- 0
+  zero_indices <- which(c(tmp) == 0)
+}
+diag(stan_data$Sigma_vec_beta[zero_indices, zero_indices]) <- 0.00001
+
+#example for A_1, we restrict the elements with zero entries to have very very small prior variance
+#and since prior mean is zero, the posterior will be essentially zero 
+t(tmp)[,1:7]
+```
+
+Now we supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model.
+
+```{r, fig.width=8, fig.height=8}
+#H <- 8
+#X_pred <- cbind(rep(1, H), 0)
+#fit <- estimate(stan_data, n_chains=4, iter=2000, warmup=500, H=H, X_pred=X_pred)
+```
+
+Lets plot the forecast. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For the variables in annualized quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates.
+
+```{r, fig.width=8, fig.height=8}
+#plot_forecast(fit, yt, ci=0.95, fcst_type="mean",growth_rate_idx=c(1,2,4,5))
+```
