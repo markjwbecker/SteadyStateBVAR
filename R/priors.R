@@ -42,14 +42,14 @@ priors <- function(yt, p,lambda1, lambda2, fol_pm, Psi_0, vec_Psi_vars, dummy=NU
   
   priors <- list()
   
-  prior$vec_beta_0 <- vec_beta_0
-  prior$Sigma_vec_beta <- Sigma_vec_beta
+  priors$vec_beta_0 <- vec_beta_0
+  priors$Sigma_vec_beta <- Sigma_vec_beta
   
-  prior$vec_Psi_0 <- vec_Psi_0
-  prior$Sigma_vec_Psi <- Sigma_vec_Psi
+  priors$vec_Psi_0 <- vec_Psi_0
+  priors$Sigma_vec_Psi <- Sigma_vec_Psi
   
-  prior$V_0 <- V_0
-  prior$m_0 <- m_0
+  priors$V_0 <- V_0
+  priors$m_0 <- m_0
   
   return(priors)
 }
