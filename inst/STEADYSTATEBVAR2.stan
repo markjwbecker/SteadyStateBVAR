@@ -57,7 +57,7 @@ parameters {
 
 model {
   for(t in 1:N){
-      vector[k] u_t = Y[t] - (X[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta);
+      vector[k] u_t = (Y[t] - (X[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
       u_t ~ multi_normal(rep_vector(0,k), Sigma);
   }
   to_vector(beta) ~ multi_normal(vec_beta_0, Sigma_vec_beta);
