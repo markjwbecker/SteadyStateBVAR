@@ -30,19 +30,19 @@ data {
   int<lower=0> N; //number of observations
   int<lower=0> k; //number of variables
   int<lower=0> p; //lag order
-  int<lower=0> q; //number of deterministic variables, i.e. dimension of x_t (constant, dummy, time trend etc.)
+  int<lower=0> q; //number of exogenous/deterministic variables
   matrix[N, k] Y; //endogenous variables (y's)
-  matrix[N, q] X; //exogenous variables (x's)
+  matrix[N, q] X; //exogenous/deterministic variables (x's)
   matrix[N, k*p] W; //lagged endogenous variables
-  matrix[N, q*p] Q; //lagged exogenous variables
-  vector[k*p*k] vec_beta_0; //lag coefficients prior mean vector
-  matrix[k*p*k, k*p*k] Sigma_vec_beta; //lag coefficients prior covariance matrix
-  vector[k*q] vec_Psi_0; // prior mean vector: unconditional mean = steady state = x_t * Lambda
-  matrix[k*q, k*q] Sigma_vec_Psi; //  mean vector: unconditional mean = steady state = x_t * Lambda
-  int<lower=0> m_0; // df for inv wishart prior
-  matrix[k, k] V_0; // prior scale matrix for cov. matrix
+  matrix[N, q*p] Q; //lagged exogenous/deterministic variables
+  vector[k*p*k] vec_beta_0; //vec_beta prior mean
+  matrix[k*p*k, k*p*k] Sigma_vec_beta; //vec_beta prior covariance matrix
+  vector[k*q] vec_Psi_0; //vec_Psi prior mean
+  matrix[k*q, k*q] Sigma_vec_Psi; //vec_Psi prior covariance matrix
+  int<lower=0> m_0; // df
+  matrix[k, k] V_0; // prior scale matrix
   int<lower=0> H; // Forecast horizon
-  matrix[H, q] X_pred; //future exogenous variables
+  matrix[H, q] X_pred; //future exogenous/deterministic variables
 }
 
 transformed data {
@@ -50,19 +50,19 @@ transformed data {
 }
 
 parameters {
-  matrix[k*p, k] beta; //beta' = (phi_1,...,phi_p)
+  matrix[k*p, k] beta; //beta' = (A_1,...,A_p)
   matrix[k, q] Psi; //Psi * x_t = steady state
-  cov_matrix[k] Sigma;
+  cov_matrix[k] Sigma_u;
 }
 
 model {
   for(t in 1:N){
       vector[k] u_t = (Y[t] - (X[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
-      u_t ~ multi_normal(rep_vector(0,k), Sigma);
+      u_t ~ multi_normal(rep_vector(0,k), Sigma_u);
   }
   to_vector(beta) ~ multi_normal(vec_beta_0, Sigma_vec_beta);
   to_vector(Psi) ~ multi_normal(vec_Psi_0, Sigma_vec_Psi);
-  Sigma ~ inv_wishart(m_0, V_0);
+  Sigma_u ~ inv_wishart(m_0, V_0);
 }
 
 generated quantities {
@@ -76,7 +76,7 @@ generated quantities {
 
   for (h in 1:H) {
 
-    vector[k] u_t = multi_normal_rng(rep_vector(0, k), Sigma);
+    vector[k] u_t = multi_normal_rng(rep_vector(0, k), Sigma_u);
     vector[k] yhat_t = (X_pred[h]*Psi')';
 
     if (h > 1) {
