@@ -1,6 +1,8 @@
 priors <- function(yt, p,lambda1, lambda2, fol_pm, Psi_0, vec_Psi_vars, dummy=NULL){
+  
   k = ncol(yt)
-  dummy <- ts(dummy, start=start(xt), frequency=frequency(xt))
+  dummy <- ts(dummy, start=start(yt), frequency=frequency(yt))
+  
   if (is.null(dummy)){
     obj <- bvartools::gen_var(as.ts(yt), p)
   } else {
