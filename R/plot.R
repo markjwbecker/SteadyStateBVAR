@@ -1,10 +1,11 @@
-plot_forecast <- function(stanfit, Y, ci=0.95, fcst_type=c("mean", "median"), growth_rate_idx=NULL,gibbs=NULL,res=NULL) {
-  if (is.null(gibbs)){
+plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), 
+                          growth_rate_idx=NULL, plot_idx=NULL,gibbs=FALSE)
+  {
+  if (gibbs==FALSE){
   posterior <- rstan::extract(fit)
   Y_pred <- posterior$Y_pred
   } else {
-  stanfit=NULL
-  Y_pred <- res$draws
+  Y_pred <- fit$fcst_draws
   }
   Y_pred_m <- apply(Y_pred, c(2, 3), fcst_type)
   alpha <- 1 - ci
@@ -27,7 +28,9 @@ plot_forecast <- function(stanfit, Y, ci=0.95, fcst_type=c("mean", "median"), gr
   }
   par(mfcol = c(1,1))
   on.exit(par(mfrow = c(1,1)))
-  for (i in 1:ncol(Y)) {
+  
+  if (is.null(plot_idx)) plot_idx <- 1:ncol(Y)
+  for (i in plot_idx) {
     smply <- Y[, i]
     fcst_m <- Y_pred_m[, i]
     fcst_lower <- Y_pred_lower[, i]
