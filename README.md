@@ -105,8 +105,8 @@ $$
 $$
 
 Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of
-freedom. Since Stan does not allow the usual noninformative prior
-$\left|\Sigma \right|^{-(k+1)/2}$, we will instead specify an
+freedom. Since Stan does not “allow” the usual noninformative prior
+$\left|\Sigma_u \right|^{-(k+1)/2}$, we will instead specify an
 uninformative prior by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where
 $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$)
 (including any potential deterministic regressors), and $m_0=k+2$.
@@ -320,159 +320,176 @@ variables for the future periods and then we fit the model.
 ``` r
 H <- 8
 X_pred <- cbind(rep(1, H), 0)
-fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+stan_fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ``` r
 params <- c("beta", "Psi", "Sigma_u")
-posterior_draws = rstan::extract(fit)
+posterior_draws = rstan::extract(stan_fit)
 
 for (param in params) {
   draws <- posterior_draws[[param]]
   mean_matrix <- round(apply(draws, c(2,3), mean), 2)
-  cat("\n", paste0(param, "_posterior_mean"), "\n")
+  cat("\n", paste0(param, "_posterior_mean (stan estimation)"), "\n")
   print(mean_matrix)
 }
 #> 
-#>  beta_posterior_mean 
+#>  beta_posterior_mean (stan estimation) 
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>    [1,]  0.18  0.03  0.00  0.12  0.08 -0.03  0.00
 #>    [2,] -0.01  0.32  0.07  0.12 -0.09  0.00  0.00
-#>    [3,] -0.01  0.16  0.92 -0.16  0.25  0.04  0.00
+#>    [3,] -0.01  0.16  0.92 -0.16  0.24  0.04  0.00
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.03  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.02  0.00
-#>    [6,]  0.00  0.00  0.00  0.00  0.09  0.75  0.00
-#>    [7,]  0.00  0.00  0.00  4.80 16.15  0.59  0.95
-#>    [8,]  0.03 -0.01  0.03  0.02 -0.02  0.03  0.00
+#>    [6,]  0.00  0.00  0.00  0.01  0.09  0.75  0.00
+#>    [7,]  0.00  0.00  0.00  4.69 16.28  0.58  0.95
+#>    [8,]  0.03 -0.01  0.03  0.03 -0.02  0.03  0.00
 #>    [9,]  0.00  0.01  0.01  0.00 -0.03 -0.04  0.00
-#>   [10,] -0.07 -0.03 -0.01  0.00  0.18  0.08  0.00
-#>   [11,]  0.00  0.00  0.00  0.12 -0.01  0.05  0.00
+#>   [10,] -0.07 -0.03 -0.01  0.00  0.19  0.08  0.00
+#>   [11,]  0.00  0.00  0.00  0.12 -0.01  0.04  0.00
 #>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.01  0.00
 #>   [13,]  0.00  0.00  0.00 -0.03  0.05  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  2.16 -1.47  0.34 -0.04
+#>   [14,]  0.00  0.00  0.00  2.26 -1.56  0.34 -0.04
 #>   [15,]  0.01 -0.01  0.00  0.02 -0.02  0.00  0.00
 #>   [16,] -0.02  0.06  0.00  0.00  0.09  0.01  0.00
 #>   [17,] -0.01 -0.01  0.02  0.01  0.01  0.03  0.00
 #>   [18,]  0.00  0.00  0.00  0.07  0.01 -0.01  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.01  0.00
 #>   [20,]  0.00  0.00  0.00  0.03 -0.02  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.59  0.09 -0.64 -0.01
+#>   [21,]  0.00  0.00  0.00 -0.61  0.07 -0.65 -0.01
 #>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.01  0.00
 #>   [23,] -0.01  0.17 -0.01  0.00  0.01  0.00  0.00
 #>   [24,]  0.00  0.00 -0.02  0.01 -0.01  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.09  0.01  0.01  0.00
-#>   [26,]  0.00  0.00  0.00  0.00  0.07  0.00  0.00
+#>   [26,]  0.00  0.00  0.00  0.00  0.06  0.00  0.00
 #>   [27,]  0.00  0.00  0.00  0.01 -0.02  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.64 -0.29 -0.20 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.62 -0.28 -0.19 -0.01
 #> 
-#>  Psi_posterior_mean 
+#>  Psi_posterior_mean (stan estimation) 
 #>       
 #>        [,1]  [,2]
 #>   [1,] 2.28  0.33
 #>   [2,] 2.01  1.83
 #>   [3,] 4.93  2.01
-#>   [4,] 2.32 -0.14
-#>   [5,] 1.96  4.56
+#>   [4,] 2.31 -0.14
+#>   [5,] 1.96  4.55
 #>   [6,] 4.29  4.47
-#>   [7,] 3.92 -0.09
+#>   [7,] 3.92 -0.10
 #> 
-#>  Sigma_u_posterior_mean 
+#>  Sigma_u_posterior_mean (stan estimation) 
 #>       
 #>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#>   [1,]  2.24 -0.14 0.04  1.05 -0.11  0.01  0.00
-#>   [2,] -0.14  1.27 0.18  0.09  1.76  0.15  0.00
-#>   [3,]  0.04  0.18 0.46  0.04  0.65  0.10  0.00
-#>   [4,]  1.05  0.09 0.04  2.76 -0.67 -0.05  0.00
-#>   [5,] -0.11  1.76 0.65 -0.67  8.43  0.42 -0.01
-#>   [6,]  0.01  0.15 0.10 -0.05  0.42  1.39 -0.01
+#>   [1,]  2.24 -0.13 0.03  1.05 -0.11  0.00  0.00
+#>   [2,] -0.13  1.27 0.18  0.08  1.77  0.15  0.00
+#>   [3,]  0.03  0.18 0.46  0.04  0.66  0.10  0.00
+#>   [4,]  1.05  0.08 0.04  2.76 -0.69 -0.05  0.00
+#>   [5,] -0.11  1.77 0.66 -0.69  8.46  0.42 -0.01
+#>   [6,]  0.00  0.15 0.10 -0.05  0.42  1.39 -0.01
 #>   [7,]  0.00  0.00 0.00  0.00 -0.01 -0.01  0.00
 ```
 
-Lets plot the forecast. Lets select a 95% prediction interval and the
+Lets plot the forecasts. Lets select a 95% prediction interval and the
 mean of the posterior as the point forecast. For the variables in
 annualized quarter on quarter growth rates, we transform the historical
 data and predictions to yearly growth rates.
 
 ``` r
-plot_forecast(stanfit, yt, ci=0.95, fcst_type="mean", growth_rate_idx=c(1,2,4,5))
+plot_forecast(stan_fit,
+              yt,
+              ci=0.95,
+              fcst_type="mean", 
+              growth_rate_idx=c(1,2,4,5),
+              plot_idx=c(4,5,6),
+              gibbs=FALSE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-3.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-4.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-5.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-6.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-7.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-3.png" width="100%" />
 
-Lets estimate the model with a Gibbs sampler instead. Everything is the
-same, except we now use the noninformative prior
-$\left|\Sigma \right|^{-(k+1)/2}$
+Lets estimate the model with a Gibbs sampler instead. The priors and
+everything is the same, except for $\Sigma_u$ we now use the
+noninformative prior $\left|\Sigma_u \right|^{-(k+1)/2}$
 
 ``` r
-fit_gibbs <- estimate_gibbs(stan_data, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+gibbs_fit <- estimate_gibbs(stan_data, iter=10000, warmup=5000, H=H, X_pred=X_pred)
 ```
 
-Now lets plot the forecast
+We can check the posterior means
 
 ``` r
-plot_forecast(stanfit=NULL, gibbs=TRUE, res = list(draws = fit_gibbs$fcst_draws), yt, ci=0.95, fcst_type="mean", growth_rate_idx=c(1,2,4,5))
-```
-
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-3.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-4.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-5.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-6.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-7.png" width="100%" />
-
-And we can check the posterior means
-
-``` r
-print("beta posterior mean")
-#> [1] "beta posterior mean"
-round(fit_gibbs$beta_post_mean,2)
+for (i in seq_along(params)) {
+  param <- params[i]
+  cat("\n", paste0(param, "_posterior_mean (gibbs sampler)"), "\n", "\n")
+  print(round(gibbs_fit[[i + 1]], 2))
+}
+#> 
+#>  beta_posterior_mean (gibbs sampler) 
+#>  
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.17  0.03  0.00  0.12  0.07 -0.03  0.00
-#>  [2,] -0.01  0.32  0.06  0.12 -0.09  0.00  0.00
-#>  [3,] -0.02  0.15  0.92 -0.16  0.24  0.04  0.00
-#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.02  0.00
-#>  [5,]  0.00  0.00  0.00  0.00  0.07  0.02  0.00
-#>  [6,]  0.00  0.00  0.00  0.01  0.08  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  4.71 15.67  0.55  0.95
-#>  [8,]  0.03 -0.01  0.02  0.02 -0.01  0.03  0.00
-#>  [9,]  0.00  0.02  0.01  0.00 -0.02 -0.04  0.00
-#> [10,] -0.07 -0.03  0.00  0.00  0.18  0.07  0.00
+#>  [1,]  0.18  0.03  0.00  0.12  0.07 -0.03  0.00
+#>  [2,] -0.02  0.32  0.06  0.12 -0.08  0.00  0.00
+#>  [3,] -0.01  0.16  0.92 -0.15  0.23  0.05  0.00
+#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.03  0.00
+#>  [5,]  0.00  0.00  0.00  0.00  0.08  0.02  0.00
+#>  [6,]  0.00  0.00  0.00  0.01  0.09  0.76  0.00
+#>  [7,]  0.00  0.00  0.00  4.64 15.63  0.58  0.95
+#>  [8,]  0.03 -0.01  0.02  0.02 -0.02  0.03  0.00
+#>  [9,]  0.00  0.02  0.01  0.00 -0.03 -0.04  0.00
+#> [10,] -0.07 -0.03 -0.01  0.00  0.18  0.07  0.00
 #> [11,]  0.00  0.00  0.00  0.12 -0.01  0.04  0.00
 #> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.01  0.00
 #> [13,]  0.00  0.00  0.00 -0.03  0.05  0.04  0.00
-#> [14,]  0.00  0.00  0.00  2.16 -1.25  0.26 -0.04
+#> [14,]  0.00  0.00  0.00  2.11 -1.50  0.28 -0.04
 #> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#> [16,] -0.02  0.06  0.00  0.00  0.08  0.01  0.00
+#> [16,] -0.02  0.06  0.00  0.00  0.09  0.01  0.00
 #> [17,] -0.01  0.00  0.02  0.01  0.01  0.03  0.00
 #> [18,]  0.00  0.00  0.00  0.07  0.01 -0.01  0.00
 #> [19,]  0.00  0.00  0.00  0.00  0.02  0.00  0.00
 #> [20,]  0.00  0.00  0.00  0.03 -0.01  0.00  0.00
-#> [21,]  0.00  0.00  0.00 -0.51  0.17 -0.56 -0.01
-#> [22,]  0.03 -0.01  0.00 -0.01  0.02  0.01  0.00
+#> [21,]  0.00  0.00  0.00 -0.54  0.06 -0.57 -0.01
+#> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.00  0.00
 #> [23,] -0.01  0.16 -0.01  0.00  0.01  0.00  0.00
 #> [24,]  0.00  0.00 -0.02  0.01 -0.01  0.03  0.00
 #> [25,]  0.00  0.00  0.00 -0.08  0.01  0.01  0.00
 #> [26,]  0.00  0.00  0.00  0.00  0.06  0.00  0.00
 #> [27,]  0.00  0.00  0.00  0.01 -0.02  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.57 -0.31 -0.15 -0.01
-print("Psi posterior mean")
-#> [1] "Psi posterior mean"
-round(fit_gibbs$Psi_post_mean,2)
+#> [28,]  0.00  0.00  0.00 -0.59 -0.18 -0.18 -0.01
+#> 
+#>  Psi_posterior_mean (gibbs sampler) 
+#>  
 #>      [,1]  [,2]
-#> [1,] 2.30  0.33
-#> [2,] 2.01  1.85
-#> [3,] 4.93  2.01
-#> [4,] 2.31 -0.15
-#> [5,] 1.96  4.58
-#> [6,] 4.29  4.48
+#> [1,] 2.29  0.30
+#> [2,] 2.01  1.86
+#> [3,] 4.94  2.00
+#> [4,] 2.31 -0.13
+#> [5,] 1.97  4.59
+#> [6,] 4.29  4.46
 #> [7,] 3.92 -0.10
-print("Sigma_u posterior mean")
-#> [1] "Sigma_u posterior mean"
-round(fit_gibbs$Sigma_u_post_mean,2)
+#> 
+#>  Sigma_u_posterior_mean (gibbs sampler) 
+#>  
 #>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#> [1,]  2.44 -0.15 0.05  1.15 -0.12  0.00  0.00
-#> [2,] -0.15  1.42 0.20  0.10  1.97  0.17  0.00
-#> [3,]  0.05  0.20 0.50  0.05  0.71  0.11  0.00
-#> [4,]  1.15  0.10 0.05  3.08 -0.78 -0.05  0.00
-#> [5,] -0.12  1.97 0.71 -0.78  9.35  0.45 -0.01
-#> [6,]  0.00  0.17 0.11 -0.05  0.45  1.52 -0.01
+#> [1,]  2.45 -0.16 0.04  1.15 -0.14  0.01  0.00
+#> [2,] -0.16  1.41 0.20  0.09  1.96  0.16  0.00
+#> [3,]  0.04  0.20 0.50  0.04  0.70  0.11  0.00
+#> [4,]  1.15  0.09 0.04  3.05 -0.76 -0.06  0.00
+#> [5,] -0.14  1.96 0.70 -0.76  9.28  0.46 -0.01
+#> [6,]  0.01  0.16 0.11 -0.06  0.46  1.53 -0.01
 #> [7,]  0.00  0.00 0.00  0.00 -0.01 -0.01  0.00
 ```
+
+Very similar to the stan estimation. Now lets plot the forecasts
+
+``` r
+plot_forecast(gibbs_fit,
+              yt,
+              ci=0.95,
+              fcst_type="mean", 
+              growth_rate_idx=c(1,2,4,5),
+              plot_idx=c(4,5,6),
+              gibbs=TRUE)
+```
+
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-16-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-16-3.png" width="100%" />

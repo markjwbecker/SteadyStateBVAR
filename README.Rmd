@@ -25,7 +25,7 @@ With this package the user can estimate the Steady-State BVAR(p) model by Mattia
 
 You can install the development version of SteadyStateBVAR with:
 
-```{r, message=FALSE, warning=FALSE, results='hide'}
+```{r, results='hide'}
 #remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 ## Introduction
@@ -93,7 +93,7 @@ $$
 \Sigma_u \sim IW(V_0,m_0)
 $$
 
-Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. Since Stan does not allow the usual noninformative prior $\left|\Sigma \right|^{-(k+1)/2}$, we will instead specify an uninformative prior by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including any potential deterministic regressors), and $m_0=k+2$.
+Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. Since Stan does not "allow" the usual noninformative prior $\left|\Sigma_u \right|^{-(k+1)/2}$, we will instead specify an uninformative prior by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including any potential deterministic regressors), and $m_0=k+2$.
 
 ## Example
 
@@ -252,46 +252,57 @@ Now we supply our forecast horizon $H$, and also the deterministic variables for
 ```{r, fig.width=8, fig.height=8}
 H <- 8
 X_pred <- cbind(rep(1, H), 0)
-fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+stan_fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ```{r, fig.width=8, fig.height=8}
 params <- c("beta", "Psi", "Sigma_u")
-posterior_draws = rstan::extract(fit)
+posterior_draws = rstan::extract(stan_fit)
 
 for (param in params) {
   draws <- posterior_draws[[param]]
   mean_matrix <- round(apply(draws, c(2,3), mean), 2)
-  cat("\n", paste0(param, "_posterior_mean"), "\n")
+  cat("\n", paste0(param, "_posterior_mean (stan estimation)"), "\n")
   print(mean_matrix)
 }
 ```
 
-Lets plot the forecast. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For the variables in annualized quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates.
+Lets plot the forecasts. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For the variables in annualized quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates.
 
 ```{r, fig.width=8, fig.height=8}
-plot_forecast(stanfit, yt, ci=0.95, fcst_type="mean", growth_rate_idx=c(1,2,4,5))
+plot_forecast(stan_fit,
+              yt,
+              ci=0.95,
+              fcst_type="mean", 
+              growth_rate_idx=c(1,2,4,5),
+              plot_idx=c(4,5,6),
+              gibbs=FALSE)
 ```
 
-Lets estimate the model with a Gibbs sampler instead. Everything is the same, except we now use the noninformative prior $\left|\Sigma \right|^{-(k+1)/2}$
+Lets estimate the model with a Gibbs sampler instead. The priors and everything is the same, except for $\Sigma_u$ we now use the noninformative prior $\left|\Sigma_u \right|^{-(k+1)/2}$
 
 ```{r, fig.width=8, fig.height=8}
-fit_gibbs <- estimate_gibbs(stan_data, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+gibbs_fit <- estimate_gibbs(stan_data, iter=10000, warmup=5000, H=H, X_pred=X_pred)
 ```
 
-Now lets plot the forecast
+We can check the posterior means
 ```{r, fig.width=8, fig.height=8}
-plot_forecast(stanfit=NULL, gibbs=TRUE, res = list(draws = fit_gibbs$fcst_draws), yt, ci=0.95, fcst_type="mean", growth_rate_idx=c(1,2,4,5))
+for (i in seq_along(params)) {
+  param <- params[i]
+  cat("\n", paste0(param, "_posterior_mean (gibbs sampler)"), "\n", "\n")
+  print(round(gibbs_fit[[i + 1]], 2))
+}
 ```
 
-And we can check the posterior means
+Very similar to the stan estimation. Now lets plot the forecasts
 ```{r, fig.width=8, fig.height=8}
-print("beta posterior mean")
-round(fit_gibbs$beta_post_mean,2)
-print("Psi posterior mean")
-round(fit_gibbs$Psi_post_mean,2)
-print("Sigma_u posterior mean")
-round(fit_gibbs$Sigma_u_post_mean,2)
+plot_forecast(gibbs_fit,
+              yt,
+              ci=0.95,
+              fcst_type="mean", 
+              growth_rate_idx=c(1,2,4,5),
+              plot_idx=c(4,5,6),
+              gibbs=TRUE)
 ```
