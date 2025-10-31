@@ -16,3 +16,4 @@ LazyData: true
 Depends:
     rstan,
     bvartools
+    R >= 3.5.0
