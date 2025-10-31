@@ -52,6 +52,7 @@ priors <- function(yt, p,lambda1, lambda2, fol_pm, Psi_0, vec_Psi_vars, dummy=NU
   
   priors$V_0 <- V_0
   priors$m_0 <- m_0
+  priors$Sigma_u_OLS <- Sigma_u_hat
   
   return(priors)
 }

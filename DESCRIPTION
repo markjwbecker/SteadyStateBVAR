@@ -16,4 +16,6 @@ LazyData: true
 Depends:
     R (>= 3.5.0),
     rstan,
-    bvartools
+    bvartools,
+    MASS,
+    LaplacesDemon

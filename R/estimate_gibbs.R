@@ -1,6 +1,4 @@
-estimate_gibbs <- function(stan_data, iter, warmup, H, X_pred){
-  library(MASS)
-  library(LaplacesDemon)
+estimate_gibbs <- function(stan_data, iter, warmup, H, X_pred, Jeffrey=FALSE){
   Z <- cbind(stan_data$W,stan_data$X)
   Y <- stan_data$Y
   X <- stan_data$X
@@ -12,6 +10,9 @@ estimate_gibbs <- function(stan_data, iter, warmup, H, X_pred){
   q  <- stan_data$q
   n_iter <- iter
   beta_hat = solve((t(Z)%*%Z))%*%t(Z)%*%Y
+  U = Y-Z%*%beta_hat
+  SigOLS <- t(U)%*%U/(N-k*p-q)
+  
   Gamma_d_OLS <- beta_hat[1:(k*p),]
   
   C_hat <- t(beta_hat[(k*p+1):(k*p+q),])
@@ -33,6 +34,10 @@ estimate_gibbs <- function(stan_data, iter, warmup, H, X_pred){
   lambda_lbar <- stan_data$vec_Psi_0
   Sigma_lambda_lbar <- stan_data$Sigma_vec_Psi
   
+  if (isFALSE(Jeffrey)){
+    v_ = k+2
+    S_ = (v_-k-1)*SigOLS
+  }
   
   Psi <- vector(mode = "list", length = n_iter)
   gamma_d <- vector(mode = "list", length = n_iter)
@@ -50,8 +55,11 @@ estimate_gibbs <- function(stan_data, iter, warmup, H, X_pred){
     U = Y - X%*%t(Lambda) - (W-Q%*%(diag(p) %x% t(Lambda))) %*% Gamma_d
     S = t(U)%*%U
     N = nrow(U)
-    Psi[[j]] = rinvwishart(N, S)
-    
+    if (isFALSE(Jeffrey)){
+      Psi[[j]] = rinvwishart(N+v_, S+S_)
+    } else {
+      Psi[[j]] = rinvwishart(N, S)  
+    }
     ############ EQ 30 ################
     Y_Lambda = Y-X%*%t(Lambda)
     W_Lambda = (W-Q%*%(diag(p)%x%t(Lambda)))
