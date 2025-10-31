@@ -103,7 +103,6 @@ We will now replicate the model in the empirical analysis in Section 4.1 in Vill
 #remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 library(SteadyStateBVAR)
 data("villani2009")
-yt <- xt #villani uses xt to denote the endogenous variables
 ```
 The data set contains quarterly data for Sweden over the time period 1980Q1–2005Q4. The seven variables are: trade-weighted measures of foreign GDP growth $(\Delta y_f)$, CPI inflation $(\pi_f)$ and the 3-month interest rate $(i_f)$, the corresponding domestic variables ($\Delta y$, $\pi$ and $i$), and the level of the real exchange rate defined as $q=s+p_f-p$, where $p_f$ and $p$ are the foreign and domestic CPI levels (in logs) and $s$ is the (log of the) trade weighted nominal exchange rate. As such we have
 
@@ -141,7 +140,7 @@ $$
 
 ```{r, fig.width=8, fig.height=8}
 bp = 52 #breakpoint at 1992Q4
-dum_var <- c(rep(1,bp), rep(0,nrow(xt)-bp)) #1 if t<=1992Q4, 0 if t>1992Q4
+dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp)) #1 if t<=1992Q4, 0 if t>1992Q4
 ```
 
 To formulate a prior on $\Psi$, note that the specification of $x_t$ implies the following parametrization of the steady state:
@@ -273,5 +272,26 @@ for (param in params) {
 Lets plot the forecast. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For the variables in annualized quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates.
 
 ```{r, fig.width=8, fig.height=8}
-plot_forecast(fit, yt, ci=0.95, fcst_type="mean",growth_rate_idx=c(1,2,4,5))
+plot_forecast(stanfit, yt, ci=0.95, fcst_type="mean", growth_rate_idx=c(1,2,4,5))
+```
+
+Lets estimate the model with a Gibbs sampler instead. Everything is the same, except we now use the noninformative prior $\left|\Sigma \right|^{-(k+1)/2}$
+
+```{r, fig.width=8, fig.height=8}
+fit_gibbs <- estimate_gibbs(stan_data, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+```
+
+Now lets plot the forecast
+```{r, fig.width=8, fig.height=8}
+plot_forecast(stanfit=NULL, gibbs=TRUE, res = list(draws = fit_gibbs$fcst_draws), yt, ci=0.95, fcst_type="mean", growth_rate_idx=c(1,2,4,5))
+```
+
+And we can check the posterior means
+```{r, fig.width=8, fig.height=8}
+print("beta posterior mean")
+round(fit_gibbs$beta_post_mean,2)
+print("Psi posterior mean")
+round(fit_gibbs$Psi_post_mean,2)
+print("Sigma_u posterior mean")
+round(fit_gibbs$Sigma_u_post_mean,2)
 ```
