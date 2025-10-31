@@ -16,6 +16,6 @@ BVAR_setup <- function(yt, p, deterministic=c("constant", "constant_and_dummy"),
   X <- x[-c(1:p), ]
   Q <- embed(x, dimension = p+1)[, -(1:q)]
   
-  stan_data=list(N=N,k=k,p=p,Y=Y,X=X,W=W,Q=Q,q=q)
+  stan_data=list(N=N,k=k,p=p,Y=Y,X=X,W=W,Q=Q,q=q,dummy=dummy)
   return(stan_data)
 }

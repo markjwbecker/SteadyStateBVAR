@@ -1,6 +1,11 @@
-plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), growth_rate_idx=NULL) {
+plot_forecast <- function(stanfit, Y, ci=0.95, fcst_type=c("mean", "median"), growth_rate_idx=NULL,gibbs=NULL,res=NULL) {
+  if (is.null(gibbs)){
   posterior <- rstan::extract(fit)
   Y_pred <- posterior$Y_pred
+  } else {
+  stanfit=NULL
+  Y_pred <- res$draws
+  }
   Y_pred_m <- apply(Y_pred, c(2, 3), fcst_type)
   alpha <- 1 - ci
   Y_pred_lower <- apply(Y_pred, c(2, 3), quantile, probs = alpha/2)
