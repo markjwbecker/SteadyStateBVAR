@@ -93,7 +93,7 @@ $$
 \Sigma_u \sim IW(V_0,m_0)
 $$
 
-Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. Since Stan does not "allow" the usual noninformative prior $\left|\Sigma_u \right|^{-(k+1)/2}$, we will instead specify an uninformative prior by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including any potential deterministic regressors), and $m_0=k+2$.
+Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. We will specify an uninformative prior by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including any potential deterministic regressors), and $m_0=k+2$. However if the user wants (not recommended), the usual noninformative Jeffreys prior $\left|\Sigma_u \right|^{-(k+1)/2}$ can be used instead for $\Sigma_u$.
 
 ## Example
 
@@ -247,12 +247,12 @@ diag(stan_data$Sigma_vec_beta[zero_indices, zero_indices]) <- 0.00001
 t(tmp)[,1:7]
 ```
 
-Now we supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model.
+Now we supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model. Note that for $\Sigma_u$ we will use the noninformative Jeffreys prior $\left|\Sigma_u \right|^{-(k+1)/2}$, as done in Villani (2009).
 
 ```{r, fig.width=8, fig.height=8}
 H <- 8
 X_pred <- cbind(rep(1, H), 0)
-stan_fit <- estimate(stan_data, n_chains=4, iter=5000, warmup=2500, H=H, X_pred=X_pred)
+stan_fit <- estimate(stan_data, n_chains=4, iter=10000, warmup=5000, H=H, X_pred=X_pred, Jeffrey = TRUE)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -281,10 +281,10 @@ plot_forecast(stan_fit,
               gibbs=FALSE)
 ```
 
-Lets estimate the model with a Gibbs sampler instead. The priors and everything is the same, except for $\Sigma_u$ we now use the noninformative prior $\left|\Sigma_u \right|^{-(k+1)/2}$
+Lets estimate the model with a Gibbs sampler instead.
 
 ```{r, fig.width=8, fig.height=8}
-gibbs_fit <- estimate_gibbs(stan_data, iter=10000, warmup=5000, H=H, X_pred=X_pred)
+gibbs_fit <- estimate_gibbs(stan_data, iter=40000, warmup=20000, H=H, X_pred=X_pred, Jeffrey=TRUE)
 ```
 
 We can check the posterior means
