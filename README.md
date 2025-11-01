@@ -14,7 +14,7 @@ by Mattias Villani.
 You can install the development version of SteadyStateBVAR with:
 
 ``` r
-#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 
 ## Introduction
@@ -63,7 +63,7 @@ priors are needed. Starting with $\beta$, we use the Minnesota prior
 where
 
 $$
-\textrm{vec}(\beta) \sim N_{kpk}\left[\textrm{vec}(\beta_0),\Sigma_{\textrm{vec}(\beta)}\right]
+\textrm{vec}(\beta) \sim N_{kpk}\left[\theta_\beta,\Omega_\beta\right]
 $$
 
 First for $\beta_0$, the Minnesota prior sets all elements to $0$,
@@ -94,7 +94,7 @@ $p$ lags (including any potential deterministic variables). Moving on to
 $\Psi$ the prior we use is
 
 $$
-\textrm{vec}(\Psi) \sim N_{kq}\left[\textrm{vec}(\Psi_0),\Sigma_{\textrm{vec}(\Psi)}\right]
+\textrm{vec}(\Psi) \sim N_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
 It is assumed that $\Sigma_{\textrm{vec}(\Psi)}$ is a diagonal matrix.
@@ -108,9 +108,14 @@ Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of
 freedom. We will specify an uninformative prior by setting
 $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least
 squares estimate from the VAR($p$) (including any potential
-deterministic regressors), and $m_0=k+2$. However if the user wants (not
-recommended), the usual noninformative Jeffreys prior
-$\left|\Sigma_u \right|^{-(k+1)/2}$ can be used instead for $\Sigma_u$.
+deterministic regressors), and $m_0=k+2$. However if the user wants, the
+usual noninformative Jeffreys prior
+
+$$
+p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}
+$$
+
+can be used instead for $\Sigma_u$.
 
 ## Example
 
@@ -216,7 +221,7 @@ fol_pm=c(0,   #delta y_f
          0,   #pi
          0.9, #i
          0.9  #q
-)
+         )
 ```
 
 Now for the steady state priors, we set them according to the 95% prior
@@ -225,61 +230,49 @@ here, simply input the 95% prior probability interval and then the
 function outputs the prior mean and variance.
 
 ``` r
-Psi_0 <- matrix(c(
-                  ppi(2,3)$mean,
-                  ppi(1.5,2.5)$mean,
-                  ppi(4.5,5.5)$mean, 
-                  ppi(2,2.5)$mean,
-                  ppi(1.7,2.3)$mean,
-                  ppi(4,4.5)$mean,
-                  ppi(3.85,4)$mean,
-                  ppi(-1,1)$mean,
-                  ppi(1.5,2.5)$mean,
-                  ppi(1.5,2.5)$mean,
-                  ppi(-1,1)$mean,
-                  ppi(4.3,5.7)$mean,
-                  ppi(3,5.5)$mean,
-                  ppi(-0.5,0.5)$mean
-                  ), nrow=stan_data$k, ncol=stan_data$q)
+theta_Psi <- matrix(c(
+                      ppi(2,3)$mean,
+                      ppi(1.5,2.5)$mean,
+                      ppi(4.5,5.5)$mean, 
+                      ppi(2,2.5)$mean,
+                      ppi(1.7,2.3)$mean,
+                      ppi(4,4.5)$mean,
+                      ppi(3.85,4)$mean,
+                      ppi(-1,1)$mean,
+                      ppi(1.5,2.5)$mean,
+                      ppi(1.5,2.5)$mean,
+                      ppi(-1,1)$mean,
+                      ppi(4.3,5.7)$mean,
+                      ppi(3,5.5)$mean,
+                      ppi(-0.5,0.5)$mean
+                      ))
 
-vec_Psi_vars <- c(ppi(2,3)$var,
-                  ppi(1.5,2.5)$var,
-                  ppi(4.5,5.5)$var, 
-                  ppi(2,2.5)$var,
-                  ppi(1.7,2.3)$var,
-                  ppi(4,4.5)$var,
-                  ppi(3.85,4)$var,
-                  ppi(-1,1)$var,
-                  ppi(1.5,2.5)$var,
-                  ppi(1.5,2.5)$var,
-                  ppi(-1,1)$var,
-                  ppi(4.3,5.7)$var,
-                  ppi(3,5.5)$var,
-                  ppi(-0.5,0.5)$var)
+Omega_Psi <- diag(c(
+                    ppi(2,3)$var,
+                    ppi(1.5,2.5)$var,
+                    ppi(4.5,5.5)$var, 
+                    ppi(2,2.5)$var,
+                    ppi(1.7,2.3)$var,
+                    ppi(4,4.5)$var,
+                    ppi(3.85,4)$var,
+                    ppi(-1,1)$var,
+                    ppi(1.5,2.5)$var,
+                    ppi(1.5,2.5)$var,
+                    ppi(-1,1)$var,
+                    ppi(4.3,5.7)$var,
+                    ppi(3,5.5)$var,
+                    ppi(-0.5,0.5)$var
+                    ))
 ```
 
-Let us check out the prior means in
+Now lets input everything to the ‘priors’ function and then append that
+to ‘stan_data’. We also need to attach the dummy variable. Note here
+that $\theta_\beta$ and $\Omega_\beta$ are automatically created, we
+just need to input the prior means for the first own lags and then the
+hyperparameters $\lambda_1$ and $\lambda_2$.
 
 ``` r
-Psi_0
-#>       [,1] [,2]
-#> [1,] 2.500 0.00
-#> [2,] 2.000 2.00
-#> [3,] 5.000 2.00
-#> [4,] 2.250 0.00
-#> [5,] 2.000 5.00
-#> [6,] 4.250 4.25
-#> [7,] 3.925 0.00
-```
-
-So if we are “after” 1992Q4, the steady state prior for variable $i$ is
-row $i$ column $1$. If we are before or at 1992Q4 the steady state prior
-for variable $i$ is row $i$ column $1$ + column $2$. Now lets input our
-priors and then append them to ‘stan_data’. We also need to attach the
-dummy variable.
-
-``` r
-priors <- priors(yt, p, lambda1, lambda2, fol_pm, Psi_0, vec_Psi_vars, dummy=dum_var)
+priors <- priors(yt, p, lambda1, lambda2, fol_pm, theta_Psi, Omega_Psi, dummy=dum_var)
 stan_data <- c(stan_data, priors)
 ```
 
@@ -300,7 +293,7 @@ for(i in 1:p){
   tmp[rows, cols] <- 0
   zero_indices <- which(c(tmp) == 0)
 }
-diag(stan_data$Sigma_vec_beta[zero_indices, zero_indices]) <- 0.00001
+diag(stan_data$Omega_beta[zero_indices, zero_indices]) <- 0.00001
 
 #example for A_1, we restrict the elements with zero entries to have very very small prior variance
 #and since prior mean is zero, the posterior will be essentially zero 
@@ -323,76 +316,21 @@ $\left|\Sigma_u \right|^{-(k+1)/2}$, as done in Villani (2009).
 ``` r
 H <- 8
 X_pred <- cbind(rep(1, H), 0)
-stan_fit <- estimate(stan_data, n_chains=4, iter=10000, warmup=5000, H=H, X_pred=X_pred, Jeffrey = TRUE)
-#> recompiling to avoid crashing R session
+#stan_fit <- estimate(stan_data, n_chains=4, iter=10000, warmup=5000, H=H, X_pred=X_pred, Jeffrey = TRUE)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ``` r
 params <- c("beta", "Psi", "Sigma_u")
-posterior_draws = rstan::extract(stan_fit)
-
-for (param in params) {
-  draws <- posterior_draws[[param]]
-  mean_matrix <- round(apply(draws, c(2,3), mean), 2)
-  cat("\n", paste0(param, "_posterior_mean (stan estimation)"), "\n")
-  print(mean_matrix)
-}
-#> 
-#>  beta_posterior_mean (stan estimation) 
-#>        
-#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.17  0.03  0.00  0.12  0.07 -0.03  0.00
-#>    [2,] -0.02  0.32  0.06  0.12 -0.09  0.00  0.00
-#>    [3,] -0.01  0.16  0.92 -0.15  0.24  0.05  0.00
-#>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.02  0.00
-#>    [5,]  0.00  0.00  0.00  0.00  0.08  0.02  0.00
-#>    [6,]  0.00  0.00  0.00  0.01  0.08  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  4.68 15.64  0.58  0.95
-#>    [8,]  0.03 -0.01  0.02  0.02 -0.02  0.03  0.00
-#>    [9,]  0.00  0.02  0.01  0.00 -0.03 -0.04  0.00
-#>   [10,] -0.06 -0.03 -0.01  0.00  0.18  0.07  0.00
-#>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.04  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.01  0.00
-#>   [13,]  0.00  0.00  0.00 -0.03  0.05  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  2.12 -1.36  0.29 -0.04
-#>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#>   [16,] -0.02  0.06  0.00  0.00  0.09  0.01  0.00
-#>   [17,] -0.01  0.00  0.02  0.01  0.01  0.03  0.00
-#>   [18,]  0.00  0.00  0.00  0.07  0.01 -0.01  0.00
-#>   [19,]  0.00  0.00  0.00  0.00  0.02  0.00  0.00
-#>   [20,]  0.00  0.00  0.00  0.03 -0.01  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.53  0.08 -0.60 -0.01
-#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.00  0.00
-#>   [23,] -0.01  0.16 -0.01  0.00  0.01  0.00  0.00
-#>   [24,]  0.00  0.00 -0.02  0.01 -0.01  0.03  0.00
-#>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.01  0.00
-#>   [26,]  0.00  0.00  0.00  0.00  0.06  0.00  0.00
-#>   [27,]  0.00  0.00  0.00  0.01 -0.02  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.58 -0.23 -0.19 -0.01
-#> 
-#>  Psi_posterior_mean (stan estimation) 
-#>       
-#>        [,1]  [,2]
-#>   [1,] 2.29  0.31
-#>   [2,] 2.01  1.85
-#>   [3,] 4.94  2.01
-#>   [4,] 2.31 -0.14
-#>   [5,] 1.96  4.59
-#>   [6,] 4.29  4.47
-#>   [7,] 3.92 -0.10
-#> 
-#>  Sigma_u_posterior_mean (stan estimation) 
-#>       
-#>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#>   [1,]  2.44 -0.15 0.04  1.15 -0.13  0.00  0.00
-#>   [2,] -0.15  1.41 0.20  0.09  1.95  0.17  0.00
-#>   [3,]  0.04  0.20 0.50  0.04  0.71  0.11  0.00
-#>   [4,]  1.15  0.09 0.04  3.05 -0.77 -0.05  0.00
-#>   [5,] -0.13  1.95 0.71 -0.77  9.33  0.46 -0.01
-#>   [6,]  0.00  0.17 0.11 -0.05  0.46  1.52 -0.01
-#>   [7,]  0.00  0.00 0.00  0.00 -0.01 -0.01  0.00
+# posterior_draws = rstan::extract(stan_fit)
+# 
+# for (param in params) {
+#   draws <- posterior_draws[[param]]
+#   mean_matrix <- round(apply(draws, c(2,3), mean), 2)
+#   cat("\n", paste0(param, "_posterior_mean (stan estimation)"), "\n")
+#   print(mean_matrix)
+# }
 ```
 
 Lets plot the forecasts. Lets select a 95% prediction interval and the
@@ -401,21 +339,24 @@ annualized quarter on quarter growth rates, we transform the historical
 data and predictions to yearly growth rates.
 
 ``` r
-plot_forecast(stan_fit,
-              yt,
-              ci=0.95,
-              fcst_type="mean", 
-              growth_rate_idx=c(1,2,4,5),
-              plot_idx=c(4,5,6),
-              gibbs=FALSE)
+# plot_forecast(stan_fit,
+#               yt,
+#               ci=0.95,
+#               fcst_type="mean", 
+#               growth_rate_idx=c(1,2,4,5),
+#               plot_idx=c(4,5,6),
+#               gibbs=FALSE)
 ```
-
-<img src="man/figures/README-unnamed-chunk-13-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-13-3.png" width="100%" />
 
 Lets estimate the model with a Gibbs sampler instead.
 
 ``` r
-gibbs_fit <- estimate_gibbs(stan_data, iter=40000, warmup=20000, H=H, X_pred=X_pred, Jeffrey=TRUE)
+gibbs_fit <- estimate_gibbs(stan_data,
+                            iter=1000,
+                            warmup=500,
+                            H=H,
+                            X_pred=X_pred,
+                            Jeffrey=TRUE)
 ```
 
 We can check the posterior means
@@ -431,54 +372,54 @@ for (i in seq_along(params)) {
 #>  
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>  [1,]  0.17  0.03  0.00  0.12  0.07 -0.03  0.00
-#>  [2,] -0.02  0.32  0.06  0.12 -0.09  0.00  0.00
-#>  [3,] -0.01  0.16  0.92 -0.15  0.24  0.05  0.00
-#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.03  0.00
+#>  [2,] -0.01  0.32  0.06  0.12 -0.08  0.00  0.00
+#>  [3,] -0.01  0.16  0.92 -0.15  0.24  0.04  0.00
+#>  [4,]  0.00  0.00  0.00  0.23 -0.08 -0.02  0.00
 #>  [5,]  0.00  0.00  0.00  0.00  0.08  0.02  0.00
-#>  [6,]  0.00  0.00  0.00  0.00  0.08  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  4.68 15.64  0.58  0.95
-#>  [8,]  0.03 -0.01  0.02  0.02 -0.02  0.03  0.00
-#>  [9,]  0.00  0.02  0.01  0.00 -0.03 -0.04  0.00
-#> [10,] -0.06 -0.03 -0.01  0.00  0.18  0.07  0.00
-#> [11,]  0.00  0.00  0.00  0.11 -0.01  0.04  0.00
-#> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.01  0.00
-#> [13,]  0.00  0.00  0.00 -0.03  0.05  0.04  0.00
-#> [14,]  0.00  0.00  0.00  2.11 -1.32  0.31 -0.04
-#> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#> [16,] -0.02  0.06  0.00  0.00  0.08  0.01  0.00
-#> [17,] -0.01  0.00  0.02  0.01  0.01  0.03  0.00
-#> [18,]  0.00  0.00  0.00  0.07  0.01 -0.01  0.00
-#> [19,]  0.00  0.00  0.00  0.00  0.02  0.00  0.00
-#> [20,]  0.00  0.00  0.00  0.03 -0.01  0.00  0.00
-#> [21,]  0.00  0.00  0.00 -0.53  0.06 -0.61 -0.01
-#> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.00  0.00
-#> [23,] -0.01  0.16 -0.01  0.00  0.01  0.00  0.00
-#> [24,]  0.00  0.00 -0.02  0.01 -0.01  0.03  0.00
-#> [25,]  0.00  0.00  0.00 -0.08  0.01  0.01  0.00
+#>  [6,]  0.00  0.00  0.00  0.00  0.09  0.76  0.00
+#>  [7,]  0.00  0.00  0.00  4.89 15.57  0.64  0.95
+#>  [8,]  0.04 -0.01  0.02  0.02 -0.02  0.03  0.00
+#>  [9,]  0.00  0.01  0.01 -0.01 -0.03 -0.05  0.00
+#> [10,] -0.07 -0.03  0.00  0.00  0.19  0.08  0.00
+#> [11,]  0.00  0.00  0.00  0.12 -0.01  0.04  0.00
+#> [12,]  0.00  0.00  0.00  0.01 -0.05 -0.01  0.00
+#> [13,]  0.00  0.00  0.00 -0.03  0.05  0.03  0.00
+#> [14,]  0.00  0.00  0.00  2.12 -1.14  0.26 -0.04
+#> [15,]  0.01 -0.01  0.00  0.02 -0.02  0.00  0.00
+#> [16,] -0.02  0.06  0.00  0.00  0.09  0.01  0.00
+#> [17,] -0.01  0.00  0.02  0.01  0.00  0.03  0.00
+#> [18,]  0.00  0.00  0.00  0.06  0.01 -0.01  0.00
+#> [19,]  0.00  0.00  0.00  0.00  0.02 -0.01  0.00
+#> [20,]  0.00  0.00  0.00  0.03 -0.02  0.01  0.00
+#> [21,]  0.00  0.00  0.00 -0.55 -0.10 -0.65 -0.01
+#> [22,]  0.03 -0.01  0.00  0.00  0.03  0.00  0.00
+#> [23,] -0.01  0.16 -0.01  0.01  0.01  0.01  0.00
+#> [24,]  0.00  0.00 -0.02  0.01  0.00  0.03  0.00
+#> [25,]  0.00  0.00  0.00 -0.09  0.02  0.01  0.00
 #> [26,]  0.00  0.00  0.00  0.00  0.06  0.00  0.00
 #> [27,]  0.00  0.00  0.00  0.01 -0.02  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.59 -0.26 -0.20 -0.01
+#> [28,]  0.00  0.00  0.00 -0.59 -0.11 -0.08 -0.01
 #> 
 #>  Psi_posterior_mean (gibbs sampler) 
 #>  
 #>      [,1]  [,2]
 #> [1,] 2.29  0.31
-#> [2,] 2.01  1.85
-#> [3,] 4.94  2.02
-#> [4,] 2.31 -0.13
-#> [5,] 1.96  4.58
-#> [6,] 4.29  4.47
-#> [7,] 3.92 -0.10
+#> [2,] 2.01  1.88
+#> [3,] 4.93  2.01
+#> [4,] 2.32 -0.14
+#> [5,] 1.96  4.57
+#> [6,] 4.28  4.46
+#> [7,] 3.92 -0.09
 #> 
 #>  Sigma_u_posterior_mean (gibbs sampler) 
 #>  
 #>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#> [1,]  2.45 -0.15 0.04  1.16 -0.14  0.00  0.00
-#> [2,] -0.15  1.41 0.20  0.09  1.95  0.17  0.00
-#> [3,]  0.04  0.20 0.50  0.04  0.71  0.11  0.00
-#> [4,]  1.16  0.09 0.04  3.06 -0.78 -0.06  0.00
-#> [5,] -0.14  1.95 0.71 -0.78  9.32  0.46 -0.01
-#> [6,]  0.00  0.17 0.11 -0.06  0.46  1.53 -0.01
+#> [1,]  2.44 -0.13 0.04  1.16 -0.09 -0.02  0.00
+#> [2,] -0.13  1.41 0.19  0.09  1.93  0.16  0.00
+#> [3,]  0.04  0.19 0.50  0.05  0.70  0.10  0.00
+#> [4,]  1.16  0.09 0.05  3.06 -0.73 -0.08  0.00
+#> [5,] -0.09  1.93 0.70 -0.73  9.15  0.45 -0.01
+#> [6,] -0.02  0.16 0.10 -0.08  0.45  1.51 -0.01
 #> [7,]  0.00  0.00 0.00  0.00 -0.01 -0.01  0.00
 ```
 
@@ -494,4 +435,4 @@ plot_forecast(gibbs_fit,
               gibbs=TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-16-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-16-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-3.png" width="100%" />

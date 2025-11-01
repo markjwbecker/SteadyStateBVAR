@@ -25,8 +25,8 @@ With this package the user can estimate the Steady-State BVAR(p) model by Mattia
 
 You can install the development version of SteadyStateBVAR with:
 
-```{r, results='hide'}
-#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+```{r, results='hide', eval=FALSE}
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 ## Introduction
 
@@ -64,7 +64,7 @@ where $w_t'=(y_{t-1}',\dots,y_{t-p}')$ is a $kp$-dimensional vector of lagged en
 
 
 $$
-\textrm{vec}(\beta) \sim N_{kpk}\left[\textrm{vec}(\beta_0),\Sigma_{\textrm{vec}(\beta)}\right]
+\textrm{vec}(\beta) \sim N_{kpk}\left[\theta_\beta,\Omega_\beta\right]
 $$
 
 First for $\beta_0$, the Minnesota prior sets all elements to $0$, except for the elements that relate to the first own lags of the variables, which are often set to $0.9$ or $1$ for level variables or also to $0$ for growth rate variables. Further, $\Sigma_{\textrm{vec}(\beta)}$ is a diagonal matrix containing the prior variances for the elements in $\beta$. The prior is constructed such that for the autoregressive coefficient $A_{\ell}^{(i,j)}$ which is element $\left(i,j\right)$ of $A_{\ell}$ for $\ell=1,\dots,p,$ the prior variance is given by
@@ -83,7 +83,7 @@ Here $\lambda_1$ and $\lambda_2$ are scalar hyperparameters where the former is 
 
 
 $$
-\textrm{vec}(\Psi) \sim N_{kq}\left[\textrm{vec}(\Psi_0),\Sigma_{\textrm{vec}(\Psi)}\right]
+\textrm{vec}(\Psi) \sim N_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
 It is assumed that $\Sigma_{\textrm{vec}(\Psi)}$ is a diagonal matrix. At last, the prior for $\Sigma_u$ is
@@ -93,7 +93,13 @@ $$
 \Sigma_u \sim IW(V_0,m_0)
 $$
 
-Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. We will specify an uninformative prior by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including any potential deterministic regressors), and $m_0=k+2$. However if the user wants (not recommended), the usual noninformative Jeffreys prior $\left|\Sigma_u \right|^{-(k+1)/2}$ can be used instead for $\Sigma_u$.
+Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. We will specify an uninformative prior by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including any potential deterministic regressors), and $m_0=k+2$. However if the user wants, the usual noninformative Jeffreys prior
+
+$$
+p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}
+$$
+
+can be used instead for $\Sigma_u$.
 
 ## Example
 
@@ -175,53 +181,53 @@ fol_pm=c(0,   #delta y_f
          0,   #pi
          0.9, #i
          0.9  #q
-)
+         )
 ```
 
 Now for the steady state priors, we set them according to the 95% prior probability intervals in Villani (2009). The 'ppi()' function is useful here, simply input the 95% prior probability interval and then the function outputs the prior mean and variance.
 
 ```{r, fig.width=8, fig.height=8}
-Psi_0 <- matrix(c(
-                  ppi(2,3)$mean,
-                  ppi(1.5,2.5)$mean,
-                  ppi(4.5,5.5)$mean, 
-                  ppi(2,2.5)$mean,
-                  ppi(1.7,2.3)$mean,
-                  ppi(4,4.5)$mean,
-                  ppi(3.85,4)$mean,
-                  ppi(-1,1)$mean,
-                  ppi(1.5,2.5)$mean,
-                  ppi(1.5,2.5)$mean,
-                  ppi(-1,1)$mean,
-                  ppi(4.3,5.7)$mean,
-                  ppi(3,5.5)$mean,
-                  ppi(-0.5,0.5)$mean
-                  ), nrow=stan_data$k, ncol=stan_data$q)
+theta_Psi <- matrix(c(
+                      ppi(2,3)$mean,
+                      ppi(1.5,2.5)$mean,
+                      ppi(4.5,5.5)$mean, 
+                      ppi(2,2.5)$mean,
+                      ppi(1.7,2.3)$mean,
+                      ppi(4,4.5)$mean,
+                      ppi(3.85,4)$mean,
+                      ppi(-1,1)$mean,
+                      ppi(1.5,2.5)$mean,
+                      ppi(1.5,2.5)$mean,
+                      ppi(-1,1)$mean,
+                      ppi(4.3,5.7)$mean,
+                      ppi(3,5.5)$mean,
+                      ppi(-0.5,0.5)$mean
+                      ))
 
-vec_Psi_vars <- c(ppi(2,3)$var,
-                  ppi(1.5,2.5)$var,
-                  ppi(4.5,5.5)$var, 
-                  ppi(2,2.5)$var,
-                  ppi(1.7,2.3)$var,
-                  ppi(4,4.5)$var,
-                  ppi(3.85,4)$var,
-                  ppi(-1,1)$var,
-                  ppi(1.5,2.5)$var,
-                  ppi(1.5,2.5)$var,
-                  ppi(-1,1)$var,
-                  ppi(4.3,5.7)$var,
-                  ppi(3,5.5)$var,
-                  ppi(-0.5,0.5)$var)
+Omega_Psi <- diag(c(
+                    ppi(2,3)$var,
+                    ppi(1.5,2.5)$var,
+                    ppi(4.5,5.5)$var, 
+                    ppi(2,2.5)$var,
+                    ppi(1.7,2.3)$var,
+                    ppi(4,4.5)$var,
+                    ppi(3.85,4)$var,
+                    ppi(-1,1)$var,
+                    ppi(1.5,2.5)$var,
+                    ppi(1.5,2.5)$var,
+                    ppi(-1,1)$var,
+                    ppi(4.3,5.7)$var,
+                    ppi(3,5.5)$var,
+                    ppi(-0.5,0.5)$var
+                    ))
 ```
-Let us check out the prior means in
-```{r, fig.width=8, fig.height=8}
-Psi_0
-```
-So if we are "after" 1992Q4, the steady state prior for variable $i$ is row $i$ column $1$. If we are before or at 1992Q4 the steady state prior for variable $i$ is row $i$ column $1$ + column $2$. Now lets input our priors and then append them to 'stan_data'. We also need to attach the dummy variable.
+
+
+Now lets input everything to the 'priors' function and then append that to 'stan_data'. We also need to attach the dummy variable. Note here that $\theta_\beta$ and $\Omega_\beta$ are automatically created, we just need to input the prior means for the first own lags and then the hyperparameters $\lambda_1$ and $\lambda_2$.
 
 
 ```{r, fig.width=8, fig.height=8}
-priors <- priors(yt, p, lambda1, lambda2, fol_pm, Psi_0, vec_Psi_vars, dummy=dum_var)
+priors <- priors(yt, p, lambda1, lambda2, fol_pm, theta_Psi, Omega_Psi, dummy=dum_var)
 stan_data <- c(stan_data, priors)
 ```
 
@@ -240,7 +246,7 @@ for(i in 1:p){
   tmp[rows, cols] <- 0
   zero_indices <- which(c(tmp) == 0)
 }
-diag(stan_data$Sigma_vec_beta[zero_indices, zero_indices]) <- 0.00001
+diag(stan_data$Omega_beta[zero_indices, zero_indices]) <- 0.00001
 
 #example for A_1, we restrict the elements with zero entries to have very very small prior variance
 #and since prior mean is zero, the posterior will be essentially zero 
@@ -252,39 +258,44 @@ Now we supply our forecast horizon $H$, and also the deterministic variables for
 ```{r, fig.width=8, fig.height=8}
 H <- 8
 X_pred <- cbind(rep(1, H), 0)
-stan_fit <- estimate(stan_data, n_chains=4, iter=10000, warmup=5000, H=H, X_pred=X_pred, Jeffrey = TRUE)
+#stan_fit <- estimate(stan_data, n_chains=4, iter=10000, warmup=5000, H=H, X_pred=X_pred, Jeffrey = TRUE)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ```{r, fig.width=8, fig.height=8}
 params <- c("beta", "Psi", "Sigma_u")
-posterior_draws = rstan::extract(stan_fit)
-
-for (param in params) {
-  draws <- posterior_draws[[param]]
-  mean_matrix <- round(apply(draws, c(2,3), mean), 2)
-  cat("\n", paste0(param, "_posterior_mean (stan estimation)"), "\n")
-  print(mean_matrix)
-}
+# posterior_draws = rstan::extract(stan_fit)
+# 
+# for (param in params) {
+#   draws <- posterior_draws[[param]]
+#   mean_matrix <- round(apply(draws, c(2,3), mean), 2)
+#   cat("\n", paste0(param, "_posterior_mean (stan estimation)"), "\n")
+#   print(mean_matrix)
+# }
 ```
 
 Lets plot the forecasts. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For the variables in annualized quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates.
 
 ```{r, fig.width=8, fig.height=8}
-plot_forecast(stan_fit,
-              yt,
-              ci=0.95,
-              fcst_type="mean", 
-              growth_rate_idx=c(1,2,4,5),
-              plot_idx=c(4,5,6),
-              gibbs=FALSE)
+# plot_forecast(stan_fit,
+#               yt,
+#               ci=0.95,
+#               fcst_type="mean", 
+#               growth_rate_idx=c(1,2,4,5),
+#               plot_idx=c(4,5,6),
+#               gibbs=FALSE)
 ```
 
 Lets estimate the model with a Gibbs sampler instead.
 
 ```{r, fig.width=8, fig.height=8}
-gibbs_fit <- estimate_gibbs(stan_data, iter=40000, warmup=20000, H=H, X_pred=X_pred, Jeffrey=TRUE)
+gibbs_fit <- estimate_gibbs(stan_data,
+                            iter=1000,
+                            warmup=500,
+                            H=H,
+                            X_pred=X_pred,
+                            Jeffrey=TRUE)
 ```
 
 We can check the posterior means
