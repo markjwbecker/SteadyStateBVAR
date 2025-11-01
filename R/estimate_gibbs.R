@@ -28,11 +28,11 @@ estimate_gibbs <- function(stan_data, iter, warmup, H, X_pred, Jeffrey=FALSE){
   
   Lambda_OLS <- solve(A_L) %*% C_hat
   
-  gamma_d_lbar <-  stan_data$vec_beta_0
-  Sigma_d_lbar <- stan_data$Sigma_vec_beta
+  gamma_d_lbar <-  stan_data$theta_beta
+  Sigma_d_lbar <- stan_data$Omega_beta
   
-  lambda_lbar <- stan_data$vec_Psi_0
-  Sigma_lambda_lbar <- stan_data$Sigma_vec_Psi
+  lambda_lbar <- stan_data$theta_Psi
+  Sigma_lambda_lbar <- stan_data$Omega_Psi
   
   if (isFALSE(Jeffrey)){
     v_ = k+2
