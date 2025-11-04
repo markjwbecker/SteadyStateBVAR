@@ -1,16 +1,24 @@
-plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"), 
-                          growth_rate_idx=NULL, plot_idx=NULL,gibbs=FALSE)
+plot_forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"), 
+                          growth_rate_idx=NULL, plot_idx=NULL, estimation = c("stan", "gibbs"))
   {
-  if (gibbs==FALSE){
-  posterior <- rstan::extract(fit)
-  Y_pred <- posterior$Y_pred
+  Y <- x$data
+  if (is.null(plot_idx)) plot_idx <- 1:ncol(Y)
+  
+  if (estimation=="gibbs") {
+    Y_pred <- x$fit$gibbs$fcst_draws
+    Y_pred_m <- apply(Y_pred, c(1, 2), fcst_type)
+    alpha <- 1 - ci
+    Y_pred_lower <- apply(Y_pred, c(1, 2), quantile, probs = alpha/2)
+    Y_pred_upper <- apply(Y_pred, c(1, 2), quantile, probs = 1 - alpha/2)
   } else {
-  Y_pred <- fit$fcst_draws
+    posterior <- rstan::extract(x$fit$stan)
+    Y_pred <- posterior$Y_pred
+    Y_pred_m <- apply(Y_pred, c(2, 3), fcst_type)
+    alpha <- 1 - ci
+    Y_pred_lower <- apply(Y_pred, c(2, 3), quantile, probs = alpha/2)
+    Y_pred_upper <- apply(Y_pred, c(2, 3), quantile, probs = 1 - alpha/2)
   }
-  Y_pred_m <- apply(Y_pred, c(2, 3), fcst_type)
-  alpha <- 1 - ci
-  Y_pred_lower <- apply(Y_pred, c(2, 3), quantile, probs = alpha/2)
-  Y_pred_upper <- apply(Y_pred, c(2, 3), quantile, probs = 1 - alpha/2)
+  
   
   T <- nrow(Y)
   H <- nrow(Y_pred_m)
@@ -18,16 +26,6 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"),
   
   time_hist <- time(Y)
   time_fore <- seq(tail(time_hist, 1) + 0.25, by = 0.25, length.out = H)
-  
-  if (ncol(Y) < 4){
-    par(mfcol = c(ncol(Y), 1))
-  } else if ((ncol(Y) < 9)){
-    par(mfcol = c(4,2))
-  } else {
-    par(mfcol = c(1,1))
-  }
-  par(mfcol = c(1,1))
-  on.exit(par(mfrow = c(1,1)))
   
   if (is.null(plot_idx)) plot_idx <- 1:ncol(Y)
   for (i in plot_idx) {
@@ -42,7 +40,7 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"),
       for(t in 4:length(smply)){
         annual_hist[t] <- sum(smply[(t-3):t])
       }
-      annual_hist <- annual_hist / 4
+      annual_hist <- annual_hist
       annual_hist <- ts(annual_hist, start = start(Y), frequency = 4)
       
       last_obs <- tail(smply,3)
@@ -52,7 +50,7 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"),
       for(t_h in 1:H){
         annual_fcst[t_h] <- sum(all_fcst[t_h:(t_h+3)])
       }
-      annual_fcst <- annual_fcst / 4
+      annual_fcst <- annual_fcst
       
       
       all_lower <- c(last_obs, fcst_lower)
@@ -64,8 +62,8 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"),
         annual_lower[t_h] <- sum(all_lower[t_h:(t_h+3)])
         annual_upper[t_h] <- sum(all_upper[t_h:(t_h+3)])
       }
-      annual_lower <- annual_lower / 4
-      annual_upper <- annual_upper / 4
+      annual_lower <- annual_lower
+      annual_upper <- annual_upper
       
       time_full <- c(tail(time_hist, 1), time_fore)
       
@@ -74,10 +72,17 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"),
       upper_full <- c(tail(annual_hist, 1), annual_upper)
       
       ylim <- range(c(annual_lower, annual_upper),na.rm=TRUE)
+      ymin <- floor(ylim[1]*2)/2   # round down to nearest 0.5
+      ymax <- ceiling(ylim[2]*2)/2 # round up to nearest 0.5
+      yticks <- seq(ymin, ymax, by = 0.5)
       
       plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"), xlab = "Time", ylab = NULL,
-              xlim = c(1998,2008),
-              ylim = ylim,col = "black", lwd = 2)
+              xlim = c(head(time_fore,1)-8,tail(time_fore,1)),
+              ylim = ylim,col = "black", lwd = 2, yaxt = "n")
+      xlim_vals <- c(head(time_hist, 1), tail(time_fore, 1))
+      x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 0.25)
+      abline(v = x_quarters, col = "gray", lty = 2) 
+      abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2) # every 0.5 increment
       
       polygon(
         c(time_full, rev(time_full)),
@@ -85,8 +90,10 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"),
         col = rgb(0, 0, 1, 0.2),
         border = NA
       )
-      
+      axis(side = 2, at = yticks, labels = yticks, las = 1)
       lines(time_full, m_full, col = "blue", lwd = 2)
+      points(as.numeric(time_hist), annual_hist, pch=16, col="black")
+      points(time_full[-1], m_full[-1], pch=16, col="blue")
       
     } else {
       
@@ -96,10 +103,18 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"),
       upper_full <- c(tail(smply, 1), fcst_upper)
       
       ylim <- range(c(lower_full, upper_full))
+      ymin <- floor(ylim[1]*2)/2   # round down to nearest 0.5
+      ymax <- ceiling(ylim[2]*2)/2 # round up to nearest 0.5
+      yticks <- seq(ymin, ymax, by = 0.5)
       
       plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
-              xlim = c(1998,2008),
-              ylim = ylim,col = "black", lwd = 2)
+              xlim = c(head(time_fore,1)-8,tail(time_fore,1)),
+              ylim = ylim,col = "black", lwd = 2, yaxt = "n")
+      # add gridlines
+      xlim_vals <- c(head(time_hist, 1), tail(time_fore, 1))
+      x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 0.25)
+      abline(v = x_quarters, col = "gray", lty = 2) 
+      abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2) # every 0.5 increment
       
       polygon(
         c(time_full, rev(time_full)),
@@ -107,7 +122,10 @@ plot_forecast <- function(fit, Y, ci=0.95, fcst_type=c("mean", "median"),
         col = rgb(0, 0, 1, 0.2),
         border = NA
       )
+      axis(side = 2, at = yticks, labels = yticks, las = 1)
       lines(time_full, m_full, col = "blue", lwd = 2)
+      points(as.numeric(time_hist), smply, pch=16, col="black")
+      points(time_full[-1], m_full[-1], pch=16, col="blue")
     }
   }
 }
