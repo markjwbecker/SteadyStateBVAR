@@ -105,10 +105,6 @@ can be used instead for $\Sigma_u$.
 
 We will now replicate the model in the empirical analysis in Section 4.1 in Villani (2009). First let us load the library and also load the data
 
-```{r, include=TRUE}
-#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
-```
-
 ```{r example, message=FALSE, warning=FALSE}
 library(SteadyStateBVAR)
 data("villani2009")
@@ -193,7 +189,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$ for the steady state priors, we set them according to the 95% prior probability intervals in Villani (2009). We first note that growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change, i.e. quarter-on-quarter (QoQ). In other words, for a variable $z$, the quarterly growth rate is $100 \ln \left(\frac{z_t}{z_{t-1}}\right)$. But the priors in Villani (2009) are specified in terms of year-on-year (YoY) growth rates. So we need to specify the prior probability intervals for the steady states of the quarterly growth rates which correspond to the prior intervals for the steady state of the YoY growth rates in Villani (2009). See for example, for domestic inflation the 95% prior probability interval (normal distribution) is $(1.7, 2.3)$. The 'ppi()' function is useful here. Simply input the desired YoY interval with 'growthrate=TRUE' and we get the corresponding prior mean and variance in terms of quarterly rate of change. 
+Now moving on to $\Psi$ for the steady state priors, we set them according to the 95% prior probability intervals in Villani (2009). We first note that growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change, i.e. quarter-on-quarter (QoQ). In other words, for a variable $z$, the quarterly growth rate is $100 \ln \left(\frac{z_t}{z_{t-1}}\right)$. But the priors in Villani (2009) are specified in terms of year-on-year (YoY) growth rates. So we need to specify the prior probability intervals for the steady states of the quarterly growth rates which correspond to the prior intervals for the steady state of the YoY growth rates in Villani (2009). See for example, for domestic inflation the 95% prior probability interval (normal distribution) is $(1.7, 2.3)$. The 'ppi()' function is useful here. Simply input the desired YoY interval with 'growthrate=TRUE' and we get the corresponding prior mean and variance in terms of quarterly rate of change. (I hope all this makes sense to the reader...)
 
 ```{r, fig.width=8, fig.height=8}
 (interval_CPI_YoY <- ppi(1.7, 2.3, growthrate=TRUE))
@@ -209,11 +205,9 @@ lower_mean_upper_QoQ <- c(
   upper = qnorm(0.975, prior_mean, sd = sqrt(prior_var)))
 
 
-cat("QoQ interval (95%):\n")
-print(lower_mean_upper_QoQ)
+cat("QoQ interval (95%):\n",lower_mean_upper_QoQ)
 
-cat("\nYoY interval (95%):\n")
-print(4 * lower_mean_upper_QoQ)
+cat("\nYoY interval (95%):\n", 4 * lower_mean_upper_QoQ)
 
 ```
 Now we do this for all steady state coefficients, see Table I in Villani (2009).
@@ -223,41 +217,41 @@ Now we do this for all steady state coefficients, see Table I in Villani (2009).
 #psi_2 = Psi col 2
 
 theta_Psi <- c(
-  ppi(2,     3,   growthrate=TRUE)$mean,   #psi_1: delta y_f
-  ppi(1.5,   2.5, growthrate=TRUE)$mean,   #psi_1: pi_f
-  ppi(4.5,   5.5 )$mean,                   #psi_1: i_f
-  ppi(2,     2.5 ,growthrate=TRUE)$mean,   #psi_1: y
-  ppi(1.7,   2.3 ,growthrate=TRUE)$mean,   #psi_1: pi
-  ppi(4,     4.5 )$mean,                   #psi_1: i
-  ppi(3.85,  4   )$mean,                   #psi_1: q
-  ppi(-1,    1,   growthrate=TRUE)$mean,   #psi_2: delta y_f
-  ppi(1.5,   2.5 ,growthrate=TRUE)$mean,   #psi_2: pi_f
-  ppi(1.5,   2.5 )$mean,                   #psi_2: i_f
-  ppi(-1,    1,   growthrate=TRUE)$mean,   #psi_2: y
-  ppi(4.3,   5.7 ,growthrate=TRUE)$mean,   #psi_2: pi
-  ppi(3,     5.5 )$mean,                   #psi_2: i
-  ppi(-0.5,  0.5 )$mean                    #psi_2: q
+  ppi(2, 3,      growthrate=TRUE)$mean,   #psi_1: delta y_f
+  ppi(1.5, 2.5,  growthrate=TRUE)$mean,   #psi_1: pi_f
+  ppi(4.5, 5.5,  growthrate=FALSE)$mean,  #psi_1: i_f
+  ppi(2, 2.5,    growthrate=TRUE)$mean,   #psi_1: y
+  ppi(1.7, 2.3,  growthrate=TRUE)$mean,   #psi_1: pi
+  ppi(4, 4.5,    growthrate=FALSE)$mean,  #psi_1: i
+  ppi(3.85, 4,   growthrate=FALSE)$mean,  #psi_1: q
+  ppi(-1, 1,     growthrate=TRUE)$mean,   #psi_2: delta y_f
+  ppi(1.5, 2.5,  growthrate=TRUE)$mean,   #psi_2: pi_f
+  ppi(1.5, 2.5,  growthrate=FALSE)$mean,  #psi_2: i_f
+  ppi(-1, 1,     growthrate=TRUE)$mean,   #psi_2: y
+  ppi(4.3, 5.7,  growthrate=TRUE)$mean,   #psi_2: pi
+  ppi(3, 5.5,    growthrate=FALSE)$mean,  #psi_2: i
+  ppi(-0.5, 0.5, growthrate=FALSE)$mean   #psi_2: q
 )
 
 Omega_Psi <- diag(c(
-  ppi(2,     3,   growthrate=TRUE)$var,   #psi_1: delta y_f
-  ppi(1.5,   2.5, growthrate=TRUE)$var,   #psi_1: pi_f
-  ppi(4.5,   5.5 )$var,                   #psi_1: i_f
-  ppi(2,     2.5 ,growthrate=TRUE)$var,   #psi_1: y
-  ppi(1.7,   2.3 ,growthrate=TRUE)$var,   #psi_1: pi
-  ppi(4,     4.5 )$var,                   #psi_1: i
-  ppi(3.85,  4   )$var,                   #psi_1: q
-  ppi(-1,    1,   growthrate=TRUE)$var,   #psi_2: delta y_f
-  ppi(1.5,   2.5 ,growthrate=TRUE)$var,   #psi_2: pi_f
-  ppi(1.5,   2.5 )$var,                   #psi_2: i_f
-  ppi(-1,    1,   growthrate=TRUE)$var,   #psi_2: y
-  ppi(4.3,   5.7 ,growthrate=TRUE)$var,   #psi_2: pi
-  ppi(3,     5.5 )$var,                   #psi_2: i
-  ppi(-0.5,  0.5 )$var                    #psi_2: q
+  ppi(2, 3,      growthrate=TRUE)$var,   #psi_1: delta y_f
+  ppi(1.5, 2.5,  growthrate=TRUE)$var,   #psi_1: pi_f
+  ppi(4.5, 5.5,  growthrate=FALSE)$var,  #psi_1: i_f
+  ppi(2, 2.5,    growthrate=TRUE)$var,   #psi_1: y
+  ppi(1.7, 2.3,  growthrate=TRUE)$var,   #psi_1: pi
+  ppi(4, 4.5,    growthrate=FALSE)$var,  #psi_1: i
+  ppi(3.85, 4,   growthrate=FALSE)$var,  #psi_1: q
+  ppi(-1, 1,     growthrate=TRUE)$var,   #psi_2: delta y_f
+  ppi(1.5, 2.5,  growthrate=TRUE)$var,   #psi_2: pi_f
+  ppi(1.5, 2.5,  growthrate=FALSE)$var,  #psi_2: i_f
+  ppi(-1, 1,     growthrate=TRUE)$var,   #psi_2: y
+  ppi(4.3, 5.7,  growthrate=TRUE)$var,   #psi_2: pi
+  ppi(3, 5.5,    growthrate=FALSE)$var,  #psi_2: i
+  ppi(-0.5, 0.5, growthrate=FALSE)$var   #psi_2: q
 ))
 ```
 
-Finally for $\Sigma_u$ we will use the noninformative Jeffreys prior $\left|\Sigma_u \right|^{-(k+1)/2}$, as done in Villani (2009). We just input everything to the priors function. Note here that the function automatically creates $\theta_\beta$ and $\Omega\beta$.
+Finally for $\Sigma_u$ we will use the noninformative Jeffreys prior $\left|\Sigma_u \right|^{-(k+1)/2}$, as done in Villani (2009). We just input everything to the priors function. Note here that the function automatically creates $\theta_\beta$ and $\Omega_\beta$.
 
 
 ```{r, fig.width=8, fig.height=8}
@@ -273,10 +267,10 @@ bvar_obj <- priors(bvar_obj,
 Like in Villani (2009), to incorporate that Sweden is a small economy and therefore not likely to affect the foreign economy, we restrict the upper right submatrix in each $A_\ell$ for $\ell =1,\dots,k$, to the zero matrix. 
 
 ```{r, fig.width=8, fig.height=8}
+p <- bvar_obj$setup$p
+k <- bvar_obj$setup$k
 k1 <- 3 #first 3 variables are foreign in yt
 k2 <- 4 #the other 4 are domestic
-k <- bvar_obj$setup$k
-p <- bvar_obj$setup$p
 
 tmp <- matrix(1, k*p, k)
 
