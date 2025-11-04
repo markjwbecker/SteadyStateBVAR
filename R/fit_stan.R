@@ -27,7 +27,7 @@ fit_stan <- function(x, iter, warmup) {
     data = stan_data,
     iter = iter,
     warmup = warmup,
-    chains = 4,
+    chains = 2,
     verbose = FALSE
   )
   x$fit$stan <- stan_fit

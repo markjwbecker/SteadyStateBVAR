@@ -1,6 +1,4 @@
-priors <- function(x, ...) UseMethod("priors")
-
-priors.bvar <- function(x, lambda_1=0.2, lambda_2=0.5, fol_pm=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
+priors<- function(x, lambda_1=0.2, lambda_2=0.5, fol_pm=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
   
   setup <- x$setup
   yt <- x$data
