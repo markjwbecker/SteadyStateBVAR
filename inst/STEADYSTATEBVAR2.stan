@@ -35,10 +35,10 @@ data {
   matrix[N, q] X; //exogenous/deterministic variables (x's)
   matrix[N, k*p] W; //lagged endogenous variables
   matrix[N, q*p] Q; //lagged exogenous/deterministic variables
-  vector[k*p*k] vec_beta_0; //vec_beta prior mean
-  matrix[k*p*k, k*p*k] Sigma_vec_beta; //vec_beta prior covariance matrix
-  vector[k*q] vec_Psi_0; //vec_Psi prior mean
-  matrix[k*q, k*q] Sigma_vec_Psi; //vec_Psi prior covariance matrix
+  vector[k*p*k] theta_beta; //vec_beta prior mean
+  matrix[k*p*k, k*p*k] Omega_beta; //vec_beta prior covariance matrix
+  vector[k*q] theta_Psi; //vec_Psi prior mean
+  matrix[k*q, k*q] Omega_Psi; //vec_Psi prior covariance matrix
   int<lower=0> m_0; // df
   matrix[k, k] V_0; // prior scale matrix
   int<lower=0> H; // Forecast horizon
@@ -60,8 +60,8 @@ model {
       vector[k] u_t = (Y[t] - (X[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
       u_t ~ multi_normal(rep_vector(0,k), Sigma_u);
   }
-  to_vector(beta) ~ multi_normal(vec_beta_0, Sigma_vec_beta);
-  to_vector(Psi) ~ multi_normal(vec_Psi_0, Sigma_vec_Psi);
+  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
+  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
   Sigma_u ~ inv_wishart(m_0, V_0);
 }
 

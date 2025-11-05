@@ -48,8 +48,11 @@ IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, 
     e[[nE]] <- tmp
   }
   
-  gibbs_draws <- x$fit$gibbs
-  stan_draws <- rstan::extract(x$fit$stan)
+  if (estimation == "stan"){
+    stan_draws <- rstan::extract(x$fit$stan)
+  } else {
+    gibbs_draws <- x$fit$gibbs
+  }
   
   for (draw in 1:N_draws) {
     if (estimation == "gibbs") {
