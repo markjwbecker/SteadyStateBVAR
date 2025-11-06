@@ -41,17 +41,10 @@ IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, 
   
   if (estimation == "stan"){
     stan_draws <- rstan::extract(x$fit$stan)
-    dim(stan_draws$beta)[1]
+    N_draws <- dim(stan_draws$beta)[1]
   } else {
     gibbs_draws <- x$fit$gibbs
     N_draws <- dim(gibbs_draws$beta_draws)[3]
-  }
-  
-  
-  if (estimation=="gibbs"){
-    N_draws <- dim(x$fit$gibbs$beta_draws)[3]
-  } else {
-    dim(stan_draws$beta)[1]
   }
   
   
