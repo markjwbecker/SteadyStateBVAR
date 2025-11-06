@@ -1,4 +1,4 @@
-fit_stan <- function(x, iter, warmup) {
+fit_stan <- function(x, iter, warmup, chains=2) {
 
   Jeffrey = x$priors$Jeffrey
   stan_data <- x$setup
@@ -27,7 +27,7 @@ fit_stan <- function(x, iter, warmup) {
     data = stan_data,
     iter = iter,
     warmup = warmup,
-    chains = 2,
+    chains = chains,
     verbose = FALSE
   )
   x$fit$stan <- stan_fit
