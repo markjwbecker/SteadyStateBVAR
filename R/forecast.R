@@ -1,4 +1,4 @@
-plot_forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"), 
+forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"), 
                           growth_rate_idx=NULL, plot_idx=NULL, estimation = c("stan", "gibbs"))
   {
   Y <- x$data
@@ -128,4 +128,5 @@ plot_forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
       points(time_full[-1], m_full[-1], pch=16, col="blue")
     }
   }
+  return(list(forecast=Y_pred_m, lower= Y_pred_lower, upper=Y_pred_upper))
 }
