@@ -37,7 +37,23 @@ IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, 
   
   k <- x$setup$k
   p <- x$setup$p
-  N_draws <- dim(x$fit$gibbs$beta_draws)[3]
+  
+  
+  if (estimation == "stan"){
+    stan_draws <- rstan::extract(x$fit$stan)
+    dim(stan_draws$beta)[1]
+  } else {
+    gibbs_draws <- x$fit$gibbs
+    N_draws <- dim(gibbs_draws$beta_draws)[3]
+  }
+  
+  
+  if (estimation=="gibbs"){
+    N_draws <- dim(x$fit$gibbs$beta_draws)[3]
+  } else {
+    dim(stan_draws$beta)[1]
+  }
+  
   
   irf_array <- array(NA, dim = c(N_draws, k, k, lag+1))
   
