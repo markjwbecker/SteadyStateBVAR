@@ -16,7 +16,7 @@ setup <- function(x, p, deterministic=c("constant", "constant_and_dummy"), dummy
   
   Y <- yt[-c(1:p), ]
   W <- embed(yt, dimension = p+1)[, -(1:k)]
-  X <- xt[-c(1:p), ]
+  X <- xt[-c(1:p), ,drop=F]
   Q <- embed(xt, dimension = p+1)[, -(1:q)]
   
   Z <- cbind(W,X)

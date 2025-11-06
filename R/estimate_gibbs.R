@@ -16,8 +16,11 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
   SigOLS <- setup$Sigma_OLS
   
   Gamma_d_OLS <- beta_hat[1:(k*p),]
-  
-  C_hat <- t(beta_hat[(k*p+1):(k*p+q),])
+  if (q == 1) {
+    C_hat <- beta_hat[(k*p+1):(k*p+q),]
+  } else {
+    C_hat <- t(beta_hat[(k*p+1):(k*p+q),])
+  }
   A <- vector("list", p)
   for (i in 1:p) {
     rows_idx <- ((i - 1) * k + 1):(i * k)
