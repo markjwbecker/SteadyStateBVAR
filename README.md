@@ -236,16 +236,15 @@ first note that growth rate variables
 ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly
 rates of change, i.e. quarter-on-quarter (QoQ). In other words, for a
 variable $z$, the quarterly growth rate is
-$100 \ln \left(\frac{z_t}{z_{t-1}}\right)$. But the priors in Villani
+$100 \left(\ln z_t - \ln z_{t-1}\right)$. But the priors in Villani
 (2009) are specified in terms of year-on-year (YoY) growth rates. So we
 need to specify the prior probability intervals for the steady states of
-the quarterly growth rates which correspond to the prior intervals for
-the steady state of the YoY growth rates in Villani (2009). See for
-example, for domestic inflation the 95% prior probability interval
+the quarterly growth rates so that they correspond to the YoY intervals.
+As an example, for domestic inflation the 95% prior probability interval
 (normal distribution) is $(1.7, 2.3)$. The ‘ppi()’ function is useful
 here. Simply input the desired YoY interval with ‘growthrate=TRUE’ and
 we get the corresponding prior mean and variance in terms of quarterly
-rate of change. (I hope all this makes sense to the reader…)
+rate of change.
 
 ``` r
 (interval_CPI_YoY <- ppi(1.7, 2.3, growthrate=TRUE))
@@ -258,9 +257,7 @@ rate of change. (I hope all this makes sense to the reader…)
 prior_mean <- interval_CPI_YoY$mean
 prior_var  <- interval_CPI_YoY$var
 
-cat("Lets do a sanity check:\n \n")
-#> Lets do a sanity check:
-#> 
+#Lets do a sanity check
 
 lower_mean_upper_QoQ <- c(
   lower = qnorm(0.025, prior_mean, sd = sqrt(prior_var)),
@@ -346,14 +343,14 @@ k <- bvar_obj$setup$k
 k1 <- 3 #first 3 variables are foreign in yt
 k2 <- 4 #the other 4 are domestic
 
-tmp <- matrix(1, k*p, k)
+restriction_matrix <- matrix(1, k*p, k)
 
 for(i in 1:p){
   rows <- ((i-1)*k + k1 + 1) : (i*k)
   cols <- 1:k1
-  tmp[rows, cols] <- 0
+  restriction_matrix[rows, cols] <- 0
 }
-tmp
+restriction_matrix
 #>       [,1] [,2] [,3] [,4] [,5] [,6] [,7]
 #>  [1,]    1    1    1    1    1    1    1
 #>  [2,]    1    1    1    1    1    1    1
@@ -384,24 +381,32 @@ tmp
 #> [27,]    0    0    0    1    1    1    1
 #> [28,]    0    0    0    1    1    1    1
 
-zero_indices <- which(c(tmp) == 0)
+zero_indices <- which(c(restriction_matrix) == 0)
+```
+
+We can look at the restriction matrix for $\beta$ to see which elements
+we restrict to zero. Note that since the restriction matrix represents
+$\beta$, the upper right submatrix in each $A_\ell$ for
+$\ell =1,\dots,p$ corresponds to the bottom left submatrix in each
+transposed $A_\ell$. Since the priors means for these elements are zero,
+we do the restriction by setting the prior variances to be very small,
+in this case $0.00001$.
+
+``` r
 diag(bvar_obj$priors$Omega_beta[zero_indices, zero_indices]) <- 0.00001
 ```
 
-In the ‘tmp’ matrix we see which elements in $\beta$ we restrict to
-zero. Note that since ‘tmp’ represents $\beta$, the upper right
-submatrix in each $A_\ell$ for $\ell =1,\dots,k$ corresponds to the
-bottom left submatrix in each transposed $A_\ell$. Now we supply our
-forecast horizon $H$, and also the deterministic variables for the
-future periods and then we fit the model.
+Now we supply our forecast horizon $H$, and also the deterministic
+variables for the future periods and then we fit the model.
 
 ``` r
 bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=10000,
-                     warmup=5000)
+                     iter=3000,
+                     warmup=1000,
+                     chains=2)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -411,43 +416,43 @@ summary_bvar(bvar_obj, estimation = "stan")
 #> $beta_posterior_mean
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.18  0.03 -0.02  0.12  0.07 -0.13  0.00
-#>    [2,] -0.02  0.31  0.26  0.12 -0.07  0.00  0.00
+#>    [1,]  0.18  0.03 -0.02  0.12  0.07 -0.14  0.00
+#>    [2,] -0.02  0.31  0.26  0.12 -0.07  0.01  0.00
 #>    [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.20  3.86  0.76  0.93
-#>    [8,]  0.03 -0.01  0.10  0.02 -0.02  0.11  0.00
+#>    [7,]  0.00  0.00  0.00  1.20  3.91  0.71  0.93
+#>    [8,]  0.03 -0.01  0.10  0.02 -0.02  0.10  0.00
 #>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.17  0.00
 #>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.16  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.54 -0.32  0.32 -0.04
+#>   [14,]  0.00  0.00  0.00  0.55 -0.36  0.34 -0.04
 #>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#>   [16,] -0.02  0.06 -0.01  0.00  0.09  0.02  0.00
+#>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.03  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
+#>   [18,]  0.00  0.00  0.00  0.07  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
 #>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.13 -0.01 -0.58  0.00
+#>   [21,]  0.00  0.00  0.00 -0.13 -0.02 -0.62  0.00
 #>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#>   [23,]  0.00  0.15 -0.03  0.00  0.01  0.02  0.00
+#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.02  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.14 -0.06 -0.17 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.14 -0.05 -0.16 -0.01
 #> 
 #> $Psi_posterior_mean
 #>       
 #>        [,1]  [,2]
 #>   [1,] 0.58  0.08
-#>   [2,] 0.51  0.46
+#>   [2,] 0.51  0.47
 #>   [3,] 4.94  2.02
 #>   [4,] 0.58 -0.04
-#>   [5,] 0.49  1.15
+#>   [5,] 0.49  1.14
 #>   [6,] 4.29  4.44
 #>   [7,] 3.92 -0.10
 #> 
@@ -455,10 +460,10 @@ summary_bvar(bvar_obj, estimation = "stan")
 #>       
 #>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#>   [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
-#>   [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
+#>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
+#>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
 #>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#>   [5,] -0.01  0.13 0.18 -0.05  0.60  0.11  0.00
+#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
 #>   [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
 #>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
@@ -467,7 +472,7 @@ Lets plot the forecasts. Lets select a 95% prediction interval and the
 mean of the posterior as the point forecast.
 
 ``` r
-plot_forecast(bvar_obj,
+bvar_obj <- forecast(bvar_obj,
               ci = 0.95,
               fcst_type = "mean",
               #growth_rate_idx = c(1,2,4,5),
@@ -475,7 +480,7 @@ plot_forecast(bvar_obj,
               estimation="stan")
 ```
 
-<img src="man/figures/README-unnamed-chunk-14-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-14-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-14-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-3.png" width="100%" />
 
 Now instead, we can take the variables in quarter on quarter growth
 rates, and transform the historical data and predictions to yearly
@@ -483,7 +488,7 @@ growth rates with ‘growth_rate_idx’ where we specify the index of the
 growth rate variables in $y_t$.
 
 ``` r
-plot_forecast(bvar_obj,
+bvar_obj <- forecast(bvar_obj,
               ci = 0.95,
               fcst_type = "mean",
               growth_rate_idx = c(1,2,4,5),
@@ -491,14 +496,55 @@ plot_forecast(bvar_obj,
               estimation="stan")
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-16-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-16-3.png" width="100%" />
+
+We can also do some impulse response analysis. We can choose between the
+orthogonalized impulse response function (OIRF) and the generalized
+impulse response function (GIRF).
+
+``` r
+par(mfrow=c(2,2))
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=4,
+           shock=6,
+           method="OIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=4,
+           shock=6,
+           method="GIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=5,
+           shock=6,
+           method="OIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=5,
+           shock=6,
+           method="GIRF",
+           ci=0.68,
+           estimation="stan")
+```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
 
 Lets estimate the model with a Gibbs sampler instead.
 
 ``` r
 bvar_obj <- fit_gibbs(bvar_obj,
-                      iter = 10000,
-                      warmup = 5000)
+                      iter = 5000,
+                      warmup = 2500)
 ```
 
 We can check the posterior means
@@ -507,53 +553,53 @@ We can check the posterior means
 summary_bvar(bvar_obj, estimation = "gibbs")
 #> $beta_posterior_mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.13  0.00
-#>  [2,] -0.02  0.32  0.26  0.12 -0.07  0.00  0.00
-#>  [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
+#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.14  0.00
+#>  [2,] -0.02  0.31  0.26  0.12 -0.07  0.00  0.00
+#>  [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
 #>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>  [5,]  0.00  0.00  0.00  0.00  0.08  0.07  0.00
 #>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.20  3.88  0.78  0.93
+#>  [7,]  0.00  0.00  0.00  1.18  3.92  0.75  0.93
 #>  [8,]  0.03 -0.01  0.10  0.02 -0.02  0.11  0.00
-#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.17  0.00
+#>  [9,]  0.01  0.02  0.05  0.00 -0.03 -0.16  0.00
 #> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #> [11,]  0.00  0.00  0.00  0.11 -0.01  0.16  0.00
-#> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
+#> [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
 #> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.53 -0.36  0.34 -0.04
-#> [15,]  0.01 -0.01  0.00  0.02 -0.02  0.00  0.00
+#> [14,]  0.00  0.00  0.00  0.56 -0.35  0.28 -0.04
+#> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
 #> [16,] -0.02  0.06 -0.01  0.00  0.09  0.02  0.00
 #> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#> [18,]  0.00  0.00  0.00  0.07  0.01 -0.02  0.00
+#> [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #> [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
 #> [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#> [21,]  0.00  0.00  0.00 -0.13 -0.03 -0.64  0.00
+#> [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.59  0.00
 #> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#> [23,]  0.00  0.16 -0.03  0.01  0.01  0.02  0.00
+#> [23,]  0.00  0.16 -0.04  0.00  0.01  0.01  0.00
 #> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
-#> [25,]  0.00  0.00  0.00 -0.08  0.01  0.04  0.00
+#> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #> [26,]  0.00  0.00  0.00  0.00  0.06 -0.02  0.00
 #> [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.13 -0.05 -0.18 -0.01
+#> [28,]  0.00  0.00  0.00 -0.13 -0.07 -0.18 -0.01
 #> 
 #> $Psi_posterior_mean
 #>      [,1]  [,2]
 #> [1,] 0.58  0.08
-#> [2,] 0.51  0.47
-#> [3,] 4.94  2.01
-#> [4,] 0.58 -0.04
+#> [2,] 0.51  0.46
+#> [3,] 4.95  2.01
+#> [4,] 0.58 -0.03
 #> [5,] 0.49  1.15
-#> [6,] 4.29  4.43
+#> [6,] 4.30  4.44
 #> [7,] 3.92 -0.10
 #> 
 #> $Sigma_u_posterior_mean
 #>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#> [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#> [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
-#> [4,]  0.07  0.01 0.01  0.20 -0.05 -0.01  0.00
-#> [5,] -0.01  0.12 0.18 -0.05  0.60  0.11  0.00
-#> [6,]  0.00  0.04 0.11 -0.01  0.11  1.55 -0.01
+#> [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
+#> [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
+#> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
+#> [5,] -0.01  0.13 0.18 -0.05  0.60  0.12  0.00
+#> [6,]  0.00  0.04 0.11 -0.01  0.12  1.56 -0.01
 #> [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
@@ -561,7 +607,7 @@ Very similar to the stan estimation (as it should be). Now lets plot the
 forecasts (which are also very similar).
 
 ``` r
-plot_forecast(bvar_obj,
+bvar_obj <- forecast(bvar_obj,
               ci = 0.95,
               fcst_type = "mean",
               growth_rate_idx = c(1,2,4,5),
@@ -569,53 +615,9 @@ plot_forecast(bvar_obj,
               estimation="gibbs")
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-18-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-18-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-20-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-20-3.png" width="100%" />
 
-We can also do some impulse response analysis. We can choose between the
-orthogonalized impulse response function (OIRF) and the generalized
-impulse response function (GIRF). Lets first try with the stan-estimated
-model
-
-``` r
-par(mfrow=c(2,2))
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=4,
-           shock=6,
-           method="OIRF",
-           ci=0.68,
-           estimation="stan")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=4,
-           shock=6,
-           method="GIRF",
-           ci=0.68,
-           estimation="stan")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=5,
-           shock=6,
-           method="OIRF",
-           ci=0.68,
-           estimation="stan")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=5,
-           shock=6,
-           method="GIRF",
-           ci=0.68,
-           estimation="stan")
-```
-
-<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
-
-And now with Gibbs. We can see that they are very similar (as they
-should be it is the exact same model but estimated with two different
-samplers)
+And the IRFs with Gibbs estimated model. Again, very similar.
 
 ``` r
 par(mfrow=c(2,2))
@@ -652,4 +654,4 @@ irf <- IRF(bvar_obj,
            estimation="gibbs")
 ```
 
-<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />

@@ -189,7 +189,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$ for the steady state priors, we set them according to the 95% prior probability intervals in Villani (2009). We first note that growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change, i.e. quarter-on-quarter (QoQ). In other words, for a variable $z$, the quarterly growth rate is $100 \ln \left(\frac{z_t}{z_{t-1}}\right)$. But the priors in Villani (2009) are specified in terms of year-on-year (YoY) growth rates. So we need to specify the prior probability intervals for the steady states of the quarterly growth rates which correspond to the prior intervals for the steady state of the YoY growth rates in Villani (2009). See for example, for domestic inflation the 95% prior probability interval (normal distribution) is $(1.7, 2.3)$. The 'ppi()' function is useful here. Simply input the desired YoY interval with 'growthrate=TRUE' and we get the corresponding prior mean and variance in terms of quarterly rate of change. (I hope all this makes sense to the reader...)
+Now moving on to $\Psi$ for the steady state priors, we set them according to the 95% prior probability intervals in Villani (2009). We first note that growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change, i.e. quarter-on-quarter (QoQ). In other words, for a variable $z$, the quarterly growth rate is $100 \left(\ln z_t - \ln z_{t-1}\right)$. But the priors in Villani (2009) are specified in terms of year-on-year (YoY) growth rates. So we need to specify the prior probability intervals for the steady states of the quarterly growth rates so that they correspond to the YoY intervals. As an example, for domestic inflation the 95% prior probability interval (normal distribution) is $(1.7, 2.3)$. The 'ppi()' function is useful here. Simply input the desired YoY interval with 'growthrate=TRUE' and we get the corresponding prior mean and variance in terms of quarterly rate of change.
 
 ```{r, fig.width=8, fig.height=8}
 (interval_CPI_YoY <- ppi(1.7, 2.3, growthrate=TRUE))
@@ -197,7 +197,7 @@ Now moving on to $\Psi$ for the steady state priors, we set them according to th
 prior_mean <- interval_CPI_YoY$mean
 prior_var  <- interval_CPI_YoY$var
 
-cat("Lets do a sanity check:\n \n")
+#Lets do a sanity check
 
 lower_mean_upper_QoQ <- c(
   lower = qnorm(0.025, prior_mean, sd = sqrt(prior_var)),
@@ -264,7 +264,7 @@ bvar_obj <- priors(bvar_obj,
                    Jeffrey=TRUE)
 ```
 
-Like in Villani (2009), to incorporate that Sweden is a small economy and therefore not likely to affect the foreign economy, we restrict the upper right submatrix in each $A_\ell$ for $\ell =1,\dots,k$, to the zero matrix. 
+Like in Villani (2009), to incorporate that Sweden is a small economy and therefore not likely to affect the foreign economy, we restrict the upper right submatrix in each $A_\ell$ for $\ell =1,\dots,k$, to the zero matrix.
 
 ```{r, fig.width=8, fig.height=8}
 p <- bvar_obj$setup$p
@@ -272,27 +272,31 @@ k <- bvar_obj$setup$k
 k1 <- 3 #first 3 variables are foreign in yt
 k2 <- 4 #the other 4 are domestic
 
-tmp <- matrix(1, k*p, k)
+restriction_matrix <- matrix(1, k*p, k)
 
 for(i in 1:p){
   rows <- ((i-1)*k + k1 + 1) : (i*k)
   cols <- 1:k1
-  tmp[rows, cols] <- 0
+  restriction_matrix[rows, cols] <- 0
 }
-tmp
+restriction_matrix
 
-zero_indices <- which(c(tmp) == 0)
+zero_indices <- which(c(restriction_matrix) == 0)
+```
+We can look at the restriction matrix for $\beta$ to see which elements we restrict to zero. Note that since the restriction matrix represents $\beta$, the upper right submatrix in each $A_\ell$ for $\ell =1,\dots,p$ corresponds to the bottom left submatrix in each transposed $A_\ell$. Since the priors means for these elements are zero, we do the restriction by setting the prior variances to be very small, in this case $0.00001$.
+```{r, fig.width=8, fig.height=8}
 diag(bvar_obj$priors$Omega_beta[zero_indices, zero_indices]) <- 0.00001
 ```
-In the 'tmp' matrix we see which elements in $\beta$ we restrict to zero. Note that since 'tmp' represents $\beta$, the upper right submatrix in each $A_\ell$ for $\ell =1,\dots,k$ corresponds to the bottom left submatrix in each transposed $A_\ell$. Now we supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model.
+Now we supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=10000,
-                     warmup=5000)
+                     iter=3000,
+                     warmup=1000,
+                     chains=2)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -304,7 +308,7 @@ summary_bvar(bvar_obj, estimation = "stan")
 Lets plot the forecasts. Lets select a 95% prediction interval and the mean of the posterior as the point forecast.
 
 ```{r, fig.width=8, fig.height=8}
-plot_forecast(bvar_obj,
+bvar_obj <- forecast(bvar_obj,
               ci = 0.95,
               fcst_type = "mean",
               #growth_rate_idx = c(1,2,4,5),
@@ -315,7 +319,7 @@ plot_forecast(bvar_obj,
 Now instead, we can take the variables in quarter on quarter growth rates, and transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$.
 
 ```{r, fig.width=8, fig.height=8}
-plot_forecast(bvar_obj,
+bvar_obj <- forecast(bvar_obj,
               ci = 0.95,
               fcst_type = "mean",
               growth_rate_idx = c(1,2,4,5),
@@ -323,31 +327,7 @@ plot_forecast(bvar_obj,
               estimation="stan")
 ```
 
-Lets estimate the model with a Gibbs sampler instead.
-
-```{r, fig.width=8, fig.height=8}
-bvar_obj <- fit_gibbs(bvar_obj,
-                      iter = 10000,
-                      warmup = 5000)
-```
-
-We can check the posterior means
-```{r, fig.width=8, fig.height=8}
-summary_bvar(bvar_obj, estimation = "gibbs")
-```
-
-Very similar to the stan estimation (as it should be). Now lets plot the forecasts (which are also very similar).
-
-```{r, fig.width=8, fig.height=8}
-plot_forecast(bvar_obj,
-              ci = 0.95,
-              fcst_type = "mean",
-              growth_rate_idx = c(1,2,4,5),
-              plot_idx = c(4,5,6),
-              estimation="gibbs")
-```
-
-We can also do some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Lets first try with the stan-estimated model
+We can also do some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF).
 
 ```{r, fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
@@ -384,7 +364,31 @@ irf <- IRF(bvar_obj,
            estimation="stan")
 ```
 
-And now with Gibbs. We can see that they are very similar (as they should be it is the exact same model but estimated with two different samplers)
+Lets estimate the model with a Gibbs sampler instead.
+
+```{r, fig.width=8, fig.height=8}
+bvar_obj <- fit_gibbs(bvar_obj,
+                      iter = 5000,
+                      warmup = 2500)
+```
+
+We can check the posterior means
+```{r, fig.width=8, fig.height=8}
+summary_bvar(bvar_obj, estimation = "gibbs")
+```
+
+Very similar to the stan estimation (as it should be). Now lets plot the forecasts (which are also very similar).
+
+```{r, fig.width=8, fig.height=8}
+bvar_obj <- forecast(bvar_obj,
+              ci = 0.95,
+              fcst_type = "mean",
+              growth_rate_idx = c(1,2,4,5),
+              plot_idx = c(4,5,6),
+              estimation="gibbs")
+```
+
+And the IRFs with Gibbs estimated model. Again, very similar.
 
 ```{r, fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
