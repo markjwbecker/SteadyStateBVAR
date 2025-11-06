@@ -130,7 +130,7 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
     }
   }
   x$forecasts$forecast = Y_pred_m
-  x$forecasts$lower = y_pred_lower
+  x$forecasts$lower = Y_pred_lower
   x$forecasts$upper = Y_pred_upper
   
   return(x)
