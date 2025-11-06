@@ -2,6 +2,7 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
                           growth_rate_idx=NULL, plot_idx=NULL, estimation = c("stan", "gibbs"))
   {
   Y <- x$data
+  freq <- frequency(Y)
   if (is.null(plot_idx)) plot_idx <- 1:ncol(Y)
   
   if (estimation=="gibbs") {
@@ -25,7 +26,7 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
   m <- ncol(Y)
   
   time_hist <- time(Y)
-  time_fore <- seq(tail(time_hist, 1) + 0.25, by = 0.25, length.out = H)
+  time_fore <- seq(tail(time_hist, 1) + 1/freq, by = 1/freq, length.out = H)
   
   if (is.null(plot_idx)) plot_idx <- 1:ncol(Y)
   for (i in plot_idx) {
@@ -37,18 +38,18 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
     if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
       
       annual_hist <- rep(NA, length(smply))
-      for(t in 4:length(smply)){
-        annual_hist[t] <- sum(smply[(t-3):t])
+      for(t in freq:length(smply)){
+        annual_hist[t] <- sum(smply[(t-(freq-1)):t])
       }
       annual_hist <- annual_hist
-      annual_hist <- ts(annual_hist, start = start(Y), frequency = 4)
+      annual_hist <- ts(annual_hist, start = start(Y), frequency = freq)
       
-      last_obs <- tail(smply,3)
+      last_obs <- tail(smply,(freq-1))
       all_fcst <- c(last_obs, fcst_m)
       
       annual_fcst <- rep(NA, H)
       for(t_h in 1:H){
-        annual_fcst[t_h] <- sum(all_fcst[t_h:(t_h+3)])
+        annual_fcst[t_h] <- sum(all_fcst[t_h:(t_h+(freq-1))])
       }
       annual_fcst <- annual_fcst
       
@@ -59,8 +60,8 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
       annual_lower <- rep(NA,H)
       annual_upper <- rep(NA,H)
       for(t_h in 1:H){
-        annual_lower[t_h] <- sum(all_lower[t_h:(t_h+3)])
-        annual_upper[t_h] <- sum(all_upper[t_h:(t_h+3)])
+        annual_lower[t_h] <- sum(all_lower[t_h:(t_h+(freq-1))])
+        annual_upper[t_h] <- sum(all_upper[t_h:(t_h+(freq-1))])
       }
       annual_lower <- annual_lower
       annual_upper <- annual_upper
@@ -80,7 +81,7 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
               xlim = c(head(time_fore,1)-8,tail(time_fore,1)),
               ylim = ylim,col = "black", lwd = 2, yaxt = "n")
       xlim_vals <- c(head(time_hist, 1), tail(time_fore, 1))
-      x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 0.25)
+      x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 1/freq)
       abline(v = x_quarters, col = "gray", lty = 2) 
       abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2) # every 0.5 increment
       
@@ -112,7 +113,7 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
               ylim = ylim,col = "black", lwd = 2, yaxt = "n")
       # add gridlines
       xlim_vals <- c(head(time_hist, 1), tail(time_fore, 1))
-      x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 0.25)
+      x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 1/freq)
       abline(v = x_quarters, col = "gray", lty = 2) 
       abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2) # every 0.5 increment
       
@@ -128,5 +129,9 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
       points(time_full[-1], m_full[-1], pch=16, col="blue")
     }
   }
-  return(list(forecast=Y_pred_m, lower= Y_pred_lower, upper=Y_pred_upper))
+  x$forecasts$forecast = Y_pred_m
+  x$forecasts$lower = y_pred_lower
+  x$forecasts$upper = Y_pred_upper
+  
+  return(x)
 }

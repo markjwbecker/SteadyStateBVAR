@@ -4,7 +4,8 @@ bvar <- function(data = NULL, setup = NULL, priors = NULL, fit = list(gibbs = NU
     data   = data,
     setup  = setup,
     priors = priors,
-    fit    = fit
+    fit    = fit,
+    forecasts = forecasts
   )
   
   class(obj) <- "bvar"
