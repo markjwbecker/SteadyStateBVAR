@@ -14,7 +14,7 @@ by Mattias Villani.
 You can install the development version of SteadyStateBVAR with:
 
 ``` r
-#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 
 ## Introduction
@@ -231,89 +231,94 @@ fol_pm=c(0,   #delta y_f
 ```
 
 Now moving on to $\Psi$ for the steady state priors, we set them
-according to the 95% prior probability intervals in Villani (2009). We
-first note that growth rate variables
+according to the 95% prior probability intervals in Table I in Villani
+(2009). We first note that for our data here, the growth rate variables
 ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly
-rates of change, i.e. quarter-on-quarter (QoQ). In other words, for a
-variable $z$, the quarterly growth rate is
-$100 \left(\ln z_t - \ln z_{t-1}\right)$. But the priors in Villani
-(2009) are specified in terms of year-on-year (YoY) growth rates. So we
-need to specify the prior probability intervals for the steady states of
-the quarterly growth rates so that they correspond to the YoY intervals.
-As an example, for domestic inflation the 95% prior probability interval
-(normal distribution) is $(1.7, 2.3)$. The ‘ppi()’ function is useful
-here. Simply input the desired YoY interval with ‘growthrate=TRUE’ and
-we get the corresponding prior mean and variance in terms of quarterly
-rate of change.
+rates of change, i.e. for a variable $z$, the quarterly growth rate is
+$100 \left(\ln z_t - \ln z_{t-1}\right)$. The 95% prior probability
+intervals in Table I are specified in terms of annualized quarterly
+growth rates $400 \left(\ln z_t - \ln z_{t-1}\right)$.
+
+So we need to specify the prior probability intervals for the steady
+states which correspond to the intervals on the annualized scale. As an
+example, for domestic inflation ($\pi$) the 95% prior probability
+interval (normal distribution) is $(1.7, 2.3)$. The ‘ppi()’ function is
+useful here. Simply input the desired 95% prior probability interval on
+the annualized scale with ‘annualize_growthrate=TRUE’ and we get the
+corresponding prior mean and variance in terms of quarterly rate of
+change (in the same scale as our data). Of course we could also just
+annualize our data before, and set ‘annualize_growthrate=’FALSE’.
 
 ``` r
-(interval_CPI_YoY <- ppi(1.7, 2.3, growthrate=TRUE))
+(interval_pi_annualized <- ppi(1.7, 2.3,
+                               annualize_growthrate=TRUE,
+                               alpha=0.05)) #95% prior probability interval
 #> $mean
 #> [1] 0.5
 #> 
 #> $var
 #> [1] 0.001464287
 
-prior_mean <- interval_CPI_YoY$mean
-prior_var  <- interval_CPI_YoY$var
+prior_mean <- interval_pi_annualized$mean
+prior_var  <- interval_pi_annualized$var
 
 #Lets do a sanity check
 
-lower_mean_upper_QoQ <- c(
+lower_mean_upper <- c(
   lower = qnorm(0.025, prior_mean, sd = sqrt(prior_var)),
   mean  = prior_mean,
   upper = qnorm(0.975, prior_mean, sd = sqrt(prior_var)))
 
 
-cat("QoQ interval (95%):\n",lower_mean_upper_QoQ)
-#> QoQ interval (95%):
+cat("Prior probability interval (95%):\n",lower_mean_upper)
+#> Prior probability interval (95%):
 #>  0.425 0.5 0.575
 
-cat("\nYoY interval (95%):\n", 4 * lower_mean_upper_QoQ)
+cat("\nAnnualized prior probability interval (95%):\n", 4 * lower_mean_upper)
 #> 
-#> YoY interval (95%):
+#> Annualized prior probability interval (95%):
 #>  1.7 2 2.3
 ```
 
-Now we do this for all steady state coefficients, see Table I in Villani
-(2009).
+Now we do this for all steady state coefficient. Again, see Table I in
+Villani (2009).
 
 ``` r
 #psi_1 = Psi col 1
 #psi_2 = Psi col 2
 
 theta_Psi <- c(
-  ppi(2, 3,      growthrate=TRUE)$mean,   #psi_1: delta y_f
-  ppi(1.5, 2.5,  growthrate=TRUE)$mean,   #psi_1: pi_f
-  ppi(4.5, 5.5,  growthrate=FALSE)$mean,  #psi_1: i_f
-  ppi(2, 2.5,    growthrate=TRUE)$mean,   #psi_1: y
-  ppi(1.7, 2.3,  growthrate=TRUE)$mean,   #psi_1: pi
-  ppi(4, 4.5,    growthrate=FALSE)$mean,  #psi_1: i
-  ppi(3.85, 4,   growthrate=FALSE)$mean,  #psi_1: q
-  ppi(-1, 1,     growthrate=TRUE)$mean,   #psi_2: delta y_f
-  ppi(1.5, 2.5,  growthrate=TRUE)$mean,   #psi_2: pi_f
-  ppi(1.5, 2.5,  growthrate=FALSE)$mean,  #psi_2: i_f
-  ppi(-1, 1,     growthrate=TRUE)$mean,   #psi_2: y
-  ppi(4.3, 5.7,  growthrate=TRUE)$mean,   #psi_2: pi
-  ppi(3, 5.5,    growthrate=FALSE)$mean,  #psi_2: i
-  ppi(-0.5, 0.5, growthrate=FALSE)$mean   #psi_2: q
+  ppi(2, 3,      annualize_growthrate=TRUE)$mean,   #psi_1: delta y_f
+  ppi(1.5, 2.5,  annualize_growthrate=TRUE)$mean,   #psi_1: pi_f
+  ppi(4.5, 5.5,  annualize_growthrate=FALSE)$mean,  #psi_1: i_f
+  ppi(2, 2.5,    annualize_growthrate=TRUE)$mean,   #psi_1: y
+  ppi(1.7, 2.3,  annualize_growthrate=TRUE)$mean,   #psi_1: pi
+  ppi(4, 4.5,    annualize_growthrate=FALSE)$mean,  #psi_1: i
+  ppi(3.85, 4,   annualize_growthrate=FALSE)$mean,  #psi_1: q
+  ppi(-1, 1,     annualize_growthrate=TRUE)$mean,   #psi_2: delta y_f
+  ppi(1.5, 2.5,  annualize_growthrate=TRUE)$mean,   #psi_2: pi_f
+  ppi(1.5, 2.5,  annualize_growthrate=FALSE)$mean,  #psi_2: i_f
+  ppi(-1, 1,     annualize_growthrate=TRUE)$mean,   #psi_2: y
+  ppi(4.3, 5.7,  annualize_growthrate=TRUE)$mean,   #psi_2: pi
+  ppi(3, 5.5,    annualize_growthrate=FALSE)$mean,  #psi_2: i
+  ppi(-0.5, 0.5, annualize_growthrate=FALSE)$mean   #psi_2: q
 )
 
 Omega_Psi <- diag(c(
-  ppi(2, 3,      growthrate=TRUE)$var,   #psi_1: delta y_f
-  ppi(1.5, 2.5,  growthrate=TRUE)$var,   #psi_1: pi_f
-  ppi(4.5, 5.5,  growthrate=FALSE)$var,  #psi_1: i_f
-  ppi(2, 2.5,    growthrate=TRUE)$var,   #psi_1: y
-  ppi(1.7, 2.3,  growthrate=TRUE)$var,   #psi_1: pi
-  ppi(4, 4.5,    growthrate=FALSE)$var,  #psi_1: i
-  ppi(3.85, 4,   growthrate=FALSE)$var,  #psi_1: q
-  ppi(-1, 1,     growthrate=TRUE)$var,   #psi_2: delta y_f
-  ppi(1.5, 2.5,  growthrate=TRUE)$var,   #psi_2: pi_f
-  ppi(1.5, 2.5,  growthrate=FALSE)$var,  #psi_2: i_f
-  ppi(-1, 1,     growthrate=TRUE)$var,   #psi_2: y
-  ppi(4.3, 5.7,  growthrate=TRUE)$var,   #psi_2: pi
-  ppi(3, 5.5,    growthrate=FALSE)$var,  #psi_2: i
-  ppi(-0.5, 0.5, growthrate=FALSE)$var   #psi_2: q
+  ppi(2, 3,      annualize_growthrate=TRUE)$var,   #psi_1: delta y_f
+  ppi(1.5, 2.5,  annualize_growthrate=TRUE)$var,   #psi_1: pi_f
+  ppi(4.5, 5.5,  annualize_growthrate=FALSE)$var,  #psi_1: i_f
+  ppi(2, 2.5,    annualize_growthrate=TRUE)$var,   #psi_1: y
+  ppi(1.7, 2.3,  annualize_growthrate=TRUE)$var,   #psi_1: pi
+  ppi(4, 4.5,    annualize_growthrate=FALSE)$var,  #psi_1: i
+  ppi(3.85, 4,   annualize_growthrate=FALSE)$var,  #psi_1: q
+  ppi(-1, 1,     annualize_growthrate=TRUE)$var,   #psi_2: delta y_f
+  ppi(1.5, 2.5,  annualize_growthrate=TRUE)$var,   #psi_2: pi_f
+  ppi(1.5, 2.5,  annualize_growthrate=FALSE)$var,  #psi_2: i_f
+  ppi(-1, 1,     annualize_growthrate=TRUE)$var,   #psi_2: y
+  ppi(4.3, 5.7,  annualize_growthrate=TRUE)$var,   #psi_2: pi
+  ppi(3, 5.5,    annualize_growthrate=FALSE)$var,  #psi_2: i
+  ppi(-0.5, 0.5, annualize_growthrate=FALSE)$var   #psi_2: q
 ))
 ```
 
@@ -334,8 +339,9 @@ bvar_obj <- priors(bvar_obj,
 
 Like in Villani (2009), to incorporate that Sweden is a small economy
 and therefore not likely to affect the foreign economy, we restrict the
-upper right submatrix in each $A_\ell$ for $\ell =1,\dots,k$, to the
-zero matrix.
+upper right submatrix in each $A_\ell$ for $\ell =1,\dots,k$ or
+equivalently restricting the bottom left $A_\ell'$ for
+$\ell =1,\dots,k$, to the zero matrix.
 
 ``` r
 p <- bvar_obj$setup$p
@@ -385,10 +391,7 @@ zero_indices <- which(c(restriction_matrix) == 0)
 ```
 
 We can look at the restriction matrix for $\beta$ to see which elements
-we restrict to zero. Note that since the restriction matrix represents
-$\beta$, the upper right submatrix in each $A_\ell$ for
-$\ell =1,\dots,p$ corresponds to the bottom left submatrix in each
-transposed $A_\ell$. Since the priors means for these elements are zero,
+we restrict to zero. Since the priors means for these elements are zero,
 we do the restriction by setting the prior variances to be very small,
 in this case $0.00001$.
 
@@ -404,9 +407,9 @@ bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=3000,
-                     warmup=1000,
-                     chains=2)
+                     iter=10000,
+                     warmup=5000,
+                     chains=4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -416,43 +419,43 @@ summary_bvar(bvar_obj, estimation = "stan")
 #> $beta_posterior_mean
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.18  0.03 -0.02  0.12  0.07 -0.14  0.00
+#>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.13  0.00
 #>    [2,] -0.02  0.31  0.26  0.12 -0.07  0.01  0.00
 #>    [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.20  3.91  0.71  0.93
-#>    [8,]  0.03 -0.01  0.10  0.02 -0.02  0.10  0.00
-#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.17  0.00
+#>    [7,]  0.00  0.00  0.00  1.21  3.87  0.77  0.93
+#>    [8,]  0.03 -0.01  0.10  0.02 -0.02  0.11  0.00
+#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.16  0.00
 #>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.16  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.55 -0.36  0.34 -0.04
+#>   [14,]  0.00  0.00  0.00  0.54 -0.33  0.32 -0.04
 #>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.03  0.00
+#>   [16,] -0.02  0.06 -0.01  0.00  0.09  0.03  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#>   [18,]  0.00  0.00  0.00  0.07  0.01 -0.02  0.00
+#>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
 #>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.13 -0.02 -0.62  0.00
+#>   [21,]  0.00  0.00  0.00 -0.13 -0.02 -0.61  0.00
 #>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
 #>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.02  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.14 -0.05 -0.16 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.14 -0.07 -0.17 -0.01
 #> 
 #> $Psi_posterior_mean
 #>       
 #>        [,1]  [,2]
 #>   [1,] 0.58  0.08
-#>   [2,] 0.51  0.47
+#>   [2,] 0.51  0.46
 #>   [3,] 4.94  2.02
-#>   [4,] 0.58 -0.04
-#>   [5,] 0.49  1.14
+#>   [4,] 0.58 -0.03
+#>   [5,] 0.49  1.15
 #>   [6,] 4.29  4.44
 #>   [7,] 3.92 -0.10
 #> 
@@ -461,7 +464,7 @@ summary_bvar(bvar_obj, estimation = "stan")
 #>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
 #>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
+#>   [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
 #>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
 #>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
 #>   [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
@@ -543,8 +546,8 @@ Lets estimate the model with a Gibbs sampler instead.
 
 ``` r
 bvar_obj <- fit_gibbs(bvar_obj,
-                      iter = 5000,
-                      warmup = 2500)
+                      iter = 10000,
+                      warmup = 5000)
 ```
 
 We can check the posterior means
@@ -553,53 +556,53 @@ We can check the posterior means
 summary_bvar(bvar_obj, estimation = "gibbs")
 #> $beta_posterior_mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.14  0.00
-#>  [2,] -0.02  0.31  0.26  0.12 -0.07  0.00  0.00
-#>  [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
+#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.13  0.00
+#>  [2,] -0.02  0.31  0.26  0.12 -0.07  0.01  0.00
+#>  [3,] -0.01  0.04  0.92 -0.04  0.06  0.04  0.00
 #>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
-#>  [5,]  0.00  0.00  0.00  0.00  0.08  0.07  0.00
+#>  [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.18  3.92  0.75  0.93
-#>  [8,]  0.03 -0.01  0.10  0.02 -0.02  0.11  0.00
-#>  [9,]  0.01  0.02  0.05  0.00 -0.03 -0.16  0.00
-#> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
+#>  [7,]  0.00  0.00  0.00  1.23  3.89  0.76  0.94
+#>  [8,]  0.03 -0.01  0.10  0.02 -0.02  0.10  0.00
+#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.16  0.00
+#> [10,] -0.02 -0.01  0.00  0.00  0.04  0.07  0.00
 #> [11,]  0.00  0.00  0.00  0.11 -0.01  0.16  0.00
-#> [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
+#> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.56 -0.35  0.28 -0.04
+#> [14,]  0.00  0.00  0.00  0.54 -0.33  0.32 -0.04
 #> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#> [16,] -0.02  0.06 -0.01  0.00  0.09  0.02  0.00
+#> [16,] -0.02  0.06 -0.01  0.00  0.08  0.03  0.00
 #> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
 #> [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #> [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
 #> [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#> [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.59  0.00
+#> [21,]  0.00  0.00  0.00 -0.13 -0.01 -0.61  0.00
 #> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#> [23,]  0.00  0.16 -0.04  0.00  0.01  0.01  0.00
+#> [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
 #> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #> [26,]  0.00  0.00  0.00  0.00  0.06 -0.02  0.00
 #> [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.13 -0.07 -0.18 -0.01
+#> [28,]  0.00  0.00  0.00 -0.14 -0.07 -0.17 -0.01
 #> 
 #> $Psi_posterior_mean
 #>      [,1]  [,2]
 #> [1,] 0.58  0.08
 #> [2,] 0.51  0.46
-#> [3,] 4.95  2.01
+#> [3,] 4.94  2.03
 #> [4,] 0.58 -0.03
 #> [5,] 0.49  1.15
-#> [6,] 4.30  4.44
+#> [6,] 4.29  4.45
 #> [7,] 3.92 -0.10
 #> 
 #> $Sigma_u_posterior_mean
 #>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#> [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
+#> [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
 #> [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
 #> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#> [5,] -0.01  0.13 0.18 -0.05  0.60  0.12  0.00
-#> [6,]  0.00  0.04 0.11 -0.01  0.12  1.56 -0.01
+#> [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
+#> [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
 #> [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
