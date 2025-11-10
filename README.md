@@ -79,19 +79,19 @@ variance is given by
 $$
 \textrm{Var}\left(A_{\ell}^{(i,j)}\right)=
 \begin{cases}
-\left(\frac{\lambda_1}{\ell}\right)^2 & \text{if } i = j \\
-\left(\frac{\lambda_1 \lambda_2}{\ell}\right)^2 \frac{\sigma_i^2}{\sigma_j^2}& \text{if } i \neq j
+\left(\frac{\lambda_1}{\ell^{\lambda_3}}\right)^2 & \text{if } i = j \\
+\left(\frac{\lambda_1 \lambda_2}{\ell^{\lambda_3}}\right)^2 \frac{\sigma_i^2}{\sigma_j^2}& \text{if } i \neq j
 \end{cases}
 $$
 
-Here $\lambda_1$ and $\lambda_2$ are scalar hyperparameters where the
-former is known as the overall tightness, and the latter as the
-cross-equation tightness. Furthermore, $\sigma_i^2$ is the $(i,i)$:th
-element of $\Sigma_u$, which we do not know, and therefore replace with
-an estimate. In this package, it is replaced by the least squares
-residual variance from a univariate autoregression for variable $i$ with
-$p$ lags (including the constant and dummy variable if applicable).
-Moving on to $\Psi$ the prior we use is
+Here $\lambda_1$, $\lambda_2$ and $\lambda_3$ are scalar hyperparameters
+known as the overall tightness, the cross-equation tightness and the lag
+decay rate. Furthermore, $\sigma_i^2$ is the $(i,i)$:th element of
+$\Sigma_u$, which we do not know, and therefore replace with an
+estimate. In this package, it is replaced by the least squares residual
+variance from a univariate autoregression for variable $i$ with $p$ lags
+(including the constant and dummy variable if applicable). Moving on to
+$\Psi$ the prior we use is
 
 $$
 \textrm{vec}(\Psi) \sim N_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
@@ -210,15 +210,18 @@ bvar_obj <- setup(bvar_obj,
                   dummy = dum_var)
 ```
 
-Now let us specify the priors. We first consider $\beta$. We choose
-overall tightness $\lambda_1=0.2$ and cross equation tightness
-$\lambda_2=0.5$. We then specify the prior means for the first own lags
-of the variables. For variables in growth rates, we set the prior mean
-to $0$, for variables in levels, we set the prior mean to 0.9.
+Now let us specify the priors. We first consider $\beta$. We choose the
+same values for the hyperparameters as in Villani (2009), i.e. overall
+tightness $\lambda_1=0.2$, cross equation tightness $\lambda_2=0.5$ and
+lag decay rate $\lambda_3=1$. We then specify the prior means for the
+first own lags of the variables. For variables in growth rates, we set
+the prior mean to $0$, for variables in levels, we set the prior mean to
+0.9.
 
 ``` r
 lambda_1 <- 0.2
 lambda_2 <- 0.5
+lambda_3 <- 1.0
 
 fol_pm=c(0,   #delta y_f
          0,   #pi_f
@@ -331,10 +334,21 @@ automatically creates $\theta_\beta$ and $\Omega_\beta$.
 bvar_obj <- priors(bvar_obj,
                    lambda_1,
                    lambda_2,
+                   lambda_3,
                    fol_pm,
                    theta_Psi, 
                    Omega_Psi,
                    Jeffrey=TRUE)
+
+bvar_obj$priors$Sigma_AR
+#>           [,1]       [,2]      [,3]      [,4]      [,5]     [,6]       [,7]
+#> [1,] 0.1423148 0.00000000 0.0000000 0.0000000 0.0000000 0.000000 0.00000000
+#> [2,] 0.0000000 0.06452466 0.0000000 0.0000000 0.0000000 0.000000 0.00000000
+#> [3,] 0.0000000 0.00000000 0.4659181 0.0000000 0.0000000 0.000000 0.00000000
+#> [4,] 0.0000000 0.00000000 0.0000000 0.1644704 0.0000000 0.000000 0.00000000
+#> [5,] 0.0000000 0.00000000 0.0000000 0.0000000 0.5285156 0.000000 0.00000000
+#> [6,] 0.0000000 0.00000000 0.0000000 0.0000000 0.0000000 1.522357 0.00000000
+#> [7,] 0.0000000 0.00000000 0.0000000 0.0000000 0.0000000 0.000000 0.00076032
 ```
 
 Like in Villani (2009), to incorporate that Sweden is a small economy
@@ -407,9 +421,9 @@ bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=10000,
-                     warmup=5000,
-                     chains=4)
+                     iter=5000,
+                     warmup=2500,
+                     chains=2)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -419,44 +433,44 @@ summary_bvar(bvar_obj, estimation = "stan")
 #> $beta_posterior_mean
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.13  0.00
-#>    [2,] -0.02  0.31  0.26  0.12 -0.07  0.01  0.00
-#>    [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
-#>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
+#>    [1,]  0.18  0.03 -0.01  0.12  0.08 -0.13  0.00
+#>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
+#>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
+#>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.09  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.21  3.87  0.77  0.93
-#>    [8,]  0.03 -0.01  0.10  0.02 -0.02  0.11  0.00
-#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.16  0.00
-#>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
-#>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.16  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
+#>    [7,]  0.00  0.00  0.00  1.20  3.95  0.76  0.93
+#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
+#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
+#>   [10,] -0.02 -0.01 -0.01  0.00  0.05  0.07  0.00
+#>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.54 -0.33  0.32 -0.04
-#>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#>   [16,] -0.02  0.06 -0.01  0.00  0.09  0.03  0.00
+#>   [14,]  0.00  0.00  0.00  0.55 -0.39  0.27 -0.04
+#>   [15,]  0.01 -0.01  0.00  0.01 -0.01  0.00  0.00
+#>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
 #>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.13 -0.02 -0.61  0.00
+#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
+#>   [21,]  0.00  0.00  0.00 -0.13 -0.02 -0.59  0.00
 #>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
 #>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
-#>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.02  0.00
+#>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.14 -0.07 -0.17 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.15 -0.06 -0.14 -0.01
 #> 
 #> $Psi_posterior_mean
 #>       
 #>        [,1]  [,2]
 #>   [1,] 0.58  0.08
-#>   [2,] 0.51  0.46
+#>   [2,] 0.51  0.47
 #>   [3,] 4.94  2.02
-#>   [4,] 0.58 -0.03
+#>   [4,] 0.58 -0.04
 #>   [5,] 0.49  1.15
-#>   [6,] 4.29  4.44
+#>   [6,] 4.29  4.45
 #>   [7,] 3.92 -0.10
 #> 
 #> $Sigma_u_posterior_mean
@@ -546,8 +560,8 @@ Lets estimate the model with a Gibbs sampler instead.
 
 ``` r
 bvar_obj <- fit_gibbs(bvar_obj,
-                      iter = 10000,
-                      warmup = 5000)
+                      iter = 5000,
+                      warmup = 2500)
 ```
 
 We can check the posterior means
@@ -556,34 +570,34 @@ We can check the posterior means
 summary_bvar(bvar_obj, estimation = "gibbs")
 #> $beta_posterior_mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.13  0.00
+#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
 #>  [2,] -0.02  0.31  0.26  0.12 -0.07  0.01  0.00
-#>  [3,] -0.01  0.04  0.92 -0.04  0.06  0.04  0.00
-#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
+#>  [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
+#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.11  0.00
 #>  [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.23  3.89  0.76  0.94
-#>  [8,]  0.03 -0.01  0.10  0.02 -0.02  0.10  0.00
-#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.16  0.00
+#>  [7,]  0.00  0.00  0.00  1.23  4.00  0.85  0.93
+#>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
+#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
 #> [10,] -0.02 -0.01  0.00  0.00  0.04  0.07  0.00
-#> [11,]  0.00  0.00  0.00  0.11 -0.01  0.16  0.00
-#> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
+#> [11,]  0.00  0.00  0.00  0.12 -0.01  0.15  0.00
+#> [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
 #> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.54 -0.33  0.32 -0.04
+#> [14,]  0.00  0.00  0.00  0.55 -0.43  0.27 -0.04
 #> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#> [16,] -0.02  0.06 -0.01  0.00  0.08  0.03  0.00
+#> [16,] -0.02  0.06 -0.01  0.00  0.09  0.03  0.00
 #> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
 #> [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #> [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#> [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#> [21,]  0.00  0.00  0.00 -0.13 -0.01 -0.61  0.00
+#> [20,]  0.00  0.00  0.00  0.01 -0.01  0.00  0.00
+#> [21,]  0.00  0.00  0.00 -0.15 -0.05 -0.58  0.00
 #> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
 #> [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
 #> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
-#> [26,]  0.00  0.00  0.00  0.00  0.06 -0.02  0.00
+#> [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #> [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.14 -0.07 -0.17 -0.01
+#> [28,]  0.00  0.00  0.00 -0.16 -0.08 -0.17 -0.01
 #> 
 #> $Psi_posterior_mean
 #>      [,1]  [,2]
@@ -592,18 +606,18 @@ summary_bvar(bvar_obj, estimation = "gibbs")
 #> [3,] 4.94  2.03
 #> [4,] 0.58 -0.03
 #> [5,] 0.49  1.15
-#> [6,] 4.29  4.45
+#> [6,] 4.29  4.44
 #> [7,] 3.92 -0.10
 #> 
 #> $Sigma_u_posterior_mean
-#>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#> [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#> [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
-#> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#> [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
-#> [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
-#> [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
+#>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#> [1,]  0.15 -0.01  0.01  0.07 -0.01  0.00  0.00
+#> [2,] -0.01  0.09  0.05  0.01  0.12  0.04  0.00
+#> [3,]  0.01  0.05  0.52  0.01  0.18  0.11 -0.01
+#> [4,]  0.07  0.01  0.01  0.19 -0.05 -0.01  0.00
+#> [5,] -0.01  0.12  0.18 -0.05  0.60  0.11  0.00
+#> [6,]  0.00  0.04  0.11 -0.01  0.11  1.56 -0.01
+#> [7,]  0.00  0.00 -0.01  0.00  0.00 -0.01  0.00
 ```
 
 Very similar to the stan estimation (as it should be). Now lets plot the
