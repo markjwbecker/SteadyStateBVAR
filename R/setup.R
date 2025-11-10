@@ -34,6 +34,7 @@ setup <- function(x, p, deterministic=c("constant", "constant_and_dummy"), dummy
                 q=q,
                 dummy=dummy,
                 beta_OLS=beta_OLS,
-                Sigma_OLS=Sigma_OLS)
+                Sigma_OLS=Sigma_OLS,
+                xt=xt)
   return(x)
 }

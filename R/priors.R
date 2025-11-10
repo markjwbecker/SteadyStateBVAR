@@ -1,29 +1,48 @@
-priors<- function(x, lambda_1=0.2, lambda_2=0.5, fol_pm=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
+priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, fol_pm=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
   
   setup <- x$setup
   yt <- x$data
   k <- setup$k
   p <- setup$p
-  
+  q <- setup$q
+  xt <- setup$xt
   dummy <- setup$dummy
-  if (!is.null(dummy)) dummy <- ts(dummy, start=start(yt), frequency=frequency(yt))
   
-  if (is.null(dummy)){
-    obj <- bvartools::gen_var(as.ts(yt), p)
-  } else {
-    obj <- bvartools::gen_var(as.ts(yt), p, exogen=dummy, s=0)
+  Sigma_AR <- diag(0,k)
+  
+  for (i in 1:k){
+    
+    y <- yt[,i]
+    N = length(y)-p
+    
+    Y <- y[-c(1:p)]
+    W <- embed(y, dimension = p+1)[, -1]
+    X <- xt[-c(1:p), ,drop=F]
+    Q <- embed(xt, dimension = p+1)[, -(1:q)]
+    
+    Z <- cbind(W,X)
+    beta_OLS = solve((t(Z)%*%Z))%*%t(Z)%*%Y
+    U = Y-Z%*%beta_OLS
+    sigma2 <- t(U)%*%U/(nrow(Z)-ncol(Z))
+    Sigma_AR[i,i] <- sigma2
   }
   
-  mp <- bvartools::minnesota_prior(
-    obj,
-    kappa0 = lambda_1^2,
-    kappa1 = lambda_2^2,
-    sigma = "AR"
-    )
+  V <- lapply(1:p, function(x) matrix(0, k, k))
+  sigma <- sqrt(diag(Sigma_AR))
   
-  tmp <- diag(solve(mp$v_i)[1:(k*p*k),1:(k*p*k)])
-  tmp_mat <- matrix(tmp,k*p,k,byrow=TRUE)
-  Omega_beta <- diag(c(tmp_mat))
+  for (l in 1:p) {
+    for (i in 1:k) {
+      for (j in 1:k) {
+        if (i == j) {
+          V[[l]][i,j] <- (lambda_1/(l^lambda_3))^2
+        } else {
+          V[[l]][i,j] <- ((lambda_1*lambda_2*sigma[i])/(l^lambda_3*sigma[j]))^2
+        }
+      }
+    }
+  }
+  V_mat <- do.call(cbind, V)
+  Omega_beta <- diag(c(t(V_mat)))
   
   if (is.null(fol_pm)) fol_pm <- rep(0,k)
   
@@ -48,7 +67,7 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, fol_pm=NULL, theta_Psi=NULL, Om
   priors$Omega_Psi <- Omega_Psi
   
   priors$Jeffrey <- Jeffrey
-  
+  priors$Sigma_AR <- Sigma_AR
   x$priors <- priors
   
   return(x)
