@@ -268,8 +268,6 @@ bvar_obj <- priors(bvar_obj,
                    theta_Psi, 
                    Omega_Psi,
                    Jeffrey=TRUE)
-
-bvar_obj$priors$Sigma_AR
 ```
 
 Like in Villani (2009), to incorporate that Sweden is a small economy and therefore not likely to affect the foreign economy, we restrict the upper right submatrix in each $A_\ell$ for $\ell =1,\dots,k$ or equivalently restricting the bottom left $A_\ell'$ for $\ell =1,\dots,k$, to the zero matrix.
@@ -288,11 +286,10 @@ for(i in 1:p){
   restriction_matrix[rows, cols] <- 0
 }
 restriction_matrix
-
-zero_indices <- which(c(restriction_matrix) == 0)
 ```
-We can look at the restriction matrix for $\beta$ to see which elements we restrict to zero. Since the priors means for these elements are zero, we do the restriction by setting the prior variances to be very small, in this case $0.00001$.
+We can look at the restriction matrix for $\beta$ to see which elements we restrict to zero. Since the priors means for these elements are zero, we do the restriction by setting the relevant prior variances in $\Omega_\beta$ to be very small, in this case $0.00001$.
 ```{r, fig.width=8, fig.height=8}
+zero_indices <- which(c(restriction_matrix) == 0)
 diag(bvar_obj$priors$Omega_beta[zero_indices, zero_indices]) <- 0.00001
 ```
 Now we supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model.
