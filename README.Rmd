@@ -302,8 +302,8 @@ bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=5000,
-                     warmup=2500,
+                     iter=10000,
+                     warmup=5000,
                      chains=2)
 ```
 
@@ -376,8 +376,8 @@ Lets estimate the model with a Gibbs sampler instead.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- fit_gibbs(bvar_obj,
-                      iter = 5000,
-                      warmup = 2500)
+                      iter = 10000,
+                      warmup = 5000)
 ```
 
 We can check the posterior means
