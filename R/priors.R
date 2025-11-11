@@ -1,5 +1,7 @@
 priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, fol_pm=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
   
+  priors <- list()
+  
   setup <- x$setup
   yt <- x$data
   k <- setup$k
@@ -57,8 +59,6 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, fol_pm=NULL, thet
     priors$V_0 <- V_0
     priors$m_0 <- m_0
   }
-  
-  priors <- list()
   
   priors$theta_beta <- theta_beta
   priors$Omega_beta <- Omega_beta
