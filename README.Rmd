@@ -30,7 +30,7 @@ remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = 
 ```
 ## Introduction
 
-The Steady State BVAR($p$) model is
+The Steady State BVAR($p$) model (Villani, 2009) is
 
 $$
 y_t = \Psi x_t + A_1(y_{t-1}-\Psi x_{t-1})+\dots+A_p(y_{t-p}-\Psi x_{t-p})+u_t
@@ -54,7 +54,7 @@ A'_p
 \end{bmatrix}
 $$
 
-We can then rewrite the model as a nonlinear regression
+We can then rewrite the model as a nonlinear regression (Karlsson, 2013)
 
 $$
 y_t' =x_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t'
@@ -429,4 +429,10 @@ irf <- IRF(bvar_obj,
            ci=0.68,
            estimation="gibbs")
 ```
+
+## References
+
+Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression. In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
+
+Villani, M. (2009). Steady-state priors for vector autoregressions.*Journal of Applied Econometrics*. 24(4), pp. 630-650. 
 
