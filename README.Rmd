@@ -101,7 +101,7 @@ $$
 
 can be used instead for $\Sigma_u$.
 
-## Example
+## Example 1 (Swedish data)
 
 We will now replicate the model in the empirical analysis in Section 4.1 in Villani (2009). First let us load the library and also load the data
 
@@ -299,8 +299,8 @@ bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=10000,
-                     warmup=5000,
+                     iter=5000,
+                     warmup=2000,
                      chains=2)
 ```
 
@@ -369,66 +369,142 @@ irf <- IRF(bvar_obj,
            estimation="stan")
 ```
 
-Lets estimate the model with a Gibbs sampler instead.
+If desired, the user can estimate the model with a Gibbs sampler instead.
 
 ```{r, fig.width=8, fig.height=8}
-bvar_obj <- fit_gibbs(bvar_obj,
-                      iter = 10000,
-                      warmup = 5000)
+# bvar_obj <- fit_gibbs(bvar_obj,
+#                       iter = 10000,
+#                       warmup = 5000)
 ```
 
-We can check the posterior means
+And then repeat the analysis above
+
+```{r, fig.width=8, fig.height=8}
+# summary_bvar(bvar_obj, estimation = "gibbs")
+
+# bvar_obj <- forecast(bvar_obj,
+#               ci = 0.95,
+#               fcst_type = "mean",
+#               growth_rate_idx = c(1,2,4,5),
+#               plot_idx = c(4,5,6),
+#               estimation="gibbs")
+
+# irf <- IRF(bvar_obj,
+#            lag=20,
+#            response=4,
+#            shock=6,
+#            method="OIRF",
+#            ci=0.68,
+#            estimation="gibbs")
+```
+
+It will give very similar results (as it should be).
+
+## Example 2 (US data)
+
+Let us try some US data. The following data set contains quarterly time series for the US CPI inflation rate 'Dp', unemployment rate 'u', and Fed Funds rate 'r' from 1959Q2 to 2007Q4.
+
+```{r, fig.width=8, fig.height=8}
+library(bvartools)
+data("us_macrodata")
+yt <- us_macrodata
+plot.ts(yt)
+```
+Create the object
+
+```{r, fig.width=8, fig.height=8}
+bvar_obj <- SteadyStateBVAR::bvar(data = yt) #bvartools also has bvar() function
+```
+
+Let us skip the dummy this time and only have the constant as the deterministic variable and thus $q=1$.
+
+```{r, fig.width=8, fig.height=8}
+bvar_obj <- setup(bvar_obj,
+                  p=4,
+                  deterministic = "constant",
+                  dummy = NULL)
+```
+
+We can use the same hyperparameters as before. Here inflation rate is a growth variable and unemployment and fed funds rate are level variables.
+
+```{r, fig.width=8, fig.height=8}
+lambda_1 <- 0.2
+lambda_2 <- 0.5
+lambda_3 <- 1.0
+
+fol_pm=c(0,     #Dp
+         0.9,   #u
+         0.9    #r
+         )
+```
+
+And some priors for $\Psi$
+
+```{r, fig.width=8, fig.height=8}
+theta_Psi <- c(
+  ppi(1.7, 2.3,  annualize_growthrate=TRUE)$mean,    #psi_1: Dp
+  ppi(5, 7,      annualize_growthrate=FALSE)$mean,   #psi_1: u
+  ppi(2, 4,      annualize_growthrate=FALSE)$mean    #psi_1: r
+)
+
+Omega_Psi <- diag(c(
+  ppi(1.7, 2.3,  annualize_growthrate=TRUE)$var,     #psi_1: Dp
+  ppi(5, 7,      annualize_growthrate=FALSE)$var,    #psi_1: u
+  ppi(2, 4,      annualize_growthrate=FALSE)$var     #psi_1: r
+))
+```
+
+Lets put everything into the 'prior function'
+
+```{r, fig.width=8, fig.height=8}
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi, 
+                   Omega_Psi,
+                   Jeffrey=FALSE) #use inverse wishart prior instead
+```
+
+We supply our forecast horizon and then fit the model. Let us use the Gibbs sampler instead in this case.
+
+```{r, fig.width=8, fig.height=8}
+bvar_obj$H <- 20
+bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
+
+bvar_obj <- fit_gibbs(bvar_obj,
+                     iter=10000,
+                     warmup=5000)
+```
+Lets take a look at the posterior means
+
 ```{r, fig.width=8, fig.height=8}
 summary_bvar(bvar_obj, estimation = "gibbs")
 ```
-
-Very similar to the stan estimation (as it should be). Now lets plot the forecasts (which are also very similar).
+Lets plot the forecasts
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- forecast(bvar_obj,
               ci = 0.95,
               fcst_type = "mean",
-              growth_rate_idx = c(1,2,4,5),
-              plot_idx = c(4,5,6),
-              estimation="gibbs")
+              growth_rate_idx = c(1),
+              plot_idx = c(1,2,3),
+              estimation="gibbs",
+              show_all = TRUE)
 ```
-
-And the IRFs with Gibbs estimated model. Again, very similar.
+Lets see the response of interest rate to a shock in inflation.
 
 ```{r, fig.width=8, fig.height=8}
-par(mfrow=c(2,2))
 irf <- IRF(bvar_obj,
            lag=20,
-           response=4,
-           shock=6,
+           response=3,
+           shock=1,
            method="OIRF",
-           ci=0.68,
-           estimation="gibbs")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=4,
-           shock=6,
-           method="GIRF",
-           ci=0.68,
-           estimation="gibbs")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=5,
-           shock=6,
-           method="OIRF",
-           ci=0.68,
-           estimation="gibbs")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=5,
-           shock=6,
-           method="GIRF",
            ci=0.68,
            estimation="gibbs")
 ```
+
 
 ## References
 

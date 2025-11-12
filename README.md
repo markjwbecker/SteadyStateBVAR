@@ -120,7 +120,7 @@ $$
 
 can be used instead for $\Sigma_u$.
 
-## Example
+## Example 1 (Swedish data)
 
 We will now replicate the model in the empirical analysis in Section 4.1
 in Villani (2009). First let us load the library and also load the data
@@ -410,8 +410,8 @@ bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=10000,
-                     warmup=5000,
+                     iter=5000,
+                     warmup=2000,
                      chains=2)
 ```
 
@@ -424,39 +424,39 @@ summary_bvar(bvar_obj, estimation = "stan")
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
 #>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
-#>    [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
+#>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.20  3.96  0.78  0.93
+#>    [7,]  0.00  0.00  0.00  1.20  3.99  0.74  0.93
 #>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
 #>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
-#>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
+#>   [10,] -0.02 -0.01  0.00  0.00  0.04  0.07  0.00
 #>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
 #>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.55 -0.40  0.30 -0.04
+#>   [14,]  0.00  0.00  0.00  0.56 -0.40  0.30 -0.04
 #>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
 #>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
 #>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
 #>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.14 -0.03 -0.56  0.00
-#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
+#>   [21,]  0.00  0.00  0.00 -0.13 -0.03 -0.61  0.00
+#>   [22,]  0.03 -0.01  0.00 -0.01  0.02  0.02  0.00
+#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.17 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.16 -0.07 -0.17 -0.01
 #> 
 #> $Psi_posterior_mean
 #>       
 #>        [,1]  [,2]
 #>   [1,] 0.58  0.08
 #>   [2,] 0.51  0.46
-#>   [3,] 4.94  2.02
+#>   [3,] 4.95  2.02
 #>   [4,] 0.58 -0.03
 #>   [5,] 0.49  1.15
 #>   [6,] 4.29  4.45
@@ -467,10 +467,10 @@ summary_bvar(bvar_obj, estimation = "stan")
 #>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
 #>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#>   [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
-#>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.02  0.00
-#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
-#>   [6,]  0.00  0.04 0.11 -0.02  0.11  1.56 -0.01
+#>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
+#>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
+#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.12  0.00
+#>   [6,]  0.00  0.04 0.11 -0.01  0.12  1.56 -0.01
 #>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
@@ -545,122 +545,193 @@ irf <- IRF(bvar_obj,
 
 <img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
 
-Lets estimate the model with a Gibbs sampler instead.
+If desired, the user can estimate the model with a Gibbs sampler
+instead.
 
 ``` r
-bvar_obj <- fit_gibbs(bvar_obj,
-                      iter = 10000,
-                      warmup = 5000)
+# bvar_obj <- fit_gibbs(bvar_obj,
+#                       iter = 10000,
+#                       warmup = 5000)
 ```
 
-We can check the posterior means
+And then repeat the analysis above
+
+``` r
+# summary_bvar(bvar_obj, estimation = "gibbs")
+
+# bvar_obj <- forecast(bvar_obj,
+#               ci = 0.95,
+#               fcst_type = "mean",
+#               growth_rate_idx = c(1,2,4,5),
+#               plot_idx = c(4,5,6),
+#               estimation="gibbs")
+
+# irf <- IRF(bvar_obj,
+#            lag=20,
+#            response=4,
+#            shock=6,
+#            method="OIRF",
+#            ci=0.68,
+#            estimation="gibbs")
+```
+
+It will give very similar results (as it should be).
+
+## Example 2 (US data)
+
+Let us try some US data. The following data set contains quarterly time
+series for the US CPI inflation rate ‘Dp’, unemployment rate ‘u’, and
+Fed Funds rate ‘r’ from 1959Q2 to 2007Q4.
+
+``` r
+library(bvartools)
+#> Loading required package: coda
+#> 
+#> Attaching package: 'coda'
+#> The following object is masked from 'package:rstan':
+#> 
+#>     traceplot
+#> Loading required package: Matrix
+#> 
+#> Attaching package: 'bvartools'
+#> The following object is masked from 'package:SteadyStateBVAR':
+#> 
+#>     bvar
+data("us_macrodata")
+yt <- us_macrodata
+plot.ts(yt)
+```
+
+<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
+Create the object
+
+``` r
+bvar_obj <- SteadyStateBVAR::bvar(data = yt) #bvartools also has bvar() function
+```
+
+Let us skip the dummy this time and only have the constant as the
+deterministic variable and thus $q=1$.
+
+``` r
+bvar_obj <- setup(bvar_obj,
+                  p=4,
+                  deterministic = "constant",
+                  dummy = NULL)
+```
+
+We can use the same hyperparameters as before. Here inflation rate is a
+growth variable and unemployment and fed funds rate are level variables.
+
+``` r
+lambda_1 <- 0.2
+lambda_2 <- 0.5
+lambda_3 <- 1.0
+
+fol_pm=c(0,     #Dp
+         0.9,   #u
+         0.9    #r
+         )
+```
+
+And some priors for $\Psi$
+
+``` r
+theta_Psi <- c(
+  ppi(1.7, 2.3,  annualize_growthrate=TRUE)$mean,    #psi_1: Dp
+  ppi(5, 7,      annualize_growthrate=FALSE)$mean,   #psi_1: u
+  ppi(2, 4,      annualize_growthrate=FALSE)$mean    #psi_1: r
+)
+
+Omega_Psi <- diag(c(
+  ppi(1.7, 2.3,  annualize_growthrate=TRUE)$var,     #psi_1: Dp
+  ppi(5, 7,      annualize_growthrate=FALSE)$var,    #psi_1: u
+  ppi(2, 4,      annualize_growthrate=FALSE)$var     #psi_1: r
+))
+```
+
+Lets put everything into the ‘prior function’
+
+``` r
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi, 
+                   Omega_Psi,
+                   Jeffrey=FALSE) #use inverse wishart prior instead
+```
+
+We supply our forecast horizon and then fit the model. Let us use the
+Gibbs sampler instead in this case.
+
+``` r
+bvar_obj$H <- 20
+bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
+
+bvar_obj <- fit_gibbs(bvar_obj,
+                     iter=10000,
+                     warmup=5000)
+```
+
+Lets take a look at the posterior means
 
 ``` r
 summary_bvar(bvar_obj, estimation = "gibbs")
 #> $beta_posterior_mean
-#>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
-#>  [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
-#>  [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
-#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
-#>  [5,]  0.00  0.00  0.00  0.01  0.08  0.06  0.00
-#>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.21  3.97  0.80  0.93
-#>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
-#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
-#> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
-#> [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
-#> [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
-#> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.56 -0.40  0.27 -0.04
-#> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#> [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
-#> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#> [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
-#> [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#> [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
-#> [21,]  0.00  0.00  0.00 -0.14 -0.04 -0.62  0.00
-#> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#> [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
-#> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
-#> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
-#> [26,]  0.00  0.00  0.00  0.00  0.06 -0.02  0.00
-#> [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.15 -0.06 -0.15 -0.01
+#>        [,1]  [,2]  [,3]
+#>  [1,]  0.50  0.04  0.14
+#>  [2,] -0.13  1.24 -0.46
+#>  [3,]  0.06  0.00  0.94
+#>  [4,]  0.11  0.01  0.19
+#>  [5,]  0.10 -0.20  0.17
+#>  [6,] -0.03  0.01 -0.12
+#>  [7,]  0.21  0.01  0.05
+#>  [8,]  0.02 -0.10  0.12
+#>  [9,] -0.01  0.01  0.09
+#> [10,]  0.01  0.01  0.00
+#> [11,]  0.00 -0.02  0.15
+#> [12,]  0.00  0.00  0.02
 #> 
 #> $Psi_posterior_mean
-#>      [,1]  [,2]
-#> [1,] 0.58  0.08
-#> [2,] 0.51  0.46
-#> [3,] 4.94  2.02
-#> [4,] 0.58 -0.03
-#> [5,] 0.49  1.15
-#> [6,] 4.29  4.46
-#> [7,] 3.92 -0.10
+#>      [,1]
+#> [1,] 0.52
+#> [2,] 4.93
+#> [3,] 3.07
 #> 
 #> $Sigma_u_posterior_mean
-#>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#> [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
-#> [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
-#> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.02  0.00
-#> [5,] -0.01  0.13 0.18 -0.05  0.60  0.12  0.00
-#> [6,]  0.00  0.04 0.11 -0.02  0.12  1.55 -0.01
-#> [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
+#>       [,1]  [,2]  [,3]
+#> [1,]  0.14 -0.01  0.10
+#> [2,] -0.01  0.06 -0.11
+#> [3,]  0.10 -0.11  0.78
 ```
 
-Very similar to the stan estimation (as it should be). Now lets plot the
-forecasts (which are also very similar).
+Lets plot the forecasts
 
 ``` r
 bvar_obj <- forecast(bvar_obj,
               ci = 0.95,
               fcst_type = "mean",
-              growth_rate_idx = c(1,2,4,5),
-              plot_idx = c(4,5,6),
-              estimation="gibbs")
+              growth_rate_idx = c(1),
+              plot_idx = c(1,2,3),
+              estimation="gibbs",
+              show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-20-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-20-3.png" width="100%" />
-
-And the IRFs with Gibbs estimated model. Again, very similar.
+<img src="man/figures/README-unnamed-chunk-28-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-28-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-28-3.png" width="100%" />
+Lets see the response of interest rate to a shock in inflation.
 
 ``` r
-par(mfrow=c(2,2))
 irf <- IRF(bvar_obj,
            lag=20,
-           response=4,
-           shock=6,
+           response=3,
+           shock=1,
            method="OIRF",
-           ci=0.68,
-           estimation="gibbs")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=4,
-           shock=6,
-           method="GIRF",
-           ci=0.68,
-           estimation="gibbs")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=5,
-           shock=6,
-           method="OIRF",
-           ci=0.68,
-           estimation="gibbs")
-
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=5,
-           shock=6,
-           method="GIRF",
            ci=0.68,
            estimation="gibbs")
 ```
 
-<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-29-1.png" width="100%" />
 
 ## References
 
