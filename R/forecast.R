@@ -1,5 +1,5 @@
 forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"), 
-                          growth_rate_idx=NULL, plot_idx=NULL, estimation = c("stan", "gibbs"))
+                          growth_rate_idx=NULL, plot_idx=NULL, estimation = c("stan", "gibbs"),show_all=FALSE)
   {
   Y <- x$data
   freq <- frequency(Y)
@@ -77,13 +77,22 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
       ymax <- ceiling(ylim[2]*2)/2 # round up to nearest 0.5
       yticks <- seq(ymin, ymax, by = 0.5)
       
-      plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"), xlab = "Time", ylab = NULL,
-              xlim = c(head(time_fore,1)-8,tail(time_fore,1)),
-              ylim = ylim,col = "black", lwd = 2, yaxt = "n")
-      xlim_vals <- c(head(time_hist, 1), tail(time_fore, 1))
-      x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 1/freq)
-      abline(v = x_quarters, col = "gray", lty = 2) 
-      abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2) # every 0.5 increment
+      if (isFALSE(show_all)){
+        plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"), xlab = "Time", ylab = NULL,
+                xlim = c(head(time_fore,1)-8,tail(time_fore,1)),
+                ylim = ylim,col = "black", lwd = 2, yaxt = "n")
+        xlim_vals <- c(head(time_hist, 1), tail(time_fore, 1))
+        x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 1/freq)
+        abline(v = x_quarters, col = "gray", lty = 2) 
+        abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2) # every 0.5 increment
+        axis(side = 2, at = yticks, labels = yticks, las = 1)
+        points(as.numeric(time_hist), annual_hist, pch=16, col="black")
+        points(time_full[-1], m_full[-1], pch=16, col="blue")
+      } else {
+        plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"), xlab = "Time", ylab = NULL,
+                col = "black", lwd = 2,xlim=c(head(time_hist, 1), tail(time_fore, 1)),
+                ylim=range(upper_full,lower_full,c(annual_hist), na.rm=TRUE))
+      }
       
       polygon(
         c(time_full, rev(time_full)),
@@ -91,10 +100,7 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
         col = rgb(0, 0, 1, 0.2),
         border = NA
       )
-      axis(side = 2, at = yticks, labels = yticks, las = 1)
       lines(time_full, m_full, col = "blue", lwd = 2)
-      points(as.numeric(time_hist), annual_hist, pch=16, col="black")
-      points(time_full[-1], m_full[-1], pch=16, col="blue")
       
     } else {
       
@@ -108,14 +114,23 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
       ymax <- ceiling(ylim[2]*2)/2 # round up to nearest 0.5
       yticks <- seq(ymin, ymax, by = 0.5)
       
-      plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
-              xlim = c(head(time_fore,1)-8,tail(time_fore,1)),
-              ylim = ylim,col = "black", lwd = 2, yaxt = "n")
-      # add gridlines
-      xlim_vals <- c(head(time_hist, 1), tail(time_fore, 1))
-      x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 1/freq)
-      abline(v = x_quarters, col = "gray", lty = 2) 
-      abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2) # every 0.5 increment
+      if (isFALSE(show_all)){
+        plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
+                xlim = c(head(time_fore,1)-8,tail(time_fore,1)),
+                ylim = ylim,col = "black", lwd = 2, yaxt = "n")
+        # add gridlines
+        xlim_vals <- c(head(time_hist, 1), tail(time_fore, 1))
+        x_quarters <- seq(xlim_vals[1], xlim_vals[2], by = 1/freq)
+        abline(v = x_quarters, col = "gray", lty = 2) 
+        abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2) # every 0.5 increment
+        axis(side = 2, at = yticks, labels = yticks, las = 1)
+        points(as.numeric(time_hist), smply, pch=16, col="black")
+        points(time_full[-1], m_full[-1], pch=16, col="blue")
+      } else {
+        plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
+                col = "black", lwd = 2,xlim=c(head(time_hist, 1), tail(time_fore, 1)),
+                ylim=range(upper_full,lower_full,smply))
+      }
       
       polygon(
         c(time_full, rev(time_full)),
@@ -123,10 +138,7 @@ forecast <- function(x, ci=0.95, fcst_type=c("mean", "median"),
         col = rgb(0, 0, 1, 0.2),
         border = NA
       )
-      axis(side = 2, at = yticks, labels = yticks, las = 1)
       lines(time_full, m_full, col = "blue", lwd = 2)
-      points(as.numeric(time_hist), smply, pch=16, col="black")
-      points(time_full[-1], m_full[-1], pch=16, col="blue")
     }
   }
   x$forecasts$forecast = Y_pred_m
