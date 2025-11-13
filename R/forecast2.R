@@ -1,8 +1,9 @@
 forecast2 <- function(x, ci=0.95, fcst_type=c("mean", "median"), plot_idx=NULL, xlim, ylim){
   
+  alpha <- 1 - ci
+  
   Y_pred <- bvar_obj$fit$gibbs$fcst_draws
   Y_pred_m <- apply(Y_pred, c(1, 2), fcst_type)
-  alpha <- 1 - ci
   Y_pred_lower <- apply(Y_pred, c(1, 2), quantile, probs = alpha/2)
   Y_pred_upper <- apply(Y_pred, c(1, 2), quantile, probs = 1 - alpha/2)
   
@@ -27,7 +28,6 @@ forecast2 <- function(x, ci=0.95, fcst_type=c("mean", "median"), plot_idx=NULL, 
   ymin <- floor(ylim[1]*2)/2
   ymax <- ceiling(ylim[2]*2)/2
   yticks <- seq(ymin, ymax, by = 1)
-  
   plot.ts(smply, main = colnames(Y)[i],ylab = NULL,
           xlim=xlim,
           ylim=ylim,
@@ -35,8 +35,27 @@ forecast2 <- function(x, ci=0.95, fcst_type=c("mean", "median"), plot_idx=NULL, 
   
   axis(side = 2, at = yticks, labels = yticks, las = 1)
   
-  lines(time_full[-1], lower_full[-1], col = "blue", lwd = 2,lty=3)
-  lines(time_full[-1], upper_full[-1], col = "blue", lwd = 2,lty=3)
-  lines(time_full, m_full, col = "blue", lwd = 2)
+  lines(time_full[-1], lower_full[-1], col = "red", lwd = 2,lty=3)
+  lines(time_full[-1], upper_full[-1], col = "red", lwd = 2,lty=3)
+  lines(time_full, m_full, col = "red", lwd = 2)
+  
+  posterior_stan <- rstan::extract(x$fit$stan)
+  Y_pred2 <- posterior_stan$Y_pred
+  Y_pred_m2 <- apply(Y_pred2, c(2, 3), fcst_type)
+  Y_pred_lower2 <- apply(Y_pred2, c(2, 3), quantile, probs = alpha/2)
+  Y_pred_upper2 <- apply(Y_pred2, c(2, 3), quantile, probs = 1 - alpha/2)
+  
+  fcst_m2 <- Y_pred_m2[, i]
+  fcst_lower2 <- Y_pred_lower2[, i]
+  fcst_upper2 <- Y_pred_upper2[, i]
+  
+  m_full2 <- c(tail(smply, 1), fcst_m2)
+  lower_full2 <- c(tail(smply, 1), fcst_lower2)
+  upper_full2 <- c(tail(smply, 1), fcst_upper2)
+  lines(time_full[-1], lower_full2[-1], col = "blue", lwd = 2,lty=3)
+  lines(time_full[-1], upper_full2[-1], col = "blue", lwd = 2,lty=3)
+  lines(time_full, m_full2, col = "blue", lwd = 2)
+  
   abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2)
+  legend("bottomleft", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
 }

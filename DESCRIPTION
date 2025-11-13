@@ -17,4 +17,5 @@ Depends:
     R (>= 3.5.0),
     rstan,
     MASS,
-    LaplacesDemon
+    LaplacesDemon,
+    MTS
