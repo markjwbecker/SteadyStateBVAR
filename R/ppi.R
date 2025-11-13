@@ -1,4 +1,4 @@
-ppi <- function(l, u, annualize_growthrate = FALSE, alpha = 0.05, freq=4) {
+ppi <- function(l, u, alpha = 0.05, annualized_growthrate = FALSE, freq=4) {
 
   z <- qnorm(1 - alpha/2)
   
