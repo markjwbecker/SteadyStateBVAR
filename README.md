@@ -426,16 +426,69 @@ variables for the future periods and then we fit the model.
 bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
-# bvar_obj <- fit_stan(bvar_obj,
-#                      iter=5000,
-#                      warmup=2000,
-#                      chains=2)
+bvar_obj <- fit_stan(bvar_obj,
+                     iter=1000,
+                     warmup=500,
+                     chains=1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ``` r
-# summary_bvar(bvar_obj, estimation = "stan")
+summary_bvar(bvar_obj, estimation = "stan")
+#> $beta_posterior_mean
+#>        
+#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>    [1,]  0.18  0.03 -0.01  0.11  0.08 -0.11  0.00
+#>    [2,] -0.02  0.31  0.24  0.11 -0.07  0.00  0.00
+#>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.04  0.00
+#>    [4,]  0.00  0.00  0.00  0.24 -0.10 -0.11  0.00
+#>    [5,]  0.00  0.00  0.00  0.00  0.07  0.06  0.00
+#>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
+#>    [7,]  0.00  0.00  0.00  1.11  3.96  0.70  0.94
+#>    [8,]  0.03 -0.01  0.10  0.02 -0.02  0.11  0.00
+#>    [9,]  0.00  0.02  0.04  0.00 -0.03 -0.14  0.00
+#>   [10,] -0.02 -0.01  0.00  0.00  0.05  0.07  0.00
+#>   [11,]  0.00  0.00  0.00  0.12 -0.01  0.15  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.04  0.00
+#>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
+#>   [14,]  0.00  0.00  0.00  0.56 -0.28  0.22 -0.04
+#>   [15,]  0.01 -0.01  0.00  0.02 -0.02 -0.01  0.00
+#>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
+#>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
+#>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
+#>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
+#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
+#>   [21,]  0.00  0.00  0.00 -0.12 -0.03 -0.62  0.00
+#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
+#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
+#>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
+#>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.04  0.00
+#>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
+#>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
+#>   [28,]  0.00  0.00  0.00 -0.15 -0.02 -0.18 -0.01
+#> 
+#> $Psi_posterior_mean
+#>       
+#>        [,1]  [,2]
+#>   [1,] 0.58  0.07
+#>   [2,] 0.51  0.46
+#>   [3,] 4.95  2.02
+#>   [4,] 0.58 -0.02
+#>   [5,] 0.49  1.15
+#>   [6,] 4.29  4.46
+#>   [7,] 3.92 -0.09
+#> 
+#> $Sigma_u_posterior_mean
+#>       
+#>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
+#>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.01  0.00
+#>   [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
+#>   [3,]  0.01  0.05 0.51  0.01  0.18  0.10  0.00
+#>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
+#>   [5,] -0.01  0.13 0.18 -0.05  0.60  0.11  0.00
+#>   [6,]  0.01  0.04 0.10 -0.01  0.11  1.54 -0.01
+#>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
 Lets plot the forecasts. Lets select a 95% prediction interval and the
@@ -445,52 +498,56 @@ to yearly growth rates with ‘growth_rate_idx’ where we specify the index
 of the growth rate variables in $y_t$.
 
 ``` r
-# bvar_obj <- forecast(bvar_obj,
-#               ci = 0.95,
-#               fcst_type = "mean",
-#               growth_rate_idx = c(1,2,4,5),
-#               plot_idx = c(4,5,6),
-#               estimation="stan")
+bvar_obj <- forecast(bvar_obj,
+              ci = 0.95,
+              fcst_type = "mean",
+              growth_rate_idx = c(1,2,4,5),
+              plot_idx = c(4,5,6),
+              estimation="stan")
 ```
+
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-15-3.png" width="100%" />
 
 We can also do some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
 impulse response function (GIRF).
 
 ``` r
-# par(mfrow=c(2,2))
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=4,
-#            shock=6,
-#            method="OIRF",
-#            ci=0.68,
-#            estimation="stan")
-# 
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=4,
-#            shock=6,
-#            method="GIRF",
-#            ci=0.68,
-#            estimation="stan")
-# 
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=5,
-#            shock=6,
-#            method="OIRF",
-#            ci=0.68,
-#            estimation="stan")
-# 
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=5,
-#            shock=6,
-#            method="GIRF",
-#            ci=0.68,
-#            estimation="stan")
+par(mfrow=c(2,2))
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=4,
+           shock=6,
+           method="OIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=4,
+           shock=6,
+           method="GIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=5,
+           shock=6,
+           method="OIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=5,
+           shock=6,
+           method="GIRF",
+           ci=0.68,
+           estimation="stan")
 ```
+
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
 
 If desired, the user can estimate the model with a Gibbs sampler instead
 and then repeat the analysis above.
@@ -633,38 +690,13 @@ bvar_obj$H <- 12
 bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
 
 bvar_obj <- fit_gibbs(bvar_obj,
-                     iter=2000,
-                     warmup=1000)
+                     iter=1000,
+                     warmup=500)
 
 bvar_obj <- fit_stan(bvar_obj,
                      iter=1000,
                      warmup=500,
                      chains=1)
-#> 
-#> SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
-#> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.002536 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 25.36 seconds.
-#> Chain 1: Adjust your expectations accordingly!
-#> Chain 1: 
-#> Chain 1: 
-#> Chain 1: Iteration:   1 / 1000 [  0%]  (Warmup)
-#> Chain 1: Iteration: 100 / 1000 [ 10%]  (Warmup)
-#> Chain 1: Iteration: 200 / 1000 [ 20%]  (Warmup)
-#> Chain 1: Iteration: 300 / 1000 [ 30%]  (Warmup)
-#> Chain 1: Iteration: 400 / 1000 [ 40%]  (Warmup)
-#> Chain 1: Iteration: 500 / 1000 [ 50%]  (Warmup)
-#> Chain 1: Iteration: 501 / 1000 [ 50%]  (Sampling)
-#> Chain 1: Iteration: 600 / 1000 [ 60%]  (Sampling)
-#> Chain 1: Iteration: 700 / 1000 [ 70%]  (Sampling)
-#> Chain 1: Iteration: 800 / 1000 [ 80%]  (Sampling)
-#> Chain 1: Iteration: 900 / 1000 [ 90%]  (Sampling)
-#> Chain 1: Iteration: 1000 / 1000 [100%]  (Sampling)
-#> Chain 1: 
-#> Chain 1:  Elapsed Time: 98.551 seconds (Warm-up)
-#> Chain 1:                53.902 seconds (Sampling)
-#> Chain 1:                152.453 seconds (Total)
-#> Chain 1:
 ```
 
 Now lets do Figure 10
@@ -734,7 +766,7 @@ optimization of hyperparameters from noisy marginal likelihood
 estimates. *Journal of Applied Econometrics*. 38(4), pp. 577–595.
 
 Gustafsson, O., and Villani, M. (2025). Variational inference for
-steady-state BVARs. *arXiv preprint arXiv:2506.09271*.
+steady-state BVARs. \* arXiv preprint arXiv:2506.09271\*.
 
 Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
 In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic

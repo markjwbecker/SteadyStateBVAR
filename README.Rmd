@@ -302,68 +302,68 @@ diag(bvar_obj$priors$Omega_beta[zero_indices, zero_indices]) <- 0.00001
 ```
 Now we supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
-# bvar_obj <- fit_stan(bvar_obj,
-#                      iter=5000,
-#                      warmup=2000,
-#                      chains=2)
+bvar_obj <- fit_stan(bvar_obj,
+                     iter=1000,
+                     warmup=500,
+                     chains=1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ```{r, fig.width=8, fig.height=8}
-# summary_bvar(bvar_obj, estimation = "stan")
+summary_bvar(bvar_obj, estimation = "stan")
 ```
 
 Lets plot the forecasts. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$.
 
 ```{r, fig.width=8, fig.height=8}
-# bvar_obj <- forecast(bvar_obj,
-#               ci = 0.95,
-#               fcst_type = "mean",
-#               growth_rate_idx = c(1,2,4,5),
-#               plot_idx = c(4,5,6),
-#               estimation="stan")
+bvar_obj <- forecast(bvar_obj,
+              ci = 0.95,
+              fcst_type = "mean",
+              growth_rate_idx = c(1,2,4,5),
+              plot_idx = c(4,5,6),
+              estimation="stan")
 ```
 
 We can also do some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF).
 
 ```{r, fig.width=8, fig.height=8}
-# par(mfrow=c(2,2))
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=4,
-#            shock=6,
-#            method="OIRF",
-#            ci=0.68,
-#            estimation="stan")
-# 
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=4,
-#            shock=6,
-#            method="GIRF",
-#            ci=0.68,
-#            estimation="stan")
-# 
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=5,
-#            shock=6,
-#            method="OIRF",
-#            ci=0.68,
-#            estimation="stan")
-# 
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=5,
-#            shock=6,
-#            method="GIRF",
-#            ci=0.68,
-#            estimation="stan")
+par(mfrow=c(2,2))
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=4,
+           shock=6,
+           method="OIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=4,
+           shock=6,
+           method="GIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=5,
+           shock=6,
+           method="OIRF",
+           ci=0.68,
+           estimation="stan")
+
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=5,
+           shock=6,
+           method="GIRF",
+           ci=0.68,
+           estimation="stan")
 ```
 
 If desired, the user can estimate the model with a Gibbs sampler instead and then repeat the analysis above.
@@ -485,13 +485,13 @@ bvar_obj <- priors(bvar_obj,
 
 We supply our forecast horizon and then estimate the model. We do it both with Stan and with the Gibbs sampler.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=8, fig.height=8,results='hide'}
 bvar_obj$H <- 12
 bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
 
 bvar_obj <- fit_gibbs(bvar_obj,
-                     iter=2000,
-                     warmup=1000)
+                     iter=1000,
+                     warmup=500)
 
 bvar_obj <- fit_stan(bvar_obj,
                      iter=1000,
@@ -554,7 +554,7 @@ par(mfrow=c(1,1))
 
 Gustafsson, O., Villani, M., and Stockhammar, Pär. (2023). Bayesian optimization of hyperparameters from noisy marginal likelihood estimates. *Journal of Applied Econometrics*. 38(4), pp. 577–595.
 
-Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. *arXiv preprint 	arXiv:2506.09271*.
+Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. *	arXiv preprint 	arXiv:2506.09271*.
 
 Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression. In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
