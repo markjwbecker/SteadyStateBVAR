@@ -103,13 +103,14 @@ $$
 
 can be used instead for $\Sigma_u$.
 
-## Example 1 (Swedish data)
+## Example 1 (Villani, 2009)
 
 We will now replicate the model in the empirical analysis in Section 4.1 in Villani (2009). First let us load the library and also load the data
 
 ```{r example, message=FALSE, warning=FALSE}
 library(SteadyStateBVAR)
 data("villani2009")
+yt <- villani2009
 ```
 The data set contains quarterly data for Sweden over the time period 1980Q1–2005Q4. The seven variables are: trade-weighted measures of foreign GDP growth $(\Delta y_f)$, CPI inflation $(\pi_f)$ and the 3-month interest rate $(i_f)$, the corresponding domestic variables ($\Delta y$, $\pi$ and $i$), and the level of the real exchange rate defined as $q=s+p_f-p$, where $p_f$ and $p$ are the foreign and domestic CPI levels (in logs) and $s$ is the (log of the) trade weighted nominal exchange rate. As such we have
 
@@ -215,9 +216,7 @@ lower_mean_upper <- c(
 
 
 cat("Prior probability interval (95%):\n",lower_mean_upper)
-
 cat("\nAnnualized prior probability interval (95%):\n", 4 * lower_mean_upper)
-
 ```
 
 So now we do this for all steady state coefficients. Again, see Table I in Villani (2009).
@@ -402,6 +401,7 @@ Now I will estimate the same model in Section 3.3 in Gustafsson and Villani (202
 ```{r, fig.width=8, fig.height=8}
 rm(list = ls())
 data("GustafssonVillaniStockhammar2023")
+yt <- GustafssonVillaniStockhammar2023
 plot.ts(yt)
 ```
 
@@ -554,7 +554,7 @@ par(mfrow=c(1,1))
 
 Gustafsson, O., Villani, M., and Stockhammar, Pär. (2023). Bayesian optimization of hyperparameters from noisy marginal likelihood estimates. *Journal of Applied Econometrics*. 38(4), pp. 577–595.
 
-Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. *	arXiv preprint 	arXiv:2506.09271*.
+Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. *arXiv preprint 	arXiv:2506.09271*.
 
 Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression. In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 

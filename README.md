@@ -2,7 +2,7 @@
 - [SteadyStateBVAR](#steadystatebvar)
   - [Installation](#installation)
   - [Introduction](#introduction)
-  - [Example 1 (Swedish data)](#example-1-swedish-data)
+  - [Example 1 (Villani, 2009)](#example-1-villani-2009)
   - [Example 2 (Gustafsson and Villani,
     2025)](#example-2-gustafsson-and-villani-2025)
   - [References](#references)
@@ -131,7 +131,7 @@ $$
 
 can be used instead for $\Sigma_u$.
 
-## Example 1 (Swedish data)
+## Example 1 (Villani, 2009)
 
 We will now replicate the model in the empirical analysis in Section 4.1
 in Villani (2009). First let us load the library and also load the data
@@ -139,6 +139,7 @@ in Villani (2009). First let us load the library and also load the data
 ``` r
 library(SteadyStateBVAR)
 data("villani2009")
+yt <- villani2009
 ```
 
 The data set contains quarterly data for Sweden over the time period
@@ -289,7 +290,6 @@ lower_mean_upper <- c(
 cat("Prior probability interval (95%):\n",lower_mean_upper)
 #> Prior probability interval (95%):
 #>  0.425 0.5 0.575
-
 cat("\nAnnualized prior probability interval (95%):\n", 4 * lower_mean_upper)
 #> 
 #> Annualized prior probability interval (95%):
@@ -534,6 +534,7 @@ obtained the data.
 ``` r
 rm(list = ls())
 data("GustafssonVillaniStockhammar2023")
+yt <- GustafssonVillaniStockhammar2023
 plot.ts(yt)
 ```
 
@@ -642,8 +643,8 @@ bvar_obj <- fit_stan(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.001275 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 12.75 seconds.
+#> Chain 1: Gradient evaluation took 0.002536 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 25.36 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -660,9 +661,9 @@ bvar_obj <- fit_stan(bvar_obj,
 #> Chain 1: Iteration: 900 / 1000 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 1000 / 1000 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 187.121 seconds (Warm-up)
-#> Chain 1:                219.526 seconds (Sampling)
-#> Chain 1:                406.647 seconds (Total)
+#> Chain 1:  Elapsed Time: 98.551 seconds (Warm-up)
+#> Chain 1:                53.902 seconds (Sampling)
+#> Chain 1:                152.453 seconds (Total)
 #> Chain 1:
 ```
 
@@ -733,7 +734,7 @@ optimization of hyperparameters from noisy marginal likelihood
 estimates. *Journal of Applied Econometrics*. 38(4), pp. 577–595.
 
 Gustafsson, O., and Villani, M. (2025). Variational inference for
-steady-state BVARs. \* arXiv preprint arXiv:2506.09271\*.
+steady-state BVARs. *arXiv preprint arXiv:2506.09271*.
 
 Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
 In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic
