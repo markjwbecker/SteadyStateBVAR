@@ -307,9 +307,9 @@ bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=1000,
-                     warmup=500,
-                     chains=1)
+                     iter=10000,
+                     warmup=5000,
+                     chains=4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -490,13 +490,13 @@ bvar_obj$H <- 12
 bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
 
 bvar_obj <- fit_gibbs(bvar_obj,
-                     iter=1000,
-                     warmup=500)
+                     iter=50000,
+                     warmup=10000)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=1000,
-                     warmup=500,
-                     chains=1)
+                     iter=50000,
+                     warmup=10000,
+                     chains=4)
 ```
 
 Now lets do Figure 10
@@ -534,8 +534,6 @@ dens2 <- density(Psi_draws_stan[,4,])
 plot(dens1, xlab="Real consumption", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
 lines(dens2, col="blue", lwd=2)
 legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
-
-par(mfrow=c(1,1))
 ```
 
 And Figure 11
@@ -544,9 +542,8 @@ And Figure 11
 par(mfrow=c(2,2))
 forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
 forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(2), xlim=c(39.25,58), ylim=c(-1,4))
-forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6))
-forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6))
-par(mfrow=c(1,1))
+forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6.5))
+forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
 ```
 
 
