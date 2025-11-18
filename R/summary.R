@@ -1,24 +1,49 @@
-summary_bvar <- function(x, estimation = c("stan", "gibbs")) {
-  estimation <- match.arg(estimation)
+summary.bvar <- function(object) {
   
-  if (estimation == "gibbs") {
-    fit_obj <- x$fit$gibbs
-    beta_posterior_mean <- fit_obj$beta_post_mean
-    Psi_posterior_mean  <- fit_obj$Psi_post_mean
-    Sigma_u_posterior_mean <- fit_obj$Sigma_u_post_mean
-  } else {
-    fit_obj <- x$fit$stan
-    posterior <- rstan::extract(fit_obj)
-    beta_posterior_mean <- apply(posterior$beta, c(2,3), mean)
-    Psi_posterior_mean  <- apply(posterior$Psi, c(2,3), mean)
-    Sigma_u_posterior_mean <- apply(posterior$Sigma_u, c(2,3), mean)
+  has_stan  <- !is.null(object$fit$stan)
+  has_gibbs <- !is.null(object$fit$gibbs)
+  
+  if (!has_stan && !has_gibbs)
+    stop("No estimation results found in object$fit.")
+  
+  summaries <- list()
+  
+  if (has_gibbs) {
+    fit <- object$fit$gibbs
+    summaries$gibbs <- list(
+      method = "Gibbs",
+      beta  = round(fit$beta_post_mean, 2),
+      Psi   = round(fit$Psi_post_mean, 2),
+      Sigma = round(fit$Sigma_u_post_mean, 2)
+    )
   }
   
-  res <- list(
-    beta_posterior_mean = round(beta_posterior_mean,2),
-    Psi_posterior_mean = round(Psi_posterior_mean,2),
-    Sigma_u_posterior_mean = round(Sigma_u_posterior_mean,2)
-  )
+  if (has_stan) {
+    fit <- object$fit$stan
+    posterior <- rstan::extract(fit)
+    summaries$stan <- list(
+      method = "Stan",
+      beta  = round(apply(posterior$beta,  c(2,3), mean), 2),
+      Psi   = round(apply(posterior$Psi,   c(2,3), mean), 2),
+      Sigma = round(apply(posterior$Sigma_u, c(2,3), mean), 2)
+    )
+  }
+  
+  out <- list(summaries = summaries)
+  class(out) <- "summary.bvar"
+  return(out)
+}
 
-  return(res)
+print.summary.bvar <- function(x) {
+  for (method_name in names(x$summaries)) {
+    s <- x$summaries[[method_name]]
+    cat("====================================\n")
+    cat("Estimation Method:", s$method, "\n")
+    cat("====================================\n\n")
+    
+    cat("beta posterior mean\n\n"); print(s$beta); cat("\n")
+    cat("Psi posterior mean\n\n"); print(s$Psi); cat("\n")
+    cat("Sigma_u posterior mean\n\n"); print(s$Sigma); cat("\n\n")
+  }
+  invisible(x)
 }

@@ -1,8 +1,12 @@
-setup <- function(x, p, deterministic=c("constant", "constant_and_dummy"), dummy=NULL) {
+setup <- function(x, ...) {
+  UseMethod("setup")
+}
+
+setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), dummy=NULL) {
   
   yt <- x$data
-  N = dim(yt)[1]-p
-  k = dim(yt)[2]
+  N = nrow(yt)-p
+  k = ncol(yt)
   
   deterministic <- match.arg(deterministic)
   
