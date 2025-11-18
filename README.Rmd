@@ -307,8 +307,8 @@ bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=1000,
-                     warmup=500,
+                     iter=10000,
+                     warmup=5000,
                      chains=1)
 ```
 
@@ -490,12 +490,12 @@ bvar_obj$H <- 12
 bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
 
 bvar_obj <- fit_gibbs(bvar_obj,
-                     iter=1000,
-                     warmup=500)
+                     iter=20000,
+                     warmup=10000)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=1000,
-                     warmup=500,
+                     iter=20000,
+                     warmup=10000,
                      chains=1)
 ```
 
@@ -536,14 +536,14 @@ lines(dens2, col="blue", lwd=2)
 legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
 ```
 
-And Figure 11
+And Figure 11 (mean +/- 1 std deviation credible bands)
 
 ```{r, fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
-forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
-forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(2), xlim=c(39.25,58), ylim=c(-1,4))
-forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6.5))
-forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
+forecast2(bvar_obj, fcst_type="mean", plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
+forecast2(bvar_obj, fcst_type="mean", plot_idx=c(2), xlim=c(39.25,58), ylim=c(-1,4))
+forecast2(bvar_obj, fcst_type="mean", plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6.5))
+forecast2(bvar_obj, fcst_type="mean", plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
 ```
 
 
