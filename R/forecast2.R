@@ -1,6 +1,6 @@
 forecast2 <- function(x, fcst_type=c("mean", "median"), plot_idx=NULL, xlim, ylim){
   
-  alpha <- 1 - ci
+  #alpha <- 1 - ci
   
   Y_pred <- bvar_obj$fit$gibbs$fcst_draws
   Y_pred_m <- apply(Y_pred, c(1, 2), fcst_type)
