@@ -17,6 +17,7 @@ fit_stan <- function(x, iter, warmup, chains=2) {
     stan_file <- system.file("STEADYSTATEBVAR2.stan", package = "SteadyStateBVAR")
   } else {
     stan_file <- system.file("STEADYSTATEBVAR3.stan", package = "SteadyStateBVAR")
+    #stan_file <- system.file("STEADYSTATEBVAR4.stan", package = "SteadyStateBVAR")
   }
   
   rstan_options(auto_write = TRUE)
