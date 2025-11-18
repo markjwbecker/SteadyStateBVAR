@@ -1,11 +1,12 @@
-forecast2 <- function(x, ci=0.95, fcst_type=c("mean", "median"), plot_idx=NULL, xlim, ylim){
+forecast2 <- function(x, fcst_type=c("mean", "median"), plot_idx=NULL, xlim, ylim){
   
   alpha <- 1 - ci
   
   Y_pred <- bvar_obj$fit$gibbs$fcst_draws
   Y_pred_m <- apply(Y_pred, c(1, 2), fcst_type)
-  Y_pred_lower <- apply(Y_pred, c(1, 2), quantile, probs = alpha/2)
-  Y_pred_upper <- apply(Y_pred, c(1, 2), quantile, probs = 1 - alpha/2)
+  Y_pred_sd <- apply(Y_pred, c(1, 2), sd)
+  Y_pred_lower <- Y_pred_m - 1 * Y_pred_sd
+  Y_pred_upper <- Y_pred_m + 1 * Y_pred_sd
   
   Y <- bvar_obj$data
   freq <- frequency(Y)
@@ -42,8 +43,9 @@ forecast2 <- function(x, ci=0.95, fcst_type=c("mean", "median"), plot_idx=NULL, 
   posterior_stan <- rstan::extract(x$fit$stan)
   Y_pred2 <- posterior_stan$Y_pred
   Y_pred_m2 <- apply(Y_pred2, c(2, 3), fcst_type)
-  Y_pred_lower2 <- apply(Y_pred2, c(2, 3), quantile, probs = alpha/2)
-  Y_pred_upper2 <- apply(Y_pred2, c(2, 3), quantile, probs = 1 - alpha/2)
+  Y_pred_sd2 <- apply(Y_pred2, c(2, 3), sd)
+  Y_pred_lower2 <- Y_pred_m2 - 1 * Y_pred_sd2
+  Y_pred_upper2 <- Y_pred_m2 + 1 * Y_pred_sd2
   
   fcst_m2 <- Y_pred_m2[, i]
   fcst_lower2 <- Y_pred_lower2[, i]
