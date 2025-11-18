@@ -307,9 +307,9 @@ bvar_obj$H <- 8
 bvar_obj$X_pred <- cbind(rep(1, bvar_obj$H), 0)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=10000,
-                     warmup=5000,
-                     chains=4)
+                     iter=1000,
+                     warmup=500,
+                     chains=1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -490,13 +490,13 @@ bvar_obj$H <- 12
 bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
 
 bvar_obj <- fit_gibbs(bvar_obj,
-                     iter=50000,
-                     warmup=10000)
+                     iter=1000,
+                     warmup=500)
 
 bvar_obj <- fit_stan(bvar_obj,
-                     iter=50000,
-                     warmup=10000,
-                     chains=4)
+                     iter=1000,
+                     warmup=500,
+                     chains=1)
 ```
 
 Now lets do Figure 10
@@ -551,7 +551,7 @@ forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(4), xlim=c(39.25,
 
 Gustafsson, O., Villani, M., and Stockhammar, Pär. (2023). Bayesian optimization of hyperparameters from noisy marginal likelihood estimates. *Journal of Applied Econometrics*. 38(4), pp. 577–595.
 
-Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. *	arXiv preprint 	arXiv:2506.09271*.
+Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. *arXiv preprint 	arXiv:2506.09271*.
 
 Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression. In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
