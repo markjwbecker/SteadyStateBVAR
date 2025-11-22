@@ -4,11 +4,10 @@ setup <- function(x, ...) {
 
 setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), dummy=NULL) {
   
+  deterministic <- match.arg(deterministic)
   yt <- x$data
   N = nrow(yt)-p
   k = ncol(yt)
-  
-  deterministic <- match.arg(deterministic)
   
   if (deterministic == "constant") {
     xt <- cbind(rep(1, nrow(yt)))
