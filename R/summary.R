@@ -8,16 +8,6 @@ summary.bvar <- function(object) {
   
   summaries <- list()
   
-  if (has_gibbs) {
-    fit <- object$fit$gibbs
-    summaries$gibbs <- list(
-      method = "Gibbs",
-      beta  = round(fit$beta_post_mean, 2),
-      Psi   = round(fit$Psi_post_mean, 2),
-      Sigma = round(fit$Sigma_u_post_mean, 2)
-    )
-  }
-  
   if (has_stan) {
     fit <- object$fit$stan
     posterior <- rstan::extract(fit)
@@ -26,6 +16,16 @@ summary.bvar <- function(object) {
       beta  = round(apply(posterior$beta,  c(2,3), mean), 2),
       Psi   = round(apply(posterior$Psi,   c(2,3), mean), 2),
       Sigma = round(apply(posterior$Sigma_u, c(2,3), mean), 2)
+    )
+  }
+  
+  if (has_gibbs) {
+    fit <- object$fit$gibbs
+    summaries$gibbs <- list(
+      method = "Gibbs",
+      beta  = round(fit$beta_post_mean, 2),
+      Psi   = round(fit$Psi_post_mean, 2),
+      Sigma = round(fit$Sigma_u_post_mean, 2)
     )
   }
   
@@ -41,9 +41,8 @@ print.summary.bvar <- function(x) {
     cat("Estimation Method:", s$method, "\n")
     cat("====================================\n\n")
     
-    cat("beta posterior mean\n\n"); print(s$beta); cat("\n")
-    cat("Psi posterior mean\n\n"); print(s$Psi); cat("\n")
-    cat("Sigma_u posterior mean\n\n"); print(s$Sigma); cat("\n\n")
+    cat("beta posterior mean\n"); print(s$beta); cat("\n")
+    cat("Psi posterior mean\n"); print(s$Psi); cat("\n")
+    cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n\n")
   }
-  invisible(x)
 }
