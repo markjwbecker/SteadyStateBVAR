@@ -309,13 +309,8 @@ Then we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit_stan(bvar_obj,
-<<<<<<< HEAD
-                     iter=10000,
-                     warmup=5000,
-=======
                      iter=1000,
                      warmup=500,
->>>>>>> newstuff
                      chains=1)
 ```
 
@@ -329,8 +324,7 @@ Lets plot the forecasts. Lets select a 95% prediction interval and the mean of t
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- forecast(bvar_obj,
-              ci = 0.2,
-              sd=TRUE,
+              ci =0.95,
               fcst_type = "mean",
               growth_rate_idx = c(4,5),
               plot_idx = c(4,5,6),
@@ -496,19 +490,6 @@ Lets put everything into the 'priors function'
 We supply our forecast horizon and then estimate the model. We do it both with Stan and with the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8,results='hide'}
-<<<<<<< HEAD
-bvar_obj$H <- 12
-bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
-
-bvar_obj <- fit_gibbs(bvar_obj,
-                     iter=20000,
-                     warmup=10000)
-
-bvar_obj <- fit_stan(bvar_obj,
-                     iter=20000,
-                     warmup=10000,
-                     chains=1)
-=======
 # bvar_obj$H <- 12
 # bvar_obj$X_pred <- matrix(rep(1, bvar_obj$H))
 # 
@@ -520,7 +501,6 @@ bvar_obj <- fit_stan(bvar_obj,
 #                      iter=50000,
 #                      warmup=10000,
 #                      chains=4)
->>>>>>> newstuff
 ```
 
 Now lets do Figure 10
@@ -563,19 +543,11 @@ Now lets do Figure 10
 And Figure 11 (mean +/- 1 std deviation credible bands)
 
 ```{r, fig.width=8, fig.height=8}
-<<<<<<< HEAD
-par(mfrow=c(2,2))
-forecast2(bvar_obj, fcst_type="mean", plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
-forecast2(bvar_obj, fcst_type="mean", plot_idx=c(2), xlim=c(39.25,58), ylim=c(-1,4))
-forecast2(bvar_obj, fcst_type="mean", plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6.5))
-forecast2(bvar_obj, fcst_type="mean", plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
-=======
 # par(mfrow=c(2,2))
 # forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
 # forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(2), xlim=c(39.25,58), ylim=c(-1,4))
 # forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6.5))
 # forecast2(bvar_obj, ci=0.6826895, fcst_type="mean", plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
->>>>>>> newstuff
 ```
 
 
