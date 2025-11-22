@@ -1,1 +1,3 @@
 exportPattern("^[[:alpha:]]+")
+export(setup)          # make generic visible externally
+S3method(setup, bvar) # register method
