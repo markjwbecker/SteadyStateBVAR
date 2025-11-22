@@ -45,4 +45,5 @@ print.summary.bvar <- function(x) {
     cat("Psi posterior mean\n"); print(s$Psi); cat("\n")
     cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n\n")
   }
+  invisible(x)
 }
