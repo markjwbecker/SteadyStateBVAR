@@ -281,13 +281,13 @@ Like in Villani (2009), to incorporate that Sweden is a small economy and theref
 ```{r, fig.width=8, fig.height=8}
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
-k1 <- 3 #first 3 variables are foreign in yt
+k_f <- 3 #first 3 variables are foreign in yt
 
 restriction_matrix <- matrix(1, k*p, k)
 
 for(i in 1:p){
-  rows <- ((i-1)*k + k1 + 1) : (i*k)
-  cols <- 1:k1
+  rows <- ((i-1)*k + k_f + 1) : (i*k)
+  cols <- 1:k_f
   restriction_matrix[rows, cols] <- 0
 }
 restriction_matrix
@@ -310,8 +310,7 @@ Then we can fit the model.
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit_stan(bvar_obj,
                      iter=1000,
-                     warmup=500,
-                     chains=1)
+                     warmup=500)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -324,13 +323,11 @@ Lets plot the forecasts. Lets select a 95% prediction interval and the mean of t
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- forecast(bvar_obj,
-              ci =0.95,
+              ci = 0.95,
               fcst_type = "mean",
               growth_rate_idx = c(4,5),
               plot_idx = c(4,5,6),
-              estimation="stan",
-              xlim=c(1998,2008),
-              ylim=c(-1,6))
+              estimation="gibbs")
 ```
 
 We can also do some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF).

@@ -111,8 +111,8 @@ forecast <- function(x,
         points(time_full[-1], m_full[-1], pch=16, col="blue")
       } else {
         plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"), xlab = "Time", ylab = NULL,
-                col = "black", lwd = 2,xlim=c(head(time_hist, 1), tail(time_fore, 1)),
-                ylim=range(upper_full,lower_full,c(annual_hist), na.rm=TRUE), yaxt="n")
+                col = "black", lwd = 2,xlim=c(tail(time_full,1)-10, tail(time_fore, 1)),
+                ylim=range(upper_full,lower_full,c(m_full), na.rm=TRUE), yaxt="n")
         abline(h = seq(ymin-100, ymax+100, by = 0.5), col = "gray", lty = 2)
         axis(side = 2, at = yticks, labels = yticks, las = 1)
         points(as.numeric(time_hist), annual_hist, pch=16, col="black")
@@ -151,8 +151,8 @@ forecast <- function(x,
       
      } else {
         plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
-                col = "black", lwd = 2,xlim=c(head(time_hist, 1), tail(time_fore, 1)),
-                ylim=range(upper_full,lower_full,smply), yaxt="n")
+                col = "black", lwd = 2,xlim=c(tail(time_full, 1)-10, tail(time_fore, 1)),
+                ylim=range(upper_full,lower_full,m_full), yaxt="n")
        abline(h = seq(ymin-100, ymax+100, by = 0.5), col = "gray", lty = 2)
        axis(side = 2, at = yticks, labels = yticks, las = 1)
        points(as.numeric(time_hist), smply, pch=16, col="black")
