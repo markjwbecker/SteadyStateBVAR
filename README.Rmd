@@ -108,12 +108,7 @@ can be used instead for $\Sigma_u$.
 We will now replicate the model in the empirical analysis in Section 4.1 in Villani (2009). First let us load the library and also load the data
 
 ```{r example, message=FALSE, warning=FALSE}
-#library(SteadyStateBVAR)
-r_files <- list.files("R", pattern = "\\.R$", full.names = TRUE)
-library(LaplacesDemon)
-library(rstan)
-library(MASS)
-sapply(r_files, source)
+library(SteadyStateBVAR)
 data("villani2009")
 yt <- villani2009
 ```
