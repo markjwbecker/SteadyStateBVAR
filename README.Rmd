@@ -174,7 +174,6 @@ bvar_obj <- setup(bvar_obj,
                   p=4,
                   deterministic = "constant_and_dummy",
                   dummy = dum_var)
-setup.bvar
 ```
 
 Now let us specify the priors. We first consider $\beta$. We choose the same values for the hyperparameters as in Villani (2009), i.e. overall tightness $\lambda_1=0.2$, cross equation tightness $\lambda_2=0.5$ and lag decay rate $\lambda_3=1$. We then specify the prior means for the first own lags of the variables. For variables in growth rates, we set the prior mean to $0$, for variables in levels, we set the prior mean to 0.9.
@@ -303,7 +302,7 @@ At last we need to supply our forecast horizon $H$, and also the deterministic v
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj$forecasts$H <- 12
-bvar_obj$forecasts$X_pred <- cbind(rep(1, 8), 0)
+bvar_obj$forecasts$X_pred <- cbind(rep(1, 12), 0)
 ```
 
 Then we can fit the model.
