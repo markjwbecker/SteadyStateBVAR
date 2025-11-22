@@ -19,3 +19,4 @@ Depends:
     MASS,
     LaplacesDemon,
     MTS
+RoxygenNote: 7.3.2

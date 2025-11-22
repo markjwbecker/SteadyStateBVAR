@@ -6,8 +6,8 @@ fit_stan <- function(x, iter, warmup, chains=2) {
   stan_data <- c(
     stan_data,
     list(
-      H = x$H,
-      X_pred = x$X_pred
+      H = x$forecasts$H,
+      X_pred = x$forecasts$X_pred
     ),
     x$priors
   )
