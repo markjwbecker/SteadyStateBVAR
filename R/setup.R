@@ -1,9 +1,14 @@
+setup <- function(x, ...) {
+  UseMethod("setup")
+}
+
 setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), dummy=NULL) {
   
-  deterministic <- match.arg(deterministic)
   yt <- x$data
   N = nrow(yt)-p
   k = ncol(yt)
+  
+  deterministic <- match.arg(deterministic)
   
   if (deterministic == "constant") {
     xt <- cbind(rep(1, nrow(yt)))
@@ -24,16 +29,16 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), 
   Sigma_OLS <- t(U)%*%U/(N-k*p-q)
   
   x$setup <- list(N=N,
-                k=k,
-                p=p,
-                Y=Y,
-                X=X,
-                W=W,
-                Q=Q,
-                q=q,
-                dummy=dummy,
-                beta_OLS=beta_OLS,
-                Sigma_OLS=Sigma_OLS,
-                xt=xt)
+                  k=k,
+                  p=p,
+                  Y=Y,
+                  X=X,
+                  W=W,
+                  Q=Q,
+                  q=q,
+                  dummy=dummy,
+                  beta_OLS=beta_OLS,
+                  Sigma_OLS=Sigma_OLS,
+                  xt=xt)
   return(x)
 }
