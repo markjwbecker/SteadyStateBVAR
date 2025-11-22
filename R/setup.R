@@ -1,7 +1,3 @@
-setup <- function(x, ...) {
-  UseMethod("setup")
-}
-
 setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), dummy=NULL) {
   
   deterministic <- match.arg(deterministic)
