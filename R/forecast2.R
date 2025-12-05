@@ -1,7 +1,5 @@
 forecast2 <- function(x, fcst_type=c("mean", "median"), plot_idx=NULL, xlim, ylim){
   
-  #alpha <- 1 - ci
-  
   Y_pred <- bvar_obj$fit$gibbs$fcst_draws
   Y_pred_m <- apply(Y_pred, c(1, 2), fcst_type)
   Y_pred_sd <- apply(Y_pred, c(1, 2), sd)
@@ -11,7 +9,7 @@ forecast2 <- function(x, fcst_type=c("mean", "median"), plot_idx=NULL, xlim, yli
   Y <- bvar_obj$data
   freq <- frequency(Y)
   T <- nrow(Y)
-  H <- bvar_obj$H
+  H <- bvar_obj$forecasts$H
   m <- ncol(Y)
   time_hist <- time(Y)
   time_fore <- seq(tail(time_hist, 1) + 1/freq, by = 1/freq, length.out = H)
