@@ -490,8 +490,8 @@ bvar_obj$forecasts$H <- 12
 bvar_obj$forecasts$X_pred <- matrix(rep(1, 12))
 
 bvar_obj <- fit_gibbs(bvar_obj,
-                     iter=20000,
-                     warmup=10000)
+                     iter=10000,
+                     warmup=5000)
 
 bvar_obj <- fit_stan(bvar_obj,
                      iter=5000,
