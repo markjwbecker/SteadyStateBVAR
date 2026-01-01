@@ -1,11 +1,11 @@
-bvar <- function(data = NULL, setup = NULL, priors = NULL, fit = list(gibbs = NULL, stan = NULL), forecasts=list()) {
+bvar <- function(data = NULL, setup = NULL, priors = NULL, fit = list(stan = NULL, gibbs = NULL), predict=list()) {
   
   obj <- list(
-    data   = data,
-    setup  = setup,
-    priors = priors,
-    fit    = fit,
-    forecasts = forecasts
+    data      = data,
+    setup     = setup,
+    priors    = priors,
+    fit       = fit,
+    predict   = predict
   )
   
   class(obj) <- "bvar"

@@ -1,4 +1,4 @@
-priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, fol_pm=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
+priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_prior_mean=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
   
   priors <- list()
   
@@ -23,9 +23,9 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, fol_pm=NULL, thet
     Q <- embed(xt, dimension = p+1)[, -(1:q)]
     
     Z <- cbind(W,X)
-    beta_OLS = solve((t(Z)%*%Z))%*%t(Z)%*%Y
+    beta_OLS = solve(crossprod(Z,Z),crossprod(Z,Y))
     U = Y-Z%*%beta_OLS
-    sigma2 <- t(U)%*%U/(nrow(Z)-ncol(Z))
+    sigma2 <- crossprod(U,U)/(nrow(Z)-ncol(Z))
     Sigma_AR[i,i] <- sigma2
   }
   
@@ -46,11 +46,11 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, fol_pm=NULL, thet
   V_mat <- do.call(cbind, V)
   Omega_beta <- diag(c(t(V_mat)))
   
-  if (is.null(fol_pm)) fol_pm <- rep(0,k)
+  if (is.null(first_own_lag_prior_mean)) first_own_lag_prior_mean <- rep(0,k)
   
   mat <- matrix(0, nrow = k*p, ncol = k)
   for (i in 1:k){
-    mat[i,i] <- fol_pm[i]
+    mat[i,i] <- first_own_lag_prior_mean[i]
   }
   theta_beta = c(mat)
   if(isFALSE(Jeffrey)){
