@@ -61,9 +61,9 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     S = crossprod(U)
     N = nrow(U)
     if (isFALSE(Jeffrey)){
-      Psi[[j]] = rinvwishart(N+v_, S+S_)
+      Psi[[j]] = LaplacesDemon::rinvwishart(N+v_, S+S_)
     } else {
-      Psi[[j]] = rinvwishart(N, S)  
+      Psi[[j]] = LaplacesDemon::rinvwishart(N, S)  
     }
     ############ EQ 30 ################
     Y_Lambda = Y-X%*%t(Lambda)
@@ -73,7 +73,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     
     gamma_d_bar = Sigma_d_bar %*% (solve(Sigma_d_lbar)%*%gamma_d_lbar + c(t(W_Lambda)%*%Y_Lambda%*%solve(Psi[[j]])))
     
-    gamma_d[[j]] = mvrnorm(1, gamma_d_bar, Sigma_d_bar)
+    gamma_d[[j]] = MASS::mvrnorm(1, gamma_d_bar, Sigma_d_bar)
     
     ############ EQ 31 ################
     Gamma_d <- matrix(gamma_d[[j]],k*p,k)
@@ -95,7 +95,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     Sigma_lambda_bar = solve(solve(Sigma_lambda_lbar)+t(F) %*% ((crossprod(B))%x%solve(Psi[[j]])) %*% F)
     lambda_bar = Sigma_lambda_bar %*% (solve(Sigma_lambda_lbar)%*%lambda_lbar+t(F)%*%c(solve(Psi[[j]])%*%t(Y_gamma)%*%B))
     
-    lambda[[j]] <- mvrnorm(1, lambda_bar, Sigma_lambda_bar)
+    lambda[[j]] <- MASS::mvrnorm(1, lambda_bar, Sigma_lambda_bar)
   }
   
   burnin <- warmup
@@ -133,7 +133,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     
     for (h in 1:H) {
       
-      u_t <- mvrnorm(1, rep(0, k), Psi)
+      u_t <- MASS::mvrnorm(1, rep(0, k), Psi)
       yhat_t <- X_pred[h, ] %*% t(Lambda)
       
       if (h > 1) {
