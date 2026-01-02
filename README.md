@@ -251,21 +251,23 @@ fol_pm=c(0,   #delta y_f
 ```
 
 Now moving on to $\Psi$ for the steady state priors, we set them
-according to the 95% prior probability intervals in Table I in Villani
-(2009). We first note that for our data here, the growth rate variables
-($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly
-rates of change, i.e. for a variable $z$, the quarterly growth rate is
-$100 \left(\ln z_t - \ln z_{t-1}\right)$. The 95% prior probability
-intervals in Table I are specified in terms of annualized quarterly
-growth rates $400 \left(\ln z_t - \ln z_{t-1}\right)$.
+according to the 95% prior probability intervals (normal distribution)
+in Table I in Villani (2009). We first note that for our data here, the
+growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified
+in terms of quarterly rates of change, i.e. for a variable $z$, the
+quarterly growth rate is $100 \left(\ln z_t - \ln z_{t-1}\right)$. The
+95% prior probability intervals in Table I are specified in terms of
+annualized quarterly growth rates
+$400 \left(\ln z_t - \ln z_{t-1}\right)$.
 
 The ‘ppi()’ function is useful here. Simply input the desired 95% prior
-probability interval on the annualized scale with
+probability interval (normal distribution) on the annualized scale with
 ‘annualized_growthrate=TRUE’ and we get the corresponding prior mean and
-variance in terms of quarterly rate of change. Of course we could also
-just annualize our data before, and set ‘annualized_growthrate=’FALSE’.
-So now we do this for all steady state coefficients. Again, see Table I
-in Villani (2009) for the 95% prior probability intervals.
+variance in terms of the original scale (quarterly rate of change). Of
+course we could also just annualize our data before, and set
+‘annualized_growthrate=’FALSE’. So now we do this for all steady state
+coefficients. Again, see Table I in Villani (2009) for the 95% prior
+probability intervals.
 
 ``` r
 #psi_1 = Psi col 1
@@ -323,7 +325,7 @@ bvar_obj <- priors(bvar_obj,
                    fol_pm,
                    theta_Psi, 
                    Omega_Psi,
-                   Jeffrey=FALSE)
+                   Jeffrey=TRUE)
 ```
 
 Like in Villani (2009), to incorporate that Sweden is a small economy
@@ -399,9 +401,9 @@ Then we can fit the model.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 2500,
-                warmup = 1000,
-                chains = 4)
+                iter = 1000,
+                warmup = 500,
+                chains = 1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -411,56 +413,56 @@ summary(bvar_obj)
 #> beta posterior mean
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.18  0.03 -0.02  0.12  0.08 -0.13  0.00
-#>    [2,] -0.01  0.31  0.26  0.13 -0.08  0.01  0.00
-#>    [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
-#>    [4,]  0.00  0.00  0.00  0.23 -0.10 -0.10  0.00
-#>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
-#>    [6,]  0.00  0.00  0.00  0.00  0.02  0.75  0.00
-#>    [7,]  0.00  0.00  0.00  1.22  4.10  0.76  0.93
-#>    [8,]  0.03 -0.01  0.10  0.02 -0.02  0.10  0.00
-#>    [9,]  0.01  0.02  0.05  0.00 -0.03 -0.16  0.00
-#>   [10,] -0.02 -0.01 -0.01  0.00  0.05  0.07  0.00
-#>   [11,]  0.00  0.00  0.00  0.12 -0.01  0.16  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
+#>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.11  0.00
+#>    [2,] -0.01  0.31  0.24  0.12 -0.07  0.00  0.00
+#>    [3,] -0.01  0.04  0.92 -0.04  0.05  0.04  0.00
+#>    [4,]  0.00  0.00  0.00  0.22 -0.09 -0.10  0.00
+#>    [5,]  0.00  0.00  0.00  0.00  0.07  0.07  0.00
+#>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
+#>    [7,]  0.00  0.00  0.00  1.21  3.87  0.80  0.93
+#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
+#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.16  0.00
+#>   [10,] -0.02 -0.01  0.00  0.00  0.05  0.07  0.00
+#>   [11,]  0.00  0.00  0.00  0.12 -0.01  0.15  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.04  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.58 -0.44  0.33 -0.04
-#>   [15,]  0.01 -0.01  0.00  0.02 -0.02  0.00  0.00
-#>   [16,] -0.02  0.06 -0.01  0.00  0.09  0.02  0.00
+#>   [14,]  0.00  0.00  0.00  0.55 -0.43  0.23 -0.03
+#>   [15,]  0.01 -0.01  0.00  0.02 -0.01 -0.01  0.00
+#>   [16,] -0.02  0.06 -0.01  0.00  0.09  0.03  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#>   [18,]  0.00  0.00  0.00  0.07  0.01 -0.02  0.00
+#>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
-#>   [21,]  0.00  0.00  0.00 -0.15 -0.02 -0.63  0.00
-#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#>   [23,]  0.00  0.17 -0.03  0.00  0.01  0.02  0.00
+#>   [20,]  0.00  0.00  0.00  0.01 -0.01  0.01  0.00
+#>   [21,]  0.00  0.00  0.00 -0.15  0.00 -0.56  0.00
+#>   [22,]  0.03 -0.01  0.00  0.00  0.03  0.02  0.00
+#>   [23,]  0.00  0.16 -0.03  0.01  0.01  0.02  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
-#>   [25,]  0.00  0.00  0.00 -0.09  0.01  0.03  0.00
-#>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.02  0.00
+#>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
+#>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.16 -0.08 -0.19 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.16 -0.05 -0.20 -0.01
 #> 
 #> Psi posterior mean
 #>       
 #>        [,1]  [,2]
-#>   [1,] 0.57  0.09
-#>   [2,] 0.51  0.46
-#>   [3,] 4.93  2.02
+#>   [1,] 0.58  0.08
+#>   [2,] 0.51  0.47
+#>   [3,] 4.94  2.04
 #>   [4,] 0.58 -0.04
 #>   [5,] 0.49  1.14
-#>   [6,] 4.29  4.45
+#>   [6,] 4.29  4.47
 #>   [7,] 3.92 -0.10
 #> 
 #> Sigma_u posterior mean
 #>       
-#>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#>   [1,]  0.14 -0.01 0.01  0.06  0.00  0.00  0.00
-#>   [2,] -0.01  0.08 0.05  0.01  0.11  0.04  0.00
-#>   [3,]  0.01  0.05 0.47  0.01  0.17  0.10  0.00
-#>   [4,]  0.06  0.01 0.01  0.17 -0.04 -0.01  0.00
-#>   [5,]  0.00  0.11 0.17 -0.04  0.54  0.10  0.00
-#>   [6,]  0.00  0.04 0.10 -0.01  0.10  1.42 -0.01
-#>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
+#>         [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>   [1,]  0.15 -0.01  0.01  0.07 -0.01  0.00  0.00
+#>   [2,] -0.01  0.09  0.05  0.01  0.13  0.04  0.00
+#>   [3,]  0.01  0.05  0.52  0.01  0.18  0.11 -0.01
+#>   [4,]  0.07  0.01  0.01  0.20 -0.05 -0.02  0.00
+#>   [5,] -0.01  0.13  0.18 -0.05  0.59  0.10  0.00
+#>   [6,]  0.00  0.04  0.11 -0.02  0.10  1.58 -0.01
+#>   [7,]  0.00  0.00 -0.01  0.00  0.00 -0.01  0.00
 ```
 
 Note that ‘bvar_obj\$fit\$stan’ is an object of class stanfit. So we can
@@ -482,22 +484,31 @@ rstan::plot(stanfit, pars=c("Psi[4,1]", "Psi[5,1]"), plotfun="hist")
 
 <img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" />
 
-We can also look at the model forecasts directly with rstan, for example
-the forecast of the interest rate in one year from “now”.
+We can also look at the model forecasts directly with rstan. Remember
+that we left out the last two observations/quarters, so let us look at
+our forecasts of the 3-month interest rate, and compare with the true
+values
 
 ``` r
-rstan::plot(stanfit, pars=c("Y_pred[4,6]"), show_density = TRUE, ci_level = 0.68, fill_color = "blue")
+villani2009[103:104,6]
+#> [1] 1.478503 1.563795
+```
+
+``` r
+rstan::plot(stanfit, pars=c("Y_pred[1,6]", "Y_pred[2,6]"), show_density = TRUE, ci_level = 0.68, fill_color = "blue")
 #> ci_level: 0.68 (68% intervals)
 #> outer_level: 0.95 (95% intervals)
 ```
 
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
 
-Lets plot the forecasts. Lets select a 95% prediction interval and the
-mean of the posterior as the point forecast. For variables in quarter on
-quarter growth rates, we transform the historical data and predictions
-to yearly growth rates with ‘growth_rate_idx’ where we specify the index
-of the growth rate variables in $y_t$.
+So the model overshot a bit, but the true values are within the 68%
+prediction interval. Lets plot the forecasts. Lets select a 95%
+prediction interval and the mean of the posterior as the point forecast.
+For variables in quarter on quarter growth rates, we transform the
+historical data and predictions to yearly growth rates with
+‘growth_rate_idx’ where we specify the index of the growth rate
+variables in $y_t$.
 
 ``` r
 bvar_obj <- forecast(bvar_obj,
@@ -507,7 +518,7 @@ bvar_obj <- forecast(bvar_obj,
                      plot_idx = c(4,5,6))
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-3.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-18-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-18-3.png" width="100%" />
 
 We can also do some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
@@ -544,32 +555,34 @@ irf <- IRF(bvar_obj,
            ci=0.68)
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
 
 If desired, the user can estimate the model with a Gibbs sampler instead
 and then repeat the analysis above.
 
 ``` r
-# bvar_obj <- fit_gibbs(bvar_obj,
-#                       iter = 10000,
-#                       warmup = 5000)
+bvar_obj <- fit(bvar_obj,
+                iter = 5000,
+                warmup = 2500,
+                chains = 1,
+                estimation = "gibbs")
 
-# summary(bvar_obj)
+summary(bvar_obj)
 
-# bvar_obj <- forecast(bvar_obj,
-#               ci = 0.95,
-#               fcst_type = "mean",
-#               growth_rate_idx = c(1,2,4,5),
-#               plot_idx = c(4,5,6),
-#               estimation="gibbs")
+bvar_obj <- forecast(bvar_obj,
+              ci = 0.95,
+              fcst_type = "mean",
+              growth_rate_idx = c(1,2,4,5),
+              plot_idx = c(4,5,6),
+              estimation="gibbs")
 
-# irf <- IRF(bvar_obj,
-#            lag=20,
-#            response=4,
-#            shock=6,
-#            method="OIRF",
-#            ci=0.68,
-#            estimation="gibbs")
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=4,
+           shock=6,
+           method="OIRF",
+           ci=0.68,
+           estimation="gibbs")
 ```
 
 It will give very similar results (as it should be). We will test if
@@ -585,47 +598,49 @@ same as in Gustafsson, Villani and Stockhammar (2023), from which I
 obtained the data.
 
 ``` r
-# rm(list = ls())
-# data("GustafssonVillaniStockhammar2023")
-# yt <- GustafssonVillaniStockhammar2023
-# plot.ts(yt)
+rm(list = ls())
+data("GustafssonVillaniStockhammar2023")
+yt <- GustafssonVillaniStockhammar2023
+plot.ts(yt)
 ```
+
+<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
 
 Create the object
 
 ``` r
-# bvar_obj <- bvar(data = yt)
+bvar_obj <- bvar(data = yt)
 ```
 
 Only a constant this time, thus $q=1$. The lag order $p$ is not
-specified, but looking at Gustafsson, Villani and Stockhammar (2023) we
-can sort of infer that they use $p=2$.
+specified, but looking at Gustafsson, Villani and Stockhammar (2023)
+(same data etc.) we can sort of infer that they use $p=2$.
 
 ``` r
-# bvar_obj <- setup(bvar_obj,
-#                   p=2,
-#                   deterministic = "constant",
-#                   dummy = NULL)
+bvar_obj <- setup(bvar_obj,
+                  p=2,
+                  deterministic = "constant",
+                  dummy = NULL)
 ```
 
-The hyperparameters are from Gustafsson, Villani and Stockhammar (2023),
-and are $\lambda_1=0.27$, $\lambda_2=0.43$ and $\lambda_3=0.76$. The
-prior means on the first own lag of the GDP-deflator and Fed funds rate
-are set to 0.6.
+The hyperparameters used in Gustafsson and Villani (2025) are from
+Gustafsson, Villani and Stockhammar (2023), and are $\lambda_1=0.27$,
+$\lambda_2=0.43$ and $\lambda_3=0.76$. The prior means on the first own
+lag of the GDP-deflator and Fed funds rate are set to 0.6.
 
 ``` r
-# lambda_1 <- 0.27
-# lambda_2 <- 0.43
-# lambda_3 <- 0.76
-# 
-# fol_pm=c(0,   #GDPC1
-#          0.6, #GDPCTPI
-#          0.6, #FEDFUNDS
-#          0,   #PCECC96
-#          0,   #GPDIC1
-#          0,   #HOANBS
-#          0    #AHETPIx
-#          )
+lambda_1 <- 0.27
+lambda_2 <- 0.43
+lambda_3 <- 0.76
+
+fol_pm=c(0,   #GDPC1
+         0.6, #GDPCTPI
+         0.6, #FEDFUNDS
+         0,   #PCECC96
+         0,   #GPDIC1
+         0,   #HOANBS
+         0    #AHETPIx
+         )
 ```
 
 For the steady state coefficients, the prior probability intervals
@@ -633,119 +648,276 @@ For the steady state coefficients, the prior probability intervals
 roughly 68% prior probability interval)
 
 ``` r
-# 1-2*(1-pnorm(1))
+1-2*(1-pnorm(1))
+#> [1] 0.6826895
 ```
 
 Note that we only have a constant now, so then $q=1$ and $\Psi$ only has
 one column $\psi_1$. Also the growth rate variables are already in the
 form $400 \left(\ln z_t - \ln z_{t-1}\right)$, so no need to annualize.
+See Gustafsson and Villani (2025) for the intervals.
 
 ``` r
-# theta_Psi <- c(
-#   ppi(2.5, 3.5, interval=0.6826895)$mean,   #psi_1: GDPC1
-#   ppi(1.5, 2.5, interval=0.6826895)$mean,   #psi_1: GDPCTPI
-#   ppi(4.3, 5.7, interval=0.6826895)$mean,   #psi_1: FEDFUNDS
-#   ppi(2.3, 3.7, interval=0.6826895)$mean,   #psi_1: PCECC96
-#   ppi(1.5, 4.5, interval=0.6826895)$mean,   #psi_1: GPDIC1
-#   ppi(2.5, 3.5, interval=0.6826895)$mean,   #psi_1: HOANBS
-#   ppi(1.5, 2.5, interval=0.6826895)$mean    #psi_1: AHETPIx
-# )
-# 
-# Omega_Psi <- diag(
-#   c(
-#   ppi(2.5, 3.5, interval=0.6826895)$var,    #psi_1: GDPC1
-#   ppi(1.5, 2.5, interval=0.6826895)$var,    #psi_1: GDPCTPI
-#   ppi(4.3, 5.7, interval=0.6826895)$var,    #psi_1: FEDFUNDS
-#   ppi(2.3, 3.7, interval=0.6826895)$var,    #psi_1: PCECC96
-#   ppi(1.5, 4.5, interval=0.6826895)$var,    #psi_1: GPDIC1
-#   ppi(2.5, 3.5, interval=0.6826895)$var,    #psi_1: HOANBS
-#   ppi(1.5, 2.5, interval=0.6826895)$var     #psi_1: AHETPIx
-#   )
-# )
+theta_Psi <- c(
+  ppi(2.5, 3.5, interval=0.6826895)$mean,   #psi_1: GDPC1
+  ppi(1.5, 2.5, interval=0.6826895)$mean,   #psi_1: GDPCTPI
+  ppi(4.3, 5.7, interval=0.6826895)$mean,   #psi_1: FEDFUNDS
+  ppi(2.3, 3.7, interval=0.6826895)$mean,   #psi_1: PCECC96
+  ppi(1.5, 4.5, interval=0.6826895)$mean,   #psi_1: GPDIC1
+  ppi(2.5, 3.5, interval=0.6826895)$mean,   #psi_1: HOANBS
+  ppi(1.5, 2.5, interval=0.6826895)$mean    #psi_1: AHETPIx
+)
+
+Omega_Psi <- diag(
+  c(
+  ppi(2.5, 3.5, interval=0.6826895)$var,    #psi_1: GDPC1
+  ppi(1.5, 2.5, interval=0.6826895)$var,    #psi_1: GDPCTPI
+  ppi(4.3, 5.7, interval=0.6826895)$var,    #psi_1: FEDFUNDS
+  ppi(2.3, 3.7, interval=0.6826895)$var,    #psi_1: PCECC96
+  ppi(1.5, 4.5, interval=0.6826895)$var,    #psi_1: GPDIC1
+  ppi(2.5, 3.5, interval=0.6826895)$var,    #psi_1: HOANBS
+  ppi(1.5, 2.5, interval=0.6826895)$var     #psi_1: AHETPIx
+  )
+)
 ```
 
 Lets put everything into the ‘priors function’
 
 ``` r
-# bvar_obj <- priors(bvar_obj,
-#                    lambda_1,
-#                    lambda_2,
-#                    lambda_3,
-#                    fol_pm,
-#                    theta_Psi,
-#                    Omega_Psi,
-#                    Jeffrey=TRUE)
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi,
+                   Omega_Psi,
+                   Jeffrey=TRUE)
 ```
 
 We supply our forecast horizon and then estimate the model. We do it
 both with Stan and with the Gibbs sampler.
 
 ``` r
-# bvar_obj$forecasts$H <- 12
-# bvar_obj$forecasts$X_pred <- matrix(rep(1, 12))
-# 
-# bvar_obj <- fit_gibbs(bvar_obj,
-#                      iter=10000,
-#                      warmup=5000)
-# 
-# bvar_obj <- fit_stan(bvar_obj,
-#                      iter=5000,
-#                      warmup=2500,
-#                      chains=4)
+bvar_obj$predict$H <- 12
+bvar_obj$predict$X_pred <- matrix(rep(1, 12))
+
+bvar_obj <- fit(bvar_obj,
+                iter = 1000,
+                warmup = 500,
+                chains = 1)
+#> recompiling to avoid crashing R session
+
+bvar_obj <- fit(bvar_obj,
+                iter = 1000,
+                warmup = 500,
+                chains = 1,
+                estimation = "gibbs")
 ```
 
 Lets check the estimation results
 
 ``` r
-# summary(bvar_obj)
+summary(bvar_obj)
+#> ====================================
+#> Estimation Method: Stan 
+#> ====================================
+#> 
+#> beta posterior mean
+#>        
+#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>    [1,]  0.06 -0.02  0.04  0.07 -0.30  0.04 -0.03
+#>    [2,]  0.02  0.71  0.04 -0.17  0.74 -0.02  0.03
+#>    [3,] -0.02  0.11  1.02 -0.40  0.26 -0.02 -0.02
+#>    [4,]  0.27  0.02  0.03  0.14  1.79  0.25  0.04
+#>    [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
+#>    [6,]  0.11  0.05  0.06 -0.02  1.24  0.32  0.01
+#>    [7,]  0.09  0.00  0.03  0.04 -0.13 -0.12  0.36
+#>    [8,]  0.04  0.00  0.01  0.03  0.11  0.00  0.02
+#>    [9,] -0.05  0.19  0.07  0.11 -0.66  0.05 -0.04
+#>   [10,] -0.06 -0.08 -0.09  0.39 -0.95 -0.11 -0.03
+#>   [11,]  0.11 -0.01 -0.04  0.12 -0.03  0.06  0.01
+#>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
+#>   [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
+#>   [14,] -0.04  0.03  0.03  0.04 -0.39 -0.14  0.29
+#> 
+#> Psi posterior mean
+#>       
+#>        [,1]
+#>   [1,] 3.18
+#>   [2,] 2.47
+#>   [3,] 4.43
+#>   [4,] 3.37
+#>   [5,] 4.64
+#>   [6,] 1.66
+#>   [7,] 1.01
+#> 
+#> Sigma_u posterior mean
+#>       
+#>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
+#>   [1,]  7.89 -0.01  0.49  4.23  26.66  3.95  0.45
+#>   [2,] -0.01  1.00  0.13 -0.14   0.88  0.34 -0.13
+#>   [3,]  0.49  0.13  0.69  0.27   2.23  0.63 -0.05
+#>   [4,]  4.23 -0.14  0.27  5.73   5.31  2.21  0.45
+#>   [5,] 26.66  0.88  2.23  5.31 160.68 16.41  2.09
+#>   [6,]  3.95  0.34  0.63  2.21  16.41  5.39  0.36
+#>   [7,]  0.45 -0.13 -0.05  0.45   2.09  0.36  1.25
+#> 
+#> 
+#> ====================================
+#> Estimation Method: Gibbs 
+#> ====================================
+#> 
+#> beta posterior mean
+#>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>  [1,]  0.06 -0.02  0.04  0.07 -0.26  0.05 -0.03
+#>  [2,]  0.02  0.70  0.03 -0.17  0.76 -0.02  0.03
+#>  [3,] -0.03  0.11  1.01 -0.39  0.23 -0.01 -0.02
+#>  [4,]  0.27  0.02  0.03  0.14  1.82  0.26  0.04
+#>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
+#>  [6,]  0.11  0.05  0.06 -0.02  1.23  0.30  0.01
+#>  [7,]  0.08  0.00  0.03  0.03 -0.20 -0.14  0.36
+#>  [8,]  0.04  0.00  0.01  0.03  0.09  0.00  0.02
+#>  [9,] -0.04  0.19  0.07  0.11 -0.68  0.04 -0.04
+#> [10,] -0.06 -0.07 -0.09  0.38 -0.91 -0.11 -0.03
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.03  0.05  0.01
+#> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
+#> [13,]  0.03 -0.01  0.01  0.00 -0.55  0.16 -0.01
+#> [14,] -0.04  0.04  0.03  0.04 -0.38 -0.13  0.30
+#> 
+#> Psi posterior mean
+#>      [,1]
+#> [1,] 3.18
+#> [2,] 2.44
+#> [3,] 4.42
+#> [4,] 3.37
+#> [5,] 4.62
+#> [6,] 1.67
+#> [7,] 1.00
+#> 
+#> Sigma_u posterior mean
+#>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
+#> [1,]  7.95 -0.01  0.49  4.28  26.84  3.99  0.45
+#> [2,] -0.01  0.99  0.12 -0.13   0.88  0.35 -0.13
+#> [3,]  0.49  0.12  0.69  0.28   2.17  0.63 -0.05
+#> [4,]  4.28 -0.13  0.28  5.76   5.46  2.23  0.46
+#> [5,] 26.84  0.88  2.17  5.46 161.30 16.55  2.09
+#> [6,]  3.99  0.35  0.63  2.23  16.55  5.43  0.36
+#> [7,]  0.45 -0.13 -0.05  0.46   2.09  0.36  1.25
 ```
 
 Now lets do Figure 10
 
 ``` r
-# Psi_draws_gibbs  <- bvar_obj$fit$gibbs$Psi_draws
-# Psi_draws_stan <- rstan::extract(bvar_obj$fit$stan)$Psi
-# 
-# par(mfrow=c(2,2))
-# 
-# # Real GDP
-# dens1 <- density(Psi_draws_gibbs[1,,])
-# dens2 <- density(Psi_draws_stan[,1,])
-# plot(dens1, xlab="Real GDP", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
-# lines(dens2, col="blue", lwd=2)
-# legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
-# 
-# # GDP deflator
-# dens1 <- density(Psi_draws_gibbs[2,,])
-# dens2 <- density(Psi_draws_stan[,2,])
-# plot(dens1, xlab="GDP deflator", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
-# lines(dens2, col="blue", lwd=2)
-# legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
-# 
-# # Fed funds rate
-# dens1 <- density(Psi_draws_gibbs[3,,])
-# dens2 <- density(Psi_draws_stan[,3,])
-# plot(dens1, xlab="Fed funds rate", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
-# lines(dens2, col="blue", lwd=2)
-# legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
-# 
-# # Real consumption
-# dens1 <- density(Psi_draws_gibbs[4,,])
-# dens2 <- density(Psi_draws_stan[,4,])
-# plot(dens1, xlab="Real consumption", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
-# lines(dens2, col="blue", lwd=2)
-# legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
+Psi_draws_gibbs  <- bvar_obj$fit$gibbs$Psi_draws
+Psi_draws_stan <- rstan::extract(bvar_obj$fit$stan)$Psi
+
+par(mfrow=c(2,2))
+
+# Real GDP
+dens1 <- density(Psi_draws_gibbs[1,,])
+dens2 <- density(Psi_draws_stan[,1,])
+plot(dens1, xlab="Real GDP", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
+lines(dens2, col="blue", lwd=2)
+legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
+
+# GDP deflator
+dens1 <- density(Psi_draws_gibbs[2,,])
+dens2 <- density(Psi_draws_stan[,2,])
+plot(dens1, xlab="GDP deflator", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
+lines(dens2, col="blue", lwd=2)
+legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
+
+# Fed funds rate
+dens1 <- density(Psi_draws_gibbs[3,,])
+dens2 <- density(Psi_draws_stan[,3,])
+plot(dens1, xlab="Fed funds rate", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
+lines(dens2, col="blue", lwd=2)
+legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
+
+# Real consumption
+dens1 <- density(Psi_draws_gibbs[4,,])
+dens2 <- density(Psi_draws_stan[,4,])
+plot(dens1, xlab="Real consumption", main="", col="red", lwd=2, ylim=c(0,max(dens1$y,dens2$y)))
+lines(dens2, col="blue", lwd=2)
+legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
 ```
+
+<img src="man/figures/README-unnamed-chunk-30-1.png" width="100%" />
 
 And Figure 11 (mean +/- 1 std deviation credible bands)
 
 ``` r
-# par(mfrow=c(2,2))
-# forecast2(bvar_obj, fcst_type="mean", plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
-# forecast2(bvar_obj, fcst_type="mean", plot_idx=c(2), xlim=c(39.25,58), ylim=c(-1,4))
-# forecast2(bvar_obj, fcst_type="mean", plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6.5))
-# forecast2(bvar_obj, fcst_type="mean", plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
+GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
+  
+  Y_pred <- bvar_obj$fit$gibbs$fcst_draws
+  Y_pred_m <- apply(Y_pred, c(1, 2), mean)
+  Y_pred_sd <- apply(Y_pred, c(1, 2), sd)
+  Y_pred_lower <- Y_pred_m - 1 * Y_pred_sd
+  Y_pred_upper <- Y_pred_m + 1 * Y_pred_sd
+  
+  Y <- bvar_obj$data
+  freq <- frequency(Y)
+  T <- nrow(Y)
+  H <- bvar_obj$predict$H
+  m <- ncol(Y)
+  time_hist <- time(Y)
+  time_fore <- seq(tail(time_hist, 1) + 1/freq, by = 1/freq, length.out = H)
+  i = plot_idx
+  smply <- Y[, i]
+  fcst_m <- Y_pred_m[, i]
+  fcst_lower <- Y_pred_lower[, i]
+  fcst_upper <- Y_pred_upper[, i]
+  
+  time_full <- c(tail(time_hist, 1), time_fore)
+  m_full <- c(tail(smply, 1), fcst_m)
+  lower_full <- c(tail(smply, 1), fcst_lower)
+  upper_full <- c(tail(smply, 1), fcst_upper)
+  
+  ymin <- floor(ylim[1]*2)/2
+  ymax <- ceiling(ylim[2]*2)/2
+  yticks <- seq(ymin, ymax, by = 1)
+  plot.ts(smply, main = colnames(Y)[i],ylab = NULL,
+          xlim=xlim,
+          ylim=ylim,
+          col = "black", lwd = 2, yaxt = "n")
+  
+  axis(side = 2, at = yticks, labels = yticks, las = 1)
+  
+  lines(time_full[-1], lower_full[-1], col = "red", lwd = 2,lty=3)
+  lines(time_full[-1], upper_full[-1], col = "red", lwd = 2,lty=3)
+  lines(time_full, m_full, col = "red", lwd = 2)
+  
+  posterior_stan <- rstan::extract(x$fit$stan)
+  Y_pred2 <- posterior_stan$Y_pred
+  Y_pred_m2 <- apply(Y_pred2, c(2, 3), mean)
+  Y_pred_sd2 <- apply(Y_pred2, c(2, 3), sd)
+  Y_pred_lower2 <- Y_pred_m2 - 1 * Y_pred_sd2
+  Y_pred_upper2 <- Y_pred_m2 + 1 * Y_pred_sd2
+  
+  fcst_m2 <- Y_pred_m2[, i]
+  fcst_lower2 <- Y_pred_lower2[, i]
+  fcst_upper2 <- Y_pred_upper2[, i]
+  
+  m_full2 <- c(tail(smply, 1), fcst_m2)
+  lower_full2 <- c(tail(smply, 1), fcst_lower2)
+  upper_full2 <- c(tail(smply, 1), fcst_upper2)
+  lines(time_full[-1], lower_full2[-1], col = "blue", lwd = 2,lty=3)
+  lines(time_full[-1], upper_full2[-1], col = "blue", lwd = 2,lty=3)
+  lines(time_full, m_full2, col = "blue", lwd = 2)
+  
+  abline(h = seq(ymin, ymax, by = 0.5), col = "gray", lty = 2)
+  legend("bottomleft", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
+}
+
+par(mfrow=c(2,2))
+
+GustafssonVillani2025plot(bvar_obj, plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
+GustafssonVillani2025plot(bvar_obj, plot_idx=c(2), xlim=c(39.25,58), ylim=c(-1,4))
+GustafssonVillani2025plot(bvar_obj, plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6.5))
+GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
 ```
+
+<img src="man/figures/README-unnamed-chunk-31-1.png" width="100%" />
 
 ## References
 
