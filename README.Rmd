@@ -28,13 +28,7 @@ With this package the user can estimate the Steady-State BVAR(p) model by Mattia
 You can install the development version of SteadyStateBVAR with:
 
 ```{r, eval=FALSE}
-remotes::install_github(
-  "markjwbecker/SteadyStateBVAR",
-  ref = "dev",
-  force = TRUE,
-  upgrade = "never"
-)
-
+remotes::install_github("markjwbecker/SteadyStateBVAR", ref = "dev", force = TRUE, upgrade = "never")
 ```
 ## Introduction
 
@@ -82,7 +76,7 @@ $$
 \textrm{Var}\left(A_{\ell}^{(i,j)}\right)=
 \begin{cases}
 \left(\frac{\lambda_1}{\ell^{\lambda_3}}\right)^2 & \text{if } i = j \\
-\left(\frac{\lambda_1 \lambda_2}{\ell^{\lambda_3}}\right)^2 \frac{\sigma_i^2}{\sigma_j^2}& \text{if } i \neq j
+\left(\frac{\lambda_1 \lambda_2\sigma_i}{\ell^{\lambda_3}\sigma_j}\right)^2& \text{if } i \neq j
 \end{cases}
 $$
 
@@ -199,7 +193,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$ for the steady state priors, we set them according to the 95% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change, i.e. for a variable $z$, the quarterly growth rate is $100 \left(\ln z_t - \ln z_{t-1}\right)$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400 \left(\ln z_t - \ln z_{t-1}\right)$.
+Now moving on to $\Psi$ for the steady state priors, we set them according to the 95% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change, i.e. for a variable $z$ which is on a quarterly frequency, the quarterly growth rate is $100 \left(\ln z_t - \ln z_{t-1}\right)$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400 \left(\ln z_t - \ln z_{t-1}\right)$.
 
 The 'ppi()' function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with 'annualized_growthrate=TRUE' and we get the corresponding prior mean and variance in terms of the original scale (quarterly rate of change). Of course we could also just annualize our data before, and set 'annualized_growthrate='FALSE'. So now we do this for all steady state coefficients. Again, see Table I in Villani (2009) for the 95% prior probability intervals.
 
@@ -293,9 +287,9 @@ Then we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
-                chains = 1)
+                iter = 10000,
+                warmup = 5000,
+                chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -308,18 +302,25 @@ Note that 'bvar_obj\$fit\$stan' is an object of class stanfit. So we can do the 
 
 ```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE}
 stanfit <- bvar_obj$fit$stan
-rstan::plot(stanfit, pars=c("Psi[4,1]", "Psi[5,1]"), plotfun="trace")
-rstan::plot(stanfit, pars=c("Psi[4,1]", "Psi[5,1]"), plotfun="hist")
+
+rstan::plot(stanfit,
+            pars=c("Psi[4,1]", "Psi[5,1]"),
+            plotfun="trace")
+
+rstan::plot(stanfit,
+            pars=c("Psi[4,1]", "Psi[5,1]"),
+            plotfun="hist")
 ```
 
 We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the 3-month interest rate, and compare with the true values
 
 ```{r, fig.width=8, fig.height=8}
-villani2009[103:104,6]
-```
-
-```{r, fig.width=8, fig.height=8}
-rstan::plot(stanfit, pars=c("Y_pred[1,6]", "Y_pred[2,6]"), show_density = TRUE, ci_level = 0.68, fill_color = "blue")
+(villani2009[103:104,6])
+rstan::plot(stanfit,
+            pars=c("Y_pred[1,6]", "Y_pred[2,6]"),
+            show_density = TRUE,
+            ci_level = 0.68,
+            fill_color = "blue")
 ```
 
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Lets plot the forecasts. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$.
@@ -440,13 +441,14 @@ fol_pm=c(0,   #GDPC1
 For the steady state coefficients, the prior probability intervals (normal distribution) are mean plus/minus one standard deviation (i.e. a roughly 68% prior probability interval)
 
 ```{r, fig.width=8, fig.height=8}
-1-2*(1-pnorm(1))
+1-2*pnorm(-1)
 ```
 
 Note that we only have a constant now, so then $q=1$ and $\Psi$ only has one column $\psi_1$. Also the growth rate variables are already in the form $400 \left(\ln z_t - \ln z_{t-1}\right)$, so no need to annualize. See Gustafsson and Villani (2025) for the intervals.
 
 ```{r, fig.width=8, fig.height=8}
-theta_Psi <- c(
+theta_Psi <- 
+  c(
   ppi(2.5, 3.5, interval=0.6826895)$mean,   #psi_1: GDPC1
   ppi(1.5, 2.5, interval=0.6826895)$mean,   #psi_1: GDPCTPI
   ppi(4.3, 5.7, interval=0.6826895)$mean,   #psi_1: FEDFUNDS
@@ -454,9 +456,10 @@ theta_Psi <- c(
   ppi(1.5, 4.5, interval=0.6826895)$mean,   #psi_1: GPDIC1
   ppi(2.5, 3.5, interval=0.6826895)$mean,   #psi_1: HOANBS
   ppi(1.5, 2.5, interval=0.6826895)$mean    #psi_1: AHETPIx
-)
+  )
 
-Omega_Psi <- diag(
+Omega_Psi <- 
+  diag(
   c(
   ppi(2.5, 3.5, interval=0.6826895)$var,    #psi_1: GDPC1
   ppi(1.5, 2.5, interval=0.6826895)$var,    #psi_1: GDPCTPI
@@ -466,7 +469,7 @@ Omega_Psi <- diag(
   ppi(2.5, 3.5, interval=0.6826895)$var,    #psi_1: HOANBS
   ppi(1.5, 2.5, interval=0.6826895)$var     #psi_1: AHETPIx
   )
-)
+  )
 ```
 
 Lets put everything into the 'priors function'
@@ -484,18 +487,18 @@ bvar_obj <- priors(bvar_obj,
 
 We supply our forecast horizon and then estimate the model. We do it both with Stan and with the Gibbs sampler.
 
-```{r, fig.width=8, fig.height=8,results='hide'}
+```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE}
 bvar_obj$predict$H <- 12
 bvar_obj$predict$X_pred <- matrix(rep(1, 12))
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
+                iter = 40000,
+                warmup = 10000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
+                iter = 40000,
+                warmup = 10000,
                 chains = 1,
                 estimation = "gibbs")
 ```
