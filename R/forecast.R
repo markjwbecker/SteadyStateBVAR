@@ -1,5 +1,6 @@
-forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NULL,plot_idx=NULL,estimation = c("stan", "gibbs"),show_all=FALSE)
-{
+forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NULL,plot_idx=NULL,estimation = c("stan", "gibbs"),show_all=FALSE){
+  estimation <- match.arg(estimation)
+  fcst_type  <- match.arg(fcst_type)
   Y <- x$data
   freq <- frequency(Y)
   if (is.null(plot_idx)) plot_idx <- 1:ncol(Y)
@@ -23,6 +24,13 @@ forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NUL
   T <- nrow(Y)
   H <- nrow(Y_pred_m)
   m <- ncol(Y)
+  
+  forecast_ret <- matrix(NA, H, m)
+  lower_ret    <- matrix(NA, H, m)
+  upper_ret    <- matrix(NA, H, m)
+  colnames(forecast_ret) <- colnames(Y)
+  colnames(lower_ret)    <- colnames(Y)
+  colnames(upper_ret)    <- colnames(Y)
   
   time_hist <- time(Y)
   time_fore <- seq(tail(time_hist, 1) + 1/freq, by = 1/freq, length.out = H)
@@ -65,6 +73,11 @@ forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NUL
       annual_lower <- annual_lower
       annual_upper <- annual_upper
       
+      forecast_ret[, i] <- annual_fcst
+      lower_ret[, i]    <- annual_lower
+      upper_ret[, i]    <- annual_upper
+      
+      
       time_full <- c(tail(time_hist, 1), time_fore)
       
       m_full <- c(tail(annual_hist, 1), annual_fcst)
@@ -103,6 +116,10 @@ forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NUL
       
     } else {
       
+      forecast_ret[, i] <- fcst_m
+      lower_ret[, i]    <- fcst_lower
+      upper_ret[, i]    <- fcst_upper
+      
       time_full <- c(tail(time_hist, 1), time_fore)
       m_full <- c(tail(smply, 1), fcst_m)
       lower_full <- c(tail(smply, 1), fcst_lower)
@@ -139,9 +156,9 @@ forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NUL
       lines(time_full, m_full, col = "blue", lwd = 2)
     }
   }
-  x$forecasts$forecast = Y_pred_m
-  x$forecasts$lower = Y_pred_lower
-  x$forecasts$upper = Y_pred_upper
+  x$predict$forecast <- forecast_ret
+  x$predict$lower    <- lower_ret
+  x$predict$upper    <- upper_ret
   
   return(x)
 }

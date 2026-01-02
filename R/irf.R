@@ -1,5 +1,9 @@
 IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, estimation=c("stan","gibbs")) {
 
+  method     <- match.arg(method)
+  estimation <- match.arg(estimation)
+  
+  
   compute_OIRF <- function(A, Sigma, e, N){
     k <- nrow(Sigma)
     OIRF_matrix <- matrix(NA, k*k, N+1)

@@ -34,16 +34,24 @@ summary.bvar <- function(object) {
   return(out)
 }
 
+
 print.summary.bvar <- function(x) {
+  
+  both_methods <- length(x$summaries) > 1
+  
   for (method_name in names(x$summaries)) {
     s <- x$summaries[[method_name]]
-    cat("====================================\n")
-    cat("Estimation Method:", s$method, "\n")
-    cat("====================================\n\n")
+    
+    if (both_methods) {
+      cat("====================================\n")
+      cat("Estimation Method:", s$method, "\n")
+      cat("====================================\n\n")
+    }
     
     cat("beta posterior mean\n"); print(s$beta); cat("\n")
     cat("Psi posterior mean\n"); print(s$Psi); cat("\n")
     cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n\n")
   }
+  
   invisible(x)
 }
