@@ -1,7 +1,7 @@
 exportPattern("^[[:alpha:]]+")
-export(setup)          # make generic visible externally
-S3method(setup, bvar) # register method
-export(summary.bvar)      # optional: lets users call summary.bvar() directly
-S3method(summary, bvar)   # registers summary.bvar as the method for class "bvar"
-export(print.summary.bvar)      # optional: lets users call print.summary.bvar() directly
-S3method(print, summary.bvar)   # registers print.summary.bvar as the print method
+export(setup)
+S3method(setup, bvar)
+export(summary.bvar)
+S3method(summary, bvar)
+export(print.summary.bvar)
+S3method(print, summary.bvar)
