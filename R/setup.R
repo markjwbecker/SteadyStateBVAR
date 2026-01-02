@@ -22,9 +22,9 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), 
   Q <- embed(xt, dimension = p+1)[, -(1:q)]
   
   Z <- cbind(W,X)
-  beta_OLS = solve(crossprod(Z,Z),crossprod(Z,Y))
+  beta_OLS = solve(crossprod(Z),crossprod(Z,Y))
   U = Y-Z%*%beta_OLS
-  Sigma_OLS <- crossprod(U,U)/(N-k*p-q)
+  Sigma_OLS <- crossprod(U)/(N-k*p-q)
   
   x$setup <- list(N=N,
                   k=k,

@@ -31,7 +31,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     A_L <- A_L - A[[i]]
   }
   
-  Lambda_OLS <- solve(A_L) %*% C_hat
+  Lambda_OLS <- solve(A_L, C_hat)
   
   gamma_d_lbar <-  priors$theta_beta
   Sigma_d_lbar <- priors$Omega_beta
@@ -58,7 +58,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     
     ############ EQ 29 ################
     U = Y - X%*%t(Lambda) - (W-Q%*%(diag(p) %x% t(Lambda))) %*% Gamma_d
-    S = t(U)%*%U
+    S = crossprod(U)
     N = nrow(U)
     if (isFALSE(Jeffrey)){
       Psi[[j]] = rinvwishart(N+v_, S+S_)
@@ -69,7 +69,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     Y_Lambda = Y-X%*%t(Lambda)
     W_Lambda = (W-Q%*%(diag(p)%x%t(Lambda)))
     
-    Sigma_d_bar = solve((solve(Sigma_d_lbar)+solve(Psi[[j]]) %x% (t(W_Lambda) %*% W_Lambda)))
+    Sigma_d_bar = solve((solve(Sigma_d_lbar)+solve(Psi[[j]]) %x% (crossprod(W_Lambda))))
     
     gamma_d_bar = Sigma_d_bar %*% (solve(Sigma_d_lbar)%*%gamma_d_lbar + c(t(W_Lambda)%*%Y_Lambda%*%solve(Psi[[j]])))
     
@@ -92,7 +92,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     B = cbind(X,-Q)
     Y_gamma = Y-W%*%Gamma_d
     
-    Sigma_lambda_bar = solve(solve(Sigma_lambda_lbar)+t(F) %*% ((t(B)%*%B)%x%solve(Psi[[j]])) %*% F)
+    Sigma_lambda_bar = solve(solve(Sigma_lambda_lbar)+t(F) %*% ((crossprod(B))%x%solve(Psi[[j]])) %*% F)
     lambda_bar = Sigma_lambda_bar %*% (solve(Sigma_lambda_lbar)%*%lambda_lbar+t(F)%*%c(solve(Psi[[j]])%*%t(Y_gamma)%*%B))
     
     lambda[[j]] <- mvrnorm(1, lambda_bar, Sigma_lambda_bar)

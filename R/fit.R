@@ -29,7 +29,12 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       verbose = FALSE
     )
     
-  } else if (method == "gibbs") {
+  } else {
+    
+    if (chains != 1) {
+      stop("For Gibbs sampling, 'chains' must be equal to 1.")
+    }
+    
     x$fit$gibbs <- estimate_gibbs(
       x = x,
       iter = iter,

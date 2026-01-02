@@ -1,10 +1,4 @@
-forecast <- function(x,
-                     ci=0.95,
-                     fcst_type=c("mean", "median"), 
-                     growth_rate_idx=NULL,
-                     plot_idx=NULL,
-                     estimation = c("stan", "gibbs"),
-                     show_all=FALSE)
+forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NULL,plot_idx=NULL,estimation = c("stan", "gibbs"),show_all=FALSE)
 {
   Y <- x$data
   freq <- frequency(Y)
