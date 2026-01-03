@@ -28,7 +28,7 @@ With this package the user can estimate the Steady-State BVAR(p) model by Mattia
 You can install the development version of SteadyStateBVAR with:
 
 ```{r, eval=FALSE}
-remotes::install_github("markjwbecker/SteadyStateBVAR", ref = "dev", force = TRUE, upgrade = "never")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 ## Introduction
 
@@ -370,8 +370,8 @@ If desired, the user can estimate the model with a Gibbs sampler instead and the
 
 ```{r, fig.width=8, fig.height=8, eval=FALSE}
 bvar_obj <- fit(bvar_obj,
-                iter = 5000,
-                warmup = 2500,
+                iter = 10000,
+                warmup = 5000,
                 chains = 1,
                 estimation = "gibbs")
 
@@ -496,12 +496,12 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 40000,
+                iter = 20000,
                 warmup = 10000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 40000,
+                iter = 20000,
                 warmup = 10000,
                 chains = 1,
                 estimation = "gibbs")
@@ -622,6 +622,85 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6
 GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
 
 ```
+
+
+## Example 3
+
+Now a quick last example, using swedish data up until 2025 for real GDP growth, CPIF inflation and the 3-month interest rate.
+
+```{r, fig.width=8, fig.height=8}
+rm(list = ls())
+data("SwedishData2025")
+yt <- SwedishData2025
+plot.ts(yt)
+
+bvar_obj <- bvar(data = yt)
+
+bp = 23 #breakpoint at 1992Q4
+dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp)) #1 if t<=1992Q4, 0 if t>1992Q4
+
+bvar_obj <- setup(bvar_obj,
+                  p=4,
+                  deterministic = "constant_and_dummy",
+                  dummy = dum_var)
+
+lambda_1 <- 0.2
+lambda_2 <- 0.5
+lambda_3 <- 1.0
+
+fol_pm=c(0,   #delta y
+         0,   #pi
+         0.9  #i
+)
+
+theta_Psi <- 
+  c(
+    ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta_y
+    ppi( 1.90,  2.10,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
+    ppi( 2.00,  3.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
+    ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta_y
+    ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
+    ppi( 4.00,  7.50,  annualized_growthrate=FALSE)$mean   #psi_2: i
+    )
+
+Omega_Psi <- 
+  diag(
+    c(
+      ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,   #psi_1: delta_y
+      ppi( 1.90,  2.10,  annualized_growthrate=TRUE)$var,   #psi_1: pi
+      ppi( 2.00,  3.50,  annualized_growthrate=FALSE)$var,  #psi_1: i
+      ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,   #psi_2: delta_y
+      ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,   #psi_2: pi
+      ppi( 4.00,  7.50,  annualized_growthrate=FALSE)$var   #psi_2: i
+    )
+    )
+
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi, 
+                   Omega_Psi,
+                   Jeffrey=FALSE) #let us use inverse wishart prior for Sigma_u
+
+bvar_obj$predict$H <- 20
+bvar_obj$predict$X_pred <- cbind(rep(1, 20), 0)
+
+bvar_obj <- fit(bvar_obj,
+                iter = 10000,
+                warmup = 5000,
+                chains = 4)
+
+summary(bvar_obj)
+
+bvar_obj <- forecast(bvar_obj,
+                     ci = 0.68,
+                     fcst_type = "median",#we can use median as point forecast
+                     growth_rate_idx = c(1,2),
+                     plot_idx = c(1,2,3))
+```
+
 
 
 ## References
