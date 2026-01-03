@@ -932,7 +932,7 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 ## References
 
-Gustafsson, O., Villani, M., and Stockhammar, Pär. (2023). Bayesian
+Gustafsson, O., Villani, M., and Stockhammar, P. (2023). Bayesian
 optimization of hyperparameters from noisy marginal likelihood
 estimates. *Journal of Applied Econometrics*. 38(4), pp. 577–595.
 

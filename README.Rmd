@@ -626,7 +626,7 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 ## References
 
-Gustafsson, O., Villani, M., and Stockhammar, Pär. (2023). Bayesian optimization of hyperparameters from noisy marginal likelihood estimates. *Journal of Applied Econometrics*. 38(4), pp. 577–595.
+Gustafsson, O., Villani, M., and Stockhammar, P. (2023). Bayesian optimization of hyperparameters from noisy marginal likelihood estimates. *Journal of Applied Econometrics*. 38(4), pp. 577–595.
 
 Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. *arXiv preprint 	arXiv:2506.09271*.
 
