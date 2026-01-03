@@ -84,7 +84,7 @@ forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NUL
       lower_full <- c(tail(annual_hist, 1), annual_lower)
       upper_full <- c(tail(annual_hist, 1), annual_upper)
       
-      ylim <- range(c(annual_lower, annual_upper),na.rm=TRUE)
+      ylim <- range(c(annual_lower, annual_upper, m_full),na.rm=TRUE)
       ymin <- floor(ylim[1]*2)/2
       ymax <- ceiling(ylim[2]*2)/2
       yticks <- seq(ymin, ymax, by = 0.5)
@@ -125,7 +125,7 @@ forecast <- function(x,ci=0.95,fcst_type=c("mean", "median"),growth_rate_idx=NUL
       lower_full <- c(tail(smply, 1), fcst_lower)
       upper_full <- c(tail(smply, 1), fcst_upper)
       
-      ylim <- range(c(lower_full, upper_full))
+      ylim <- range(c(lower_full, upper_full, m_full),na.rm=TRUE)
       ymin <- floor(ylim[1]*2)/2
       ymax <- ceiling(ylim[2]*2)/2
       yticks <- seq(ymin, ymax, by = 0.5)
