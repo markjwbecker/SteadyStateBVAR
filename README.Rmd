@@ -206,14 +206,14 @@ theta_Psi <-
   ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
   ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: pi_f
   ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: y
+  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
   ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
   ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
   ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$mean,  #psi_1: q
   ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y_f
   ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_2: pi_f
   ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: y
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
   ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
   ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i
   ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$mean   #psi_2: q
@@ -225,14 +225,14 @@ Omega_Psi <-
   ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$var,    #psi_1: delta y_f
   ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: pi_f
   ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$var,   #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: y
+  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: delta y
   ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$var,    #psi_1: pi
   ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$var,   #psi_1: i
   ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$var,   #psi_1: q
   ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y_f
   ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_2: pi_f
   ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$var,   #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: y
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y
   ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,    #psi_2: pi
   ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$var,   #psi_2: i
   ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$var    #psi_2: q
@@ -278,7 +278,7 @@ bvar_obj <- restrict(bvar_obj, restriction_matrix)
 
 At last we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods and then we fit the model.
 
-```{r, fig.width=8, fig.height=8, results='hide'}
+```{r, fig.width=8, fig.height=8}
 bvar_obj$predict$H <- 12
 bvar_obj$predict$X_pred <- cbind(rep(1, 12), 0)
 ```
@@ -298,7 +298,7 @@ Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 summary(bvar_obj)
 ```
 
-Note that 'bvar_obj\$fit\$stan' is an object of class stanfit. So we can do the usual rstan inference on our model. Lets look at some examples for the post-crisis steady state coefficients of domestic gdp growth and inflation (multiply both coefficients by 4 to get on the annualized scale).
+Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for the post-crisis steady state coefficients of domestic gdp growth and inflation (multiply both coefficients by 4 to get on the annualized scale).
 
 ```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE}
 stanfit <- bvar_obj$fit$stan
@@ -312,10 +312,10 @@ rstan::plot(stanfit,
             plotfun="hist")
 ```
 
-We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the 3-month interest rate, and compare with the true values
+We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the 3-month interest rate, and compare with the actual true values
 
 ```{r, fig.width=8, fig.height=8}
-(villani2009[103:104,6])
+(villani2009[103:104,6]) #true values
 rstan::plot(stanfit,
             pars=c("Y_pred[1,6]", "Y_pred[2,6]"),
             show_density = TRUE,
@@ -323,7 +323,7 @@ rstan::plot(stanfit,
             fill_color = "blue")
 ```
 
-So the model overshot a bit, but the true values are within the 68\% prediction interval. Lets plot the forecasts. Lets select a 95% prediction interval and the mean of the posterior as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$.
+So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 95% prediction interval and the mean of the posterior as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 \left(\ln z_t - \ln z_{t-4}\right)$.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- forecast(bvar_obj,
@@ -380,7 +380,7 @@ summary(bvar_obj)
 bvar_obj <- forecast(bvar_obj,
               ci = 0.95,
               fcst_type = "mean",
-              growth_rate_idx = c(1,2,4,5),
+              growth_rate_idx = c(4,5),
               plot_idx = c(4,5,6),
               estimation="gibbs")
 
@@ -444,7 +444,7 @@ For the steady state coefficients, the prior probability intervals (normal distr
 1-2*pnorm(-1)
 ```
 
-Note that we only have a constant now, so then $q=1$ and $\Psi$ only has one column $\psi_1$. Also the growth rate variables are already in the form $400 \left(\ln z_t - \ln z_{t-1}\right)$, so no need to annualize. See Gustafsson and Villani (2025) for the intervals.
+Note that we only have a constant now, so then $q=1$ and $\Psi$ only has one column $\psi_1$. Also the growth rate variables (everything except 'FEDFUNDS') are already in the form $400 \left(\ln z_t - \ln z_{t-1}\right)$, so we can specify all of the intervals 'as is'. See Gustafsson and Villani (2025) for the intervals.
 
 ```{r, fig.width=8, fig.height=8}
 theta_Psi <- 
@@ -472,7 +472,7 @@ Omega_Psi <-
   )
 ```
 
-Lets put everything into the 'priors function'
+Lets put everything into the 'priors function'. They also use Jeffreys prior for $\Sigma_u$.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- priors(bvar_obj,
@@ -485,12 +485,16 @@ bvar_obj <- priors(bvar_obj,
                    Jeffrey=TRUE)
 ```
 
-We supply our forecast horizon and then estimate the model. We do it both with Stan and with the Gibbs sampler.
+We supply our forecast horizon and the deterministic variables for the future periods.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE}
 bvar_obj$predict$H <- 12
 bvar_obj$predict$X_pred <- matrix(rep(1, 12))
+```
 
+Then estimate the model, both with Stan and the Gibbs sampler.
+
+```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
 bvar_obj <- fit(bvar_obj,
                 iter = 40000,
                 warmup = 10000,
@@ -502,7 +506,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1,
                 estimation = "gibbs")
 ```
-Lets check the estimation results
+Lets check the posterior means (very similar as expected)
 
 ```{r, fig.width=8, fig.height=8}
 summary(bvar_obj)
