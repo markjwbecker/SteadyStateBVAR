@@ -19,7 +19,7 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), 
   Y <- yt[-c(1:p), ]
   W <- embed(yt, dimension = p+1)[, -(1:k)]
   X <- xt[-c(1:p), ,drop=F]
-  Q <- embed(xt, dimension = p+1)[, -(1:q)]
+  Q <- embed(xt, dimension = p+1)[, -(1:q), drop=F]
   
   Z <- cbind(W,X)
   beta_OLS = solve(crossprod(Z),crossprod(Z,Y))
