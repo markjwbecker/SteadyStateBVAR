@@ -400,9 +400,9 @@ Then we can fit the model.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 5000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 2)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -418,48 +418,48 @@ summary(bvar_obj)
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.21  3.94  0.74  0.93
+#>    [7,]  0.00  0.00  0.00  1.22  3.95  0.94  0.93
 #>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
 #>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
 #>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.55 -0.37  0.28 -0.04
+#>   [14,]  0.00  0.00  0.00  0.57 -0.41  0.31 -0.04
 #>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
+#>   [16,] -0.02  0.06 -0.01  0.00  0.09  0.02  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
 #>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.13 -0.02 -0.57  0.00
-#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
+#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
+#>   [21,]  0.00  0.00  0.00 -0.14 -0.01 -0.63  0.00
+#>   [22,]  0.03 -0.01  0.00  0.00  0.02  0.02  0.00
+#>   [23,]  0.00  0.15 -0.03  0.00  0.01  0.01  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.15 -0.06 -0.17 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.14 -0.07 -0.17 -0.01
 #> 
 #> Psi posterior mean
 #>       
 #>        [,1]  [,2]
 #>   [1,] 0.58  0.08
-#>   [2,] 0.51  0.46
+#>   [2,] 0.51  0.47
 #>   [3,] 4.94  2.02
-#>   [4,] 0.58 -0.03
-#>   [5,] 0.49  1.15
-#>   [6,] 4.29  4.45
+#>   [4,] 0.58 -0.04
+#>   [5,] 0.49  1.14
+#>   [6,] 4.29  4.46
 #>   [7,] 3.92 -0.10
 #> 
 #> Sigma_u posterior mean
 #>       
 #>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
+#>   [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
 #>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
 #>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
+#>   [5,] -0.01  0.13 0.18 -0.05  0.60  0.11  0.00
 #>   [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
 #>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
@@ -721,13 +721,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 2000,
+                warmup = 500,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 2000,
+                warmup = 500,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -744,41 +744,41 @@ summary(bvar_obj)
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>    [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
-#>    [2,]  0.03  0.70  0.04 -0.17  0.76 -0.02  0.03
-#>    [3,] -0.02  0.11  1.01 -0.39  0.24 -0.02 -0.02
-#>    [4,]  0.27  0.02  0.03  0.14  1.80  0.25  0.04
+#>    [2,]  0.03  0.70  0.04 -0.17  0.75 -0.02  0.03
+#>    [3,] -0.02  0.11  1.01 -0.39  0.20 -0.02 -0.02
+#>    [4,]  0.26  0.02  0.03  0.13  1.79  0.25  0.04
 #>    [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>    [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
+#>    [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
 #>    [7,]  0.08  0.00  0.03  0.03 -0.18 -0.13  0.36
 #>    [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>    [9,] -0.06  0.19  0.07  0.11 -0.68  0.04 -0.04
-#>   [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
-#>   [11,]  0.12 -0.01 -0.04  0.12 -0.01  0.06  0.01
+#>    [9,] -0.05  0.19  0.07  0.11 -0.68  0.05 -0.04
+#>   [10,] -0.06 -0.08 -0.09  0.39 -0.89 -0.11 -0.03
+#>   [11,]  0.12 -0.01 -0.04  0.12 -0.03  0.05  0.01
 #>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#>   [13,]  0.03 -0.01  0.01  0.01 -0.56  0.16 -0.01
-#>   [14,] -0.04  0.03  0.03  0.04 -0.38 -0.13  0.30
+#>   [13,]  0.04 -0.01  0.01  0.00 -0.55  0.16 -0.01
+#>   [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>       
 #>        [,1]
-#>   [1,] 3.19
-#>   [2,] 2.47
-#>   [3,] 4.45
-#>   [4,] 3.38
-#>   [5,] 4.61
+#>   [1,] 3.20
+#>   [2,] 2.46
+#>   [3,] 4.44
+#>   [4,] 3.39
+#>   [5,] 4.68
 #>   [6,] 1.66
 #>   [7,] 1.03
 #> 
 #> Sigma_u posterior mean
 #>       
 #>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#>   [1,]  7.92 -0.01  0.49  4.25  26.80  3.97  0.45
-#>   [2,] -0.01  1.00  0.12 -0.14   0.88  0.34 -0.13
-#>   [3,]  0.49  0.12  0.69  0.27   2.25  0.63 -0.05
-#>   [4,]  4.25 -0.14  0.27  5.74   5.39  2.23  0.45
-#>   [5,] 26.80  0.88  2.25  5.39 161.22 16.50  2.08
-#>   [6,]  3.97  0.34  0.63  2.23  16.50  5.42  0.36
-#>   [7,]  0.45 -0.13 -0.05  0.45   2.08  0.36  1.26
+#>   [1,]  7.97 -0.01  0.50  4.26  27.02  4.00  0.44
+#>   [2,] -0.01  0.99  0.12 -0.13   0.86  0.34 -0.14
+#>   [3,]  0.50  0.12  0.70  0.28   2.25  0.63 -0.05
+#>   [4,]  4.26 -0.13  0.28  5.75   5.47  2.23  0.45
+#>   [5,] 27.02  0.86  2.25  5.47 162.22 16.65  2.10
+#>   [6,]  4.00  0.34  0.63  2.23  16.65  5.43  0.37
+#>   [7,]  0.44 -0.14 -0.05  0.45   2.10  0.37  1.26
 #> 
 #> 
 #> ====================================
@@ -787,40 +787,40 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.05 -0.03
-#>  [2,]  0.03  0.70  0.04 -0.17  0.77 -0.02  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.21 -0.02 -0.02
+#>  [1,]  0.07 -0.02  0.03  0.07 -0.25  0.04 -0.03
+#>  [2,]  0.02  0.71  0.04 -0.17  0.79 -0.01  0.03
+#>  [3,] -0.03  0.11  1.01 -0.40  0.21 -0.02 -0.02
 #>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
-#>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
+#>  [5,] -0.01  0.00  0.00  0.01  0.02  0.01 -0.01
 #>  [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.19 -0.13  0.36
+#>  [7,]  0.09  0.00  0.03  0.03 -0.17 -0.13  0.36
 #>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.05  0.19  0.07  0.11 -0.67  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.09  0.38 -0.91 -0.11 -0.03
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.05  0.01
-#> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
-#> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
+#>  [9,] -0.05  0.19  0.07  0.11 -0.68  0.04 -0.04
+#> [10,] -0.05 -0.08 -0.09  0.39 -0.91 -0.11 -0.03
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.01  0.06  0.01
+#> [12,] -0.01  0.00  0.00  0.01  0.02  0.00  0.00
+#> [13,]  0.04 -0.01  0.01  0.01 -0.56  0.16 -0.01
+#> [14,] -0.04  0.03  0.03  0.04 -0.38 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
 #> [1,] 3.20
-#> [2,] 2.47
+#> [2,] 2.45
 #> [3,] 4.45
 #> [4,] 3.39
-#> [5,] 4.62
-#> [6,] 1.66
+#> [5,] 4.63
+#> [6,] 1.67
 #> [7,] 1.03
 #> 
 #> Sigma_u posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.95 -0.02  0.49  4.26  26.88  3.99  0.45
-#> [2,] -0.02  1.00  0.12 -0.14   0.87  0.34 -0.14
-#> [3,]  0.49  0.12  0.70  0.27   2.24  0.63 -0.05
-#> [4,]  4.26 -0.14  0.27  5.75   5.44  2.24  0.45
-#> [5,] 26.88  0.87  2.24  5.44 161.47 16.56  2.09
-#> [6,]  3.99  0.34  0.63  2.24  16.56  5.43  0.37
-#> [7,]  0.45 -0.14 -0.05  0.45   2.09  0.37  1.26
+#> [1,]  7.93 -0.02  0.50  4.23  26.84  3.98  0.45
+#> [2,] -0.02  1.00  0.12 -0.14   0.87  0.34 -0.13
+#> [3,]  0.50  0.12  0.70  0.28   2.24  0.63 -0.05
+#> [4,]  4.23 -0.14  0.28  5.72   5.39  2.23  0.46
+#> [5,] 26.84  0.87  2.24  5.39 161.45 16.49  2.09
+#> [6,]  3.98  0.34  0.63  2.23  16.49  5.44  0.37
+#> [7,]  0.45 -0.13 -0.05  0.46   2.09  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -946,10 +946,15 @@ rate. CPIF inflation is orignally on a monthly frequency, as such the
 CPIF index value of the last month in each quarter is taken to be the
 quarterly value.
 
+We do a similar setup as before. We use the hyperparameters from
+Gustafsson, Villani and Stockhammar (2023). Also, this time the prior
+for the covariance matrix is inverse wishart.
+
 ``` r
 rm(list = ls())
-data("SwedishData2025")
-yt <- SwedishData2025
+library(SteadyStateBVAR)
+data("SwedishData_1987_2025")
+yt <- SwedishData_1987_2025
 plot.ts(yt)
 ```
 
@@ -973,30 +978,35 @@ lambda_3 <- 0.76
 
 fol_pm=c(0,   #delta y
          0,   #pi
+         0.9, #u
          0.9  #i
 )
 
 theta_Psi <- 
   c(
-    ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta_y
+    ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
     ppi( 1.95,  2.05,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
+    ppi( 6.00,  8.00,  annualized_growthrate=FALSE)$mean,  #psi_1: u
     ppi( 1.45,  1.55,  annualized_growthrate=FALSE)$mean,  #psi_1: i
-    ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta_y
+    ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
     ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
+    ppi( 0.00, -2.00,  annualized_growthrate=FALSE)$mean,  #psi_1: u
     ppi( 5.00,  9.00,  annualized_growthrate=FALSE)$mean   #psi_2: i
-    )
+  )
 
 Omega_Psi <- 
   diag(
     c(
-    ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,   #psi_1: delta_y
-    ppi( 1.95,  2.05,  annualized_growthrate=TRUE)$var,   #psi_1: pi
-    ppi( 1.45,  1.55,  annualized_growthrate=FALSE)$var,  #psi_1: i
-    ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,   #psi_2: delta_y
-    ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,   #psi_2: pi
-    ppi( 5.00,  9.00,  annualized_growthrate=FALSE)$var   #psi_2: i
+      ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,   #psi_1: delta y
+      ppi( 1.95,  2.05,  annualized_growthrate=TRUE)$var,   #psi_1: pi
+      ppi( 6.00,  8.00,  annualized_growthrate=FALSE)$var,  #psi_1: u
+      ppi( 1.45,  1.55,  annualized_growthrate=FALSE)$var,  #psi_1: i
+      ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,   #psi_2: delta y
+      ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,   #psi_2: pi
+      ppi( 0.00, -2.00,  annualized_growthrate=FALSE)$var,  #psi_1: u
+      ppi( 5.00,  9.00,  annualized_growthrate=FALSE)$var   #psi_2: i
     )
-    )
+  )
 
 bvar_obj <- priors(bvar_obj,
                    lambda_1,
@@ -1007,66 +1017,80 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi,
                    Jeffrey=FALSE) #let us use inverse wishart prior for Sigma_u
 
-bvar_obj$predict$H <- 20
-bvar_obj$predict$X_pred <- cbind(rep(1, 20), 0)
+bvar_obj$predict$H <- 40
+bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 5000,
-                chains = 2)
+                iter = 1000,
+                warmup = 500,
+                chains = 1,
+                estimation="gibbs")
 
 summary(bvar_obj)
 #> beta posterior mean
-#>        
-#>          [,1]  [,2]  [,3]
-#>    [1,] -0.07 -0.02  0.02
-#>    [2,]  0.18  0.03 -0.01
-#>    [3,] -0.11 -0.02  0.93
-#>    [4,]  0.04  0.00  0.03
-#>    [5,] -0.08  0.21 -0.03
-#>    [6,] -0.01  0.06  0.19
-#>    [7,]  0.03  0.00  0.01
-#>    [8,] -0.01 -0.08  0.06
-#>    [9,]  0.03 -0.04 -0.04
-#>   [10,] -0.01  0.01  0.00
-#>   [11,] -0.02  0.14  0.00
-#>   [12,]  0.06 -0.01 -0.11
+#>        [,1]  [,2]  [,3]  [,4]
+#>  [1,] -0.15 -0.03 -0.06  0.01
+#>  [2,]  0.15  0.02 -0.02 -0.02
+#>  [3,] -0.11 -0.07  1.14 -0.12
+#>  [4,] -0.06 -0.02  0.00  0.90
+#>  [5,] -0.02 -0.01 -0.01  0.03
+#>  [6,] -0.09  0.20  0.00 -0.03
+#>  [7,]  0.06 -0.01  0.01  0.02
+#>  [8,] -0.04  0.06  0.00  0.18
+#>  [9,] -0.03  0.00 -0.01  0.01
+#> [10,] -0.01 -0.08  0.01  0.06
+#> [11,]  0.10  0.05 -0.05  0.03
+#> [12,]  0.04 -0.03  0.02 -0.02
+#> [13,] -0.05  0.01  0.00  0.00
+#> [14,] -0.02  0.14  0.00  0.00
+#> [15,]  0.07  0.03 -0.13  0.01
+#> [16,]  0.04 -0.01  0.00 -0.09
 #> 
 #> Psi posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.56 -0.10
-#>   [2,] 0.50  1.20
-#>   [3,] 1.50  4.52
+#>      [,1]  [,2]
+#> [1,] 0.56 -0.06
+#> [2,] 0.50  1.20
+#> [3,] 7.31 -0.67
+#> [4,] 1.50  4.35
 #> 
 #> Sigma_u posterior mean
-#>       
-#>         [,1]  [,2] [,3]
-#>   [1,]  1.63 -0.06 0.15
-#>   [2,] -0.06  0.56 0.05
-#>   [3,]  0.15  0.05 0.43
-
-bvar_obj <- forecast(bvar_obj,
-                     ci = 0.68,
-                     fcst_type = "median", #we can use median as point forecast
-                     growth_rate_idx = c(1,2),
-                     plot_idx = c(1,2,3))
+#>       [,1]  [,2]  [,3]  [,4]
+#> [1,]  1.62 -0.06 -0.15  0.17
+#> [2,] -0.06  0.57 -0.03  0.05
+#> [3,] -0.15 -0.03  0.07 -0.03
+#> [4,]  0.17  0.05 -0.03  0.42
 ```
 
-<img src="man/figures/README-unnamed-chunk-32-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-32-3.png" width="100%" /><img src="man/figures/README-unnamed-chunk-32-4.png" width="100%" />
+Now lets forecast. We can this time use the median as the point
+forecast. This time we can use ‘show_all = TRUE’ to see all the
+historical data along with the forecast.
 
 ``` r
+par(mfrow=c(2,2))
+bvar_obj <- forecast(bvar_obj,
+                     ci = 0.68,
+                     fcst_type = "median",
+                     growth_rate_idx = c(1,2),
+                     plot_idx = c(1,2,3,4),
+                     estimation="gibbs",
+                     show_all = TRUE)
+```
 
-par(mfrow=c(2,1))
+<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
+
+Let do some impulse response analysis
+
+``` r
 irf <- IRF(bvar_obj,
            lag=20,
            response=1,
-           shock=3,
+           shock=4,
            method="OIRF",
-           ci=0.68)
+           ci=0.68,
+           estimation="gibbs")
 ```
 
-<img src="man/figures/README-unnamed-chunk-32-5.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-34-1.png" width="100%" />
 
 Real GDP growth shows a (persistent) decrease to an unexpected interest
 rate shock, in line with economic theory.
@@ -1075,12 +1099,13 @@ rate shock, in line with economic theory.
 irf <- IRF(bvar_obj,
            lag=20,
            response=2,
-           shock=3,
+           shock=4,
            method="OIRF",
-           ci=0.68)
+           ci=0.68,
+           estimation="gibbs")
 ```
 
-<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-35-1.png" width="100%" />
 
 Again, for the response of inflation to an interest rate shock, we see
 the price puzzle taking effect.
@@ -1089,12 +1114,28 @@ the price puzzle taking effect.
 irf <- IRF(bvar_obj,
            lag=20,
            response=3,
-           shock=2,
+           shock=4,
            method="OIRF",
-           ci=0.68)
+           ci=0.68,
+           estimation="gibbs")
 ```
 
-<img src="man/figures/README-unnamed-chunk-34-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
+
+The unemployment rate rises after an unexpected interest rate shock,
+which is in line with economic theory.
+
+``` r
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=4,
+           shock=2,
+           method="OIRF",
+           ci=0.68,
+           estimation="gibbs")
+```
+
+<img src="man/figures/README-unnamed-chunk-37-1.png" width="100%" />
 
 The short interest rate shows a (persistent) increase to an unexpected
 inflation shock, also in line with economic theory.
