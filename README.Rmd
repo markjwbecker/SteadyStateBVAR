@@ -132,7 +132,7 @@ $$
 
 Also, we will leave out the last two observations, so the user can compare the forecasts produced here to the last forecasts seen in Figure 1-3 in Villani (2009), to verify that this implementation works correctly.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=10, fig.height=10}
 yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 plot.ts(yt)
 ```
@@ -372,7 +372,7 @@ Interestingly, for the response of inflation to the interest rate shock, we see 
 
 Eventhough we can see by the posterior means that the foreign economy is ""exogenous"" (not really exogenous in the strict sense), we can also see this by plotting the response of the foreign gdp growth to an increase in the swedish interest rate (it should have no effect at all.)
 
-```{r, fig.width=16, fig.height=10}
+```{r, fig.width=8, fig.height=8}
 irf <- IRF(bvar_obj,
            lag=20,
            response=1,
@@ -416,7 +416,7 @@ It will give very similar results (as it should be). We will test if they give s
 
 Now I will estimate the same model in Section 3.3 in Gustafsson and Villani (2025), and "replicate" Figure 10-11. But now instead of blue = Variational inference, I will do blue = Stan (NUTS sampler), and red = Gibbs sampling. The data used in Gustafsson and Villani (2025) is the same as in Gustafsson, Villani and Stockhammar (2023), from which I obtained the data.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=10, fig.height=10}
 rm(list = ls())
 data("GustafssonVillaniStockhammar2023")
 yt <- GustafssonVillaniStockhammar2023
@@ -531,7 +531,7 @@ summary(bvar_obj)
 
 Now lets do Figure 10
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=10, fig.height=10}
 Psi_draws_gibbs  <- bvar_obj$fit$gibbs$Psi_draws
 Psi_draws_stan <- rstan::extract(bvar_obj$fit$stan)$Psi
 
@@ -568,7 +568,7 @@ legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="
 
 And Figure 11 (mean +/- 1 std deviation credible bands)
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=10, fig.height=10}
 GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
   
   Y_pred <- bvar_obj$fit$gibbs$fcst_draws
@@ -643,11 +643,11 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 ## Example 3 (Swedish data, 1987Q2-2025Q3)
 
-Now a quick last example, using swedish data up until 2025 for real GDP growth, where $100 [ln( GDP_t) - ln (GDP_{t-1}) ]$, CPIF inflation, where $100 [ln( CPIF_t) - ln (CPIF_{t-1}) ]$, and the 3-month interest rate. CPIF inflation is orignally on a monthly frequency, as such the CPIF index value of the last month in each quarter is taken to be the quarterly value.
+Now a quick last example, using swedish data up until 2025 for real GDP growth, where $100 [ln( GDP_t) - ln (GDP_{t-1}) ]$, CPIF inflation, where $100 [ln( CPIF_t) - ln (CPIF_{t-1}) ]$, the unemployment rate, and the 3-month interest rate. CPIF inflation is orignally on a monthly frequency, as such the CPIF index value of the last month in each quarter is taken to be the quarterly value.
 
 We do a similar setup as before. We use the hyperparameters from Gustafsson, Villani and Stockhammar (2023). Also, this time the prior for the covariance matrix is inverse wishart.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=10, fig.height=6}
 rm(list = ls())
 library(SteadyStateBVAR)
 data("SwedishData_1987_2025")
@@ -711,18 +711,24 @@ bvar_obj <- priors(bvar_obj,
 
 bvar_obj$predict$H <- 40
 bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
+```
 
+Lets fit the model
+
+```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit(bvar_obj,
                 iter = 2000,
                 warmup = 500,
                 chains = 1)
-
+```
+Check out posterior means
+```{r, fig.width=8, fig.height=8, results='hide'}
 summary(bvar_obj)
 ```
 
 Now lets forecast. We can this time use the median as the point forecast. This time we can use 'show_all = TRUE' to see all the historical data along with the forecast.
 
-```{r, fig.width=16, fig.height=10}
+```{r, fig.width=12, fig.height=8}
 par(mfrow=c(2,2))
 bvar_obj <- forecast(bvar_obj,
                      ci = 0.68,
@@ -734,7 +740,7 @@ bvar_obj <- forecast(bvar_obj,
 
 Let do some impulse response analysis
 
-```{r, fig.width=16, fig.height=10}
+```{r, fig.width=10, fig.height=6}
 irf <- IRF(bvar_obj,
            lag=20,
            response=1,
@@ -745,7 +751,7 @@ irf <- IRF(bvar_obj,
 
 Real GDP growth shows a (persistent) decrease to an unexpected interest rate shock, in line with economic theory.
 
-```{r, fig.width=16, fig.height=10}
+```{r, fig.width=10, fig.height=6}
 irf <- IRF(bvar_obj,
            lag=20,
            response=2,
@@ -757,7 +763,7 @@ irf <- IRF(bvar_obj,
 
 Again, for the response of inflation to an interest rate shock, we see the price puzzle taking effect.
 
-```{r, fig.width=16, fig.height=10}
+```{r, fig.width=10, fig.height=6}
 irf <- IRF(bvar_obj,
            lag=20,
            response=3,
@@ -768,7 +774,7 @@ irf <- IRF(bvar_obj,
 
 The unemployment rate rises after an unexpected interest rate shock, which is in line with economic theory.
 
-```{r, fig.width=16, fig.height=10}
+```{r, fig.width=10, fig.height=6}
 irf <- IRF(bvar_obj,
            lag=20,
            response=4,
