@@ -290,8 +290,8 @@ Then we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 2000,
+                warmup = 500,
                 chains = 2)
 ```
 
@@ -338,7 +338,7 @@ bvar_obj <- forecast(bvar_obj,
 
 We can also do some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF).
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=10, fig.height=10}
 par(mfrow=c(2,2))
 irf <- IRF(bvar_obj,
            lag=20,
@@ -351,8 +351,7 @@ irf <- IRF(bvar_obj,
            lag=20,
            response=4,
            shock=6,
-           method="GIRF",
-           ci=0.68)
+           method="GIRF")
 
 irf <- IRF(bvar_obj,
            lag=20,
@@ -370,6 +369,19 @@ irf <- IRF(bvar_obj,
 ```
 
 Interestingly, for the response of inflation to the interest rate shock, we see the price puzzle taking effect.
+
+Eventhough we can see by the posterior means that the foreign economy is ""exogenous"" (not really exogenous in the strict sense), we can also see this by plotting the response of the foreign gdp growth to an increase in the swedish interest rate (it should have no effect at all.)
+
+```{r, fig.width=16, fig.height=10}
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=1,
+           shock=6,
+           method="OIRF",
+           ci=0.68)
+```
+
+As we predicted, it has no effect.
 
 Now if desired, the user can estimate the model with a Gibbs sampler instead and then repeat the analysis above.
 
@@ -701,74 +713,68 @@ bvar_obj$predict$H <- 40
 bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
+                iter = 2000,
                 warmup = 500,
-                chains = 1,
-                estimation="gibbs")
+                chains = 1)
 
 summary(bvar_obj)
 ```
 
 Now lets forecast. We can this time use the median as the point forecast. This time we can use 'show_all = TRUE' to see all the historical data along with the forecast.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=16, fig.height=10}
 par(mfrow=c(2,2))
 bvar_obj <- forecast(bvar_obj,
                      ci = 0.68,
                      fcst_type = "median",
                      growth_rate_idx = c(1,2),
                      plot_idx = c(1,2,3,4),
-                     estimation="gibbs",
                      show_all = TRUE)
 ```
 
 Let do some impulse response analysis
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=16, fig.height=10}
 irf <- IRF(bvar_obj,
            lag=20,
            response=1,
            shock=4,
            method="OIRF",
-           ci=0.68,
-           estimation="gibbs")
+           ci=0.68)
 ```
 
 Real GDP growth shows a (persistent) decrease to an unexpected interest rate shock, in line with economic theory.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=16, fig.height=10}
 irf <- IRF(bvar_obj,
            lag=20,
            response=2,
            shock=4,
            method="OIRF",
-           ci=0.68,
-           estimation="gibbs")
+           ci=0.68)
 
 ```
 
 Again, for the response of inflation to an interest rate shock, we see the price puzzle taking effect.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=16, fig.height=10}
 irf <- IRF(bvar_obj,
            lag=20,
            response=3,
            shock=4,
            method="OIRF",
-           ci=0.68,
-           estimation="gibbs")
+           ci=0.68)
 ```
 
 The unemployment rate rises after an unexpected interest rate shock, which is in line with economic theory.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=16, fig.height=10}
 irf <- IRF(bvar_obj,
            lag=20,
            response=4,
            shock=2,
            method="OIRF",
-           ci=0.68,
-           estimation="gibbs")
+           ci=0.68)
 ```
 
 The short interest rate shows a (persistent) increase to an unexpected inflation shock, also in line with economic theory.
