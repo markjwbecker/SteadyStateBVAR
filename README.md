@@ -5,7 +5,8 @@
   - [Example 1 (Villani, 2009)](#example-1-villani-2009)
   - [Example 2 (Gustafsson and Villani,
     2025)](#example-2-gustafsson-and-villani-2025)
-  - [Example 3](#example-3)
+  - [Example 3 (Swedish data,
+    1987Q2-2025Q3)](#example-3-swedish-data-1987q2-2025q3)
   - [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -20,7 +21,10 @@ by Mattias Villani.
 
 ## Installation
 
-You can install the development version of SteadyStateBVAR with:
+First, you need to install Rstan:
+<https://github.com/stan-dev/rstan/wiki/Rstan-Getting-Started>
+
+Then you can install the development version of SteadyStateBVAR with:
 
 ``` r
 remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
@@ -229,7 +233,7 @@ tightness $\lambda_1=0.2$, cross equation tightness $\lambda_2=0.5$ and
 lag decay rate $\lambda_3=1$. We then specify the prior means for the
 first own lags of the variables. For variables in growth rates, we set
 the prior mean to $0$, for variables in levels, we set the prior mean to
-0.9.
+$0.9$.
 
 ``` r
 lambda_1 <- 0.2
@@ -250,16 +254,16 @@ Now moving on to $\Psi$ for the steady state priors, we set them
 according to the 95% prior probability intervals (normal distribution)
 in Table I in Villani (2009). We first note that for our data here, the
 growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified
-in terms of quarterly rates of change, i.e. for a variable $z$ which is
-on a quarterly frequency, the quarterly growth rate is
-$100 \left(\ln z_t - \ln z_{t-1}\right)$. The 95% prior probability
-intervals in Table I are specified in terms of annualized quarterly
-growth rates $400 \left(\ln z_t - \ln z_{t-1}\right)$.
+in terms of quarterly rates of change/quarter-on-quarter growth,
+i.e. for a variable $z$ which is on a quarterly frequency, the quarterly
+growth rate is $100[ \ln (z_t) - \ln (z_{t-1})]$. The 95% prior
+probability intervals in Table I are specified in terms of annualized
+quarterly growth rates $400 [\ln (z_t) - \ln (z_{t-1})]$.
 
 The ‘ppi()’ function is useful here. Simply input the desired 95% prior
 probability interval (normal distribution) on the annualized scale with
 ‘annualized_growthrate=TRUE’ and we get the corresponding prior mean and
-variance in terms of the original scale (quarterly rate of change). Of
+variance in terms of the original scale (quarter-on-quarter growth). Of
 course we could also just annualize our data before, and set
 ‘annualized_growthrate=’FALSE’. So now we do this for all steady state
 coefficients. Again, see Table I in Villani (2009) for the 95% prior
@@ -385,8 +389,7 @@ bvar_obj <- restrict(bvar_obj, restriction_matrix)
 ```
 
 At last we need to supply our forecast horizon $H$, and also the
-deterministic variables for the future periods and then we fit the
-model.
+deterministic variables for the future periods.
 
 ``` r
 bvar_obj$predict$H <- 12
@@ -410,19 +413,19 @@ summary(bvar_obj)
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
-#>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
-#>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
+#>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.00  0.00
+#>    [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.21  3.97  0.72  0.93
-#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
+#>    [7,]  0.00  0.00  0.00  1.21  3.94  0.74  0.93
+#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
 #>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
 #>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
 #>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.54 -0.39  0.31 -0.04
+#>   [14,]  0.00  0.00  0.00  0.55 -0.37  0.28 -0.04
 #>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
 #>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
@@ -431,12 +434,12 @@ summary(bvar_obj)
 #>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
 #>   [21,]  0.00  0.00  0.00 -0.13 -0.02 -0.57  0.00
 #>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
+#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.18 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.15 -0.06 -0.17 -0.01
 #> 
 #> Psi posterior mean
 #>       
@@ -444,7 +447,7 @@ summary(bvar_obj)
 #>   [1,] 0.58  0.08
 #>   [2,] 0.51  0.46
 #>   [3,] 4.94  2.02
-#>   [4,] 0.58 -0.04
+#>   [4,] 0.58 -0.03
 #>   [5,] 0.49  1.15
 #>   [6,] 4.29  4.45
 #>   [7,] 3.92 -0.10
@@ -453,10 +456,10 @@ summary(bvar_obj)
 #>       
 #>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#>   [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
+#>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
 #>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
 #>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#>   [5,] -0.01  0.13 0.18 -0.05  0.59  0.11  0.00
+#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
 #>   [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
 #>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
@@ -513,7 +516,7 @@ quarter growth rates, we transform the historical data and predictions
 to yearly growth rates with ‘growth_rate_idx’ where we specify the index
 of the growth rate variables in $y_t$. Note that this is not
 annualization, but we are now computing
-$100 \left(\ln z_t - \ln z_{t-4}\right)$.
+$100 [ \ln (z_t) - \ln (z_{t-4})]$.
 
 ``` r
 bvar_obj <- forecast(bvar_obj,
@@ -562,8 +565,11 @@ irf <- IRF(bvar_obj,
 
 <img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
 
-If desired, the user can estimate the model with a Gibbs sampler instead
-and then repeat the analysis above.
+Interestingly, for the response of inflation to the interest rate shock,
+we see the price puzzle taking effect.
+
+Now if desired, the user can estimate the model with a Gibbs sampler
+instead and then repeat the analysis above.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
@@ -659,9 +665,9 @@ roughly 68% prior probability interval)
 
 Note that we only have a constant now, so then $q=1$ and $\Psi$ only has
 one column $\psi_1$. Also the growth rate variables (everything except
-‘FEDFUNDS’) are already in the form
-$400 \left(\ln z_t - \ln z_{t-1}\right)$, so we can specify all of the
-intervals ‘as is’. See Gustafsson and Villani (2025) for the intervals.
+‘FEDFUNDS’) are already in the form $400 [ \ln (z_t) - \ln (z_{t-1}) ]$,
+so we can specify all of the intervals ‘as is’. See Gustafsson and
+Villani (2025) for the intervals.
 
 ``` r
 theta_Psi <- 
@@ -738,41 +744,41 @@ summary(bvar_obj)
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>    [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
-#>    [2,]  0.02  0.71  0.04 -0.17  0.76 -0.02  0.03
-#>    [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.02
-#>    [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
+#>    [2,]  0.03  0.70  0.04 -0.17  0.76 -0.02  0.03
+#>    [3,] -0.02  0.11  1.01 -0.39  0.24 -0.02 -0.02
+#>    [4,]  0.27  0.02  0.03  0.14  1.80  0.25  0.04
 #>    [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
 #>    [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>    [7,]  0.08 -0.01  0.03  0.03 -0.20 -0.13  0.36
+#>    [7,]  0.08  0.00  0.03  0.03 -0.18 -0.13  0.36
 #>    [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>    [9,] -0.05  0.19  0.07  0.11 -0.67  0.04 -0.04
+#>    [9,] -0.06  0.19  0.07  0.11 -0.68  0.04 -0.04
 #>   [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
-#>   [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
+#>   [11,]  0.12 -0.01 -0.04  0.12 -0.01  0.06  0.01
 #>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#>   [13,]  0.04 -0.01  0.01  0.01 -0.56  0.16 -0.01
-#>   [14,] -0.04  0.03  0.03  0.04 -0.36 -0.13  0.30
+#>   [13,]  0.03 -0.01  0.01  0.01 -0.56  0.16 -0.01
+#>   [14,] -0.04  0.03  0.03  0.04 -0.38 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>       
 #>        [,1]
-#>   [1,] 3.20
-#>   [2,] 2.46
+#>   [1,] 3.19
+#>   [2,] 2.47
 #>   [3,] 4.45
 #>   [4,] 3.38
-#>   [5,] 4.64
+#>   [5,] 4.61
 #>   [6,] 1.66
 #>   [7,] 1.03
 #> 
 #> Sigma_u posterior mean
 #>       
 #>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#>   [1,]  7.95 -0.01  0.50  4.26  26.91  3.99  0.45
+#>   [1,]  7.92 -0.01  0.49  4.25  26.80  3.97  0.45
 #>   [2,] -0.01  1.00  0.12 -0.14   0.88  0.34 -0.13
-#>   [3,]  0.50  0.12  0.70  0.27   2.25  0.63 -0.05
-#>   [4,]  4.26 -0.14  0.27  5.74   5.43  2.24  0.45
-#>   [5,] 26.91  0.88  2.25  5.43 161.56 16.55  2.08
-#>   [6,]  3.99  0.34  0.63  2.24  16.55  5.43  0.37
-#>   [7,]  0.45 -0.13 -0.05  0.45   2.08  0.37  1.26
+#>   [3,]  0.49  0.12  0.69  0.27   2.25  0.63 -0.05
+#>   [4,]  4.25 -0.14  0.27  5.74   5.39  2.23  0.45
+#>   [5,] 26.80  0.88  2.25  5.39 161.22 16.50  2.08
+#>   [6,]  3.97  0.34  0.63  2.23  16.50  5.42  0.36
+#>   [7,]  0.45 -0.13 -0.05  0.45   2.08  0.36  1.26
 #> 
 #> 
 #> ====================================
@@ -781,40 +787,40 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
-#>  [2,]  0.03  0.70  0.04 -0.17  0.75 -0.02  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.23 -0.02 -0.02
+#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.05 -0.03
+#>  [2,]  0.03  0.70  0.04 -0.17  0.77 -0.02  0.03
+#>  [3,] -0.02  0.11  1.01 -0.39  0.21 -0.02 -0.02
 #>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.10  0.05  0.06 -0.02  1.21  0.31  0.01
-#>  [7,]  0.08  0.00  0.02  0.03 -0.20 -0.13  0.36
+#>  [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
+#>  [7,]  0.08  0.00  0.03  0.03 -0.19 -0.13  0.36
 #>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
 #>  [9,] -0.05  0.19  0.07  0.11 -0.67  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.09  0.38 -0.93 -0.11 -0.03
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
+#> [10,] -0.06 -0.08 -0.09  0.38 -0.91 -0.11 -0.03
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.05  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.04 -0.01  0.01  0.01 -0.56  0.16 -0.01
+#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
 #> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
-#> [1,] 3.19
+#> [1,] 3.20
 #> [2,] 2.47
 #> [3,] 4.45
-#> [4,] 3.38
-#> [5,] 4.63
+#> [4,] 3.39
+#> [5,] 4.62
 #> [6,] 1.66
 #> [7,] 1.03
 #> 
 #> Sigma_u posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.93 -0.01  0.50  4.25  26.88  3.98  0.45
-#> [2,] -0.01  1.00  0.12 -0.13   0.87  0.35 -0.13
-#> [3,]  0.50  0.12  0.70  0.28   2.26  0.63 -0.05
-#> [4,]  4.25 -0.13  0.28  5.73   5.43  2.24  0.45
-#> [5,] 26.88  0.87  2.26  5.43 161.75 16.56  2.10
-#> [6,]  3.98  0.35  0.63  2.24  16.56  5.43  0.37
-#> [7,]  0.45 -0.13 -0.05  0.45   2.10  0.37  1.26
+#> [1,]  7.95 -0.02  0.49  4.26  26.88  3.99  0.45
+#> [2,] -0.02  1.00  0.12 -0.14   0.87  0.34 -0.14
+#> [3,]  0.49  0.12  0.70  0.27   2.24  0.63 -0.05
+#> [4,]  4.26 -0.14  0.27  5.75   5.44  2.24  0.45
+#> [5,] 26.88  0.87  2.24  5.44 161.47 16.56  2.09
+#> [6,]  3.99  0.34  0.63  2.24  16.56  5.43  0.37
+#> [7,]  0.45 -0.14 -0.05  0.45   2.09  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -924,17 +930,21 @@ GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
 par(mfrow=c(2,2))
 
 GustafssonVillani2025plot(bvar_obj, plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
-GustafssonVillani2025plot(bvar_obj, plot_idx=c(2), xlim=c(39.25,58), ylim=c(-1,4))
-GustafssonVillani2025plot(bvar_obj, plot_idx=c(3), xlim=c(39.25,58), ylim=c(-1,6.5))
+GustafssonVillani2025plot(bvar_obj, plot_idx=c(2), xlim=c(39.25,58), ylim=c(-0.7,4))
+GustafssonVillani2025plot(bvar_obj, plot_idx=c(3), xlim=c(39.25,58), ylim=c(-0.5,6))
 GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
 ```
 
 <img src="man/figures/README-unnamed-chunk-31-1.png" width="100%" />
 
-## Example 3
+## Example 3 (Swedish data, 1987Q2-2025Q3)
 
 Now a quick last example, using swedish data up until 2025 for real GDP
-growth, CPIF inflation and the 3-month interest rate.
+growth, where $100 [ln( GDP_t) - ln (GDP_{t-1}) ]$, CPIF inflation,
+where $100 [ln( CPIF_t) - ln (CPIF_{t-1}) ]$, and the 3-month interest
+rate. CPIF inflation is orignally on a monthly frequency, as such the
+CPIF index value of the last month in each quarter is taken to be the
+quarterly value.
 
 ``` r
 rm(list = ls())
@@ -957,9 +967,9 @@ bvar_obj <- setup(bvar_obj,
                   deterministic = "constant_and_dummy",
                   dummy = dum_var)
 
-lambda_1 <- 0.2
-lambda_2 <- 0.5
-lambda_3 <- 1.0
+lambda_1 <- 0.27
+lambda_2 <- 0.43
+lambda_3 <- 0.76
 
 fol_pm=c(0,   #delta y
          0,   #pi
@@ -969,22 +979,22 @@ fol_pm=c(0,   #delta y
 theta_Psi <- 
   c(
     ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta_y
-    ppi( 1.90,  2.10,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
-    ppi( 2.00,  3.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
+    ppi( 1.95,  2.05,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
+    ppi( 1.45,  1.55,  annualized_growthrate=FALSE)$mean,  #psi_1: i
     ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta_y
     ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
-    ppi( 4.00,  7.50,  annualized_growthrate=FALSE)$mean   #psi_2: i
+    ppi( 5.00,  9.00,  annualized_growthrate=FALSE)$mean   #psi_2: i
     )
 
 Omega_Psi <- 
   diag(
     c(
-      ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,   #psi_1: delta_y
-      ppi( 1.90,  2.10,  annualized_growthrate=TRUE)$var,   #psi_1: pi
-      ppi( 2.00,  3.50,  annualized_growthrate=FALSE)$var,  #psi_1: i
-      ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,   #psi_2: delta_y
-      ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,   #psi_2: pi
-      ppi( 4.00,  7.50,  annualized_growthrate=FALSE)$var   #psi_2: i
+    ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,   #psi_1: delta_y
+    ppi( 1.95,  2.05,  annualized_growthrate=TRUE)$var,   #psi_1: pi
+    ppi( 1.45,  1.55,  annualized_growthrate=FALSE)$var,  #psi_1: i
+    ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,   #psi_2: delta_y
+    ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,   #psi_2: pi
+    ppi( 5.00,  9.00,  annualized_growthrate=FALSE)$var   #psi_2: i
     )
     )
 
@@ -1003,47 +1013,91 @@ bvar_obj$predict$X_pred <- cbind(rep(1, 20), 0)
 bvar_obj <- fit(bvar_obj,
                 iter = 10000,
                 warmup = 5000,
-                chains = 4)
+                chains = 2)
 
 summary(bvar_obj)
 #> beta posterior mean
 #>        
 #>          [,1]  [,2]  [,3]
-#>    [1,] -0.06 -0.01  0.01
-#>    [2,]  0.16  0.02  0.00
-#>    [3,] -0.09 -0.01  0.97
-#>    [4,]  0.03  0.00  0.02
-#>    [5,] -0.05  0.17 -0.02
-#>    [6,]  0.00  0.03  0.10
-#>    [7,]  0.02  0.00  0.01
-#>    [8,] -0.01 -0.05  0.03
-#>    [9,]  0.02 -0.02 -0.04
-#>   [10,] -0.01  0.00  0.00
-#>   [11,] -0.01  0.07  0.00
-#>   [12,]  0.03 -0.01 -0.06
+#>    [1,] -0.07 -0.02  0.02
+#>    [2,]  0.18  0.03 -0.01
+#>    [3,] -0.11 -0.02  0.93
+#>    [4,]  0.04  0.00  0.03
+#>    [5,] -0.08  0.21 -0.03
+#>    [6,] -0.01  0.06  0.19
+#>    [7,]  0.03  0.00  0.01
+#>    [8,] -0.01 -0.08  0.06
+#>    [9,]  0.03 -0.04 -0.04
+#>   [10,] -0.01  0.01  0.00
+#>   [11,] -0.02  0.14  0.00
+#>   [12,]  0.06 -0.01 -0.11
 #> 
 #> Psi posterior mean
 #>       
 #>        [,1]  [,2]
 #>   [1,] 0.56 -0.10
 #>   [2,] 0.50  1.20
-#>   [3,] 2.74  4.18
+#>   [3,] 1.50  4.52
 #> 
 #> Sigma_u posterior mean
 #>       
 #>         [,1]  [,2] [,3]
-#>   [1,]  1.63 -0.07 0.15
-#>   [2,] -0.07  0.58 0.04
-#>   [3,]  0.15  0.04 0.44
+#>   [1,]  1.63 -0.06 0.15
+#>   [2,] -0.06  0.56 0.05
+#>   [3,]  0.15  0.05 0.43
 
 bvar_obj <- forecast(bvar_obj,
                      ci = 0.68,
-                     fcst_type = "median",#we can use median as point forecast
+                     fcst_type = "median", #we can use median as point forecast
                      growth_rate_idx = c(1,2),
                      plot_idx = c(1,2,3))
 ```
 
 <img src="man/figures/README-unnamed-chunk-32-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-32-3.png" width="100%" /><img src="man/figures/README-unnamed-chunk-32-4.png" width="100%" />
+
+``` r
+
+par(mfrow=c(2,1))
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=1,
+           shock=3,
+           method="OIRF",
+           ci=0.68)
+```
+
+<img src="man/figures/README-unnamed-chunk-32-5.png" width="100%" />
+
+Real GDP growth shows a (persistent) decrease to an unexpected interest
+rate shock, in line with economic theory.
+
+``` r
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=2,
+           shock=3,
+           method="OIRF",
+           ci=0.68)
+```
+
+<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
+
+Again, for the response of inflation to an interest rate shock, we see
+the price puzzle taking effect.
+
+``` r
+irf <- IRF(bvar_obj,
+           lag=20,
+           response=3,
+           shock=2,
+           method="OIRF",
+           ci=0.68)
+```
+
+<img src="man/figures/README-unnamed-chunk-34-1.png" width="100%" />
+
+The short interest rate shows a (persistent) increase to an unexpected
+inflation shock, also in line with economic theory.
 
 ## References
 
