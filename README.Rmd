@@ -290,9 +290,9 @@ Then we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 500,
-                chains = 2)
+                iter = 10000,
+                warmup = 5000,
+                chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -303,7 +303,7 @@ summary(bvar_obj)
 
 Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for the post-crisis steady state coefficients of domestic gdp growth and inflation (multiply both coefficients by 4 to get on the annualized scale).
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE}
+```{r, fig.width=16, fig.height=8, warning=FALSE, message=FALSE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -513,13 +513,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 500,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 500,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -643,13 +643,12 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 ## Example 3 (Swedish data, 1987Q2-2025Q3)
 
-Now a quick last example, using swedish data up until 2025 for real GDP growth, where $100 [ln( GDP_t) - ln (GDP_{t-1}) ]$, CPIF inflation, where $100 [ln( CPIF_t) - ln (CPIF_{t-1}) ]$, the unemployment rate, and the 3-month interest rate. CPIF inflation is orignally on a monthly frequency, as such the CPIF index value of the last month in each quarter is taken to be the quarterly value.
+Now a quick last example, using swedish data up until 2025 for real GDP growth, where $100 [ln( GDP_t) - ln (GDP_{t-1}) ]$, CPIF inflation, where $100 [ln( CPIF_t) - ln (CPIF_{t-1}) ]$, the unemployment rate, and the 3-month interest rate. CPIF inflation is originally on a monthly frequency, as such the CPIF index value of the last month in each quarter is taken to be the quarterly value.
 
 We do a similar setup as before. We use the hyperparameters from Gustafsson, Villani and Stockhammar (2023). Also, this time the prior for the covariance matrix is inverse wishart.
 
-```{r, fig.width=10, fig.height=6}
+```{r, fig.width=8, fig.height=8}
 rm(list = ls())
-library(SteadyStateBVAR)
 data("SwedishData_1987_2025")
 yt <- SwedishData_1987_2025
 plot.ts(yt)
@@ -717,9 +716,9 @@ Lets fit the model
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 500,
-                chains = 1)
+                iter = 10000,
+                warmup = 2500,
+                chains = 4)
 ```
 Check out posterior means
 ```{r, fig.width=8, fig.height=8, results='hide'}
@@ -738,6 +737,17 @@ bvar_obj <- forecast(bvar_obj,
                      show_all = TRUE)
 ```
 
+Now I will also quickly show the forecasts of real gdp growth and inflation on the original (quarter-on-quarter growth) scale.
+
+```{r, fig.width=12, fig.height=8}
+par(mfrow=c(2,1))
+bvar_obj <- forecast(bvar_obj,
+                     ci = 0.68,
+                     fcst_type = "median",
+                     plot_idx = c(1,2),
+                     show_all = TRUE)
+```
+
 Let do some impulse response analysis
 
 ```{r, fig.width=10, fig.height=6}
@@ -749,7 +759,7 @@ irf <- IRF(bvar_obj,
            ci=0.68)
 ```
 
-Real GDP growth shows a (persistent) decrease to an unexpected interest rate shock, in line with economic theory.
+Real GDP growth shows a (persistent) decrease to an interest rate shock, in line with economic theory.
 
 ```{r, fig.width=10, fig.height=6}
 irf <- IRF(bvar_obj,
@@ -772,7 +782,7 @@ irf <- IRF(bvar_obj,
            ci=0.68)
 ```
 
-The unemployment rate rises after an unexpected interest rate shock, which is in line with economic theory.
+The unemployment rate rises after an interest rate shock, which is in line with economic theory.
 
 ```{r, fig.width=10, fig.height=6}
 irf <- IRF(bvar_obj,
@@ -783,7 +793,7 @@ irf <- IRF(bvar_obj,
            ci=0.68)
 ```
 
-The short interest rate shows a (persistent) increase to an unexpected inflation shock, also in line with economic theory.
+The short interest rate shows a (persistent) increase to an inflation shock, also in line with economic theory.
 
 
 ## References
