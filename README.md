@@ -75,8 +75,9 @@ $qp$-dimensional vector of lagged exogenous (deterministic) variables,
 $I_p$ is the $(p \times p)$ identity matrix and $\otimes$ denotes the
 Kronecker product. This is how the likelihood is written in the Stan
 code. The goal is to estimate $\beta, \Psi$ and $\Sigma_u$, therefore
-priors are needed. Starting with $\beta$, we use the Minnesota prior
-where
+priors are needed. Note that we assume prior independence between
+$\beta, \Psi$ and $\Sigma_u$. Starting with $\beta$, we use the
+Minnesota prior where
 
 $$
 \textrm{vec}(\beta) \sim N_{kpk}\left[\theta_\beta,\Omega_\beta\right]
@@ -201,7 +202,7 @@ x_{t}' =
 $$
 
 ``` r
-bp = 52 #breakpoint at 1992Q4
+bp = which(time(yt) == 1992.75) #breakpoint at 1992Q4
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp)) #1 if t<=1992Q4, 0 if t>1992Q4
 ```
 
@@ -414,24 +415,24 @@ summary(bvar_obj)
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
 #>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
-#>    [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
+#>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.20  3.95  0.79  0.93
-#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
+#>    [7,]  0.00  0.00  0.00  1.22  3.98  0.77  0.93
+#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
 #>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
 #>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.55 -0.37  0.28 -0.04
+#>   [14,]  0.00  0.00  0.00  0.56 -0.39  0.30 -0.04
 #>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
 #>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
 #>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
+#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
 #>   [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.58  0.00
 #>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
 #>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
@@ -439,7 +440,7 @@ summary(bvar_obj)
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.15 -0.06 -0.17 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.18 -0.01
 #> 
 #> Psi posterior mean
 #>       
@@ -447,20 +448,20 @@ summary(bvar_obj)
 #>   [1,] 0.58  0.08
 #>   [2,] 0.51  0.46
 #>   [3,] 4.94  2.02
-#>   [4,] 0.58 -0.04
+#>   [4,] 0.58 -0.03
 #>   [5,] 0.49  1.15
-#>   [6,] 4.29  4.46
+#>   [6,] 4.29  4.45
 #>   [7,] 3.92 -0.10
 #> 
 #> Sigma_u posterior mean
 #>       
 #>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#>   [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
+#>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
 #>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
 #>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#>   [5,] -0.01  0.13 0.18 -0.05  0.60  0.12  0.00
-#>   [6,]  0.00  0.04 0.11 -0.01  0.12  1.56 -0.01
+#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
+#>   [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
 #>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
@@ -497,6 +498,7 @@ true values
 ``` r
 (villani2009[103:104,6]) #true values
 #> [1] 1.478503 1.563795
+
 rstan::plot(stanfit,
             pars=c("Y_pred[1,6]", "Y_pred[2,6]"),
             show_density = TRUE,
@@ -511,12 +513,13 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
 historical data. We will choose a 95% prediction interval and the mean
-of the posterior as the point forecast. For variables in quarter on
-quarter growth rates, we transform the historical data and predictions
-to yearly growth rates with ‘growth_rate_idx’ where we specify the index
-of the growth rate variables in $y_t$. Note that this is not
-annualization, but we are now computing
-$100 [ \ln (z_t) - \ln (z_{t-4})]$.
+of the predictive distribution as the point forecast. For variables in
+quarter on quarter growth rates, we transform the historical data and
+predictions to yearly growth rates with ‘growth_rate_idx’ where we
+specify the index of the growth rate variables in $y_t$. Note that this
+is not annualization, but we are now computing
+$100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by
+summing up to fourth differences.
 
 ``` r
 bvar_obj <- forecast(bvar_obj,
@@ -570,7 +573,7 @@ we see the price puzzle taking effect.
 Even though we can see by the posterior means that the foreign economy
 is ““exogenous”” (not really exogenous in the strict sense), we can also
 see this by plotting the response of the foreign gdp growth to an
-increase in the swedish interest rate (it should have no effect at all.)
+increase in the Swedish interest rate (it should have no effect at all.)
 
 ``` r
 irf <- IRF(bvar_obj,
@@ -583,7 +586,7 @@ irf <- IRF(bvar_obj,
 
 <img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
 
-As we predicted, it has no effect.
+As we predicted, it has virtually no effect.
 
 Now if desired, the user can estimate the model with a Gibbs sampler
 instead and then repeat the analysis above.
@@ -620,7 +623,7 @@ they give similar results in the following section.
 
 Now I will estimate the same model in Section 3.3 in Gustafsson and
 Villani (2025), and “replicate” Figure 10-11. But now instead of blue =
-Variational inference, I will do blue = Stan (NUTS sampler), and red =
+Variational Inference, I will do blue = Stan (NUTS sampler), and red =
 Gibbs sampling. The data used in Gustafsson and Villani (2025) is the
 same as in Gustafsson, Villani and Stockhammar (2023), from which I
 obtained the data.
@@ -760,19 +763,19 @@ summary(bvar_obj)
 #> beta posterior mean
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.06 -0.02  0.03  0.07 -0.26  0.05 -0.03
-#>    [2,]  0.03  0.71  0.04 -0.17  0.75 -0.02  0.03
-#>    [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.02
+#>    [1,]  0.06 -0.02  0.03  0.07 -0.26  0.04 -0.03
+#>    [2,]  0.02  0.71  0.04 -0.17  0.76 -0.02  0.03
+#>    [3,] -0.02  0.11  1.01 -0.39  0.23 -0.02 -0.02
 #>    [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
 #>    [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>    [6,]  0.10  0.05  0.06 -0.02  1.21  0.31  0.01
-#>    [7,]  0.09 -0.01  0.03  0.03 -0.19 -0.13  0.36
+#>    [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
+#>    [7,]  0.09  0.00  0.03  0.03 -0.18 -0.13  0.36
 #>    [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
 #>    [9,] -0.05  0.19  0.07  0.11 -0.67  0.04 -0.04
-#>   [10,] -0.06 -0.08 -0.08  0.38 -0.92 -0.11 -0.03
+#>   [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
 #>   [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
 #>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#>   [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
+#>   [13,]  0.04 -0.01  0.01  0.00 -0.56  0.16 -0.01
 #>   [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
@@ -781,20 +784,20 @@ summary(bvar_obj)
 #>   [1,] 3.19
 #>   [2,] 2.47
 #>   [3,] 4.44
-#>   [4,] 3.38
-#>   [5,] 4.62
-#>   [6,] 1.65
-#>   [7,] 1.03
+#>   [4,] 3.37
+#>   [5,] 4.63
+#>   [6,] 1.66
+#>   [7,] 1.02
 #> 
 #> Sigma_u posterior mean
 #>       
 #>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#>   [1,]  7.93 -0.01  0.49  4.25  26.83  3.97  0.45
-#>   [2,] -0.01  0.99  0.12 -0.13   0.86  0.34 -0.13
-#>   [3,]  0.49  0.12  0.70  0.27   2.25  0.63 -0.05
-#>   [4,]  4.25 -0.13  0.27  5.74   5.40  2.23  0.45
-#>   [5,] 26.83  0.86  2.25  5.40 161.36 16.52  2.09
-#>   [6,]  3.97  0.34  0.63  2.23  16.52  5.42  0.37
+#>   [1,]  7.93 -0.01  0.50  4.25  26.81  3.98  0.45
+#>   [2,] -0.01  1.00  0.12 -0.14   0.88  0.34 -0.13
+#>   [3,]  0.50  0.12  0.70  0.27   2.25  0.63 -0.05
+#>   [4,]  4.25 -0.14  0.27  5.73   5.40  2.23  0.45
+#>   [5,] 26.81  0.88  2.25  5.40 161.27 16.54  2.09
+#>   [6,]  3.98  0.34  0.63  2.23  16.54  5.43  0.37
 #>   [7,]  0.45 -0.13 -0.05  0.45   2.09  0.37  1.26
 #> 
 #> 
@@ -804,40 +807,40 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.03  0.07 -0.26  0.04 -0.03
-#>  [2,]  0.03  0.71  0.04 -0.17  0.76 -0.02  0.03
+#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
+#>  [2,]  0.02  0.71  0.04 -0.17  0.76 -0.02  0.03
 #>  [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.02
 #>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
 #>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.19 -0.13  0.36
+#>  [7,]  0.09 -0.01  0.03  0.04 -0.19 -0.13  0.36
 #>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.06  0.19  0.07  0.11 -0.68  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
+#>  [9,] -0.06  0.19  0.07  0.11 -0.67  0.04 -0.04
+#> [10,] -0.06 -0.08 -0.09  0.38 -0.91 -0.11 -0.03
 #> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
+#> [13,]  0.04 -0.01  0.01  0.01 -0.56  0.16 -0.01
 #> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
 #> [1,] 3.20
-#> [2,] 2.47
-#> [3,] 4.46
+#> [2,] 2.46
+#> [3,] 4.45
 #> [4,] 3.38
-#> [5,] 4.64
-#> [6,] 1.67
+#> [5,] 4.63
+#> [6,] 1.66
 #> [7,] 1.03
 #> 
 #> Sigma_u posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.96 -0.01  0.50  4.26  26.96  3.99  0.45
-#> [2,] -0.01  0.99  0.12 -0.14   0.87  0.34 -0.14
-#> [3,]  0.50  0.12  0.70  0.27   2.27  0.63 -0.05
-#> [4,]  4.26 -0.14  0.27  5.74   5.43  2.24  0.45
-#> [5,] 26.96  0.87  2.27  5.43 162.00 16.58  2.11
+#> [1,]  7.95 -0.02  0.50  4.26  26.91  3.99  0.45
+#> [2,] -0.02  1.00  0.12 -0.14   0.87  0.34 -0.14
+#> [3,]  0.50  0.12  0.70  0.27   2.26  0.63 -0.05
+#> [4,]  4.26 -0.14  0.27  5.74   5.45  2.24  0.45
+#> [5,] 26.91  0.87  2.26  5.45 161.61 16.58  2.10
 #> [6,]  3.99  0.34  0.63  2.24  16.58  5.44  0.37
-#> [7,]  0.45 -0.14 -0.05  0.45   2.11  0.37  1.26
+#> [7,]  0.45 -0.14 -0.05  0.45   2.10  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -879,7 +882,8 @@ legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="
 
 <img src="man/figures/README-unnamed-chunk-31-1.png" width="100%" />
 
-And Figure 11 (mean +/- 1 std deviation credible bands)
+And Figure 11 (mean +/- 1 std deviation bands of predictive
+distribution)
 
 ``` r
 GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
@@ -895,7 +899,7 @@ GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
   T <- nrow(Y)
   H <- bvar_obj$predict$H
   m <- ncol(Y)
-  time_hist <- time(Y)
+  time_hist <- as.numeric(time(Y))
   time_fore <- seq(tail(time_hist, 1) + 1/freq, by = 1/freq, length.out = H)
   i = plot_idx
   smply <- Y[, i]
@@ -946,10 +950,10 @@ GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
 
 par(mfrow=c(2,2))
 
-GustafssonVillani2025plot(bvar_obj, plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,7))
+GustafssonVillani2025plot(bvar_obj, plot_idx=c(1), xlim=c(39.25,58), ylim=c(-8.5,6.75))
 GustafssonVillani2025plot(bvar_obj, plot_idx=c(2), xlim=c(39.25,58), ylim=c(-0.7,4))
 GustafssonVillani2025plot(bvar_obj, plot_idx=c(3), xlim=c(39.25,58), ylim=c(-0.5,6))
-GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.5))
+GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.25))
 ```
 
 <img src="man/figures/README-unnamed-chunk-32-1.png" width="100%" />
@@ -970,12 +974,17 @@ irf <- IRF(bvar_obj,
 
 ## Example 3 (Swedish data, 1987Q2-2025Q3)
 
-Now a quick last example, using swedish data up until 2025 for real GDP
+Now a quick last example, using Swedish data up until 2025 for real GDP
 growth, where $100 [ \ln( GDP_t) - \ln (GDP_{t-1}) ]$, CPIF inflation,
 where $100 [ \ln( CPIF_t) - \ln (CPIF_{t-1}) ]$, the unemployment rate,
-and the 3-month interest rate. CPIF inflation is originally on a monthly
+and the 3-month interest rate. The CPIF index is originally on a monthly
 frequency, as such the CPIF index value of the last month in each
-quarter is taken to be the quarterly value. g
+quarter is taken to be the quarterly value. We will do a similar setup
+as in the first example, except now we use the uninformative inverse
+wishart prior for the covariance matrix ($\Sigma_u$). Note that if you
+want to use an informative prior, you are free to do so by changing
+‘bvar_obj\$priors\$V_0’ (scale matrix) and ‘bvar_obj\$priors\$m0’
+(degrees of freedom), before you fit the model.
 
 ``` r
 rm(list = ls())
@@ -990,7 +999,7 @@ plot.ts(yt)
 
 bvar_obj <- bvar(data = yt)
 
-bp = 23 #breakpoint at 1992Q4
+bp = which(time(yt) == 1992.75) #breakpoint at 1992Q4
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp)) #1 if t<=1992Q4, 0 if t>1992Q4
 
 bvar_obj <- setup(bvar_obj,
@@ -1006,7 +1015,7 @@ fol_pm=c(0,   #delta y
          0,   #pi
          0.9, #u
          0.9  #i
-)
+         )
 
 theta_Psi <- 
    c(
@@ -1041,7 +1050,7 @@ bvar_obj <- priors(bvar_obj,
                    fol_pm,
                    theta_Psi, 
                    Omega_Psi,
-                   Jeffrey=FALSE) #let us use inverse wishart prior for Sigma_u
+                   Jeffrey=FALSE) #inverse wishart prior for Sigma_u
 
 bvar_obj$predict$H <- 40
 bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
@@ -1065,7 +1074,7 @@ summary(bvar_obj)
 #>          [,1]  [,2]  [,3]  [,4]
 #>    [1,] -0.15 -0.02 -0.06  0.01
 #>    [2,]  0.14  0.01 -0.01 -0.01
-#>    [3,] -0.02 -0.06  1.15 -0.12
+#>    [3,] -0.02 -0.06  1.16 -0.12
 #>    [4,] -0.06 -0.01  0.00  0.93
 #>    [5,] -0.01 -0.01  0.00  0.02
 #>    [6,] -0.06  0.17  0.00 -0.02
@@ -1086,7 +1095,7 @@ summary(bvar_obj)
 #>   [1,] 0.55 -0.05
 #>   [2,] 0.50  1.20
 #>   [3,] 7.26 -0.65
-#>   [4,] 1.56  4.26
+#>   [4,] 1.56  4.27
 #> 
 #> Sigma_u posterior mean
 #>       
@@ -1097,9 +1106,9 @@ summary(bvar_obj)
 #>   [4,]  0.17  0.04 -0.03  0.43
 ```
 
-Now lets forecast. We can this time use the median as the point
-forecast. This time we can use ‘show_all = TRUE’ to see all the
-historical data along with the forecast.
+Now lets forecast. We can this time use the median of the predictive
+distribution as the point forecast. Also, let us use ‘show_all = TRUE’
+to see all the historical data along with the forecast.
 
 ``` r
 par(mfrow=c(2,2))
@@ -1155,7 +1164,7 @@ irf <- IRF(bvar_obj,
 <img src="man/figures/README-unnamed-chunk-40-1.png" width="100%" />
 
 Again, for the response of inflation to an interest rate shock, we see
-the price puzzle taking effect. Also quite a weak (almost non-existent)
+the price puzzle taking effect. Also, a very weak (almost non-existent)
 negative effect, after the initial price puzzle.
 
 ``` r
