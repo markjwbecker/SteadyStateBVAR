@@ -33,7 +33,7 @@ forecast <- function (x, ci = 0.95, fcst_type = c("mean", "median"), growth_rate
   colnames(forecast_ret) <- colnames(Y)
   colnames(lower_ret) <- colnames(Y)
   colnames(upper_ret) <- colnames(Y)
-  time_hist <- time(Y)
+  time_hist <- as.numeric(time(Y))
   time_fore <- seq(tail(time_hist, 1) + 1/freq, by = 1/freq, 
                    length.out = H)
   if (is.null(plot_idx)) 
