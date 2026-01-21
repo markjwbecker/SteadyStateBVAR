@@ -303,7 +303,7 @@ summary(bvar_obj)
 
 Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for the post-crisis steady state coefficients of domestic gdp growth and inflation (multiply both coefficients by 4 to get on the annualized scale).
 
-```{r, fig.width=16, fig.height=8, warning=FALSE, message=FALSE}
+```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -317,7 +317,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the 3-month interest rate, and compare with the actual true values
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=10, fig.height=8}
 (villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -515,13 +515,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 5000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 5000,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -780,7 +780,7 @@ irf <- IRF(bvar_obj,
            ci=0.68)
 ```
 
-Again, for the response of inflation to an interest rate shock, we see the price puzzle taking effect. Also, a very weak (almost non-existent) negative effect, after the initial price puzzle.
+Again, for the response of inflation to an interest rate shock, we see the price puzzle taking effect. Also, a very weak (almost non-existent) negative effect, after the initial price puzzle. Reestimating the exact same model, but instead using CPI inflation (same variable for $\pi$ as in example 1) instead of CPIF inflation, the impulse response is very similar to the one seen in example 1. CPIF inflation is used here, because the Swedish central bank nowadays uses CPIF instead of CPI inflation as the target variable for  their monetary policy.
 
 ```{r, fig.width=10, fig.height=6}
 irf <- IRF(bvar_obj,
@@ -803,7 +803,6 @@ irf <- IRF(bvar_obj,
 ```
 
 The short interest rate shows a increase to an inflation shock, also in line with economic theory.
-
 
 ## References
 
