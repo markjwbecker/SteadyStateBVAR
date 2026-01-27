@@ -7,7 +7,7 @@
     2025)](#example-2-gustafsson-and-villani-2025)
   - [Example 3 (Swedish data,
     1987Q2-2025Q3)](#example-3-swedish-data-1987q2-2025q3)
-   - [Stochastic volatility (Clark, 2011) WIP](#Stochastic-volatility-(Clark,-2011)-WIP)
+  - [Stochastic volatility (Clark, 2011) WIP](#stochastic-volatility-clark-2011-wip)
   - [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -1203,14 +1203,14 @@ line with economic theory.
 
 ## Stochastic volatility (Clark, 2011) WIP
 
-Now we follow Clark (2011) and extend the Steady-State BVAR(p) model to allow the errors/innovations to have time varying covariance matrix $\Sigma_{u,t}$.
-Consider again the steady-state model
+Now we follow Clark (2011) and extend the Steady-State BVAR(p) model to allow the errors/innovations $u_t$ to have time varying covariance matrix $\Sigma_{u,t}$.
+The model is exactly the same on the surface
 
 $$
 y_t = \Psi x_t + A_1(y_{t-1}-\Psi x_{t-1})+\dots+A_p(y_{t-p}-\Psi x_{t-p})+u_t
 $$
 
-but now
+but now...
 
 $$
 u_t = B^{-1} \Lambda^{0.5}_t \epsilon_t, \ \ \ \ \ \epsilon_t \sim \textrm{N}(0, \textrm{I}_p)
@@ -1228,12 +1228,13 @@ $$
 \nu_{i,t} \sim \text{iid} \ \textrm{N}(0, \phi_{i}) \ \ \forall i = 1,\dots,k.
 $$
 
-Now
+Therefore the time varying covariance matrix is
 
 $$
-\Sigma_{u,t} = (B^{-1}) \Lambda_t (B^{-1})^{'}
+\Sigma_{u,t} = \left(B^{-1}\right) \Lambda_t \left(B^{-1}\right)^{'}
 $$
 
+*WIP - have written stan code that works*
 
 ## References
 
