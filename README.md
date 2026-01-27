@@ -7,6 +7,7 @@
     2025)](#example-2-gustafsson-and-villani-2025)
   - [Example 3 (Swedish data,
     1987Q2-2025Q3)](#example-3-swedish-data-1987q2-2025q3)
+   - [Stochastic volatility (Clark, 2011) WIP](#Stochastic-volatility-(Clark,-2011)-WIP)
   - [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -1200,7 +1201,44 @@ irf <- IRF(bvar_obj,
 The short interest rate shows a increase to an inflation shock, also in
 line with economic theory.
 
+## Stochastic volatility (Clark, 2011) WIP
+
+Now we follow Clark (2011) and extend the Steady-State BVAR(p) model to allow the errors/innovations to have time varying covariance matrix $\Sigma_{u,t}$.
+Consider again the steady-state model
+
+$$
+y_t = \Psi x_t + A_1(y_{t-1}-\Psi x_{t-1})+\dots+A_p(y_{t-p}-\Psi x_{t-p})+u_t
+$$
+
+but now
+
+$$
+u_t = B^{-1} \Lambda^{0.5}_t \epsilon_t, \ \ \ \ \ \epsilon_t \sim \textrm{N}(0, \textrm{I}_p)
+$$
+
+$$
+\Lambda_t = \textrm{diag}(\lambda_{1,t},\lambda_{2,t},\dots,\lambda_{k,t})
+$$
+
+$$
+\textrm{log} (\lambda_{i,t}) = \alpha_i \ \textrm{log} (\lambda_{i,t-1}) + \nu_{i,t}
+$$
+
+$$
+\nu_{i,t} \sim \text{iid} \ \textrm{N}(0, \phi_{i}) \ \ \forall i = 1,\dots,k.
+$$
+
+Now
+
+$$
+\Sigma_{u,t} = (B^{-1}) \Lambda_t (B^{-1})^{'}
+$$
+
+
 ## References
+
+Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector Autoregressions
+with Stochastic Volatility. *Journal of Business \& Economic Statistics*. 29(3), pp. 327–341.
 
 Gustafsson, O., Villani, M., and Stockhammar, P. (2023). Bayesian
 optimization of hyperparameters from noisy marginal likelihood
