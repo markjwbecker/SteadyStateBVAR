@@ -1203,8 +1203,11 @@ line with economic theory.
 
 ## Stochastic volatility (Clark, 2011) WIP
 
-Now we follow Clark (2011) and extend the Steady-State BVAR(p) model to allow the errors/innovations $u_t$ to have time varying covariance matrix $\Sigma_{u,t}$.
-The model is exactly the same on the surface
+Clark (2011) extends the Steady-State BVAR(p) model (Villani, 2009) to allow the errors/innovations $u_t$ to have time varying covariance matrix $\Sigma_{u,t}$.
+Here I follow Carriero, Clark and Marcellino (2024) which uses a more general version (ar(1) process with intercept for log volatilities instead of random walk.
+Also, the innovations of the log volatilities may be correlated, i.e. $\Phi$ is not necessarily diagonal) of stochastic volatility than in Clark (2011).
+
+The model is exactly the same as before on the surface. 
 
 $$
 y_t = \Psi x_t + A_1(y_{t-1}-\Psi x_{t-1})+\dots+A_p(y_{t-p}-\Psi x_{t-p})+u_t
@@ -1213,30 +1216,35 @@ $$
 but now...
 
 $$
-u_t = B^{-1} \Lambda^{0.5}_t \epsilon_t, \ \ \ \ \ \epsilon_t \sim \textrm{N}(0, \textrm{I}_p)
+u_t = B^{-1} \Lambda^{0.5}_t \epsilon_t, \ \ \ \ \ \epsilon_t \sim \textrm{N}(0, \textrm{I}_k)
 $$
 
 $$
-\Lambda_t = \textrm{diag}(\lambda_{1,t},\lambda_{2,t},\dots,\lambda_{k,t})
+\Lambda_t = \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
 $$
 
 $$
-\textrm{log} (\lambda_{i,t}) = \alpha_i \ \textrm{log} (\lambda_{i,t-1}) + \nu_{i,t}
+\textrm{ln} (\lambda_{i,t}) = \gamma_{0,i} + \gamma_{1,i} \textrm{ln} (\lambda_{i,t-1}) + \nu_{i,t}
 $$
 
 $$
-\nu_{i,t} \sim \text{iid} \ \textrm{N}(0, \phi_{i}) \ \ \forall i = 1,\dots,k.
+\nu_{i,t} \sim \textrm{N}(0, \Phi) \ \ \forall i = 1,\dots,k.
 $$
 
 Therefore the time varying covariance matrix is
 
 $$
-\Sigma_{u,t} = \left(B^{-1}\right) \Lambda_t \left(B^{-1}\right)^{'}
+\Sigma_{u,t} = B^{-1} \, \Lambda_t \, (B^{-1})'
 $$
 
 *WIP - have written stan code that works*
 
+*See: inst/stochastic_volatility.stan*
+
 ## References
+
+Carriero, A., Clark, T. E., and Marcellino, M. (2024). Capturing Macro‐Economic Tail Risks with Bayesian Vector Autoregressions.
+*Journal of Money, Credit and Banking*. 56(5), pp. 1099–1127.
 
 Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector Autoregressions
 with Stochastic Volatility. *Journal of Business \& Economic Statistics*. 29(3), pp. 327–341.
