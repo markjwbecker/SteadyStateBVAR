@@ -1234,7 +1234,7 @@ $$
 Therefore the time varying covariance matrix is
 
 $$
-\Sigma_{u,t} = B^{-1} \, \Lambda_t \, (B^{-1})'
+\Sigma_{u,t} = B^{-1} \Lambda_t (B^{-1})'
 $$
 
 *WIP - have written stan code that works*
