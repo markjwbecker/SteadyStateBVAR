@@ -49,49 +49,52 @@ parameters {
   matrix[k*p, k] beta; //beta' = (A_1,...,A_p)
   matrix[k, q] Psi; //Psi * x_t = steady state
   matrix[N, k] log_lambda; //log volatilities
-  vector[k] gamma0; //log volatility intercept
-  vector[k] gamma1; //log volatility slope
+  vector[k] gamma_0; //log volatility intercept
+  vector[k] gamma_1; //log volatility slope
   cov_matrix[k] Phi; //log volatility innovation covariance matrix
-  vector[k*(k-1)/2] B_free; //free parameters in A
+  vector[k*(k-1)/2] A_free; //free parameters in A
 }
 
 transformed parameters {
-  matrix[k,k] B;
-  matrix[k,k] Binv;
-  matrix[k,k] Sigma[N]; //time varying covariance matrix of reduced form errors u_t
+  matrix[k,k] A;
+  matrix[k,k] Ainv;
+  matrix[k,k] Sigma_u[N]; //time varying covariance matrix of reduced form errors u_t
 
-  // construct B (1's on diagonal, and then free parameters on lower triangular)
-  B = diag_matrix(rep_vector(1,k));
+  // construct A (1's on diagonal, and then free parameters on lower triangular)
+  A = diag_matrix(rep_vector(1,k));
   {
     int idx = 1;
     for (i in 2:k) {
       for (j in 1:(i-1)) {
-        B[i,j] = B_free[idx];
+        A[i,j] = A_free[idx];
         idx += 1;
       }
     }
   }
-  Binv = inverse(B);
-  // Sigma[t] = B^-1 * Lambda_t * B^-1 '
+  Ainv = inverse(A);
   for (t in 1:N) {
     matrix[k,k] Lambda_t = diag_matrix(exp(log_lambda[t]'));
-    Sigma[t] = Binv * Lambda_t * Ainv';
+    Sigma_u[t] = Ainv * Lambda_t * Ainv';
   }
 }
 
 model {
-  log_lambda[1] ~ normal(0, 5);
+  //priors//
+  log_lambda[1] ~ multi_normal(rep_vector(0,k), diag_matrix(rep_vector(10,k)));
+  gamma_0 ~ multi_normal(rep_vector(0,k), diag_matrix(rep_vector(10,k)));
+  gamma_1 ~ multi_normal(rep_vector(0,k), diag_matrix(rep_vector(10,k)));
+  A_free ~ multi_normal(rep_vector(0,k), diag_matrix(rep_vector(10,k)));
+  Phi ~ inv_wishart(k+2, diag_matrix(rep_vector(1,k)));
+  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
+  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
+  //
   for (t in 2:N)
-    log_lambda[t] ~ multi_normal(gamma0 + gamma1 .* to_vector(log_lambda[t-1]), Phi);
+    vector[k] nu_t = log_lambda[t] - (gamma_0 + gamma_1 * log_lambda[t-1]);
+    nu_t ~ multi_normal(rep_vector(0,k), Phi);
     
   for(t in 1:N){
       vector[k] u_t = (Y[t] - (X[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
       u_t ~ multi_normal(rep_vector(0,k), Sigma[t]);
   }
-  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
-  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
-  gamma0 ~ normal(0, 5);
-  gamma1 ~ normal(0, 5);
-  B_free ~ normal(0, 5);
-  Phi ~ inv_wishart(k+2, diag_matrix(rep_vector(1,k)));
+
 }
