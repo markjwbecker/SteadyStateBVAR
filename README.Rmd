@@ -743,39 +743,52 @@ bvar_obj <- forecast(bvar_obj,
 
 Clark (2011) extends the Steady-State BVAR(p) model (Villani, 2009) to allow the errors/innovations $u_t$ to have time varying covariance matrix $\Sigma_{u,t}$. Here we further extend the model of Clark (2011), by following the setup in Carriero, Clark and Marcellino (2024), which uses a more flexible version of stochastic volatility for a conventional BVAR. But here we use it for the steady state BVAR. Our model is on the surface exactly the same as before
 
+
 $$
 y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t
 $$
+
 but now...
+
 
 $$
 \begin{aligned}
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \epsilon_t &\sim \textrm{N}(0, \textrm{I}_k)\end{aligned}
 $$
+
 where $A$ is a lower triangular matrix with ones on the diagonal and nonzero coefficients below the diagonal, and
+
 
 $$
 \Lambda_t = \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
 $$
+
 contains the time-varying variances of conditionally Gaussian shocks (Carriero, Clark and Marcellino, 2024). Furthermore
+
 
 $$
 \textrm{ln} (\lambda_{i,t}) = \gamma_{0,i} + \gamma_{1,i} \textrm{ln} (\lambda_{i,t-1}) + \nu_{i,t}, \ \ \ \ \, i=1,\dots,k
 $$
+
 where
+
 
 $$
 \nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \textrm{N}(0, \Phi), \ \ \ \ \, i=1,\dots,k
 $$
+
 Under the foregoing specification, the time varying covariance matrix is
+
 
 $$
 \Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'
 $$
+
 The difference to Clark (2011) is: i) for the log volatilities, $\textrm{ln} (\lambda_{i,t})$, Clark (2011) sets $\gamma_{0,i}=0  \ \ \forall i$  and $\gamma_{1,i}=1 \ \ \forall i$, i.e. such that each log volatility process is a random walk (without drift). We relax this assumption and let the log volatilities follow (not necessarily stationary) AR(1) processes with constants, ii) we relax the assumption that the covariance matrix of the vector of innovations to the log volatilities ($\Phi$) is diagonal, and let the innovations (to the log volatilities) be correlated across variables.
 
 This time we will simulate our data, and estimate the model and see if we can recover the true parameters reasonably well. Consider the following DGP
+
 
 $$
 \begin{aligned}
@@ -787,7 +800,9 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \nu_{t} &\sim \textrm{N}(0, \Phi)
 \end{aligned}
 $$
-We have $T=500$ observations, $k=2$, $p=1$, and parameters/initial observations
+
+We have $T=200$ observations, $k=2$, $p=1$, and parameters
+
 
 $$
 \begin{aligned}
@@ -802,24 +817,34 @@ A &= \begin{bmatrix} 1 & 0 \\
 \gamma_{1} &= \begin{bmatrix} 0.4  \\
                          0.9 \end{bmatrix} \\
 \Phi &= \begin{bmatrix} 1.2 & 0.3 \\
-                         0.3 & 1.2 \end{bmatrix} \\
+                         0.3 & 1.2 \end{bmatrix}
+\end{aligned}                         
+$$
+
+
+and initial observations ($y_0$) and initial conditions $\lambda_0$
+
+
+$$
+\begin{aligned}
 \lambda_{0} &= \begin{bmatrix} 0.1  \\
                          0.2 \end{bmatrix} \\
-y_0 &= \Psi d_0, \ \ \ d_0 =\begin{pmatrix} 1 \\
-                            1 \end{pmatrix} \\
+y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
-\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 200 \\
-\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 200
+\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 50 \\
+\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 50
 \end{cases} \\
 \end{aligned}
 $$
 
+
 ```{r, fig.width=8, fig.height=8}
+#remotes::install_github("markjwbecker/SteadyStateBVAR",ref = "dev",force = TRUE,upgrade = "never")
 library(SteadyStateBVAR)
 set.seed(123)
 
-N <- 501
+N <- 201
 
 Psi <- matrix(c(2, 6,
                 6, 10), 2, 2, byrow = TRUE)
@@ -836,18 +861,16 @@ gamma0 <- c(-0.60,
 gamma1 <- c(0.4,
             0.9)
 
-Phi <- matrix(c(1.2,0.3,
-                0.3,1.2),2,2)
+Phi <- matrix(c(1.0,0.3,
+                0.3,0.6),2,2)
 
-dummy <- c(rep(1,201), rep(0,N-201))
+dummy <- c(rep(1,51), rep(0,N-51))
 d <- cbind(rep(1, N), dummy)
 y <- matrix(NA, N, 2)
 y[1,] <- Psi %*% d[1,] #y_0
 
 log_lambda <- matrix(NA, N, 2)
 log_lambda[1,] <- c(log(0.1), log(0.2)) #lambda_0
-
-
 
 nu <- matrix(NA, N, 2)
 Lambda <- array(NA, dim = c(2, 2, N))
@@ -866,16 +889,113 @@ for (t in 2:N) {
   Sigma[,,t] <- solve(A)%*%Lambda[,,t]%*%t(solve(A))
 }
 par(mfrow = c(1, 1))
-plot.ts(y)
+yt <- y[2:201,] #exclude t=0
+plot.ts(yt)
 ```
+
+Now we "cheat" and use super-good priors (and also many priors are hardcoded in the stan file, remember this is WIP).
 
 ```{r, fig.width=8, fig.height=8}
+bvar_obj <- bvar(data = yt)
 
+bp <- which(time(yt) == 50)
+dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+
+bvar_obj <- setup(bvar_obj,
+                  p=1,
+                  deterministic = "constant_and_dummy",
+                  dummy = dum_var)
+
+lambda_1 <- 0.80
+lambda_2 <- 0.90
+lambda_3 <- 1.00
+
+fol_pm=c(0.8,
+         0.7
+         )
+
+theta_Psi <- 
+   c(
+    ppi( 1.90,  2.10)$mean,
+    ppi( 5.90,  6.10)$mean,
+    ppi( 5.90,  6.10)$mean,
+    ppi( 9.90, 10.10)$mean
+    )
+
+Omega_Psi <- 
+  diag(
+     c(
+      ppi( 1.90,  2.10)$var,
+      ppi( 5.90,  6.10)$var,
+      ppi( 5.90,  6.10)$var,
+      ppi( 9.90, 10.10)$var
+      )
+      )
+
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi, 
+                   Omega_Psi)
 ```
 
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE}
+stan_data <- c(bvar_obj$setup, bvar_obj$priors)
+stan_file <- system.file("stochastic_volatility.stan", package = "SteadyStateBVAR")
+rstan::rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 
+bvar_obj$fit$stochastic_volatility <- 
+  rstan::stan(
+  file = stan_file,
+  data = stan_data,
+  iter = 2000,
+  warmup = 500,
+  chains = 2,
+  verbose = FALSE
+  )
 
-*WIP - have written stan code that works*
+sf <- bvar_obj$fit$stochastic_volatility
+sf <- rstan::extract(sf)
+```
+We can print our parameter estimates (posterior means). Also lets print the posterior mean of the reduced error standard deviation, i.e. the sd of $u_t$.
+
+```{r, fig.width=10, fig.height=6}
+k <- 2
+p <- 1
+q <- 2
+N <- 199 #we have 200-p effective sample size in the estimation
+cat("Psi_hat:\n"); print(round(t(apply(sf$Psi, c(2,3), mean)), 2)); cat("\n")
+cat("Pi_1_hat:\n"); print(round(t(apply(sf$beta, c(2,3), mean)), 2)); cat("\n")
+cat("A_hat:\n"); print(round(apply(sf$A, c(2,3), mean), 2)); cat("\n")
+cat("gamma0_hat:\n"); print(round(apply(sf$gamma0, 2, mean), 2)); cat("\n")
+cat("gamma1_hat:\n"); print(round(apply(sf$gamma1, 2, mean), 2)); cat("\n")
+cat("Phi_hat:\n"); print(round(apply(sf$Phi, c(2,3), mean), 2)); cat("\n")
+
+Sigma_hat <- array(NA, dim = c(N, k, k))
+sd_hat <- matrix(NA,N,2)
+for(t in 1:N){
+  Sigma_hat[t,,] <- apply(sf$Sigma_u[,t,,], c(2,3), mean)
+  sd_hat[t,] <- sqrt(diag(Sigma_hat[t,,]))
+}
+
+sigma_true <- matrix(NA,201,2)
+for(t in 1:201){
+  sigma_true[t,] <- sqrt(diag(Sigma[,,t]))
+}
+
+true_sd1 <- sigma_true[3:201,1]
+true_sd2 <- sigma_true[3:201,2]
+est_sd1 <- sd_hat[,1]
+est_sd2 <- sd_hat[,2]
+
+ts.plot(cbind(true_sd1, est_sd1), col=c("black", "blue"), main="u_1,t: posterior mean sd (blue) u_1,t 1 vs. real (black)")
+ts.plot(cbind(true_sd2, est_sd2), col=c("black", "blue"), main="u_2,t: posterior mean sd (blue) vs. real (black)")
+```
+
+The code seems to work.
 
 *See: inst/stochastic_volatility.stan*
 

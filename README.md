@@ -888,31 +888,44 @@ surface exactly the same as before
 
 $$
 y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t
-$$ but now…
+$$
+
+but now…
 
 $$
 \begin{aligned}
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \epsilon_t &\sim \textrm{N}(0, \textrm{I}_k)\end{aligned}
-$$ where
+$$
+
+where $A$ is a lower triangular matrix with ones on the diagonal and
+nonzero coefficients below the diagonal, and
 
 $$
 \Lambda_t = \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
-$$ and
+$$
+
+contains the time-varying variances of conditionally Gaussian shocks
+(Carriero, Clark and Marcellino, 2024). Furthermore
 
 $$
 \textrm{ln} (\lambda_{i,t}) = \gamma_{0,i} + \gamma_{1,i} \textrm{ln} (\lambda_{i,t-1}) + \nu_{i,t}, \ \ \ \ \, i=1,\dots,k
 $$
 
+where
+
 $$
 \nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \textrm{N}(0, \Phi), \ \ \ \ \, i=1,\dots,k
-$$ Under the foregoing specification, the time varying covariance matrix
-is
+$$
+
+Under the foregoing specification, the time varying covariance matrix is
 
 $$
 \Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'
-$$ The difference to Clark (2011) is: i) for the log volatilities,
-$\textrm{ln} (\lambda_{i,t})$), Clark (2011) sets
+$$
+
+The difference to Clark (2011) is: i) for the log volatilities,
+$\textrm{ln} (\lambda_{i,t})$, Clark (2011) sets
 $\gamma_{0,i}=0  \ \ \forall i$ and $\gamma_{1,i}=1 \ \ \forall i$,
 i.e. such that each log volatility process is a random walk (without
 drift). We relax this assumption and let the log volatilities follow
@@ -934,8 +947,9 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \textrm{ln} (\lambda_{i,t}) &= \gamma_{0,i} + \gamma_{1,i} \textrm{ln} (\lambda_{i,t-1}) + \nu_{i,t}, \ \ \ \ \, i=1,\dots,k \\
 \nu_{t} &\sim \textrm{N}(0, \Phi)
 \end{aligned}
-$$ We have $T=500$ observations, $k=2$, $p=1$, and parameters/initial
-observations
+$$
+
+We have $T=200$ observations, $k=2$, $p=1$, and parameters
 
 $$
 \begin{aligned}
@@ -950,23 +964,47 @@ A &= \begin{bmatrix} 1 & 0 \\
 \gamma_{1} &= \begin{bmatrix} 0.4  \\
                          0.9 \end{bmatrix} \\
 \Phi &= \begin{bmatrix} 1.2 & 0.3 \\
-                         0.3 & 1.2 \end{bmatrix} \\
+                         0.3 & 1.2 \end{bmatrix}
+\end{aligned}                         
+$$
+
+and initial observations ($y_0$) and initial conditions $\lambda_0$
+
+$$
+\begin{aligned}
 \lambda_{0} &= \begin{bmatrix} 0.1  \\
                          0.2 \end{bmatrix} \\
-y_0 &= \Psi d_0, \ \ \ d_0 =\begin{pmatrix} 1 \\
-                            1 \end{pmatrix} \\
+y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
-\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 200 \\
-\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 200
+\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 50 \\
+\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 50
 \end{cases} \\
 \end{aligned}
 $$
 
 ``` r
+#remotes::install_github("markjwbecker/SteadyStateBVAR",ref = "dev",force = TRUE,upgrade = "never")
+library(SteadyStateBVAR)
+#> Loading required package: rstan
+#> Warning: package 'rstan' was built under R version 4.4.3
+#> Loading required package: StanHeaders
+#> 
+#> rstan version 2.32.7 (Stan version 2.32.2)
+#> For execution on a local, multicore CPU with excess RAM we recommend calling
+#> options(mc.cores = parallel::detectCores()).
+#> To avoid recompilation of unchanged Stan programs, we recommend calling
+#> rstan_options(auto_write = TRUE)
+#> For within-chain threading using `reduce_sum()` or `map_rect()` Stan functions,
+#> change `threads_per_chain` option:
+#> rstan_options(threads_per_chain = 1)
+#> Do not specify '-march=native' in 'LOCAL_CPPFLAGS' or a Makevars file
+#> Loading required package: MASS
+#> Loading required package: LaplacesDemon
+#> Loading required package: MTS
 set.seed(123)
 
-N <- 501
+N <- 201
 
 Psi <- matrix(c(2, 6,
                 6, 10), 2, 2, byrow = TRUE)
@@ -983,18 +1021,16 @@ gamma0 <- c(-0.60,
 gamma1 <- c(0.4,
             0.9)
 
-Phi <- matrix(c(1.2,0.3,
-                0.3,1.2),2,2)
+Phi <- matrix(c(1.0,0.3,
+                0.3,0.6),2,2)
 
-dummy <- c(rep(1,201), rep(0,N-201))
+dummy <- c(rep(1,51), rep(0,N-51))
 d <- cbind(rep(1, N), dummy)
 y <- matrix(NA, N, 2)
 y[1,] <- Psi %*% d[1,] #y_0
 
 log_lambda <- matrix(NA, N, 2)
 log_lambda[1,] <- c(log(0.1), log(0.2)) #lambda_0
-
-
 
 nu <- matrix(NA, N, 2)
 Lambda <- array(NA, dim = c(2, 2, N))
@@ -1013,12 +1049,150 @@ for (t in 2:N) {
   Sigma[,,t] <- solve(A)%*%Lambda[,,t]%*%t(solve(A))
 }
 par(mfrow = c(1, 1))
-plot.ts(y)
+yt <- y[2:201,] #exclude t=0
+plot.ts(yt)
 ```
 
 <img src="man/figures/README-unnamed-chunk-37-1.png" width="100%" />
 
-*WIP - have written stan code that works*
+Now we “cheat” and use super-good priors (and also many priors are
+hardcoded in the stan file, remember this is WIP).
+
+``` r
+bvar_obj <- bvar(data = yt)
+
+bp <- which(time(yt) == 50)
+dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+
+bvar_obj <- setup(bvar_obj,
+                  p=1,
+                  deterministic = "constant_and_dummy",
+                  dummy = dum_var)
+
+lambda_1 <- 0.80
+lambda_2 <- 0.90
+lambda_3 <- 1.00
+
+fol_pm=c(0.8,
+         0.7
+         )
+
+theta_Psi <- 
+   c(
+    ppi( 1.90,  2.10)$mean,
+    ppi( 5.90,  6.10)$mean,
+    ppi( 5.90,  6.10)$mean,
+    ppi( 9.90, 10.10)$mean
+    )
+
+Omega_Psi <- 
+  diag(
+     c(
+      ppi( 1.90,  2.10)$var,
+      ppi( 5.90,  6.10)$var,
+      ppi( 5.90,  6.10)$var,
+      ppi( 9.90, 10.10)$var
+      )
+      )
+
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi, 
+                   Omega_Psi)
+```
+
+``` r
+stan_data <- c(bvar_obj$setup, bvar_obj$priors)
+stan_file <- system.file("stochastic_volatility.stan", package = "SteadyStateBVAR")
+rstan::rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+bvar_obj$fit$stochastic_volatility <- 
+  rstan::stan(
+  file = stan_file,
+  data = stan_data,
+  iter = 2000,
+  warmup = 500,
+  chains = 2,
+  verbose = FALSE
+  )
+
+sf <- bvar_obj$fit$stochastic_volatility
+sf <- rstan::extract(sf)
+```
+
+We can print our parameter estimates (posterior means). Also lets print
+the posterior mean of the reduced error standard deviation, i.e. the sd
+of $u_t$.
+
+``` r
+k <- 2
+p <- 1
+q <- 2
+N <- 199 #we have 200-p effective sample size in the estimation
+cat("Psi_hat:\n"); print(round(t(apply(sf$Psi, c(2,3), mean)), 2)); cat("\n")
+#> Psi_hat:
+#>       
+#>        [,1]  [,2]
+#>   [1,] 2.07  6.01
+#>   [2,] 6.00 10.00
+cat("Pi_1_hat:\n"); print(round(t(apply(sf$beta, c(2,3), mean)), 2)); cat("\n")
+#> Pi_1_hat:
+#>       
+#>         [,1] [,2]
+#>   [1,]  0.78 0.14
+#>   [2,] -0.21 0.71
+cat("A_hat:\n"); print(round(apply(sf$A, c(2,3), mean), 2)); cat("\n")
+#> A_hat:
+#>       
+#>        [,1] [,2]
+#>   [1,] 1.00    0
+#>   [2,] 0.71    1
+cat("gamma0_hat:\n"); print(round(apply(sf$gamma0, 2, mean), 2)); cat("\n")
+#> gamma0_hat:
+#> [1] -0.58 -0.29
+cat("gamma1_hat:\n"); print(round(apply(sf$gamma1, 2, mean), 2)); cat("\n")
+#> gamma1_hat:
+#> [1] 0.37 0.87
+cat("Phi_hat:\n"); print(round(apply(sf$Phi, c(2,3), mean), 2)); cat("\n")
+#> Phi_hat:
+#>       
+#>        [,1] [,2]
+#>   [1,] 0.78 0.19
+#>   [2,] 0.19 0.41
+
+Sigma_hat <- array(NA, dim = c(N, k, k))
+sd_hat <- matrix(NA,N,2)
+for(t in 1:N){
+  Sigma_hat[t,,] <- apply(sf$Sigma_u[,t,,], c(2,3), mean)
+  sd_hat[t,] <- sqrt(diag(Sigma_hat[t,,]))
+}
+
+sigma_true <- matrix(NA,201,2)
+for(t in 1:201){
+  sigma_true[t,] <- sqrt(diag(Sigma[,,t]))
+}
+
+true_sd1 <- sigma_true[3:201,1]
+true_sd2 <- sigma_true[3:201,2]
+est_sd1 <- sd_hat[,1]
+est_sd2 <- sd_hat[,2]
+
+ts.plot(cbind(true_sd1, est_sd1), col=c("black", "blue"), main="u_1,t: posterior mean sd (blue) u_1,t 1 vs. real (black)")
+```
+
+<img src="man/figures/README-unnamed-chunk-40-1.png" width="100%" />
+
+``` r
+ts.plot(cbind(true_sd2, est_sd2), col=c("black", "blue"), main="u_2,t: posterior mean sd (blue) vs. real (black)")
+```
+
+<img src="man/figures/README-unnamed-chunk-40-2.png" width="100%" />
+
+The code seems to work.
 
 *See: inst/stochastic_volatility.stan*
 
