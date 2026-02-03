@@ -518,12 +518,12 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
 bvar_obj <- fit(bvar_obj,
                 iter = 10000,
-                warmup = 2500,
+                warmup = 5000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
                 iter = 10000,
-                warmup = 2500,
+                warmup = 5000,
                 chains = 1,
                 estimation = "gibbs")
 ```
