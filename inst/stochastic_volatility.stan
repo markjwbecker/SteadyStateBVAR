@@ -49,8 +49,8 @@ parameters {
   matrix[k*p, k] beta; //beta' = (A_1,...,A_p)
   matrix[k, q] Psi; //Psi * x_t = steady state
   matrix[N, k] log_lambda; //log volatilities
-  vector[k] gamma_0; //log volatility intercept
-  vector[k] gamma_1; //log volatility slope
+  vector[k] gamma0; //log volatility intercept
+  vector[k] gamma1; //log volatility slope
   cov_matrix[k] Phi; //log volatility innovation covariance matrix
   vector[k*(k-1)/2] A_free; //free parameters in A
 }
@@ -79,22 +79,21 @@ transformed parameters {
 }
 
 model {
-  //priors//
-  log_lambda[1] ~ multi_normal(rep_vector(0,k), diag_matrix(rep_vector(10,k)));
-  gamma_0 ~ multi_normal(rep_vector(0,k), diag_matrix(rep_vector(10,k)));
-  gamma_1 ~ multi_normal(rep_vector(0,k), diag_matrix(rep_vector(10,k)));
-  A_free ~ multi_normal(rep_vector(0,k), diag_matrix(rep_vector(10,k)));
-  Phi ~ inv_wishart(k+2, diag_matrix(rep_vector(1,k)));
-  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
-  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
-  //
+  log_lambda[1,1] ~ normal(-2.3, 0.1);
+  log_lambda[1,2] ~ normal(-1.61, 0.1);
   for (t in 2:N)
-    vector[k] nu_t = log_lambda[t] - (gamma_0 + gamma_1 * log_lambda[t-1]);
-    nu_t ~ multi_normal(rep_vector(0,k), Phi);
+    log_lambda[t] ~ multi_normal(gamma0 + gamma1 .* to_vector(log_lambda[t-1]), Phi);
     
   for(t in 1:N){
       vector[k] u_t = (Y[t] - (X[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
-      u_t ~ multi_normal(rep_vector(0,k), Sigma[t]);
+      u_t ~ multi_normal(rep_vector(0,k), Sigma_u[t]);
   }
-
+  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
+  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
+  gamma0[1] ~ normal(-0.6, 0.1);
+  gamma0[2] ~ normal(-0.2, 0.1);
+  gamma1[1] ~ normal(0.4, 0.1);
+  gamma1[2] ~ normal(0.9, 0.1);
+  A_free ~ normal(0.7, 0.1);
+  Phi ~ inv_wishart(k+2, diag_matrix(rep_vector(1,k)));
 }
