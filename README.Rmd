@@ -292,9 +292,9 @@ Then we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 10000,
+                warmup = 2500,
+                chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -517,13 +517,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 10000,
+                warmup = 2500,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 10000,
+                warmup = 2500,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -724,8 +724,8 @@ bvar_obj <- priors(bvar_obj,
 bvar_obj$predict$H <- 40
 bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 10000,
+                warmup = 2500,
                 chains = 2)
 ```
 
@@ -840,6 +840,7 @@ $$
 
 
 ```{r, fig.width=8, fig.height=8}
+rm(list = ls())
 set.seed(123)
 N <- 201
 
@@ -950,8 +951,8 @@ bvar_obj$fit$stochastic_volatility <-
   rstan::stan(
   file = stan_file,
   data = stan_data,
-  iter = 2000,
-  warmup = 500,
+  iter = 10000,
+  warmup = 5000,
   chains = 2,
   verbose = FALSE
   )
