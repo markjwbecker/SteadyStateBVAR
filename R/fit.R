@@ -17,6 +17,16 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       system.file("diffuse_cov.stan", package = "SteadyStateBVAR")
     }
     
+    if (x$priors$SV == TRUE) {
+      stan_file <- system.file("stochastic_volatility.stan", package = "SteadyStateBVAR")
+      stan_data <- c(x$SV_priors, stan_data)
+      k <- x$setup$k
+      if (k == 2) {
+        stan_data$theta_A <- as.array(x$SV_priors$theta_A[1])
+      }
+
+    }
+    
     rstan::rstan_options(auto_write = TRUE)
     options(mc.cores = parallel::detectCores())
     
