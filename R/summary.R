@@ -41,7 +41,8 @@ summary.bvar <- function(object) {
     )
   }
   
-  out <- list(summaries = summaries)
+  out <- list(summaries = summaries,
+              SV = object$SV)
   class(out) <- "summary.bvar"
   return(out)
 }
