@@ -837,9 +837,13 @@ d_{t}' &=
 \end{cases} \\
 \end{aligned}
 $$
+
+
 Simulate from the DGP
 
-```{r, fig.width=8, fig.height=8}
+
+
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE}
 #remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
 library(SteadyStateBVAR)
 rm(list = ls())
@@ -892,7 +896,10 @@ par(mfrow = c(1, 1))
 yt <- y
 plot.ts(yt)
 ```
+
+
 Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we do the same setup as before i.e. Minnesota for dynamic coefficients and informative normal prior on steady state coefficients.
+
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- bvar(data = yt)
@@ -923,9 +930,11 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi)
 ```
 
+
 We also need to specify our stochastic volatility priors (instead of Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following setup is an exact copy of the setup in Carriero, Clark and Marcellino (2024).
 
 For the free parameters in $A$ we use uninformative normal prior with means 0 and variances of 10. We also use Gaussian priors on the coefficients $(\gamma_{i,0}, \gamma_{i_1})$ (intercept, slope) of the log volatility process of equation $i, i=1,\dots,k$, where the prior means are $(0.1 \ln \sigma^2_i, 0.9)$, where $\sigma^2_i$ is the residual variance of an AR(p) model i.e. the exact same estimate used in the Minnesota prior from before. Note that this prior implies that the steady states of the volatility processes are $\ln \sigma^2_i$ The prior standard deviations (assuming 0 covariance) are $(2^{0.5}, 0.2)$. For $\Phi$, we use an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom. For the period 0 values of $\ln \lambda_t$, we set the prior mean and variance at $\ln \sigma^2_i$ and 2.0.
+
 
 ```{r, fig.width=8, fig.height=8}
 k <- bvar_obj$setup$k
@@ -954,19 +963,19 @@ Lets fit the model
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE}
 bvar_obj <- fit(bvar_obj,
                 iter = 2000,
-                warmup = 1000,
-                chains = 2)
+                warmup = 500,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters... Remember here since $p=1$ we have $\beta'=\Pi_1$.
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE}
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE}
 summary(bvar_obj)
 ```
 
 Looks like it works quite well! Now let us plot the estimates (posterior mean and 95\% interval) of stochastic volatilities from the model, defined as reduced form residual/innovation ($u_t$) standard deviations (diagonal elements of $\Sigma_{u,t}^{0.5}$).
 
-```{r, fig.width=15, fig.height=8}
+```{r, fig.width=12, fig.height=8}
 k <- bvar_obj$setup$k
 p <- bvar_obj$setup$p
 q <- bvar_obj$setup$q
@@ -1018,9 +1027,6 @@ lines(lower_sd2, col="blue", lty=2)
 lines(upper_sd2, col="blue", lty=2)
 ```
 
-The code seems to work.
-
-*See: inst/stochastic_volatility.stan*
 
 ## References
 

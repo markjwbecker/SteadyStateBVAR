@@ -981,27 +981,13 @@ d_{t}' &=
 \begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 50
 \end{cases} \\
 \end{aligned}
-$$ Simulate from the DGP
+$$
+
+Simulate from the DGP
 
 ``` r
 #remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
 library(SteadyStateBVAR)
-#> Loading required package: rstan
-#> Warning: package 'rstan' was built under R version 4.4.3
-#> Loading required package: StanHeaders
-#> 
-#> rstan version 2.32.7 (Stan version 2.32.2)
-#> For execution on a local, multicore CPU with excess RAM we recommend calling
-#> options(mc.cores = parallel::detectCores()).
-#> To avoid recompilation of unchanged Stan programs, we recommend calling
-#> rstan_options(auto_write = TRUE)
-#> For within-chain threading using `reduce_sum()` or `map_rect()` Stan functions,
-#> change `threads_per_chain` option:
-#> rstan_options(threads_per_chain = 1)
-#> Do not specify '-march=native' in 'LOCAL_CPPFLAGS' or a Makevars file
-#> Loading required package: MASS
-#> Loading required package: LaplacesDemon
-#> Loading required package: MTS
 rm(list = ls())
 set.seed(123)
 N <- 201
@@ -1054,6 +1040,7 @@ plot.ts(yt)
 ```
 
 <img src="man/figures/README-unnamed-chunk-37-1.png" width="100%" />
+
 Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we
 do the same setup as before i.e. Minnesota for dynamic coefficients and
 informative normal prior on steady state coefficients.
@@ -1131,8 +1118,8 @@ Lets fit the model
 ``` r
 bvar_obj <- fit(bvar_obj,
                 iter = 2000,
-                warmup = 1000,
-                chains = 2)
+                warmup = 500,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters…
@@ -1140,6 +1127,36 @@ Remember here since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>       
+#>        [,1]  [,2]
+#>   [1,] 0.75 -0.18
+#>   [2,] 0.12  0.75
+#> 
+#> Psi posterior mean
+#>       
+#>        [,1]  [,2]
+#>   [1,] 2.23  5.90
+#>   [2,] 5.85 10.07
+#> 
+#> A posterior mean
+#>       
+#>        [,1] [,2]
+#>   [1,] 1.00    0
+#>   [2,] 0.71    1
+#> 
+#> gamma_0 posterior mean
+#> [1] -0.76 -0.41
+#> 
+#> gamma_1 posterior mean
+#> [1] 0.44 0.82
+#> 
+#> 
+#> Phi posterior mean
+#>       
+#>        [,1] [,2]
+#>   [1,] 0.60 0.41
+#>   [2,] 0.41 0.35
 ```
 
 Looks like it works quite well! Now let us plot the estimates (posterior
@@ -1205,10 +1222,6 @@ lines(upper_sd2, col="blue", lty=2)
 ```
 
 <img src="man/figures/README-unnamed-chunk-42-2.png" width="100%" />
-
-The code seems to work.
-
-*See: inst/stochastic_volatility.stan*
 
 ## References
 
