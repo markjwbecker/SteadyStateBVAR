@@ -185,8 +185,6 @@ yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
-
 Also, let us create the bvar object which we will use throughout here.
 
 ``` r
@@ -336,8 +334,8 @@ bvar_obj <- priors(bvar_obj,
 
 Like in Villani (2009), to incorporate that Sweden is a small economy
 and therefore not likely to affect the foreign economy, we restrict the
-upper right submatrix in each $A_\ell$ for $\ell =1,\dots,k$ or
-equivalently restricting the bottom left $A_\ell'$ for
+upper right submatrix in each $\Pi_\ell$ for $\ell =1,\dots,k$ or
+equivalently restricting the bottom left $\Pi_\ell'$ for
 $\ell =1,\dots,k$, to the zero matrix.
 
 ``` r
@@ -353,35 +351,6 @@ for(i in 1:p){
   restriction_matrix[rows, cols] <- 0
 }
 restriction_matrix
-#>       [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-#>  [1,]    1    1    1    1    1    1    1
-#>  [2,]    1    1    1    1    1    1    1
-#>  [3,]    1    1    1    1    1    1    1
-#>  [4,]    0    0    0    1    1    1    1
-#>  [5,]    0    0    0    1    1    1    1
-#>  [6,]    0    0    0    1    1    1    1
-#>  [7,]    0    0    0    1    1    1    1
-#>  [8,]    1    1    1    1    1    1    1
-#>  [9,]    1    1    1    1    1    1    1
-#> [10,]    1    1    1    1    1    1    1
-#> [11,]    0    0    0    1    1    1    1
-#> [12,]    0    0    0    1    1    1    1
-#> [13,]    0    0    0    1    1    1    1
-#> [14,]    0    0    0    1    1    1    1
-#> [15,]    1    1    1    1    1    1    1
-#> [16,]    1    1    1    1    1    1    1
-#> [17,]    1    1    1    1    1    1    1
-#> [18,]    0    0    0    1    1    1    1
-#> [19,]    0    0    0    1    1    1    1
-#> [20,]    0    0    0    1    1    1    1
-#> [21,]    0    0    0    1    1    1    1
-#> [22,]    1    1    1    1    1    1    1
-#> [23,]    1    1    1    1    1    1    1
-#> [24,]    1    1    1    1    1    1    1
-#> [25,]    0    0    0    1    1    1    1
-#> [26,]    0    0    0    1    1    1    1
-#> [27,]    0    0    0    1    1    1    1
-#> [28,]    0    0    0    1    1    1    1
 ```
 
 We can look at the restriction matrix for $\beta$ to see which elements
@@ -415,59 +384,6 @@ Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>        
-#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
-#>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
-#>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
-#>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
-#>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
-#>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.21  3.96  0.75  0.93
-#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
-#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
-#>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
-#>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
-#>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.55 -0.38  0.29 -0.04
-#>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
-#>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
-#>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.59  0.00
-#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
-#>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
-#>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
-#>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
-#>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.15 -0.06 -0.17 -0.01
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.58  0.08
-#>   [2,] 0.51  0.47
-#>   [3,] 4.94  2.02
-#>   [4,] 0.58 -0.03
-#>   [5,] 0.49  1.15
-#>   [6,] 4.29  4.45
-#>   [7,] 3.92 -0.10
-#> 
-#> Sigma_u posterior mean
-#>       
-#>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#>   [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
-#>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
-#>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#>   [5,] -0.01  0.13 0.18 -0.05  0.60  0.11  0.00
-#>   [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
-#>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
 Note that ‘bvar_obj\$fit\$stan’ is an object of class ‘stanfit’. So we
@@ -482,18 +398,11 @@ stanfit <- bvar_obj$fit$stan
 rstan::plot(stanfit,
             pars=c("Psi[4,1]", "Psi[5,1]"),
             plotfun="trace")
-```
-
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
-
-``` r
 
 rstan::plot(stanfit,
             pars=c("Psi[4,1]", "Psi[5,1]"),
             plotfun="hist")
 ```
-
-<img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" />
 
 We can also look at the model forecasts directly with rstan. Remember
 that we left out the last two observations/quarters, so let us look at
@@ -502,18 +411,13 @@ true values
 
 ``` r
 (villani2009[103:104,6]) #true values
-#> [1] 1.478503 1.563795
 
 rstan::plot(stanfit,
             pars=c("Y_pred[1,6]", "Y_pred[2,6]"),
             show_density = TRUE,
             ci_level = 0.68,
             fill_color = "blue")
-#> ci_level: 0.68 (68% intervals)
-#> outer_level: 0.95 (95% intervals)
 ```
-
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
 
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
@@ -533,8 +437,6 @@ bvar_obj <- forecast(bvar_obj,
                      growth_rate_idx = c(4,5),
                      plot_idx = c(4,5,6))
 ```
-
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-3.png" width="100%" />
 
 We can also do some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
@@ -570,8 +472,6 @@ irf <- IRF(bvar_obj,
            ci=0.68)
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
-
 Interestingly, for the response of inflation to the interest rate shock,
 we see the price puzzle taking effect.
 
@@ -588,8 +488,6 @@ irf <- IRF(bvar_obj,
            method="OIRF",
            ci=0.68)
 ```
-
-<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
 
 As we predicted, it has virtually no effect.
 
@@ -640,8 +538,6 @@ yt <- GustafssonVillaniStockhammar2023
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
-
 Create the object
 
 ``` r
@@ -685,7 +581,6 @@ roughly 68% prior probability interval)
 
 ``` r
 pnorm(1)-pnorm(-1)
-#> [1] 0.6826895
 ```
 
 Note that we only have a constant now, so then $q=1$ and $\Psi$ only has
@@ -761,91 +656,6 @@ Lets check the posterior means (very similar as expected)
 
 ``` r
 summary(bvar_obj)
-#> ====================================
-#> Estimation Method: Stan 
-#> ====================================
-#> 
-#> beta posterior mean
-#>        
-#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.06 -0.02  0.03  0.07 -0.26  0.05 -0.03
-#>    [2,]  0.03  0.70  0.04 -0.17  0.76 -0.01  0.03
-#>    [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.02
-#>    [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
-#>    [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>    [6,]  0.11  0.05  0.06 -0.02  1.20  0.31  0.01
-#>    [7,]  0.09  0.00  0.03  0.03 -0.18 -0.13  0.36
-#>    [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>    [9,] -0.05  0.19  0.07  0.11 -0.67  0.04 -0.04
-#>   [10,] -0.06 -0.08 -0.08  0.39 -0.92 -0.11 -0.03
-#>   [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
-#>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#>   [13,]  0.04 -0.01  0.01  0.01 -0.55  0.16 -0.01
-#>   [14,] -0.04  0.03  0.03  0.04 -0.38 -0.13  0.30
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1]
-#>   [1,] 3.19
-#>   [2,] 2.47
-#>   [3,] 4.43
-#>   [4,] 3.37
-#>   [5,] 4.63
-#>   [6,] 1.66
-#>   [7,] 1.02
-#> 
-#> Sigma_u posterior mean
-#>       
-#>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#>   [1,]  7.95 -0.01  0.50  4.26  26.96  4.00  0.45
-#>   [2,] -0.01  1.00  0.12 -0.13   0.88  0.35 -0.13
-#>   [3,]  0.50  0.12  0.70  0.27   2.27  0.63 -0.05
-#>   [4,]  4.26 -0.13  0.27  5.75   5.45  2.24  0.45
-#>   [5,] 26.96  0.88  2.27  5.45 161.96 16.64  2.10
-#>   [6,]  4.00  0.35  0.63  2.24  16.64  5.46  0.36
-#>   [7,]  0.45 -0.13 -0.05  0.45   2.10  0.36  1.26
-#> 
-#> 
-#> ====================================
-#> Estimation Method: Gibbs 
-#> ====================================
-#> 
-#> beta posterior mean
-#>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.05 -0.03
-#>  [2,]  0.03  0.71  0.04 -0.17  0.76 -0.01  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.21 -0.02 -0.02
-#>  [4,]  0.27  0.02  0.03  0.14  1.80  0.25  0.04
-#>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.20 -0.13  0.36
-#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.06  0.19  0.07  0.11 -0.67  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.09  0.38 -0.91 -0.11 -0.03
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
-#> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.04 -0.01  0.01  0.01 -0.56  0.16 -0.01
-#> [14,] -0.04  0.03  0.03  0.04 -0.36 -0.13  0.30
-#> 
-#> Psi posterior mean
-#>      [,1]
-#> [1,] 3.20
-#> [2,] 2.46
-#> [3,] 4.45
-#> [4,] 3.39
-#> [5,] 4.64
-#> [6,] 1.66
-#> [7,] 1.02
-#> 
-#> Sigma_u posterior mean
-#>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.92 -0.01  0.49  4.24  26.82  3.98  0.45
-#> [2,] -0.01  1.00  0.12 -0.14   0.88  0.35 -0.14
-#> [3,]  0.49  0.12  0.70  0.27   2.25  0.63 -0.05
-#> [4,]  4.24 -0.14  0.27  5.73   5.39  2.23  0.45
-#> [5,] 26.82  0.88  2.25  5.39 161.35 16.55  2.09
-#> [6,]  3.98  0.35  0.63  2.23  16.55  5.43  0.36
-#> [7,]  0.45 -0.14 -0.05  0.45   2.09  0.36  1.26
 ```
 
 Now lets do Figure 10
@@ -884,8 +694,6 @@ plot(dens1, xlab="Real consumption", main="", col="red", lwd=2, ylim=c(0,max(den
 lines(dens2, col="blue", lwd=2)
 legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
 ```
-
-<img src="man/figures/README-unnamed-chunk-31-1.png" width="100%" />
 
 And Figure 11 (mean +/- 1 std deviation bands of predictive
 distribution)
@@ -961,8 +769,6 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(3), xlim=c(39.25,58), ylim=c(-0.5
 GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.25))
 ```
 
-<img src="man/figures/README-unnamed-chunk-32-1.png" width="100%" />
-
 Now just for fun let us see the response of real gdp to a shock in the
 fed funds rate
 
@@ -974,8 +780,6 @@ irf <- IRF(bvar_obj,
            method="OIRF",
            ci=0.68)
 ```
-
-<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
 
 ## Example 3 (Swedish data, 1987Q2-2025Q3)
 
@@ -998,8 +802,6 @@ data("SwedishData_1987_2025")
 yt <- SwedishData_1987_2025
 plot.ts(yt)
 ```
-
-<img src="man/figures/README-unnamed-chunk-34-1.png" width="100%" />
 
 ``` r
 bvar_obj <- bvar(data = yt)
@@ -1074,8 +876,6 @@ bvar_obj <- forecast(bvar_obj,
                      show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
-
 ## Stochastic volatility - extension of Clark (2011) — WIP
 
 Clark (2011) extends the Steady-State BVAR(p) model (Villani, 2009) to
@@ -1109,7 +909,7 @@ contains the time-varying variances of conditionally Gaussian shocks
 (Carriero, Clark and Marcellino, 2024). Furthermore
 
 $$
-\textrm{ln} (\lambda_{i,t}) = \gamma_{0,i} + \gamma_{1,i} \textrm{ln} (\lambda_{i,t-1}) + \nu_{i,t}, \ \ \ \ \, i=1,\dots,k
+\ln (\lambda_{i,t}) = \gamma_{0,i} + \gamma_{1,i}\ln (\lambda_{i,t-1}) + \nu_{i,t}, \ \ \ \ \, i=1,\dots,k
 $$
 
 where
@@ -1125,14 +925,14 @@ $$
 $$
 
 The difference to Clark (2011) is: i) for the log volatilities,
-$\textrm{ln} (\lambda_{i,t})$, Clark (2011) sets
-$\gamma_{0,i}=0  \ \ \forall i$ and $\gamma_{1,i}=1 \ \ \forall i$,
-i.e. such that each log volatility process is a random walk (without
-drift). We relax this assumption and let the log volatilities follow
-(not necessarily stationary) AR(1) processes with constants, ii) we
-relax the assumption that the covariance matrix of the vector of
-innovations to the log volatilities ($\Phi$) is diagonal, and let the
-innovations (to the log volatilities) be correlated across variables.
+$\ln (\lambda_{i,t})$, Clark (2011) sets $\gamma_{0,i}=0  \ \ \forall i$
+and $\gamma_{1,i}=1 \ \ \forall i$, i.e. such that each log volatility
+process is a random walk (without drift). We relax this assumption and
+let the log volatilities follow (not necessarily stationary) AR(1)
+processes with constants, ii) we relax the assumption that the
+covariance matrix of the vector of innovations to the log volatilities
+($\Phi$) is diagonal, and let the innovations (to the log volatilities)
+be correlated across variables.
 
 This time we will simulate our data, and estimate the model and see if
 we can recover the true parameters reasonably well. Consider the
@@ -1149,7 +949,7 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \end{aligned}
 $$
 
-We have $t=1,\dots,T=200$ observations, $k=2$, $p=1$, and parameters
+We have $t=0,\dots,T=200$ observations, $k=2$, $p=1$, and parameters
 
 $$
 \begin{aligned}
@@ -1159,12 +959,12 @@ $$
                          -0.20 & 0.70 \end{bmatrix} \\
 A &= \begin{bmatrix} 1 & 0 \\
                          0.7 & 1 \end{bmatrix} \\
-\gamma_{0} &= \begin{bmatrix} -0.6  \\
-                         -0.2 \end{bmatrix} \\
-\gamma_{1} &= \begin{bmatrix} 0.4  \\
-                         0.9 \end{bmatrix} \\
-\Phi &= \begin{bmatrix} 1.2 & 0.3 \\
-                         0.3 & 1.2 \end{bmatrix}
+\gamma_{0} &= \begin{pmatrix} -0.6  \\
+                         -0.2 \end{pmatrix} \\
+\gamma_{1} &= \begin{pmatrix} 0.6  \\
+                         0.9 \end{pmatrix} \\
+\Phi &= \begin{bmatrix} 1.0 & 0.3 \\
+                         0.3 & 0.6 \end{bmatrix}
 \end{aligned}                         
 $$
 
@@ -1172,8 +972,8 @@ and initial observations ($y_0$) and initial conditions $\lambda_0$
 
 $$
 \begin{aligned}
-\lambda_{0} &= \begin{bmatrix} 0.1  \\
-                         0.2 \end{bmatrix} \\
+\lambda_{0} &= \begin{pmatrix} 0.1  \\
+                         0.2 \end{pmatrix} \\
 y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
@@ -1181,9 +981,27 @@ d_{t}' &=
 \begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 50
 \end{cases} \\
 \end{aligned}
-$$
+$$ Simulate from the DGP
 
 ``` r
+#remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
+library(SteadyStateBVAR)
+#> Loading required package: rstan
+#> Warning: package 'rstan' was built under R version 4.4.3
+#> Loading required package: StanHeaders
+#> 
+#> rstan version 2.32.7 (Stan version 2.32.2)
+#> For execution on a local, multicore CPU with excess RAM we recommend calling
+#> options(mc.cores = parallel::detectCores()).
+#> To avoid recompilation of unchanged Stan programs, we recommend calling
+#> rstan_options(auto_write = TRUE)
+#> For within-chain threading using `reduce_sum()` or `map_rect()` Stan functions,
+#> change `threads_per_chain` option:
+#> rstan_options(threads_per_chain = 1)
+#> Do not specify '-march=native' in 'LOCAL_CPPFLAGS' or a Makevars file
+#> Loading required package: MASS
+#> Loading required package: LaplacesDemon
+#> Loading required package: MTS
 rm(list = ls())
 set.seed(123)
 N <- 201
@@ -1200,19 +1018,19 @@ A <- matrix(c(1.0, 0.0,
 gamma0 <- c(-0.60,
             -0.20)
 
-gamma1 <- c(0.4,
+gamma1 <- c(0.6,
             0.9)
 
 Phi <- matrix(c(1.0,0.3,
                 0.3,0.6),2,2)
 
-dummy <- c(rep(1,51), rep(0,N-51))
+dummy <- c(rep(1,(floor(N/4)+1)), rep(0,N-(floor(N/4)+1)))
 d <- cbind(rep(1, N), dummy)
 y <- matrix(NA, N, 2)
-y[1,] <- Psi %*% d[1,] #y_0
+y[1,] <- Psi %*% d[1,] #y_{t=0}
 
 log_lambda <- matrix(NA, N, 2)
-log_lambda[1,] <- c(log(0.1), log(0.2)) #lambda_0
+log_lambda[1,] <- c(log(0.1), log(0.2)) #lambda_{t=0}
 
 nu <- matrix(NA, N, 2)
 Lambda <- array(NA, dim = c(2, 2, N))
@@ -1231,19 +1049,19 @@ for (t in 2:N) {
   Sigma[,,t] <- solve(A)%*%Lambda[,,t]%*%t(solve(A))
 }
 par(mfrow = c(1, 1))
-yt <- y[2:201,] #exclude t=0
+yt <- y
 plot.ts(yt)
 ```
 
 <img src="man/figures/README-unnamed-chunk-37-1.png" width="100%" />
-
-Now we “cheat” and use super-good priors (and also many priors are
-hardcoded in the stan file, remember this is WIP).
+Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we
+do the same setup as before i.e. Minnesota for dynamic coefficients and
+informative normal prior on steady state coefficients.
 
 ``` r
 bvar_obj <- bvar(data = yt)
 
-bp <- which(time(yt) == 50)
+bp <- which(time(yt) == floor(N/4)+1)
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
 
 bvar_obj <- setup(bvar_obj,
@@ -1251,32 +1069,15 @@ bvar_obj <- setup(bvar_obj,
                   deterministic = "constant_and_dummy",
                   dummy = dum_var)
 
-lambda_1 <- 0.80
-lambda_2 <- 0.90
+lambda_1 <- 0.20
+lambda_2 <- 0.50
 lambda_3 <- 1.00
 
-fol_pm=c(0.8,
-         0.7
-         )
+fol_pm=c(0.9,0.9)
 
-theta_Psi <- 
-   c(
-    ppi( 1.90,  2.10)$mean,
-    ppi( 5.90,  6.10)$mean,
-    ppi( 5.90,  6.10)$mean,
-    ppi( 9.90, 10.10)$mean
-    )
-
-Omega_Psi <- 
-  diag(
-     c(
-      ppi( 1.90,  2.10)$var,
-      ppi( 5.90,  6.10)$var,
-      ppi( 5.90,  6.10)$var,
-      ppi( 9.90, 10.10)$var
-      )
-      )
-
+theta_Psi <- c(2,6,6,10)
+Omega_Psi <- diag(rep(0.25,4))
+    
 bvar_obj <- priors(bvar_obj,
                    lambda_1,
                    lambda_2,
@@ -1286,98 +1087,124 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi)
 ```
 
-WIP, will make it like rest of package, and allow you to choose priors
-etc.
+We also need to specify our stochastic volatility priors (instead of
+Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following setup is
+an exact copy of the setup in Carriero, Clark and Marcellino (2024).
+
+For the free parameters in $A$ we use uninformative normal prior with
+means 0 and variances of 10. We also use Gaussian priors on the
+coefficients $(\gamma_{i,0}, \gamma_{i_1})$ (intercept, slope) of the
+log volatility process of equation $i, i=1,\dots,k$, where the prior
+means are $(0.1 \ln \sigma^2_i, 0.9)$, where $\sigma^2_i$ is the
+residual variance of an AR(p) model i.e. the exact same estimate used in
+the Minnesota prior from before. Note that this prior implies that the
+steady states of the volatility processes are $\ln \sigma^2_i$ The prior
+standard deviations (assuming 0 covariance) are $(2^{0.5}, 0.2)$. For
+$\Phi$, we use an Inverse Wishart prior with mean of $0.03 I_k$ and 10
+degrees of freedom. For the period 0 values of $\ln \lambda_t$, we set
+the prior mean and variance at $\ln \sigma^2_i$ and 2.0.
 
 ``` r
-stan_data <- c(bvar_obj$setup, bvar_obj$priors)
-stan_file <- system.file("stochastic_volatility.stan", package = "SteadyStateBVAR")
-rstan::rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+k <- bvar_obj$setup$k
+n_free_params_A <- k*(k-1)/2
+sigma2_AR <- diag(bvar_obj$priors$Sigma_AR)
 
-bvar_obj$fit$stochastic_volatility <- 
-  rstan::stan(
-  file = stan_file,
-  data = stan_data,
-  iter = 10000,
-  warmup = 5000,
-  chains = 2,
-  verbose = FALSE
+SV_priors <- list(
+  theta_A            = rep(0, n_free_params_A),
+  theta_gamma_0      = 0.1 * log(sigma2_AR),
+  theta_gamma_1      = rep(0.9, k),
+  theta_log_lambda_0 = log(sigma2_AR),
+  Omega_A            = diag(10, n_free_params_A),
+  Omega_gamma_0      = diag(2^(1/2)^2, k),
+  Omega_gamma_1      = diag(0.2, k),
+  Omega_log_lambda_0 = diag(2.0, k),
+  m_0                = 10,
+  V_0                = 0.03 * diag(k) * (10 - k - 1) #10 = m_0
   )
 
-sf <- bvar_obj$fit$stochastic_volatility
-sf <- rstan::extract(sf)
+bvar_obj$SV <- TRUE
+bvar_obj$SV_priors <- SV_priors
 ```
 
-We can print our parameter estimates (posterior means). Also lets print
-the posterior mean of the reduced error standard deviation, i.e. our
-estimate of $sd(u_{i,t})$, vs. the true SD from the DGP.
+Lets fit the model
 
 ``` r
-k <- 2
-p <- 1
-q <- 2
-N <- 199 #we have 200-p effective sample size in the estimation
-cat("Psi_hat:"); print(round(t(apply(sf$Psi, c(2,3), mean)), 2)); cat("\n")
-#> Psi_hat:
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.07 6.01
-#>   [2,] 6.00 9.99
-cat("Pi_1_hat:"); print(round(t(apply(sf$beta, c(2,3), mean)), 2)); cat("\n")
-#> Pi_1_hat:
-#>       
-#>         [,1] [,2]
-#>   [1,]  0.78 0.15
-#>   [2,] -0.21 0.71
-cat("A_hat:"); print(round(apply(sf$A, c(2,3), mean), 2)); cat("\n")
-#> A_hat:
-#>       
-#>        [,1] [,2]
-#>   [1,] 1.00    0
-#>   [2,] 0.71    1
-cat("gamma0_hat:"); print(round(apply(sf$gamma0, 2, mean), 2)); cat("\n")
-#> gamma0_hat:
-#> [1] -0.58 -0.28
-cat("gamma1_hat:"); print(round(apply(sf$gamma1, 2, mean), 2)); cat("\n")
-#> gamma1_hat:
-#> [1] 0.37 0.87
-cat("Phi_hat:"); print(round(apply(sf$Phi, c(2,3), mean), 2)); cat("\n")
-#> Phi_hat:
-#>       
-#>        [,1] [,2]
-#>   [1,] 0.76 0.21
-#>   [2,] 0.21 0.41
+bvar_obj <- fit(bvar_obj,
+                iter = 2000,
+                warmup = 1000,
+                chains = 2)
+```
 
-Sigma_hat <- array(NA, dim = c(N, k, k))
-sd_hat <- matrix(NA,N,2)
-for(t in 1:N){
-  Sigma_hat[t,,] <- apply(sf$Sigma_u[,t,,], c(2,3), mean)
-  sd_hat[t,] <- sqrt(diag(Sigma_hat[t,,]))
+Let see if we managed to reasonably recover the true parameters…
+Remember here since $p=1$ we have $\beta'=\Pi_1$.
+
+``` r
+summary(bvar_obj)
+```
+
+Looks like it works quite well! Now let us plot the estimates (posterior
+mean and 95% interval) of stochastic volatilities from the model,
+defined as reduced form residual/innovation ($u_t$) standard deviations
+(diagonal elements of $\Sigma_{u,t}^{0.5}$).
+
+``` r
+k <- bvar_obj$setup$k
+p <- bvar_obj$setup$p
+q <- bvar_obj$setup$q
+N_est <- N-p
+sf <- bvar_obj$fit$stan
+sf <- rstan::extract(sf)
+
+Sigma_mean <- array(NA, dim = c(N_est, k, k))
+Sigma_lwr <- array(NA, dim = c(N_est, k, k))
+Sigma_upr <- array(NA, dim = c(N_est, k, k))
+
+sd_mean <- matrix(NA,N_est,2)
+sd_lwr <- matrix(NA, N_est, 2)
+sd_upr <- matrix(NA, N_est, 2)
+
+for(t in 1:N_est){
+  Sigma_mean[t,,] <- apply(sf$Sigma_u[,t,,], c(2,3), mean)
+  Sigma_lwr[t,,] <- apply(sf$Sigma_u[,t,,], c(2,3), quantile, 0.025)
+  Sigma_upr[t,,] <- apply(sf$Sigma_u[,t,,], c(2,3), quantile, 0.975)
+  sd_mean[t,] <- sqrt(diag(Sigma_mean[t,,]))
+  sd_lwr[t,] <- sqrt(diag(Sigma_lwr[t,,]))
+  sd_upr[t,] <- sqrt(diag(Sigma_upr[t,,]))
 }
 
-sigma_true <- matrix(NA,201,2)
-for(t in 1:201){
+sigma_true <- matrix(NA,N,2)
+for(t in 1:(N)){
   sigma_true[t,] <- sqrt(diag(Sigma[,,t]))
 }
 
-true_sd1 <- sigma_true[3:201,1]
-true_sd2 <- sigma_true[3:201,2]
-est_sd1 <- sd_hat[,1]
-est_sd2 <- sd_hat[,2]
+true_sd1 <- sigma_true[2:(N),1]
+true_sd2 <- sigma_true[2:(N),2]
+est_sd1 <- sd_mean[,1]
+est_sd2 <- sd_mean[,2]
+lower_sd1 <- sd_lwr[,1]
+upper_sd1 <- sd_upr[,1]
+lower_sd2 <- sd_lwr[,2]
+upper_sd2 <- sd_upr[,2]
 
-ts.plot(cbind(true_sd1, est_sd1), col=c("black", "blue"),
-        main="u_1,t: posterior mean sd (blue) vs. real (black)")
+ts.plot(cbind(true_sd1, est_sd1), col=c("black","blue"),
+        main="u_{1,t}: posterior mean sd (blue) + 95% interval vs. real (black)", lwd=c(3,4),
+        ylim=range(c(true_sd1,est_sd1,lower_sd1,upper_sd1)))
+lines(lower_sd1, col="blue", lty=2) 
+lines(upper_sd1, col="blue", lty=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-40-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
 
 ``` r
-ts.plot(cbind(true_sd2, est_sd2), col=c("black", "blue"),
-        main="u_2,t: posterior mean sd (blue) vs. real (black)")
+
+ts.plot(cbind(true_sd2, est_sd2), col=c("black","blue"),
+        main="u_{2,t}: posterior mean sd (blue) + 95% interval vs. real (black)", lwd=c(3,4),
+        ylim=range(c(true_sd2,est_sd2,lower_sd2,upper_sd2)))
+lines(lower_sd2, col="blue", lty=2)
+lines(upper_sd2, col="blue", lty=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-40-2.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-42-2.png" width="100%" />
 
 The code seems to work.
 
