@@ -5,11 +5,18 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
   
   if (estimation == "stan") {
     
-    stan_data <- c(
-      x$setup,
-      list(H = x$predict$H, X_pred = x$predict$X_pred),
-      x$priors
-    )
+    if (x$SV == TRUE) {
+      stan_data <- c(
+        x$setup,
+        x$priors
+      )
+    } else {
+      stan_data <- c(
+        x$setup,
+        list(H = x$predict$H, X_pred = x$predict$X_pred),
+        x$priors
+      )
+    }
     
     stan_file <- if (isFALSE(Jeffrey)) {
       system.file("inv_wishart_cov.stan", package = "SteadyStateBVAR")
@@ -17,7 +24,7 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       system.file("diffuse_cov.stan", package = "SteadyStateBVAR")
     }
     
-    if (x$priors$SV == TRUE) {
+    if (isTRUE(x$SV)) {
       stan_file <- system.file("stochastic_volatility.stan", package = "SteadyStateBVAR")
       stan_data <- c(x$SV_priors, stan_data)
       k <- x$setup$k
@@ -26,7 +33,6 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       }
 
     }
-    
     rstan::rstan_options(auto_write = TRUE)
     options(mc.cores = parallel::detectCores())
     

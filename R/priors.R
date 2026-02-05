@@ -1,4 +1,4 @@
-priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_prior_mean=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE, SV=NULL, SV_priors=NULL){
+priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_prior_mean=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
   
   priors <- list()
   
@@ -69,10 +69,6 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_pri
   priors$Jeffrey <- Jeffrey
   priors$Sigma_AR <- Sigma_AR
   x$priors <- priors
-  
-  if (!is.null(SV)){
-    x$SV_priors <- SV_priors
-  }
   
   return(x)
 }

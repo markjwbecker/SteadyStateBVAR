@@ -8,7 +8,7 @@ summary.bvar <- function(object) {
   
   summaries <- list()
   
-  if (has_stan) {
+  if (has_stan && !object$SV) {
     fit <- object$fit$stan
     posterior <- rstan::extract(fit)
     summaries$stan <- list(
@@ -16,6 +16,18 @@ summary.bvar <- function(object) {
       beta  = round(apply(posterior$beta,  c(2,3), mean), 2),
       Psi   = round(apply(posterior$Psi,   c(2,3), mean), 2),
       Sigma = round(apply(posterior$Sigma_u, c(2,3), mean), 2)
+    )
+  } else if (has_stan && object$SV){
+    fit <- object$fit$stan
+    posterior <- rstan::extract(fit)
+    summaries$stan <- list(
+      method = "Stan",
+      beta     = round(apply(posterior$beta,  c(2,3), mean), 2),
+      Psi      = round(apply(posterior$Psi,   c(2,3), mean), 2),
+      A        = round(apply(posterior$A,     c(2,3), mean), 2),
+      gamma_0  = round(apply(posterior$gamma_0, 2, mean), 2),
+      gamma_1  = round(apply(posterior$gamma_1, 2, mean), 2),
+      Phi      = round(apply(posterior$Phi,   c(2,3), mean), 2)
     )
   }
   
@@ -50,7 +62,10 @@ print.summary.bvar <- function(x) {
     
     cat("beta posterior mean\n"); print(s$beta); cat("\n")
     cat("Psi posterior mean\n"); print(s$Psi); cat("\n")
-    cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n\n")
+    cat("A posterior mean\n"); print(s$A); cat("\n")
+    cat("gamma_0 posterior mean\n"); print(s$gamma_0); cat("\n")
+    cat("gamma_1 posterior mean\n"); print(s$gamma_1); cat("\n\n")
+    cat("Phi posterior mean\n"); print(s$Phi); cat("\n\n")
   }
   
   invisible(x)
