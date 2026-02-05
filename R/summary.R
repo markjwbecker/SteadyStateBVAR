@@ -8,7 +8,7 @@ summary.bvar <- function(object) {
   
   summaries <- list()
   
-  if (has_stan && !object$SV) {
+  if (has_stan && is.null(object$SV)) {
     fit <- object$fit$stan
     posterior <- rstan::extract(fit)
     summaries$stan <- list(
@@ -62,10 +62,14 @@ print.summary.bvar <- function(x) {
     
     cat("beta posterior mean\n"); print(s$beta); cat("\n")
     cat("Psi posterior mean\n"); print(s$Psi); cat("\n")
-    cat("A posterior mean\n"); print(s$A); cat("\n")
-    cat("gamma_0 posterior mean\n"); print(s$gamma_0); cat("\n")
-    cat("gamma_1 posterior mean\n"); print(s$gamma_1); cat("\n\n")
-    cat("Phi posterior mean\n"); print(s$Phi); cat("\n\n")
+    if (is.null(x$SV)) {
+      cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n\n")
+    } else {
+      cat("A posterior mean\n"); print(s$A); cat("\n")
+      cat("gamma_0 posterior mean\n"); print(s$gamma_0); cat("\n")
+      cat("gamma_1 posterior mean\n"); print(s$gamma_1); cat("\n\n")
+      cat("Phi posterior mean\n"); print(s$Phi); cat("\n\n")
+    }
   }
   
   invisible(x)
