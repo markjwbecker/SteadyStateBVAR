@@ -4,7 +4,7 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
   Jeffrey <- x$priors$Jeffrey
   
   if (estimation == "stan") {
-    
+    if (!is.null(x$SV)){
     if (x$SV == TRUE) {
       stan_data <- c(
         x$setup,
@@ -17,7 +17,13 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
         x$priors
       )
     }
-    
+    } else {
+      stan_data <- c(
+        x$setup,
+        list(H = x$predict$H, X_pred = x$predict$X_pred),
+        x$priors
+      )
+    }
     stan_file <- if (isFALSE(Jeffrey)) {
       system.file("inv_wishart_cov.stan", package = "SteadyStateBVAR")
     } else {
