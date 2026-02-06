@@ -65,9 +65,9 @@ model {
 
 generated quantities {
 
-  matrix[k, k] A[p];
+  matrix[k, k] Pi[p];
   for (i in 1:p) {
-    A[i] = (beta[((i - 1) * k + 1):(i * k), :])'; //extract A_1, ..., A_p
+    Pi[i] = (beta[((i - 1) * k + 1):(i * k), :])'; //extract Pi_1, ..., Pi_p
   }
 
   matrix[H, k] Y_pred;
@@ -79,13 +79,13 @@ generated quantities {
 
     if (h > 1) {
       for (i in 1:min(h-1, p)) {
-        yhat_t += to_vector((Y_pred[h-i] - X_pred[h-i]*Psi') * A[i]');
+        yhat_t += to_vector((Y_pred[h-i] - X_pred[h-i]*Psi') * Pi[i]');
       }
     }
 
     if (h <= p) {
       for (i in h:p) {
-        yhat_t += to_vector((Y[N + h - i] - X[N + h - i]*Psi') * A[i]');
+        yhat_t += to_vector((Y[N + h - i] - X[N + h - i]*Psi') * Pi[i]');
       }
     }
     Y_pred[h] = (yhat_t + u_t)';

@@ -1,14 +1,23 @@
-fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan", "gibbs"),test=FALSE) {
+fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan", "gibbs")) {
   
   estimation <- match.arg(estimation)
   Jeffrey <- x$priors$Jeffrey
   
-  if (estimation == "stan" && is.null(x$SV)) {
+  if (estimation == "stan") {
+    
+    if (x$SV == TRUE) {
+      stan_data <- c(
+        x$setup,
+        x$priors
+      )
+    } else {
       stan_data <- c(
         x$setup,
         list(H = x$predict$H, X_pred = x$predict$X_pred),
         x$priors
       )
+    }
+    
     stan_file <- if (isFALSE(Jeffrey)) {
       system.file("inv_wishart_cov.stan", package = "SteadyStateBVAR")
     } else {
@@ -17,18 +26,12 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
     
     if (isTRUE(x$SV)) {
       stan_file <- system.file("stochastic_volatility.stan", package = "SteadyStateBVAR")
-      if (test == TRUE){
-        stan_file <- system.file("stochastic_volatility_test.stan", package = "SteadyStateBVAR")
-      }
-      stan_data <- c(
-        x$setup,
-        x$priors,
-        x$SV_priors
-      )
+      stan_data <- c(x$SV_priors, stan_data)
       k <- x$setup$k
       if (k == 2) {
         stan_data$theta_A <- as.array(x$SV_priors$theta_A[1])
       }
+      
     }
     rstan::rstan_options(auto_write = TRUE)
     options(mc.cores = parallel::detectCores())
