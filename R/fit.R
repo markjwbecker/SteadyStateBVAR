@@ -5,7 +5,7 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
   
   if (estimation == "stan") {
     
-    if (x$SV == TRUE) {
+    if (!is.null(x$SV)) {
       stan_data <- c(
         x$setup,
         x$priors
