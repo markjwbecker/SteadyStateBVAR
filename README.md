@@ -44,7 +44,7 @@ where $y_t$ is a $k$-dimensional vector of endogenous variables (time
 series) at time $t$, and $d_t$ is a $q$-dimensional vector of
 deterministic/exogenous variables at time $t$, and
 $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also,
-$A_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is
+$\Pi_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is
 $(k \times q)$. Note here that
 
 $$
@@ -406,7 +406,7 @@ Then we can fit the model.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 4)
 ```
@@ -418,34 +418,34 @@ summary(bvar_obj)
 #> beta posterior mean
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.18  0.03 -0.02  0.12  0.07 -0.12  0.00
+#>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
 #>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
 #>    [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.21  3.97  0.73  0.93
+#>    [7,]  0.00  0.00  0.00  1.21  3.96  0.74  0.93
 #>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
 #>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
 #>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
 #>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.55 -0.39  0.32 -0.04
+#>   [14,]  0.00  0.00  0.00  0.55 -0.38  0.32 -0.04
 #>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
 #>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
 #>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
 #>   [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
-#>   [21,]  0.00  0.00  0.00 -0.14 -0.03 -0.58  0.00
+#>   [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.58  0.00
 #>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
 #>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.15 -0.06 -0.17 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.17 -0.01
 #> 
 #> Psi posterior mean
 #>       
@@ -465,8 +465,8 @@ summary(bvar_obj)
 #>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
 #>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
 #>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.12  0.00
-#>   [6,]  0.00  0.04 0.11 -0.01  0.12  1.56 -0.01
+#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
+#>   [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
 #>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
@@ -746,12 +746,12 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 1,
                 estimation = "gibbs")
@@ -768,42 +768,42 @@ summary(bvar_obj)
 #> beta posterior mean
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.06 -0.02  0.03  0.07 -0.27  0.05 -0.03
-#>    [2,]  0.03  0.70  0.04 -0.17  0.75 -0.02  0.03
-#>    [3,] -0.02  0.11  1.01 -0.39  0.24 -0.02 -0.03
+#>    [1,]  0.06 -0.02  0.03  0.07 -0.26  0.05 -0.03
+#>    [2,]  0.03  0.71  0.04 -0.17  0.77 -0.02  0.03
+#>    [3,] -0.02  0.11  1.01 -0.39  0.23 -0.02 -0.03
 #>    [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
 #>    [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>    [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
+#>    [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
 #>    [7,]  0.09  0.00  0.03  0.03 -0.19 -0.13  0.36
 #>    [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>    [9,] -0.05  0.19  0.07  0.11 -0.66  0.04 -0.04
-#>   [10,] -0.06 -0.08 -0.09  0.39 -0.93 -0.11 -0.03
-#>   [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.05  0.01
+#>    [9,] -0.06  0.19  0.07  0.11 -0.68  0.04 -0.04
+#>   [10,] -0.06 -0.08 -0.08  0.38 -0.92 -0.11 -0.03
+#>   [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
 #>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#>   [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
+#>   [13,]  0.04 -0.01  0.01  0.00 -0.56  0.16 -0.01
 #>   [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>       
 #>        [,1]
-#>   [1,] 3.20
-#>   [2,] 2.46
+#>   [1,] 3.19
+#>   [2,] 2.47
 #>   [3,] 4.44
 #>   [4,] 3.38
-#>   [5,] 4.64
+#>   [5,] 4.63
 #>   [6,] 1.66
 #>   [7,] 1.03
 #> 
 #> Sigma_u posterior mean
 #>       
 #>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#>   [1,]  7.93 -0.01  0.50  4.25  26.83  3.98  0.45
-#>   [2,] -0.01  1.00  0.12 -0.13   0.88  0.34 -0.13
-#>   [3,]  0.50  0.12  0.70  0.27   2.25  0.63 -0.05
-#>   [4,]  4.25 -0.13  0.27  5.74   5.41  2.23  0.45
-#>   [5,] 26.83  0.88  2.25  5.41 161.27 16.53  2.10
-#>   [6,]  3.98  0.34  0.63  2.23  16.53  5.43  0.37
-#>   [7,]  0.45 -0.13 -0.05  0.45   2.10  0.37  1.26
+#>   [1,]  7.95 -0.01  0.50  4.25  26.90  3.99  0.45
+#>   [2,] -0.01  1.00  0.12 -0.13   0.89  0.34 -0.14
+#>   [3,]  0.50  0.12  0.70  0.27   2.26  0.63 -0.05
+#>   [4,]  4.25 -0.13  0.27  5.73   5.43  2.23  0.45
+#>   [5,] 26.90  0.89  2.26  5.43 161.57 16.56  2.08
+#>   [6,]  3.99  0.34  0.63  2.23  16.56  5.43  0.37
+#>   [7,]  0.45 -0.14 -0.05  0.45   2.08  0.37  1.26
 #> 
 #> 
 #> ====================================
@@ -813,39 +813,39 @@ summary(bvar_obj)
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.05 -0.03
-#>  [2,]  0.02  0.70  0.04 -0.17  0.76 -0.02  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.02
-#>  [4,]  0.26  0.02  0.03  0.14  1.80  0.25  0.04
+#>  [2,]  0.03  0.70  0.04 -0.17  0.75 -0.02  0.03
+#>  [3,] -0.02  0.11  1.01 -0.39  0.23 -0.02 -0.03
+#>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.18 -0.13  0.36
-#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.05  0.19  0.07  0.11 -0.67  0.04 -0.04
+#>  [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
+#>  [7,]  0.08  0.00  0.03  0.03 -0.20 -0.13  0.36
+#>  [8,]  0.04  0.00  0.01  0.03  0.11  0.00  0.02
+#>  [9,] -0.06  0.19  0.07  0.11 -0.67  0.04 -0.04
 #> [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.01  0.06  0.01
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.05  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
-#> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.14  0.30
+#> [13,]  0.04 -0.01  0.01  0.00 -0.56  0.16 -0.01
+#> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
-#> [1,] 3.20
+#> [1,] 3.19
 #> [2,] 2.47
-#> [3,] 4.45
+#> [3,] 4.44
 #> [4,] 3.38
-#> [5,] 4.64
+#> [5,] 4.63
 #> [6,] 1.66
-#> [7,] 1.03
+#> [7,] 1.02
 #> 
 #> Sigma_u posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.93 -0.02  0.50  4.25  26.84  3.98  0.45
-#> [2,] -0.02  1.00  0.12 -0.14   0.86  0.34 -0.14
-#> [3,]  0.50  0.12  0.70  0.27   2.25  0.63 -0.05
-#> [4,]  4.25 -0.14  0.27  5.73   5.40  2.23  0.45
-#> [5,] 26.84  0.86  2.25  5.40 161.40 16.55  2.09
-#> [6,]  3.98  0.34  0.63  2.23  16.55  5.44  0.37
-#> [7,]  0.45 -0.14 -0.05  0.45   2.09  0.37  1.26
+#> [1,]  7.95 -0.01  0.50  4.26  26.90  3.99  0.45
+#> [2,] -0.01  1.00  0.12 -0.13   0.88  0.34 -0.13
+#> [3,]  0.50  0.12  0.70  0.27   2.26  0.63 -0.05
+#> [4,]  4.26 -0.13  0.27  5.74   5.45  2.24  0.45
+#> [5,] 26.90  0.88  2.26  5.45 161.59 16.58  2.09
+#> [6,]  3.99  0.34  0.63  2.24  16.58  5.44  0.37
+#> [7,]  0.45 -0.13 -0.05  0.45   2.09  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -1059,7 +1059,7 @@ bvar_obj <- priors(bvar_obj,
 bvar_obj$predict$H <- 40
 bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 4)
 ```
@@ -1159,12 +1159,12 @@ $$
                          -0.20 & 0.70 \end{bmatrix} \\
 A &= \begin{bmatrix} 1 & 0 \\
                          0.7 & 1 \end{bmatrix} \\
-\gamma_{0} &= \begin{pmatrix} -0.6  \\
-                         -0.2 \end{pmatrix} \\
-\gamma_{1} &= \begin{pmatrix} 0.6  \\
+\gamma_{0} &= \begin{pmatrix} -0.10  \\
+                         -0.20 \end{pmatrix} \\
+\gamma_{1} &= \begin{pmatrix} 0.8  \\
                          0.9 \end{pmatrix} \\
-\Phi &= \begin{bmatrix} 1.0 & 0.3 \\
-                         0.3 & 0.6 \end{bmatrix}
+\Phi &= \begin{bmatrix} 0.5 & 0.3 \\
+                         0.3 & 0.4 \end{bmatrix}
 \end{aligned}                         
 $$
 
@@ -1172,8 +1172,8 @@ and initial observations $y_0$ and initial conditions $\lambda_0$
 
 $$
 \begin{aligned}
-\lambda_{0} &= \begin{pmatrix} 0.1  \\
-                         0.2 \end{pmatrix} \\
+\ln (\lambda_{0}) &= \begin{pmatrix} -0.6  \\
+                         -0.8 \end{pmatrix} \\
 y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
@@ -1188,7 +1188,7 @@ Simulate from the DGP
 ``` r
 rm(list = ls())
 set.seed(123)
-N <- 201
+N <- 501
 
 Psi <- matrix(c(2, 6,
                 6, 10), 2, 2, byrow = TRUE)
@@ -1199,14 +1199,14 @@ Pi_1 <- matrix(c( 0.80, 0.15,
 A <- matrix(c(1.0, 0.0,
               0.7, 1.0), 2, 2, byrow = TRUE)
 
-gamma0 <- c(-0.60,
+gamma0 <- c(-0.10,
             -0.20)
 
-gamma1 <- c(0.6,
+gamma1 <- c(0.8,
             0.9)
 
-Phi <- matrix(c(1.0,0.3,
-                0.3,0.6),2,2)
+Phi <- matrix(c(0.5,0.3,
+                0.3,0.4),2,2)
 
 dummy <- c(rep(1,(floor(N/4)+1)), rep(0,N-(floor(N/4)+1)))
 d <- cbind(rep(1, N), dummy)
@@ -1214,7 +1214,7 @@ y <- matrix(NA, N, 2)
 y[1,] <- Psi %*% d[1,] #y_{t=0}
 
 log_lambda <- matrix(NA, N, 2)
-log_lambda[1,] <- c(log(0.1), log(0.2)) #lambda_{t=0}
+log_lambda[1,] <- c(-0.6, -0.8) #lambda_{t=0}
 
 nu <- matrix(NA, N, 2)
 Lambda <- array(NA, dim = c(2, 2, N))
@@ -1273,8 +1273,9 @@ bvar_obj <- priors(bvar_obj,
 ```
 
 We also need to specify our stochastic volatility priors (instead of
-Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following setup is
-an exact copy of the setup in Carriero, Clark and Marcellino (2024).
+Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following prior
+setup is almost (except for $\Phi$ an exact copy of the setup in
+Carriero, Clark and Marcellino (2024).
 
 For the free parameters in $A$ we use uninformative normal prior with
 means 0 and variances of 10. We also use Gaussian priors on the
@@ -1285,10 +1286,14 @@ residual variance of an AR(p) model i.e. the exact same estimate used in
 the Minnesota prior from before. Note that this prior implies that the
 steady states of the volatility processes are $\ln \ \sigma^2_i$. The
 prior standard deviations for the intercepts and slopes (assuming 0
-covariance) are $(2^{0.5}, 0.2)$. For $\Phi$, we use an Inverse Wishart
-prior with mean of $0.03 I_k$ and 10 degrees of freedom. For the period
-0 values of $\ln \lambda_t$, we set the prior mean and variance at
-$\ln \sigma^2_i$ and 2.0.
+covariance) are $(2^{0.5}, 0.2)$. For the period 0 values of
+$\ln \lambda_t$, we set the prior mean and variance at $\ln \sigma^2_i$
+and 2.0. Now for $\Phi$, Carriero, Clark and Marcellino (2024) use an
+Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom.
+Instead we will use Inverse Wishart prior with mean of $I_k$, i.e. scale
+matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. I cheat a
+bit here since I know the DGP, and that the $0.03$ factor is not
+suitable.
 
 ``` r
 k <- bvar_obj$setup$k
@@ -1304,8 +1309,8 @@ SV_priors <- list(
   Omega_gamma_0      = diag(2^(1/2)^2, k),
   Omega_gamma_1      = diag(0.2^2, k),
   Omega_log_lambda_0 = diag(2.0, k),
-  m_0                = 10,
-  V_0                = 0.03 * diag(k) * (10 - k - 1) #10 = m_0
+  m_0                = k+2,
+  V_0                = (k+2 - k - 1) * diag(k)
   )
 
 bvar_obj$SV <- TRUE
@@ -1316,7 +1321,7 @@ Lets fit the model
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 4)
 ```
@@ -1329,33 +1334,33 @@ summary(bvar_obj)
 #> beta posterior mean
 #>       
 #>        [,1]  [,2]
-#>   [1,] 0.74 -0.18
-#>   [2,] 0.12  0.75
+#>   [1,] 0.72 -0.15
+#>   [2,] 0.13  0.72
 #> 
 #> Psi posterior mean
 #>       
-#>        [,1]  [,2]
-#>   [1,] 2.22  5.90
-#>   [2,] 5.86 10.06
+#>        [,1] [,2]
+#>   [1,] 1.99 6.22
+#>   [2,] 6.06 9.80
 #> 
 #> A posterior mean
 #>       
 #>        [,1] [,2]
 #>   [1,] 1.00    0
-#>   [2,] 0.71    1
+#>   [2,] 0.69    1
 #> 
 #> gamma_0 posterior mean
-#> [1] -0.57 -0.38
+#> [1] -0.15 -0.39
 #> 
 #> gamma_1 posterior mean
-#> [1] 0.58 0.83
+#> [1] 0.69 0.84
 #> 
 #> 
 #> Phi posterior mean
 #>       
 #>        [,1] [,2]
-#>   [1,] 0.49 0.33
-#>   [2,] 0.33 0.33
+#>   [1,] 0.65 0.41
+#>   [2,] 0.41 0.52
 ```
 
 Looks like it works quite well! Now let us plot the estimates (posterior
@@ -1375,9 +1380,9 @@ Sigma_mean <- array(NA, dim = c(N_est, k, k))
 Sigma_lwr <- array(NA, dim = c(N_est, k, k))
 Sigma_upr <- array(NA, dim = c(N_est, k, k))
 
-sd_mean <- matrix(NA,N_est,2)
-sd_lwr <- matrix(NA, N_est, 2)
-sd_upr <- matrix(NA, N_est, 2)
+sd_mean <- matrix(NA,N_est, k)
+sd_lwr <- matrix(NA, N_est, k)
+sd_upr <- matrix(NA, N_est, k)
 
 for(t in 1:N_est){
   Sigma_mean[t,,] <- apply(sf$Sigma_u[,t,,], c(2,3), mean)
@@ -1418,6 +1423,8 @@ lines(upper_sd2, col="blue", lty=2)
 ```
 
 <img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
+
+Forecasting is comin soon! WIP
 
 ## References
 

@@ -41,7 +41,7 @@ $$
 y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t
 $$
 
-where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, and $d_t$ is a $q$-dimensional vector of deterministic/exogenous variables at time $t$, and $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also, $A_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is $(k \times q)$. Note here that
+where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, and $d_t$ is a $q$-dimensional vector of deterministic/exogenous variables at time $t$, and $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also, $\Pi_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is $(k \times q)$. Note here that
 
 
 $$
@@ -292,7 +292,7 @@ Then we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 4)
 ```
@@ -517,12 +517,12 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 1,
                 estimation = "gibbs")
@@ -724,7 +724,7 @@ bvar_obj <- priors(bvar_obj,
 bvar_obj$predict$H <- 40
 bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 4)
 ```
@@ -812,12 +812,12 @@ $$
                          -0.20 & 0.70 \end{bmatrix} \\
 A &= \begin{bmatrix} 1 & 0 \\
                          0.7 & 1 \end{bmatrix} \\
-\gamma_{0} &= \begin{pmatrix} -0.6  \\
-                         -0.2 \end{pmatrix} \\
-\gamma_{1} &= \begin{pmatrix} 0.6  \\
+\gamma_{0} &= \begin{pmatrix} -0.10  \\
+                         -0.20 \end{pmatrix} \\
+\gamma_{1} &= \begin{pmatrix} 0.8  \\
                          0.9 \end{pmatrix} \\
-\Phi &= \begin{bmatrix} 1.0 & 0.3 \\
-                         0.3 & 0.6 \end{bmatrix}
+\Phi &= \begin{bmatrix} 0.5 & 0.3 \\
+                         0.3 & 0.4 \end{bmatrix}
 \end{aligned}                         
 $$
 
@@ -827,8 +827,8 @@ and initial observations $y_0$ and initial conditions $\lambda_0$
 
 $$
 \begin{aligned}
-\lambda_{0} &= \begin{pmatrix} 0.1  \\
-                         0.2 \end{pmatrix} \\
+\ln (\lambda_{0}) &= \begin{pmatrix} -0.6  \\
+                         -0.8 \end{pmatrix} \\
 y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
@@ -843,10 +843,10 @@ Simulate from the DGP
 
 
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE}
 rm(list = ls())
 set.seed(123)
-N <- 201
+N <- 501
 
 Psi <- matrix(c(2, 6,
                 6, 10), 2, 2, byrow = TRUE)
@@ -857,14 +857,14 @@ Pi_1 <- matrix(c( 0.80, 0.15,
 A <- matrix(c(1.0, 0.0,
               0.7, 1.0), 2, 2, byrow = TRUE)
 
-gamma0 <- c(-0.60,
+gamma0 <- c(-0.10,
             -0.20)
 
-gamma1 <- c(0.6,
+gamma1 <- c(0.8,
             0.9)
 
-Phi <- matrix(c(1.0,0.3,
-                0.3,0.6),2,2)
+Phi <- matrix(c(0.5,0.3,
+                0.3,0.4),2,2)
 
 dummy <- c(rep(1,(floor(N/4)+1)), rep(0,N-(floor(N/4)+1)))
 d <- cbind(rep(1, N), dummy)
@@ -872,7 +872,7 @@ y <- matrix(NA, N, 2)
 y[1,] <- Psi %*% d[1,] #y_{t=0}
 
 log_lambda <- matrix(NA, N, 2)
-log_lambda[1,] <- c(log(0.1), log(0.2)) #lambda_{t=0}
+log_lambda[1,] <- c(-0.6, -0.8) #lambda_{t=0}
 
 nu <- matrix(NA, N, 2)
 Lambda <- array(NA, dim = c(2, 2, N))
@@ -929,9 +929,9 @@ bvar_obj <- priors(bvar_obj,
 ```
 
 
-We also need to specify our stochastic volatility priors (instead of Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following setup is an exact copy of the setup in Carriero, Clark and Marcellino (2024).
+We also need to specify our stochastic volatility priors (instead of Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following prior setup is almost (except for $\Phi$ an exact copy of the setup in Carriero, Clark and Marcellino (2024).
 
-For the free parameters in $A$ we use uninformative normal prior with means 0 and variances of 10. We also use Gaussian priors on the coefficients $(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log volatility process of equation $i, \ i=1,\dots,k$, where the prior means are $(0.1 \ln \  \sigma^2_i, \ 0.9)$, where $\sigma^2_i$ is the residual variance of an AR(p) model i.e. the exact same estimate used in the Minnesota prior from before. Note that this prior implies that the steady states of the volatility processes are $\ln \ \sigma^2_i$.  The prior standard deviations for the intercepts and slopes (assuming 0 covariance) are $(2^{0.5}, 0.2)$. For $\Phi$, we use an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom. For the period 0 values of $\ln \lambda_t$, we set the prior mean and variance at $\ln \sigma^2_i$ and 2.0.
+For the free parameters in $A$ we use uninformative normal prior with means 0 and variances of 10. We also use Gaussian priors on the coefficients $(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log volatility process of equation $i, \ i=1,\dots,k$, where the prior means are $(0.1 \ln \  \sigma^2_i, \ 0.9)$, where $\sigma^2_i$ is the residual variance of an AR(p) model i.e. the exact same estimate used in the Minnesota prior from before. Note that this prior implies that the steady states of the volatility processes are $\ln \ \sigma^2_i$.  The prior standard deviations for the intercepts and slopes (assuming 0 covariance) are $(2^{0.5}, 0.2)$. For the period 0 values of $\ln \lambda_t$, we set the prior mean and variance at $\ln \sigma^2_i$ and 2.0. Now for $\Phi$, Carriero, Clark and Marcellino (2024) use an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom. Instead we will use Inverse Wishart prior with mean of $I_k$, i.e. scale matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. I cheat a bit here since I know the DGP, and that the $0.03$ factor is not suitable.
 
 
 ```{r, fig.width=8, fig.height=8}
@@ -948,8 +948,8 @@ SV_priors <- list(
   Omega_gamma_0      = diag(2^(1/2)^2, k),
   Omega_gamma_1      = diag(0.2^2, k),
   Omega_log_lambda_0 = diag(2.0, k),
-  m_0                = 10,
-  V_0                = 0.03 * diag(k) * (10 - k - 1) #10 = m_0
+  m_0                = k+2,
+  V_0                = (k+2 - k - 1) * diag(k)
   )
 
 bvar_obj$SV <- TRUE
@@ -960,7 +960,7 @@ Lets fit the model
 
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE}
 bvar_obj <- fit(bvar_obj,
-                iter = 15000,
+                iter = 20000,
                 warmup = 5000,
                 chains = 4)
 ```
@@ -985,9 +985,9 @@ Sigma_mean <- array(NA, dim = c(N_est, k, k))
 Sigma_lwr <- array(NA, dim = c(N_est, k, k))
 Sigma_upr <- array(NA, dim = c(N_est, k, k))
 
-sd_mean <- matrix(NA,N_est,2)
-sd_lwr <- matrix(NA, N_est, 2)
-sd_upr <- matrix(NA, N_est, 2)
+sd_mean <- matrix(NA,N_est, k)
+sd_lwr <- matrix(NA, N_est, k)
+sd_upr <- matrix(NA, N_est, k)
 
 for(t in 1:N_est){
   Sigma_mean[t,,] <- apply(sf$Sigma_u[,t,,], c(2,3), mean)
@@ -1027,6 +1027,7 @@ lines(lower_sd2, col="blue", lty=2)
 lines(upper_sd2, col="blue", lty=2)
 ```
 
+Forecasting is comin soon! WIP
 
 ## References
 
