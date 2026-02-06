@@ -1,4 +1,4 @@
-fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan", "gibbs")) {
+fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan", "gibbs"),test=FALSE) {
   
   estimation <- match.arg(estimation)
   Jeffrey <- x$priors$Jeffrey
@@ -32,10 +32,14 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
     
     if (isTRUE(x$SV)) {
       stan_file <- system.file("stochastic_volatility.stan", package = "SteadyStateBVAR")
+      if (test == TRUE){
+        stan_file <- system.file("stochastic_volatility_test.stan", package = "SteadyStateBVAR")
+        stan_data <- c(list(H = x$predict$H, X_pred = x$predict$X_pred), stan_data)
+      }
       stan_data <- c(x$SV_priors, stan_data)
       k <- x$setup$k
       if (k == 2) {
-        stan_data$theta_A <- as.array(x$SV_priors$theta_A[1])
+        stan_data$theta_A <- as.array(x9$SV_priors$theta_A[1])
       }
 
     }
