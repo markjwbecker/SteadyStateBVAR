@@ -87,10 +87,6 @@ transformed parameters {
   for (t in 1:N) {
     matrix[k,k] Lambda_t = diag_matrix(exp(log_lambda[t]'));
     Sigma_u[t] = Ainv * Lambda_t * Ainv';
-    // standard deviations
-    for (i in 1:k) {
-      sigma[t, i] = sqrt(Sigma_u[t, i, i]);
-    }
   }
 }
 
