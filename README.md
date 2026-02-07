@@ -1274,7 +1274,7 @@ bvar_obj <- priors(bvar_obj,
 
 We also need to specify our stochastic volatility priors (instead of
 Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following prior
-setup is almost (except for $\Phi$ an exact copy of the setup in
+setup is almost (except for $\Phi$) an exact copy of the setup in
 Carriero, Clark and Marcellino (2024).
 
 For the free parameters in $A$ we use uninformative normal prior with
@@ -1424,7 +1424,7 @@ lines(upper_sd2, col="blue", lty=2)
 
 <img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
 
-Forecasting is comin soon! WIP
+Forecasting is coming soon! WIP
 
 ## References
 

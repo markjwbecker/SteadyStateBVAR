@@ -929,7 +929,7 @@ bvar_obj <- priors(bvar_obj,
 ```
 
 
-We also need to specify our stochastic volatility priors (instead of Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following prior setup is almost (except for $\Phi$ an exact copy of the setup in Carriero, Clark and Marcellino (2024).
+We also need to specify our stochastic volatility priors (instead of Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following prior setup is almost (except for $\Phi$) an exact copy of the setup in Carriero, Clark and Marcellino (2024).
 
 For the free parameters in $A$ we use uninformative normal prior with means 0 and variances of 10. We also use Gaussian priors on the coefficients $(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log volatility process of equation $i, \ i=1,\dots,k$, where the prior means are $(0.1 \ln \  \sigma^2_i, \ 0.9)$, where $\sigma^2_i$ is the residual variance of an AR(p) model i.e. the exact same estimate used in the Minnesota prior from before. Note that this prior implies that the steady states of the volatility processes are $\ln \ \sigma^2_i$.  The prior standard deviations for the intercepts and slopes (assuming 0 covariance) are $(2^{0.5}, 0.2)$. For the period 0 values of $\ln \lambda_t$, we set the prior mean and variance at $\ln \sigma^2_i$ and 2.0. Now for $\Phi$, Carriero, Clark and Marcellino (2024) use an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom. Instead we will use Inverse Wishart prior with mean of $I_k$, i.e. scale matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. I cheat a bit here since I know the DGP, and that the $0.03$ factor is not suitable.
 
@@ -1027,7 +1027,7 @@ lines(lower_sd2, col="blue", lty=2)
 lines(upper_sd2, col="blue", lty=2)
 ```
 
-Forecasting is comin soon! WIP
+Forecasting is coming soon! WIP
 
 ## References
 
