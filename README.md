@@ -1149,7 +1149,7 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \end{aligned}
 $$
 
-We have $t=0,\dots,T=200$ observations, $k=2$, $p=1$, and parameters
+We have $t=0,\dots,T=500$ observations, $k=2$, $p=1$, and parameters
 
 $$
 \begin{aligned}
@@ -1177,8 +1177,8 @@ $$
 y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
-\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 50 \\
-\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 50
+\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 125 \\
+\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 125
 \end{cases} \\
 \end{aligned}
 $$
