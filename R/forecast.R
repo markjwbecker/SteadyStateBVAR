@@ -23,8 +23,8 @@ forecast <- function (x, ci = 0.95, fcst_type = c("mean", "median"), growth_rate
     Y_pred_lower <- apply(Y_pred, c(2, 3), quantile, probs = alpha/2)
     Y_pred_upper <- apply(Y_pred, c(2, 3), quantile, probs = 1 - 
                             alpha/2)
-  } else { fcst_draws = forecasts_array
-  Y_pred <- x$fit$stan$fcst_draws
+  } else {
+  Y_pred <- x$fit$stanf$fcst_draws
   Y_pred_m <- apply(Y_pred, c(1, 2), fcst_type)
   alpha <- 1 - ci
   Y_pred_lower <- apply(Y_pred, c(1, 2), quantile, probs = alpha/2)

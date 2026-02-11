@@ -120,7 +120,7 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
         
         forecast_array[,,j] <- Y_pred_mat
       }
-      x$fit$stan$fcst_draws 
+      x$fit$stanf$fcst_draws 
     }
     
   } else {
