@@ -121,6 +121,8 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
         forecast_array[j,,] <- Y_pred_mat
       }
       x$fit$stanf$fcst_draws  <- forecast_array
+      x$fit$stanf$Sigma_u_array <- Sigma_u_array 
+      x$fit$stanf$log_lambda_array <- log_lambda_array
     }
     
   } else {
