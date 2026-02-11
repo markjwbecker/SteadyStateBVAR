@@ -55,7 +55,7 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       q <- x$setup$q
       H <- x$predict$H
       X_pred <- x$predict$X_pred
-      forecast_array <- array(NA, dim = c(H, k, n_draws))
+      forecast_array <- array(NA, dim = c(n_draws, H, k))
       Sigma_u_array <- array(NA, dim = c(n_draws, H, k, k))
       log_lambda_array <- array(NA, dim = c(n_draws, H, k))
       X <- x$setup$X
@@ -118,9 +118,9 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
           Sigma_u_array[j, h, , ] <- Sigma_u_pred[[h]]
         }
         
-        forecast_array[,,j] <- Y_pred_mat
+        forecast_array[j,,] <- Y_pred_mat
       }
-      x$fit$stanf$fcst_draws 
+      x$fit$stanf$fcst_draws  <- forecast_array
     }
     
   } else {
