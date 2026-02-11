@@ -1,6 +1,6 @@
 setup <- function(x, ...) UseMethod("setup")
 
-setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), dummy=NULL) {
+setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL) {
   
   yt <- x$data
   N = nrow(yt)-p
@@ -11,8 +11,12 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), 
   if (deterministic == "constant") {
     xt <- cbind(rep(1, nrow(yt)))
     q <- 1
-  } else {
+  } else if (deterministic == "constant_and_dummy") {
     xt <- cbind(rep(1, nrow(yt)), dummy)
+    q <- 2
+  } else {
+    trend <- 1:nrow(yt)
+    xt <- cbind(rep(1, nrow(yt)), trend)
     q <- 2
   }
   
@@ -24,7 +28,24 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), 
   Z <- cbind(W,X)
   beta_OLS = solve(crossprod(Z),crossprod(Z,Y))
   U = Y-Z%*%beta_OLS
-  Sigma_OLS <- crossprod(U)/(N-k*p-q)
+  Sigma_u_OLS <- crossprod(U)/(N-k*p-q)
+  
+  Gamma_d_OLS <- beta_OLS[1:(k*p),]
+  if (q == 1) {
+    C_hat <- beta_OLS[(k*p+1):(k*p+q),]
+  } else {
+    C_hat <- t(beta_OLS[(k*p+1):(k*p+q),])
+  }
+  A <- vector("list", p)
+  for (i in 1:p) {
+    rows_idx <- ((i - 1) * k + 1):(i * k)
+    A[[i]] <- matrix(t(beta_OLS[rows_idx, ]), nrow = k, ncol = k)
+  }
+  A_L <- diag(k)
+  for (i in 1:p) {
+    A_L <- A_L - A[[i]]
+  }
+  Psi_OLS <- solve(A_L, C_hat)
   
   x$setup <- list(N=N,
                   k=k,
@@ -36,7 +57,8 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy"), 
                   q=q,
                   dummy=dummy,
                   beta_OLS=beta_OLS,
-                  Sigma_OLS=Sigma_OLS,
+                  Sigma_u_OLS=Sigma_u_OLS,
+                  Psi_OLS=Psi_OLS,
                   xt=xt)
   return(x)
 }

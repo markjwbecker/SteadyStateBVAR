@@ -55,7 +55,7 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_pri
   theta_beta = c(mat)
   if(isFALSE(Jeffrey)){
     m_0=k+2
-    V_0 = (m_0-k-1)*setup$Sigma_OLS
+    V_0 = (m_0-k-1)*setup$Sigma_u_OLS
     priors$V_0 <- V_0
     priors$m_0 <- m_0
   }

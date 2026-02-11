@@ -35,9 +35,9 @@ summary.bvar <- function(object) {
     fit <- object$fit$gibbs
     summaries$gibbs <- list(
       method = "Gibbs",
-      beta  = round(fit$beta_post_mean, 2),
-      Psi   = round(fit$Psi_post_mean, 2),
-      Sigma = round(fit$Sigma_u_post_mean, 2)
+      beta  = round(fit$beta_posterior_mean, 2),
+      Psi   = round(fit$Psi_posterior_mean, 2),
+      Sigma = round(fit$Sigma_u_posterior_mean, 2)
     )
   }
   
