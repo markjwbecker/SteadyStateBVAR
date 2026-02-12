@@ -1026,7 +1026,7 @@ Simulate from the DGP
 ``` r
 rm(list = ls())
 set.seed(123)
-N <- 201
+N <- 301
 
 Psi <- matrix(c(2, 6,
                 3, 9), 2, 2, byrow = TRUE)
@@ -1035,16 +1035,16 @@ Pi_1 <- matrix(c( 0.80, 0.15,
                  -0.20, 0.70), 2, 2, byrow = TRUE)
 
 A <- matrix(c(1.0, 0.0,
-              0.4, 1.0), 2, 2, byrow = TRUE)
+              0.25, 1.0), 2, 2, byrow = TRUE)
 
-gamma0 <- c(-0.20,
-            -0.30)
+gamma0 <- c(-0.03,
+            -0.06)
 
-gamma1 <- c(0.7,
+gamma1 <- c(0.85,
             0.95)
 
-Phi <- matrix(c(0.9,-0.4,
-                -0.4,0.6),2,2)
+Phi <- matrix(c(0.8,-0.2,
+                -0.2,0.6),2,2)
 
 dummy <- c(rep(1,(floor(N/4)+1)), rep(0,N-(floor(N/4)+1)))
 d <- cbind(rep(1, N), dummy)
@@ -1076,6 +1076,16 @@ plot.ts(yt)
 ```
 
 <img src="man/figures/README-unnamed-chunk-37-1.png" width="100%" />
+
+``` r
+sigma <- matrix(NA,N,2)
+for(t in 1:(N)){
+  sigma[t,] <- sqrt(diag(Sigma_u[,,t]))
+}
+ts.plot(sigma, col=c("red", "blue"))
+```
+
+<img src="man/figures/README-unnamed-chunk-37-2.png" width="100%" />
 
 Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we
 do the same setup as before i.e. Minnesota for dynamic coefficients and
@@ -1160,7 +1170,7 @@ bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
 bvar_obj <- fit(bvar_obj,
                 iter = 4000,
                 warmup = 2000,
-                chains = 2)
+                chains = 4)
 ```
 
 Let see if we managed to reasonably recover the true parameters…
@@ -1170,34 +1180,34 @@ Remember here since $p=1$ we have $\beta'=\Pi_1$.
 summary(bvar_obj)
 #> beta posterior mean
 #>       
-#>         [,1]  [,2]
-#>   [1,]  0.64 -0.13
-#>   [2,] -0.01  0.79
+#>        [,1]  [,2]
+#>   [1,] 0.77 -0.20
+#>   [2,] 0.15  0.72
 #> 
 #> Psi posterior mean
 #>       
 #>        [,1] [,2]
-#>   [1,] 1.81  5.8
-#>   [2,] 3.36  9.1
+#>   [1,] 2.10 5.83
+#>   [2,] 3.07 9.06
 #> 
 #> A posterior mean
 #>       
 #>        [,1] [,2]
-#>   [1,]  1.0    0
-#>   [2,]  0.4    1
+#>   [1,] 1.00    0
+#>   [2,] 0.24    1
 #> 
 #> gamma_0 posterior mean
-#> [1] -0.24 -0.66
+#> [1] -0.08 -0.09
 #> 
 #> gamma_1 posterior mean
-#> [1] 0.61 0.87
+#> [1] 0.74 0.86
 #> 
 #> 
 #> Phi posterior mean
 #>       
 #>         [,1]  [,2]
-#>   [1,]  0.67 -0.37
-#>   [2,] -0.37  0.78
+#>   [1,]  0.69 -0.10
+#>   [2,] -0.10  0.77
 par(mfrow=c(2,1))
 bvar_obj <- forecast(bvar_obj,
                      ci = 0.95,
@@ -1217,12 +1227,12 @@ with a 95% prediction interval.
 
 ``` r
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(log_lambda[2:N,1]), plot_idx=1, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(log_lambda[2:N,1]-2,log_lambda[2:N,1]+2), plot_idx=1, vol="log_lambda")
 lines(2:N, log_lambda[2:N,1],
       col = adjustcolor("grey", alpha.f = 0.5),
       lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(log_lambda[2:N,2]), plot_idx=2, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(log_lambda[2:N,2]-2,log_lambda[2:N,2]+2), plot_idx=2, vol="log_lambda")
 lines(2:N, log_lambda[2:N,2],
       col = adjustcolor("grey", alpha.f = 0.5),
       lwd = 4)
