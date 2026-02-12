@@ -94,6 +94,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     
     ############   4   ################
     if (j > (Burnin+1)) {
+    idx <- j - (Burnin + 1)
     Lambda_j <- matrix(lambda[[j]], nrow = k, ncol = q)
     Gamma_d_j <- matrix(gamma_d[[j]], nrow = k * p, ncol = k)
     Psi_j <- Psi[[j]]                                    
@@ -128,7 +129,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
       Y_pred_mat[h, ] <- ytilde_t + u_t
     }
     
-    forecasts_array[, ,j] <- Y_pred_mat
+    forecasts_array[, ,idx] <- Y_pred_mat
     }
   }
   
