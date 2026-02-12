@@ -15,7 +15,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
   p  <- setup$p
   q  <- setup$q
   
-  Gamma_d_OLS <- setup$beta_hat[1:(k*p),]
+  Gamma_d_OLS <- setup$beta_OLS[1:(k*p),]
   Lambda_OLS <- setup$Psi_OLS
   
   gamma_d_lbar <-  priors$theta_beta
@@ -33,7 +33,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
   lambda <- vector(mode = "list", length = iter+1)
   
   R <- iter-warmup
-  B <- warmup
+  Burnin <- warmup
   forecasts_array <- array(NA, dim = c(H, k, R))
   
   ############### START ###############
@@ -43,7 +43,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
   gamma_d[[1]] <- c(Gamma_d_OLS) #gamma_d^{0}
   lambda[[1]]  <- c(Lambda_OLS) #lambda_d^{0}
   
-  for (j in 2:(B+R+1)){
+  for (j in 2:(Burnin+R+1)){
     
     Lambda = matrix(lambda[[j-1]],k,q)
     Gamma_d = matrix(gamma_d[[j-1]],k*p,k)
@@ -93,7 +93,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     lambda[[j]] <- MASS::mvrnorm(1, lambda_bar, Sigma_lambda_bar)
     
     ############   4   ################
-    if (j > (B+1)) {
+    if (j > (Burnin+1)) {
     Lambda_j <- matrix(lambda[[j]], nrow = k, ncol = q)
     Gamma_d_j <- matrix(gamma_d[[j]], nrow = k * p, ncol = k)
     Psi_j <- Psi[[j]]                                    
@@ -132,9 +132,9 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     }
   }
   
-  #### The first B draws are discarded as burn-in ###
-  keep_idx <- seq(B + 2, B+R+1)
-  n_keep <- length(seq(B + 2, B+R+1))
+  #### The first B (Burnin) draws are discarded as burn-in ###
+  keep_idx <- seq(Burnin + 2, Burnin+R+1)
+  n_keep <- length(seq(Burnin + 2, Burnin+R+1))
   gamma_d_keep  <- gamma_d[keep_idx]
   lambda_keep <- lambda[keep_idx]
   Psi_keep    <- Psi[keep_idx]
