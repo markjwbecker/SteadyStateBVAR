@@ -94,33 +94,33 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     
     ############   4   ################
     if (j > (B+1)) {
-    Lambda <- matrix(lambda[[j]], nrow = k, ncol = q)
-    Gamma_d <- matrix(gamma_d[[j]], nrow = k * p, ncol = k)
-    Psi <- Psi[[j]]                                    
+    Lambda_j <- matrix(lambda[[j]], nrow = k, ncol = q)
+    Gamma_d_j <- matrix(gamma_d[[j]], nrow = k * p, ncol = k)
+    Psi_j <- Psi[[j]]                                    
     
-    A <- vector("list", p)
+    A_j <- vector("list", p)
     for (i in 1:p) {
       rows_idx <- ((i - 1) * k + 1):(i * k)
-      A[[i]] <- t(Gamma_d[rows_idx,])  # k x k
+      A_j[[i]] <- t(Gamma_d_j[rows_idx,])  # k x k
     }
     
     Y_pred_mat <- matrix(NA, nrow = H, ncol = k)
     
     for (h in 1:H) {
       
-      u_t <- MASS::mvrnorm(1, rep(0, k), Psi)
-      ytilde_t <- X_pred[h, ] %*% t(Lambda)
+      u_t <- MASS::mvrnorm(1, rep(0, k), Psi_j)
+      ytilde_t <- X_pred[h, ] %*% t(Lambda_j)
       
       if (h > 1) {
         for (i in 1:min(h - 1, p)) {
-          term <- (Y_pred_mat[h - i,] - X_pred[h - i,] %*% t(Lambda)) %*% t(A[[i]])
+          term <- (Y_pred_mat[h - i,] - X_pred[h - i,] %*% t(Lambda_j)) %*% t(A_j[[i]])
           ytilde_t <- ytilde_t + term
         }
       }
       
       if (h <= p) {
         for (i in h:p) {
-          term <- (Y[N + h - i,] - X[N + h - i,] %*% t(Lambda)) %*% t(A[[i]])
+          term <- (Y[N + h - i,] - X[N + h - i,] %*% t(Lambda_j)) %*% t(A_j[[i]])
           ytilde_t <- ytilde_t + term
         }
       }
