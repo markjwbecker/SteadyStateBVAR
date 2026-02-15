@@ -45,8 +45,8 @@ Times are different, and with the help of Stan, we can basically do
 whatever we can imagine. To showcase this, in the last section we extend
 the Steady-State BVAR model of Clark (2011), which is an extension of
 the original model (Villani, 2009). And this is done without asking
-Professor Villani for derivations. I just simply write the model
-formulas, put some priors on my parameters, and Stan does the rest!
+Professor Villani for derivations. I just simply wrote the model
+formulas, put some priors on the parameters, and Stan did the rest!
 
 ## Installation
 
@@ -432,15 +432,68 @@ Then we can fit the model.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
-                chains = 4)
+                iter = 1000,
+                warmup = 500,
+                chains = 1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>        
+#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>    [1,]  0.18  0.03 -0.02  0.12  0.07 -0.13  0.00
+#>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.03  0.00
+#>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.04  0.00
+#>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
+#>    [5,]  0.00  0.00  0.00  0.00  0.07  0.06  0.00
+#>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
+#>    [7,]  0.00  0.00  0.00  1.25  4.07  0.65  0.93
+#>    [8,]  0.03 -0.01  0.09  0.02 -0.01  0.10  0.00
+#>    [9,]  0.00  0.02  0.04 -0.01 -0.03 -0.15  0.00
+#>   [10,] -0.02 -0.01  0.00  0.00  0.04  0.07  0.00
+#>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.16  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
+#>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
+#>   [14,]  0.00  0.00  0.00  0.54 -0.46  0.39 -0.04
+#>   [15,]  0.01 -0.01  0.01  0.02 -0.02  0.00  0.00
+#>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.01  0.00
+#>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
+#>   [18,]  0.00  0.00  0.00  0.07  0.01 -0.02  0.00
+#>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
+#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
+#>   [21,]  0.00  0.00  0.00 -0.13 -0.03 -0.66  0.00
+#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
+#>   [23,]  0.00  0.16 -0.03  0.01  0.01  0.01  0.00
+#>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
+#>   [25,]  0.00  0.00  0.00 -0.09  0.01  0.03  0.00
+#>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
+#>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
+#>   [28,]  0.00  0.00  0.00 -0.14 -0.08 -0.19 -0.01
+#> 
+#> Psi posterior mean
+#>       
+#>        [,1]  [,2]
+#>   [1,] 0.58  0.08
+#>   [2,] 0.51  0.46
+#>   [3,] 4.94  2.02
+#>   [4,] 0.58 -0.04
+#>   [5,] 0.49  1.15
+#>   [6,] 4.28  4.47
+#>   [7,] 3.92 -0.10
+#> 
+#> Sigma_u posterior mean
+#>       
+#>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
+#>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
+#>   [2,] -0.01  0.09 0.05  0.01  0.13  0.05  0.00
+#>   [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
+#>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
+#>   [5,] -0.01  0.13 0.18 -0.05  0.59  0.13  0.00
+#>   [6,]  0.00  0.05 0.11 -0.01  0.13  1.55 -0.01
+#>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
 Note that ‘bvar_obj\$fit\$stan’ is an object of class ‘stanfit’. So we
@@ -455,11 +508,18 @@ stanfit <- bvar_obj$fit$stan
 rstan::plot(stanfit,
             pars=c("Psi[4,1]", "Psi[5,1]"),
             plotfun="trace")
+```
+
+<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
+
+``` r
 
 rstan::plot(stanfit,
             pars=c("Psi[4,1]", "Psi[5,1]"),
             plotfun="hist")
 ```
+
+<img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" />
 
 We can also look at the model forecasts directly with rstan. Remember
 that we left out the last two observations/quarters, so let us look at
@@ -468,13 +528,18 @@ true values
 
 ``` r
 (villani2009[103:104,6]) #true values
+#> [1] 1.478503 1.563795
 
 rstan::plot(stanfit,
             pars=c("Y_pred[1,6]", "Y_pred[2,6]"),
             show_density = TRUE,
             ci_level = 0.68,
             fill_color = "blue")
+#> ci_level: 0.68 (68% intervals)
+#> outer_level: 0.95 (95% intervals)
 ```
+
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
 
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
@@ -494,6 +559,8 @@ bvar_obj <- forecast(bvar_obj,
                      growth_rate_idx = c(4,5),
                      plot_idx = c(4,5,6))
 ```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-3.png" width="100%" />
 
 We can also do some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
@@ -529,6 +596,8 @@ irf <- IRF(bvar_obj,
            ci=0.68)
 ```
 
+<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
+
 Interestingly, for the response of inflation to the interest rate shock,
 we see the price puzzle taking effect.
 
@@ -545,6 +614,8 @@ irf <- IRF(bvar_obj,
            method="OIRF",
            ci=0.68)
 ```
+
+<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
 
 As we predicted, it has virtually no effect.
 
@@ -701,13 +772,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
+                iter = 1000,
+                warmup = 500,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
+                iter = 1000,
+                warmup = 500,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -716,6 +787,91 @@ Lets check the posterior means (very similar as expected)
 
 ``` r
 summary(bvar_obj)
+#> ====================================
+#> Estimation Method: Stan 
+#> ====================================
+#> 
+#> beta posterior mean
+#>        
+#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>    [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
+#>    [2,]  0.02  0.71  0.04 -0.16  0.75 -0.01  0.03
+#>    [3,] -0.02  0.11  1.01 -0.39  0.20 -0.03 -0.02
+#>    [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
+#>    [5,] -0.01  0.00  0.00  0.01  0.02  0.01 -0.01
+#>    [6,]  0.11  0.05  0.06 -0.02  1.24  0.31  0.01
+#>    [7,]  0.08 -0.01  0.03  0.04 -0.22 -0.13  0.36
+#>    [8,]  0.05  0.00  0.01  0.03  0.11  0.00  0.02
+#>    [9,] -0.05  0.19  0.07  0.10 -0.65  0.04 -0.04
+#>   [10,] -0.06 -0.08 -0.08  0.38 -0.91 -0.11 -0.03
+#>   [11,]  0.11 -0.01 -0.04  0.12 -0.03  0.05  0.01
+#>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
+#>   [13,]  0.04 -0.01  0.01  0.01 -0.57  0.16 -0.01
+#>   [14,] -0.03  0.03  0.03  0.04 -0.34 -0.13  0.30
+#> 
+#> Psi posterior mean
+#>       
+#>        [,1]
+#>   [1,] 3.20
+#>   [2,] 2.44
+#>   [3,] 4.46
+#>   [4,] 3.40
+#>   [5,] 4.67
+#>   [6,] 1.67
+#>   [7,] 1.03
+#> 
+#> Sigma_u posterior mean
+#>       
+#>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
+#>   [1,]  7.90 -0.03  0.48  4.22  26.71  3.96  0.46
+#>   [2,] -0.03  1.00  0.12 -0.14   0.85  0.34 -0.14
+#>   [3,]  0.48  0.12  0.70  0.27   2.21  0.62 -0.05
+#>   [4,]  4.22 -0.14  0.27  5.74   5.23  2.21  0.46
+#>   [5,] 26.71  0.85  2.21  5.23 161.08 16.41  2.15
+#>   [6,]  3.96  0.34  0.62  2.21  16.41  5.43  0.37
+#>   [7,]  0.46 -0.14 -0.05  0.46   2.15  0.37  1.26
+#> 
+#> 
+#> ====================================
+#> Estimation Method: Gibbs 
+#> ====================================
+#> 
+#> beta posterior mean
+#>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>  [1,]  0.06 -0.02  0.03  0.07 -0.29  0.04 -0.03
+#>  [2,]  0.03  0.71  0.03 -0.16  0.69 -0.02  0.03
+#>  [3,] -0.01  0.11  1.01 -0.39  0.25 -0.01 -0.02
+#>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
+#>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
+#>  [6,]  0.10  0.05  0.06 -0.02  1.21  0.31  0.01
+#>  [7,]  0.09 -0.01  0.03  0.04 -0.18 -0.13  0.36
+#>  [8,]  0.04  0.00  0.01  0.03  0.09  0.00  0.02
+#>  [9,] -0.05  0.19  0.07  0.11 -0.63  0.05 -0.04
+#> [10,] -0.07 -0.08 -0.08  0.38 -0.95 -0.12 -0.02
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.01  0.05  0.01
+#> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
+#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16  0.00
+#> [14,] -0.03  0.03  0.03  0.04 -0.36 -0.13  0.30
+#> 
+#> Psi posterior mean
+#>      [,1]
+#> [1,] 3.20
+#> [2,] 2.47
+#> [3,] 4.46
+#> [4,] 3.37
+#> [5,] 4.68
+#> [6,] 1.69
+#> [7,] 1.03
+#> 
+#> Sigma_u posterior mean
+#>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
+#> [1,]  7.98  0.00  0.49  4.27  26.99  4.03  0.45
+#> [2,]  0.00  0.99  0.12 -0.13   0.89  0.35 -0.13
+#> [3,]  0.49  0.12  0.70  0.27   2.22  0.62 -0.05
+#> [4,]  4.27 -0.13  0.27  5.74   5.48  2.26  0.44
+#> [5,] 26.99  0.89  2.22  5.48 161.47 16.58  2.14
+#> [6,]  4.03  0.35  0.62  2.26  16.58  5.43  0.37
+#> [7,]  0.45 -0.13 -0.05  0.44   2.14  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -754,6 +910,8 @@ plot(dens1, xlab="Real consumption", main="", col="red", lwd=2, ylim=c(0,max(den
 lines(dens2, col="blue", lwd=2)
 legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
 ```
+
+<img src="man/figures/README-unnamed-chunk-31-1.png" width="100%" />
 
 And Figure 11 (mean +/- 1 std deviation bands of predictive
 distribution)
@@ -829,6 +987,8 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(3), xlim=c(39.25,58), ylim=c(-0.5
 GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.25))
 ```
 
+<img src="man/figures/README-unnamed-chunk-32-1.png" width="100%" />
+
 Now just for fun let us see the response of real gdp to a shock in the
 fed funds rate
 
@@ -840,6 +1000,8 @@ irf <- IRF(bvar_obj,
            method="OIRF",
            ci=0.68)
 ```
+
+<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
 
 ## Example 3 (Swedish data, 1987Q2-2025Q3)
 
@@ -939,6 +1101,8 @@ bvar_obj <- forecast(bvar_obj,
                      show_all = TRUE,
                      estimation="gibbs")
 ```
+
+<img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
 
 ## Stochastic volatility - extension of Clark (2011)
 
@@ -1140,8 +1304,10 @@ a &\sim N(\theta_A, \Omega_A) \\
 \ln \lambda_{0} &\sim N(\theta_{\lambda_{0}}, \Omega_{\lambda_{0}}) \\
 \Phi &\sim IW(V_0,m_0)
 \end{aligned}                         
-$$ Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in
-$A$ in row major order, and $\ln \lambda_0$ are the time $t=0$ values
+$$
+
+Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in $A$
+in row major order, and $\ln \lambda_0$ are the time $t=0$ values
 (initial conditions) of $\ln \lambda_{i,t}$. The following prior setup
 is almost (except for $\Phi$) an exact copy of the setup in Carriero,
 Clark and Marcellino (2024).
