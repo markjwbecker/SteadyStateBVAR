@@ -7,8 +7,8 @@
     2025)](#example-2-gustafsson-and-villani-2025)
   - [Example 3 (Swedish data,
     1987Q2-2025Q3)](#example-3-swedish-data-1987q2-2025q3)
-  - [Stochastic volatility - extension of Clark (2011) —
-    WIP](#stochastic-volatility---extension-of-clark-2011--wip)
+  - [Stochastic volatility - extension of Clark
+    (2011)](#stochastic-volatility---extension-of-clark-2011)
   - [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -940,7 +940,7 @@ bvar_obj <- forecast(bvar_obj,
                      estimation="gibbs")
 ```
 
-## Stochastic volatility - extension of Clark (2011) — WIP
+## Stochastic volatility - extension of Clark (2011)
 
 Clark (2011) extends the Steady-State BVAR(p) model (Villani, 2009) to
 allow the errors/innovations $u_t$ to have time varying covariance
@@ -1205,6 +1205,36 @@ Remember here since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>       
+#>        [,1]  [,2]
+#>   [1,] 0.77 -0.20
+#>   [2,] 0.15  0.72
+#> 
+#> Psi posterior mean
+#>       
+#>        [,1] [,2]
+#>   [1,] 2.15 5.82
+#>   [2,] 3.11 9.04
+#> 
+#> A posterior mean
+#>       
+#>        [,1] [,2]
+#>   [1,] 1.00    0
+#>   [2,] 0.24    1
+#> 
+#> gamma_0 posterior mean
+#> [1] -0.13 -0.01
+#> 
+#> gamma_1 posterior mean
+#> [1] 0.75 0.86
+#> 
+#> 
+#> Phi posterior mean
+#>       
+#>         [,1]  [,2]
+#>   [1,]  0.65 -0.08
+#>   [2,] -0.08  0.80
 ```
 
 Looks like it works quite well! Now lets forecast
@@ -1218,6 +1248,8 @@ bvar_obj <- forecast(bvar_obj,
                      show_all = TRUE)
 ```
 
+<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
+
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$ in red. In grey, we plot the true unobserved/latent
 process. In blue we plot the forecasts of the log volatilities along
@@ -1226,15 +1258,13 @@ with a 95% prediction interval.
 ``` r
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
-lines(2:N, log_lambda[2:N,1], #log_lambda are true log_lambdas from the DGP above
-      col = adjustcolor("grey", alpha.f = 0.5),
-      lwd = 4)
+lines(2:N, log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=ylim=c(-8,6), plot_idx=2, vol="log_lambda")
-lines(2:N, log_lambda[2:N,2],
-      col = adjustcolor("grey", alpha.f = 0.5),
-      lwd = 4)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol="log_lambda")
+lines(2:N, log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-43-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1249,16 +1279,14 @@ for(t in 1:(N)){
 }
 
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(sigma[2:N,1]), plot_idx=1, vol="sd")
-lines(2:N, sigma[2:N,1],
-      col = adjustcolor("grey", alpha.f = 0.5),
-      lwd = 4)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,4), plot_idx=1, vol="sd")
+lines(2:N, sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(sigma[2:N,2]), plot_idx=2, vol="sd")
-lines(2:N, sigma[2:N,2],
-      col = adjustcolor("grey", alpha.f = 0.5),
-      lwd = 4)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="sd")
+lines(2:N, sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-44-1.png" width="100%" />
 
 ## References
 

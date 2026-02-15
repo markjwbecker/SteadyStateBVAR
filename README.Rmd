@@ -747,7 +747,7 @@ bvar_obj <- forecast(bvar_obj,
                      estimation="gibbs")
 ```
 
-## Stochastic volatility - extension of Clark (2011) --- WIP
+## Stochastic volatility - extension of Clark (2011)
 
 Clark (2011) extends the Steady-State BVAR(p) model (Villani, 2009) to allow the errors/innovations $u_t$ to have time varying covariance matrix $\Sigma_{u,t}$. Here we further extend the model of Clark (2011), by following the setup in Carriero, Clark and Marcellino (2024), which uses a more flexible version of stochastic volatility for a conventional BVAR. But here we use it for the steady state BVAR. Our model is on the surface exactly the same as before
 
@@ -1004,14 +1004,10 @@ We can also plot the estimates (posterior means) of the log volatilities ($\ln \
 ```{r, fig.width=12, fig.height=8,eval=TRUE}
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
-lines(2:N, log_lambda[2:N,1], #log_lambda are true log_lambdas from the DGP above
-      col = adjustcolor("grey", alpha.f = 0.5),
-      lwd = 4)
+lines(2:N, log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=ylim=c(-8,6), plot_idx=2, vol="log_lambda")
-lines(2:N, log_lambda[2:N,2],
-      col = adjustcolor("grey", alpha.f = 0.5),
-      lwd = 4)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol="log_lambda")
+lines(2:N, log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
 Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
@@ -1023,15 +1019,11 @@ for(t in 1:(N)){
 }
 
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(sigma[2:N,1]), plot_idx=1, vol="sd")
-lines(2:N, sigma[2:N,1],
-      col = adjustcolor("grey", alpha.f = 0.5),
-      lwd = 4)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,4), plot_idx=1, vol="sd")
+lines(2:N, sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(sigma[2:N,2]), plot_idx=2, vol="sd")
-lines(2:N, sigma[2:N,2],
-      col = adjustcolor("grey", alpha.f = 0.5),
-      lwd = 4)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="sd")
+lines(2:N, sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
 ## References
