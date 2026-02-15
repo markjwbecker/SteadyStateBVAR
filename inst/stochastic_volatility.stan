@@ -27,14 +27,14 @@ functions {
 }
 
 data {
-  int<lower=0> N; //number of observations
-  int<lower=0> k; //number of variables
-  int<lower=0> p; //lag order
-  int<lower=0> q; //number of exogenous/deterministic variables
-  matrix[N, k] Y; //endogenous variables (y's)
-  matrix[N, q] X; //exogenous/deterministic variables (x's)
+  int<lower=2> N; //number of observations
+  int<lower=1> p; //lag order
+  int<lower=2> k; //number of endogenous variables
+  int<lower=1> q; //number of deterministic variables
+  matrix[N, k] Y; //endogenous variables (y_t)
+  matrix[N, q] X; //deterministic variables (d_t)
   matrix[N, k*p] W; //lagged endogenous variables
-  matrix[N, q*p] Q; //lagged exogenous/deterministic variables
+  matrix[N, q*p] Q; //lagged deterministic variables
   vector[k*p*k] theta_beta; //vec_beta prior mean
   matrix[k*p*k, k*p*k] Omega_beta; //vec_beta prior covariance matrix
   vector[k*q] theta_Psi; //vec_Psi prior mean
@@ -56,13 +56,13 @@ transformed data {
 }
 
 parameters {
-  matrix[k*p, k] beta; //beta' = (A_1,...,A_p)
+  matrix[k*p, k] beta; //beta' = (Pi_1,...,Pi_p)
   matrix[k, q] Psi; //Psi * x_t = steady state
   matrix[N, k] log_lambda; //log volatilities
   vector[k] gamma_0; //log volatility intercept
   vector[k] gamma_1; //log volatility slope
   cov_matrix[k] Phi; //log volatility innovation covariance matrix
-  vector[k*(k-1)/2] A_free; //free parameters in A
+  vector[k*(k-1)/2] a; //free parameters in A
 }
 
 transformed parameters {
@@ -76,7 +76,7 @@ transformed parameters {
     int idx = 1;
     for (i in 2:k) {
       for (j in 1:(i-1)) {
-        A[i,j] = A_free[idx];
+        A[i,j] = a[idx];
         idx += 1;
       }
     }
@@ -103,7 +103,7 @@ model {
   }
   to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
   to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
-  A_free  ~ multi_normal(theta_A, Omega_A);
+  a  ~ multi_normal(theta_A, Omega_A);
   gamma_0  ~ multi_normal(theta_gamma_0, Omega_gamma_0);
   gamma_1  ~ multi_normal(theta_gamma_1, Omega_gamma_1);
   Phi     ~ inv_wishart(m_0, V_0);

@@ -27,14 +27,14 @@ functions {
 }
 
 data {
-  int<lower=0> N; //number of observations
-  int<lower=0> k; //number of variables
-  int<lower=0> p; //lag order
-  int<lower=0> q; //number of exogenous/deterministic variables
-  matrix[N, k] Y; //endogenous variables (y's)
-  matrix[N, q] X; //exogenous/deterministic variables (x's)
+  int<lower=2> N; //number of observations
+  int<lower=1> p; //lag order
+  int<lower=2> k; //number of endogenous variables
+  int<lower=1> q; //number of deterministic variables
+  matrix[N, k] Y; //endogenous variables (y_t)
+  matrix[N, q] X; //deterministic variables (d_t)
   matrix[N, k*p] W; //lagged endogenous variables
-  matrix[N, q*p] Q; //lagged exogenous/deterministic variables
+  matrix[N, q*p] Q; //lagged deterministic variables
   vector[k*p*k] theta_beta; //vec_beta prior mean
   matrix[k*p*k, k*p*k] Omega_beta; //vec_beta prior covariance matrix
   vector[k*q] theta_Psi; //vec_Psi prior mean
@@ -50,7 +50,7 @@ transformed data {
 }
 
 parameters {
-  matrix[k*p, k] beta; //beta' = (A_1,...,A_p)
+  matrix[k*p, k] beta; //beta' = (Pi_1,...,Pi_p)
   matrix[k, q] Psi; //Psi * x_t = steady state
   cov_matrix[k] Sigma_u;
 }

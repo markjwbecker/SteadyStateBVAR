@@ -19,7 +19,34 @@
 <!-- badges: end -->
 
 With this package the user can estimate the Steady-State BVAR(p) model
-by Mattias Villani.
+by Mattias Villani (Villani, 2009). The goal is to use modern Bayesian
+solutions i.e. Stan to: i) estimate the model as specified in the
+original paper, ii) extend the model in many different ways. Back in the
+days, extensions of the model seemed to be limited to what Mattias
+Villani had time to derive.
+
+See for example Clark (2011): “*In a methodological sense, this paper
+extends the estimator of Villani (2009) to include stochastic
+volatility.*”, and later on: “*(Special thanks are due to Mattias
+Villani for providing the formulas for posterior means and variances of
+$\Pi$ and $\Psi$, which generalize the constant-variance formulas of
+Villani 2009.)*”
+
+A bit more recent example of the model being limited to the mercy of
+Professor Villani, we can take a look at the [Technical
+Guide](https://github.com/european-central-bank/BEAR-toolbox/blob/master/tbx/doc/Technical%20guide.pdf)
+for the BEAR (Bayesian Estimation, Analysis and Regression) toolbox by
+the ECB. On page 122 (Dieppe, Legrand, and van Roye, 2018), they write:
+“*Villani (2009) only provides derivation in the case of the
+normal-diffuse prior distribution, so the incoming analysis will be
+restricted to this case.*”
+
+Times are different, and with the help of Stan, we can basically do
+whatever we can imagine. To showcase this, in the last section we extend
+the Steady-State BVAR model of Clark (2011), which is an extension of
+the original model (Villani, 2009). And this is done without asking
+Professor Villani for derivations. I just simply write the model
+formulas, put some priors on my parameters, and Stan does the rest!
 
 ## Installation
 
@@ -120,29 +147,28 @@ This is really the core of the Steady State BVAR model. In $\theta_\Psi$
 we specify our prior beliefs of the location of the steady state, and in
 $\Omega_\Psi$, which we assume to be a diagonal matrix, we specify our
 degree of certainty in those prior beliefs. At last, the prior for
-$\Sigma_u$ is
-
-$$
-\Sigma_u \sim IW(V_0,m_0)
-$$
-
-Here $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of
-freedom. We will specify an uninformative prior by setting
-$V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least
-squares estimate from the VAR($p$) (including the constant and dummy
-variable if applicable), and $m_0=k+2$. However if the user wants, the
-usual noninformative Jeffreys prior
+$\Sigma_u$ is the usual noninformative Jeffreys prior
 
 $$
 p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}
 $$
 
-can be used instead for $\Sigma_u$.
+However if the user wants, an inverse Wishart prior can be used instead
+
+$$
+\Sigma_u \sim IW(V_0,m_0)
+$$ where $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of
+freedom. An uninformative prior can be specified by setting
+$V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least
+squares estimate from the VAR($p$) (including the constant and
+dummy/trend variable if applicable), and $m_0=k+2$. In the last section,
+we introduce stochastic volatility and let the covariance matrix vary
+over time such that we have $\Sigma_{u,t}$.
 
 ## Example 1 (Villani, 2009)
 
-For a super quick example, please see Example 3, here I go quite deep to
-explain each step.
+For a super quick example, please see Example 3, here I go quite
+in-depth to explain each step.
 
 We will now replicate the model in the empirical analysis in Section 4.1
 in Villani (2009). First let us load the library and also load the data
@@ -947,7 +973,7 @@ contains the time-varying variances of conditionally Gaussian shocks
 (Carriero, Clark and Marcellino, 2024). Furthermore
 
 $$
-\ln (\lambda_{i,t}) = \gamma_{0,i} + \gamma_{1,i}\ln (\lambda_{i,t-1}) + \nu_{i,t} \ \ \ \ \ , i=1,\dots,k
+\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t} \ \ \ \ \ , i=1,\dots,k
 $$
 
 where
@@ -963,7 +989,7 @@ $$
 $$
 
 The difference to Clark (2011) is: i) for the log volatilities,
-$\ln (\lambda_{i,t})$, Clark (2011) sets $\gamma_{0,i}=0  \ \ \forall i$
+$\ln \lambda_{i,t}$, Clark (2011) sets $\gamma_{0,i}=0  \ \ \forall i$
 and $\gamma_{1,i}=1 \ \ \forall i$, i.e. such that each log volatility
 process is a random walk (without drift). We relax this assumption and
 let the log volatilities follow (not necessarily stationary) AR(1)
@@ -982,46 +1008,47 @@ y_t &= \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+u_t \\
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \epsilon_t &\sim \textrm{N}(0, \textrm{I}_k) \\
 \Lambda_t &= \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
-\textrm{ln} (\lambda_{i,t}) &= \gamma_{0,i} + \gamma_{1,i} \textrm{ln} (\lambda_{i,t-1}) + \nu_{i,t} \ \ \ \ \ , i=1,\dots,k \\
+\ln \lambda_{i,t} &= \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t} \ \ \ \ \ , i=1,\dots,k \\
 \nu_{t} &\sim \textrm{N}(0, \Phi)
 \end{aligned}
 $$
 
-We have $t=0,\dots,T=500$ observations, $k=2$, $p=1$, and parameters
+We have $t=0,\dots,T=300$ observations, $k=2$, $p=1$, and parameters
 
 $$
 \begin{aligned}
 \Psi &= \begin{bmatrix} 2 & 6 \\
-                        6 & 10\end{bmatrix} \\
+                        3 & 9\end{bmatrix} \\
 \Pi_1 &= \begin{bmatrix} 0.80 & 0.15 \\
                          -0.20 & 0.70 \end{bmatrix} \\
 A &= \begin{bmatrix} 1 & 0 \\
-                         0.7 & 1 \end{bmatrix} \\
-\gamma_{0} &= \begin{pmatrix} -0.10  \\
-                         -0.20 \end{pmatrix} \\
-\gamma_{1} &= \begin{pmatrix} 0.8  \\
-                         0.9 \end{pmatrix} \\
-\Phi &= \begin{bmatrix} 0.5 & 0.3 \\
-                         0.3 & 0.4 \end{bmatrix}
+                         0.25 & 1 \end{bmatrix} \\
+\gamma_{0} &= \begin{pmatrix} -0.06  \\
+                         -0.03 \end{pmatrix} \\
+\gamma_{1} &= \begin{pmatrix} 0.85  \\
+                         0.95 \end{pmatrix} \\
+\Phi &= \begin{bmatrix} 0.8 & -0.2 \\
+                         -0.2 & 0.6 \end{bmatrix}
 \end{aligned}                         
 $$
 
-and initial observations $y_0$ and initial conditions $\lambda_0$
+Also, the initial conditions $\lambda_0$ and initial observations $y_0$
+are both set to their unconditional means (or as we like to call them:
+steady states)
 
 $$
 \begin{aligned}
-\ln (\lambda_{0}) &= \begin{pmatrix} -0.6  \\
-                         -0.8 \end{pmatrix} \\
+\ln \lambda_{i,0} &= \frac{\gamma_{0,i}}{1-\gamma_{1,i}}  \\
 y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
-\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 51 \\
-\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 51
+\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 76 \\
+\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 76
 \end{cases} \\
 \end{aligned}
 $$
 
-Simulate from the DGP
+Now lets simulate from this DGP
 
 ``` r
 rm(list = ls())
@@ -1034,41 +1061,36 @@ Psi <- matrix(c(2, 6,
 Pi_1 <- matrix(c( 0.80, 0.15,
                  -0.20, 0.70), 2, 2, byrow = TRUE)
 
-A <- matrix(c(1.0, 0.0,
-              0.25, 1.0), 2, 2, byrow = TRUE)
+A <- matrix(c(1.00, 0.00,
+              0.25, 1.00), 2, 2, byrow = TRUE)
 
-gamma0 <- c(-0.03,
-            -0.06)
+gamma_0 <- c(-0.06,
+             -0.03)
 
-gamma1 <- c(0.85,
-            0.95)
+gamma_1 <- c(0.85,
+             0.95)
 
-Phi <- matrix(c(0.8,-0.2,
-                -0.2,0.6),2,2)
+Phi <- matrix(c( 0.8,-0.2,
+                -0.2, 0.6),2,2)
+
+log_lambda <- matrix(NA, N, 2)
+log_lambda[1,] <- gamma_0/(1-gamma_1) #lambda_{t=0}
 
 dummy <- c(rep(1,(floor(N/4)+1)), rep(0,N-(floor(N/4)+1)))
 d <- cbind(rep(1, N), dummy)
 y <- matrix(NA, N, 2)
 y[1,] <- Psi %*% d[1,] #y_{t=0}
 
-log_lambda <- matrix(NA, N, 2)
-log_lambda[1,] <- c(-0.6, -0.8) #lambda_{t=0}
-
-nu <- matrix(NA, N, 2)
-Lambda <- array(NA, dim = c(2, 2, N))
-epsilon <- matrix(NA, N, 2)
-u <- matrix(NA, N, 2)
-epsilon <- matrix(NA, N, 2)
 Sigma_u <- array(NA, dim = c(2, 2, N))
 
 for (t in 2:N) {
-  nu[t,] <- MASS::mvrnorm(1, mu = c(0,0), Sigma = Phi)
-  log_lambda[t,] <- gamma0 + gamma1*log_lambda[t-1,] + nu[t,] 
-  Lambda[,,t] <- diag(exp(log_lambda[t,]))
-  epsilon[t,] <- MASS::mvrnorm(1, mu = c(0,0), Sigma = diag(2))
-  u[t,] <- solve(A) %*% diag(sqrt(exp(log_lambda[t,]))) %*% epsilon[t,]
-  y[t, ] = Psi%*%d[t,] + Pi_1 %*% (y[t-1,] - Psi%*%d[t-1,])  + u[t,]
-  Sigma_u[,,t] <- solve(A)%*%Lambda[,,t]%*%t(solve(A))
+  nu_t <- MASS::mvrnorm(1, mu = c(0,0), Sigma = Phi)
+  log_lambda[t,] <- gamma_0 + gamma_1*log_lambda[t-1,] + nu_t
+  Lambda_t <- diag(exp(log_lambda[t,]))
+  epsilon_t <- MASS::mvrnorm(1, mu = c(0,0), Sigma = diag(2))
+  u_t <- solve(A) %*% diag(sqrt(exp(log_lambda[t,]))) %*% epsilon_t
+  y[t, ] = Psi%*%d[t,] + Pi_1 %*% (y[t-1,] - Psi%*%d[t-1,])  + u_t
+  Sigma_u[,,t] <- solve(A)%*%Lambda_t%*%t(solve(A))
 }
 yt <- y
 par(mfrow = c(1, 1))
@@ -1077,19 +1099,9 @@ plot.ts(yt)
 
 <img src="man/figures/README-unnamed-chunk-37-1.png" width="100%" />
 
-``` r
-sigma <- matrix(NA,N,2)
-for(t in 1:(N)){
-  sigma[t,] <- sqrt(diag(Sigma_u[,,t]))
-}
-ts.plot(sigma, col=c("red", "blue"))
-```
-
-<img src="man/figures/README-unnamed-chunk-37-2.png" width="100%" />
-
 Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we
 do the same setup as before i.e. Minnesota for dynamic coefficients and
-informative normal prior on steady state coefficients.
+informative normal priors on steady state coefficients.
 
 ``` r
 bvar_obj <- bvar(data = yt)
@@ -1117,60 +1129,75 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi)
 ```
 
-We also need to specify our stochastic volatility priors (instead of
-Jeffreys/Inverse Wishart prior for $\Sigma_u$). This following prior
-setup is almost (except for $\Phi$) an exact copy of the setup in
-Carriero, Clark and Marcellino (2024).
+We also need to specify our stochastic volatility (SV) priors. For now,
+the package only supports the following priors
 
-For the free parameters in $A$ we use uninformative normal prior with
-means 0 and variances of 10. We also use Gaussian priors on the
-coefficients $(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the
-log volatility process of equation $i, \ i=1,\dots,k$, where the prior
-means are $(0.1 \ln \  \sigma^2_i, \ 0.9)$, where $\sigma^2_i$ is the
+$$
+\begin{aligned}
+a &\sim N(\theta_A, \Omega_A) \\
+\gamma_{0} &\sim N(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
+\gamma_{1} &\sim N(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
+\ln \lambda_{0} &\sim N(\theta_{\lambda_{0}}, \Omega_{\lambda_{0}}) \\
+\Phi &\sim IW(V_0,m_0)
+\end{aligned}                         
+$$ Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in
+$A$ in row major order, and $\ln \lambda_0$ are the time $t=0$ values
+(initial conditions) of $\ln \lambda_{i,t}$. The following prior setup
+is almost (except for $\Phi$) an exact copy of the setup in Carriero,
+Clark and Marcellino (2024).
+
+For $a$ we use an uninformative prior with means 0 and variances 10
+(assuming 0 covariance). For the coefficients
+$(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log
+volatility process of equation $i=1,\dots,k$, the prior means are
+$(0.1 \ln \  \hat{\sigma}^2_i, \ 0.9)$, where $\hat{\sigma}^2_i$ is the
 residual variance of an AR(p) model i.e. the exact same estimate used in
 the Minnesota prior from before. Note that this prior implies that the
-steady states of the volatility processes are $\ln \ \sigma^2_i$. The
-prior standard deviations for the intercepts and slopes (assuming 0
-covariance) are $(2^{0.5}, 0.2)$. For the period 0 values of
-$\ln \lambda_t$, we set the prior mean and variance at $\ln \sigma^2_i$
-and 2.0. Now for $\Phi$, Carriero, Clark and Marcellino (2024) use an
-Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom.
-Instead we will use Inverse Wishart prior with mean of $I_k$, i.e. scale
-matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. I cheat a
-bit here since I know the DGP, and that the $0.03$ factor is not
-suitable.
+steady states of the volatility processes are $\ln \ \hat{\sigma}^2_i$.
+The prior variances for the intercepts and slopes (assuming 0
+covariance) are $(2, 0.04)$. For $\ln \lambda_0$, we set the prior mean
+and variance at $\ln \hat{\sigma}^2_i$ and $2.0$ (assuming 0
+covariance). Now for $\Phi$, Carriero, Clark and Marcellino (2024) use
+an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of
+freedom. Instead we will use Inverse Wishart prior with mean of $I_k$,
+i.e. scale matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom.
+We can cheat a bit here since we know the DGP, and that the $0.03$
+factor is not suitable.
 
 ``` r
 k <- bvar_obj$setup$k
 n_free_params_A <- k*(k-1)/2
-sigma2_AR <- diag(bvar_obj$priors$Sigma_AR)
+sigma2_hat <- diag(bvar_obj$priors$Sigma_AR)
 
 SV_priors <- list(
   theta_A            = rep(0, n_free_params_A),
-  theta_gamma_0      = 0.1 * log(sigma2_AR),
-  theta_gamma_1      = rep(0.9, k),
-  theta_log_lambda_0 = log(sigma2_AR),
   Omega_A            = diag(10, n_free_params_A),
-  Omega_gamma_0      = diag(2^(1/2)^2, k),
-  Omega_gamma_1      = diag(0.2^2, k),
+  theta_gamma_0      = 0.1 * log(sigma2_hat),
+  theta_gamma_1      = rep(0.9, k),
+  Omega_gamma_0      = diag(2, k),
+  Omega_gamma_1      = diag(0.04, k),
+  theta_log_lambda_0 = log(sigma2_hat),
   Omega_log_lambda_0 = diag(2.0, k),
-  m_0                = k+2,
-  V_0                = (k+2 - k - 1) * diag(k)
+  V_0                = (k+2 - k - 1) * diag(k),
+  m_0                =  k+2
   )
 
 bvar_obj$SV <- TRUE
 bvar_obj$SV_priors <- SV_priors
 ```
 
-Lets fit the model
+At last we need to supply our forecast horizon $H$, and also the
+deterministic variables for the future periods. Then we can fit fit the
+model
 
 ``` r
 bvar_obj$predict$H <- 20
-bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
+bvar_obj$predict$X_pred <- cbind(rep(1, 20), 0)
+
 bvar_obj <- fit(bvar_obj,
-                iter = 4000,
-                warmup = 2000,
-                chains = 4)
+                iter = 1000,
+                warmup = 500,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters…
@@ -1178,36 +1205,11 @@ Remember here since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.77 -0.20
-#>   [2,] 0.15  0.72
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.10 5.83
-#>   [2,] 3.07 9.06
-#> 
-#> A posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 1.00    0
-#>   [2,] 0.24    1
-#> 
-#> gamma_0 posterior mean
-#> [1] -0.08 -0.09
-#> 
-#> gamma_1 posterior mean
-#> [1] 0.74 0.86
-#> 
-#> 
-#> Phi posterior mean
-#>       
-#>         [,1]  [,2]
-#>   [1,]  0.69 -0.10
-#>   [2,] -0.10  0.77
+```
+
+Looks like it works quite well! Now lets forecast
+
+``` r
 par(mfrow=c(2,1))
 bvar_obj <- forecast(bvar_obj,
                      ci = 0.95,
@@ -1216,29 +1218,23 @@ bvar_obj <- forecast(bvar_obj,
                      show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-41-1.png" width="100%" />
-
-Looks like it works quite well!
-
-Now let us plot the estimates (posterior means) of the log volatilities
-($\ln (\lambda_t)$ in red. In grey, we plot the true unobserved/latent
+We can also plot the estimates (posterior means) of the log volatilities
+($\ln \lambda_t$ in red. In grey, we plot the true unobserved/latent
 process. In blue we plot the forecasts of the log volatilities along
 with a 95% prediction interval.
 
 ``` r
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(log_lambda[2:N,1]-2,log_lambda[2:N,1]+2), plot_idx=1, vol="log_lambda")
-lines(2:N, log_lambda[2:N,1],
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
+lines(2:N, log_lambda[2:N,1], #log_lambda are true log_lambdas from the DGP above
       col = adjustcolor("grey", alpha.f = 0.5),
       lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=range(log_lambda[2:N,2]-2,log_lambda[2:N,2]+2), plot_idx=2, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=ylim=c(-8,6), plot_idx=2, vol="log_lambda")
 lines(2:N, log_lambda[2:N,2],
       col = adjustcolor("grey", alpha.f = 0.5),
       lwd = 4)
 ```
-
-<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1249,7 +1245,7 @@ of the log volatilities along with a 95% prediction interval.
 ``` r
 sigma <- matrix(NA,N,2)
 for(t in 1:(N)){
-  sigma[t,] <- sqrt(diag(Sigma_u[,,t]))
+  sigma[t,] <- sqrt(diag(Sigma_u[,,t])) #true sigmas from the DGP above
 }
 
 par(mfrow = c(2,1))
@@ -1264,8 +1260,6 @@ lines(2:N, sigma[2:N,2],
       lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-43-1.png" width="100%" />
-
 ## References
 
 Carriero, A., Clark, T. E., and Marcellino, M. (2024). Capturing
@@ -1275,6 +1269,10 @@ of Money, Credit and Banking*. 56(5), pp. 1099–1127.
 Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector
 Autoregressions with Stochastic Volatility. *Journal of Business &
 Economic Statistics*. 29(3), pp. 327–341.
+
+Dieppe, A., Legrand, R., and van Roye, B. (2018). *The Bayesian
+Estimation, Analysis and Regression (BEAR) Toolbox Technical guide*.
+European Central Bank.
 
 Gustafsson, O., Villani, M., and Stockhammar, P. (2023). Bayesian
 optimization of hyperparameters from noisy marginal likelihood
