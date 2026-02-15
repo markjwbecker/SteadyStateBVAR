@@ -34,6 +34,8 @@ stochastic_volatility_forecast <- function(x, ci=0.95, plot_idx=NULL, xlim=NULL,
     vol_pred_lower <- rep(NA, N_est + H)
     vol_pred_upper <- rep(NA, N_est + H)
     vol_pred[N_est] <- tail(vol_est, 1)
+    vol_pred_lower[N_est] <- tail(vol_est, 1)
+    vol_pred_upper[N_est] <- tail(vol_est, 1)
     
     for (h in 1:H) {
       if (vol == "sd") {
@@ -68,9 +70,14 @@ stochastic_volatility_forecast <- function(x, ci=0.95, plot_idx=NULL, xlim=NULL,
             ylim = ylim,
             xlim = xlim)
     
-    lines(vol_pred, col="blue", lwd=2)
-    lines(vol_pred_lower, col="blue", lty=2, lwd=2)
-    lines(vol_pred_upper, col="blue", lty=2, lwd=2)
+    x_fore <- (N_est):(N_est + H)
+    mean_full  <- vol_pred[x_fore]
+    lower_full <- vol_pred_lower[x_fore]
+    upper_full <- vol_pred_upper[x_fore]
+    polygon(x = c(x_fore, rev(x_fore)),
+            y = c(upper_full, rev(lower_full)),
+            col = rgb(0, 0, 1, 0.2), border = NA)
+    lines(x_fore, mean_full, col = "blue", lwd = 2)
     
   }
 }
