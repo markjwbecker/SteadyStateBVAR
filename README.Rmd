@@ -23,8 +23,7 @@ knitr::opts_chunk$set(
 
 With this package the user can estimate the Steady-State BVAR(p) model by Mattias Villani (Villani, 2009). The goal is to use modern Bayesian solutions i.e. Stan to: i) estimate the model as specified in the original paper, ii) extend the model in many different ways. Back in the days, extensions of the model seemed to be limited to what Mattias Villani had time to derive.
 
-See for example Clark (2011): "*In a methodological sense, this
-paper extends the estimator of Villani (2009) to include stochastic volatility.*", and later on: "*(Special thanks are due to Mattias Villani for providing the formulas for posterior means and variances of $\Pi$ and $\Psi$, which generalize the constant-variance formulas of Villani 2009.)*"
+See for example Clark (2011): "*In a methodological sense, this paper extends the estimator of Villani (2009) to include stochastic volatility.*", and later on: "*(Special thanks are due to Mattias Villani for providing the formulas for posterior means and variances of* $\Pi$ *and* $\Psi$*, which generalize the constant-variance formulas of Villani 2009.)*"
 
 A bit more recent example of the model being limited to the mercy of Professor Villani, we can take a look at the [Technical Guide](https://github.com/european-central-bank/BEAR-toolbox/blob/master/tbx/doc/Technical%20guide.pdf) for the BEAR (Bayesian Estimation, Analysis and Regression) toolbox by the ECB. On page 122 (Dieppe, Legrand, and van Roye, 2018), they write: "*Villani (2009) only provides derivation in the case of the normal-diffuse prior distribution, so the incoming analysis will be restricted to this case.*"
 
@@ -1000,7 +999,7 @@ bvar_obj <- forecast(bvar_obj,
 ```
 
 
-We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$ in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
+We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
 ```{r, fig.width=12, fig.height=8,eval=TRUE}

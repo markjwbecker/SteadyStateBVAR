@@ -25,12 +25,10 @@ original paper, ii) extend the model in many different ways. Back in the
 days, extensions of the model seemed to be limited to what Mattias
 Villani had time to derive.
 
-See for example Clark (2011): “*In a methodological sense, this paper
-extends the estimator of Villani (2009) to include stochastic
-volatility.*”, and later on: “*(Special thanks are due to Mattias
-Villani for providing the formulas for posterior means and variances of
-$\Pi$ and $\Psi$, which generalize the constant-variance formulas of
-Villani 2009.)*”
+See for example Clark (2011):
+"*In a methodological sense, this paper extends the estimator of Villani (2009) to include stochastic volatility.*", and later on:
+"*(Special thanks are due to Mattias Villani for providing the formulas for posterior means and variances of* $\Pi$ *and* $\Psi$*,
+which generalize the constant-variance formulas of Villani 2009.)*"
 
 A bit more recent example of the model being limited to the mercy of
 Professor Villani, we can take a look at the [Technical
@@ -1415,7 +1413,7 @@ bvar_obj <- forecast(bvar_obj,
 <img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
 
 We can also plot the estimates (posterior means) of the log volatilities
-($\ln \lambda_t$ in red. In grey, we plot the true unobserved/latent
+($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue we plot the forecasts of the log volatilities along
 with a 95% prediction interval.
 
