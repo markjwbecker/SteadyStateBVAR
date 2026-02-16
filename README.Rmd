@@ -299,9 +299,9 @@ Then we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -398,8 +398,8 @@ Now if desired, the user can estimate the model with a Gibbs sampler instead and
 
 ```{r, fig.width=8, fig.height=8, eval=FALSE}
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 5000,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1,
                 estimation = "gibbs")
 
@@ -524,13 +524,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -730,10 +730,9 @@ bvar_obj <- priors(bvar_obj,
 bvar_obj$predict$H <- 40
 bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
-                chains = 1,
-                estimation="gibbs")
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 ```{r, fig.width=10, fig.height=8}
@@ -743,8 +742,7 @@ bvar_obj <- forecast(bvar_obj,
                      fcst_type = "median", #point forecast
                      growth_rate_idx = c(1,2),
                      plot_idx = c(1,2,3,4),
-                     show_all = TRUE,
-                     estimation="gibbs")
+                     show_all = TRUE)
 ```
 
 ## Stochastic volatility - extension of Clark (2011)
@@ -937,7 +935,7 @@ $$
 a &\sim N(\theta_A, \Omega_A) \\
 \gamma_{0} &\sim N(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &\sim N(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
-\ln \lambda_{0} &\sim N(\theta_{\lambda_{0}}, \Omega_{\lambda_{0}}) \\
+\ln \lambda_{0} &\sim N(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
 \Phi &\sim IW(V_0,m_0)
 \end{aligned}                         
 $$
@@ -945,7 +943,7 @@ $$
 
 Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in $A$ in row major order, and $\ln \lambda_0$ are the time $t=0$ values (initial conditions) of $\ln \lambda_{i,t}$. The following prior setup is almost (except for $\Phi$) an exact copy of the setup in Carriero, Clark and Marcellino (2024).
 
-For $a$ we use an uninformative prior with means 0 and variances 10 (assuming 0 covariance). For the coefficients $(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log volatility process of equation $i=1,\dots,k$, the prior means are $(0.1 \ln \  \hat{\sigma}^2_i, \ 0.9)$, where $\hat{\sigma}^2_i$ is the residual variance of an AR(p) model i.e. the exact same estimate used in the Minnesota prior from before. Note that this prior implies that the steady states of the volatility processes are $\ln \ \hat{\sigma}^2_i$.  The prior variances for the intercepts and slopes (assuming 0 covariance) are $(2, 0.04)$. For $\ln \lambda_0$, we set the prior mean and variance at $\ln \hat{\sigma}^2_i$ and $2.0$ (assuming 0 covariance). Now for $\Phi$, Carriero, Clark and Marcellino (2024) use an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom. Instead we will use Inverse Wishart prior with mean of $I_k$, i.e. scale matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. We can cheat a bit here since we know the DGP, and that the $0.03$ factor is not suitable.
+For $a$ we use an uninformative prior with means 0 and variances 10 (assuming 0 covariance). For the coefficients $(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log volatility process of equation $i=1,\dots,k$, the prior means are $(0.1 \ln \hat{\sigma^2_i}, \ 0.9)$, where $\hat{\sigma^2_i}$ is the residual variance of an AR(p) model i.e. the exact same estimate used in the Minnesota prior from before. Note that this prior implies that the steady states of the volatility processes are $\ln \hat{\sigma^2_i}$.  The prior variances for the intercepts and slopes (assuming 0 covariance) are $(2, \ 0.04)$. For $\ln \lambda_0$, we set the prior mean and variance at $\ln \hat{\sigma^2_i}$ and $2.0$ (assuming 0 covariance). Now for $\Phi$, Carriero, Clark and Marcellino (2024) use an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom. Instead we will use Inverse Wishart prior with mean of $I_k$, i.e. scale matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. We can cheat a bit here since we know the DGP, and that the $0.03$ factor is not suitable.
 
 
 ```{r, fig.width=8, fig.height=8}
@@ -977,9 +975,9 @@ bvar_obj$predict$H <- 20
 bvar_obj$predict$X_pred <- cbind(rep(1, 20), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 Let see if we managed to reasonably recover the true parameters... Remember here since $p=1$ we have $\beta'=\Pi_1$.
