@@ -995,10 +995,9 @@ summary(bvar_obj)
 
 Looks like it works quite well! Now lets forecast. We follow the approach in section 3.5 'Drawing Forecasts' in Clark (2011), and also step 9 of Algorithm 13 in Karlsson (2013).
 
-For each (post warmup) draw $j$ of the parameters:
+For each (post warmup) draw $j$:
 
-Start from (the estimated) $\ln \lambda_{T}^{(j)}$, generate shocks $\nu_{T+1}$ from $N(0,\Phi^{(j)})$, compute $\ln \lambda_{T+1}^{(j)}$ and then form $\Lambda_{T+1}^{(j)}$. Then compute the implied covariance matrix $\Sigma_{u,t+1}^{(j)} = A^{-1 (j)} \Lambda_{t+1}^{(j)} (A^{-1 (j)})'$. Generate the shock to the VAR $u_t$ from $u_t \sim N(0,\Sigma_{u,t+1})$ and then compute $y_{t+1}^{j}$ as per the usual way [see step 4 in Algorithm 4 in Karlsson (2013)]. Then continue on from $\ln \lambda_{T+1}^{(j)}$ and continue the procedure until you reach $h=H$. This incorporates uncertainty associated with the time variation of $\Sigma_{u,t}$.
-
+Start at $\ln \lambda_T^{(j)}$, generate $\nu_{T+(h=1)}\sim N(0,\Phi^{(j)})$, form $\ln \lambda_{T+(h=1)}^{(j)}$ and then $\Lambda_{T+(h=1)}^{(j)}$, and compute the implied covariance matrix $\Sigma_{u,T+(h=1)}^{(j)} = A^{(j)-1} \Lambda_{T+(h=1)}^{(j)} (A^{(j)-1})'$. Generate the shock to the VAR $u_{T+(h=1)} \sim N(0,\Sigma_{u,T+(h=1)}^{(j)})$ and then compute $y_{T+(h=1)}^{(j)}$ as per the usual way [see step 4 in Algorithm 4 in Karlsson (2013)]. Then continue on starting at $\ln \lambda_{T+(h=1)}^{(j)}$ and continue the procedure until you reach $h=H$. As I have had some problems implementing the forecasting routine directly in the Stan code, it is done in R/fit.R instead (for those who are interested). It does not make a difference however if it is done inside or outside of Stan, but I am working on it.
 
 
 
