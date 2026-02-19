@@ -1229,7 +1229,7 @@ $\ln \lambda_{T+h}^{(j)} = \gamma_{0}^{(j)} + \gamma_{1}^{(j)} \ln \lambda_{T+h-
 After that form $\Lambda_{T+h}^{(j)}$, and then compute the implied
 covariance matrix
 $\Sigma_{u,T+h}^{(j)} = A^{(j)-1} \Lambda_{T+h}^{(j)} (A^{(j)-1})'$.
-Then generate the shock to the VAR $u_{T+h}^{(j)}$from
+Then generate the shock to the VAR $u_{T+h}^{(j)}$ from
 $u_{T+h} \sim N(0,\Sigma_{u,T+h}^{(j)})$ and then calculate the forecast
 $\tilde{y}_{T+h}^{(j)}$ as per the usual way \[see step 4 in Algorithm 4
 in Karlsson (2013)\]. Then continue on starting at
