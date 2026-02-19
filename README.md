@@ -1229,15 +1229,16 @@ $\ln \lambda_{T+h}^{(j)} = \gamma_{0}^{(j)} + \gamma_{1}^{(j)} \ln \lambda_{T+h-
 After that form $\Lambda_{T+h}^{(j)}$, and then compute the implied
 covariance matrix
 $\Sigma_{u,T+h}^{(j)} = A^{(j)-1} \Lambda_{T+h}^{(j)} (A^{(j)-1})'$.
+
 Then generate the shock to the VAR $u_{T+h}^{(j)}$ from
 $u_{T+h} \sim N(0,\Sigma_{u,T+h}^{(j)})$ and then calculate the forecast
 $\tilde{y}_{T+h}^{(j)}$ as per the usual way \[see step 4 in Algorithm 4
-in Karlsson (2013)\]. Then continue on starting at
-$\ln \lambda_{T+h}^{(j)}$ and continue the procedure until you reach
-$h=H$. As I have had some problems implementing the forecasting routine
+in Karlsson (2013)\].
+
+As I have had some problems implementing the forecasting routine
 directly in the Stan code, it is done in R/fit.R instead (for those who
 are interested). It does not make a difference however if it is done
-inside or outside of Stan, but I am working on it.
+inside or outside of Stan, but I am working on fixing it.
 
 ``` r
 par(mfrow=c(2,1))
