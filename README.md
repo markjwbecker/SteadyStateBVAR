@@ -1221,16 +1221,19 @@ step 9 of Algorithm 13 in Karlsson (2013).
 
 For each (post warmup) draw $j$:
 
-Start at $\ln \lambda_T^{(j)}$, generate
-$\nu_{T+(h=1)}\sim N(0,\Phi^{(j)})$, form $\ln \lambda_{T+(h=1)}^{(j)}$
-and then $\Lambda_{T+(h=1)}^{(j)}$, and compute the implied covariance
-matrix
-$\Sigma_{u,T+(h=1)}^{(j)} = A^{(j)-1} \Lambda_{T+(h=1)}^{(j)} (A^{(j)-1})'$.
-Generate the shock to the VAR
-$u_{T+(h=1)} \sim N(0,\Sigma_{u,T+(h=1)}^{(j)})$ and then compute
-$y_{T+(h=1)}^{(j)}$ as per the usual way \[see step 4 in Algorithm 4 in
-Karlsson (2013)\]. Then continue on starting at
-$\ln \lambda_{T+(h=1)}^{(j)}$ and continue the procedure until you reach
+For $h=1,\dots,H$:
+
+generate $\nu_{T+h}^{(j)}$ from $\nu_{T+h}\sim N(0,\Phi^{(j)})$, then
+compute
+$\ln \lambda_{T+h}^{(j)} = \gamma_{0}^{(j)} + \gamma_{1}^{(j)} \ln \lambda_{T+h-1}^{(j)} + \nu_{T+h}^{(j)}$.
+After that form $\Lambda_{T+h}^{(j)}$, and then compute the implied
+covariance matrix
+$\Sigma_{u,T+h}^{(j)} = A^{(j)-1} \Lambda_{T+h}^{(j)} (A^{(j)-1})'$.
+Then generate the shock to the VAR $u_{T+h}^{(j)}$from
+$u_{T+h} \sim N(0,\Sigma_{u,T+h}^{(j)})$ and then calculate the forecast
+$\tilde{y}_{T+h}^{(j)}$ as per the usual way \[see step 4 in Algorithm 4
+in Karlsson (2013)\]. Then continue on starting at
+$\ln \lambda_{T+h}^{(j)}$ and continue the procedure until you reach
 $h=H$. As I have had some problems implementing the forecasting routine
 directly in the Stan code, it is done in R/fit.R instead (for those who
 are interested). It does not make a difference however if it is done
