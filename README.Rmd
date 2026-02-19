@@ -107,10 +107,17 @@ $$
 
 However if the user wants, an inverse Wishart prior can be used instead
 
+
 $$
 \Sigma_u \sim IW(V_0,m_0)
 $$
-where $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. An uninformative prior can be specified by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including the constant and dummy/trend variable if applicable), and $m_0=k+2$. In the last section, we introduce stochastic volatility and let the covariance matrix vary over time such that we have $\Sigma_{u,t}$.
+
+
+where $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom.
+
+An uninformative prior can be specified by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including the constant and dummy/trend variable if applicable), and $m_0=k+2$.
+
+In the last section, we introduce stochastic volatility and let the covariance matrix vary over time such that we have $\Sigma_{u,t}$.
 
 ## Example 1 (Villani, 2009)
 
@@ -296,7 +303,7 @@ bvar_obj$predict$X_pred <- cbind(rep(1, 12), 0)
 
 Then we can fit the model.
 
-```{r, fig.width=8, fig.height=8, results='hide'}
+```{r, fig.width=8, fig.height=8, results='hide',eval=FALSE}
 bvar_obj <- fit(bvar_obj,
                 iter = 20000,
                 warmup = 10000,
@@ -305,13 +312,13 @@ bvar_obj <- fit(bvar_obj,
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=8, fig.height=8,eval=FALSE}
 summary(bvar_obj)
 ```
 
 Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for the post-crisis steady state coefficients of domestic gdp growth and inflation (multiply both coefficients by 4 to get on the annualized scale).
 
-```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE}
+```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -325,7 +332,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the 3-month interest rate, and compare with the actual true values
 
-```{r, fig.width=10, fig.height=8}
+```{r, fig.width=10, fig.height=8,eval=FALSE}
 (villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -338,7 +345,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 95% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=8, fig.height=8,eval=FALSE}
 bvar_obj <- forecast(bvar_obj,
                      ci = 0.95,
                      fcst_type = "mean",
@@ -348,7 +355,7 @@ bvar_obj <- forecast(bvar_obj,
 
 We can also do some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF).
 
-```{r, fig.width=10, fig.height=10}
+```{r, fig.width=10, fig.height=10,eval=FALSE}
 par(mfrow=c(2,2))
 irf <- IRF(bvar_obj,
            lag=20,
@@ -382,7 +389,7 @@ Interestingly, for the response of inflation to the interest rate shock, we see 
 
 Even though we can see by the posterior means that the foreign economy is ""exogenous"" (not really exogenous in the strict sense), we can also see this by plotting the response of the foreign gdp growth to an increase in the Swedish interest rate (it should have no effect at all.)
 
-```{r, fig.width=10, fig.height=6}
+```{r, fig.width=10, fig.height=6,eval=FALSE}
 irf <- IRF(bvar_obj,
            lag=20,
            response=1,
@@ -521,7 +528,7 @@ bvar_obj$predict$X_pred <- matrix(rep(1, 12))
 
 Then estimate the model, both with Stan and the Gibbs sampler.
 
-```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide'}
+```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
 bvar_obj <- fit(bvar_obj,
                 iter = 20000,
                 warmup = 10000,
@@ -535,13 +542,13 @@ bvar_obj <- fit(bvar_obj,
 ```
 Lets check the posterior means (very similar as expected)
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=8, fig.height=8,eval=FALSE}
 summary(bvar_obj)
 ```
 
 Now lets do Figure 10
 
-```{r, fig.width=10, fig.height=10}
+```{r, fig.width=10, fig.height=10,eval=FALSE}
 Psi_draws_gibbs  <- bvar_obj$fit$gibbs$Psi_draws
 Psi_draws_stan <- rstan::extract(bvar_obj$fit$stan)$Psi
 
@@ -578,7 +585,7 @@ legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="
 
 And Figure 11 (mean +/- 1 std deviation bands of predictive distribution)
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=8, fig.height=8,eval=FALSE}
 GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
   
   Y_pred <- bvar_obj$fit$gibbs$fcst_draws
@@ -651,7 +658,7 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 Now just for fun let us see the response of real gdp to a shock in the fed funds rate
 
-```{r, fig.width=10, fig.height=6}
+```{r, fig.width=10, fig.height=6,eval=FALSE}
 irf <- IRF(bvar_obj,
            lag=20,
            response=1,
@@ -671,7 +678,7 @@ yt <- SwedishData_1987_2025
 plot.ts(yt)
 ```
 
-```{r, fig.width=10, fig.height=8, results='hide'}
+```{r, fig.width=10, fig.height=8, results='hide',eval=FALSE}
 bvar_obj <- bvar(data = yt)
 bp <- which(time(yt) == 1992.75)
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
@@ -734,7 +741,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 4)
 ```
 
-```{r, fig.width=10, fig.height=8}
+```{r, fig.width=10, fig.height=8,eval=FALSE}
 par(mfrow=c(2,2))
 bvar_obj <- forecast(bvar_obj,
                      ci = 0.68,
@@ -969,7 +976,7 @@ bvar_obj$SV_priors <- SV_priors
 
 At last we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods. Then we can fit fit the model
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=FALSE}
 bvar_obj$predict$H <- 20
 bvar_obj$predict$X_pred <- cbind(rep(1, 20), 0)
 
@@ -981,7 +988,7 @@ bvar_obj <- fit(bvar_obj,
 
 Let see if we managed to reasonably recover the true parameters... Remember here since $p=1$ we have $\beta'=\Pi_1$.
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
 summary(bvar_obj)
 ```
 
@@ -989,7 +996,7 @@ summary(bvar_obj)
 Looks like it works quite well! Now lets forecast
 
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
 par(mfrow=c(2,1))
 bvar_obj <- forecast(bvar_obj,
                      ci = 0.95,
@@ -1002,7 +1009,7 @@ bvar_obj <- forecast(bvar_obj,
 We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=8,eval=TRUE}
+```{r, fig.width=12, fig.height=8,eval=FALSE}
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
 lines(2:N, log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
@@ -1013,7 +1020,7 @@ lines(2:N, log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
-```{r, fig.width=12, fig.height=8,eval=TRUE}
+```{r, fig.width=12, fig.height=8,eval=FALSE}
 sigma <- matrix(NA,N,2)
 for(t in 1:(N)){
   sigma[t,] <- sqrt(diag(Sigma_u[,,t])) #true sigmas from the DGP above
