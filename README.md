@@ -162,13 +162,16 @@ $$
 where $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of
 freedom.
 
-An uninformative prior can be specified by setting
-$V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least
-squares estimate from the VAR($p$) (including the constant and
+An uninformative prior can be (and is in this package) specified by
+setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the
+least squares estimate from the VAR($p$) (including the constant and
 dummy/trend variable if applicable), and $m_0=k+2$.
 
 In the last section, we introduce stochastic volatility and let the
 covariance matrix vary over time such that we have $\Sigma_{u,t}$.
+
+To forecast with the Steady-State BVAR, we simply follow step 4 in
+Algorithm 4 of Karlsson (2013).
 
 ## Example 1 (Villani, 2009)
 
@@ -1212,7 +1215,23 @@ Remember here since $p=1$ we have $\beta'=\Pi_1$.
 summary(bvar_obj)
 ```
 
-Looks like it works quite well! Now lets forecast
+Looks like it works quite well! Now lets forecast. We follow the
+approach in section 3.5 ‘Drawing Forecasts’ in Clark (2011), and also
+step 9 of Algorithm 13 in Karlsson (2013).
+
+For each (post warmup) draw $j$ of the parameters:
+
+Start from (the estimated) $\ln \lambda_{T}^{(j)}$, generate shocks
+$\nu_{T+1}$ from $N(0,\Phi^{(j)})$, compute $\ln \lambda_{T+1}^{(j)}$
+and then form $\Lambda_{T+1}^{(j)}$. Then compute the implied covariance
+matrix
+$\Sigma_{u,t+1}^{(j)} = A^{-1 (j)} \Lambda_{t+1}^{(j)} (A^{-1 (j)})'$.
+Generate the shock to the VAR $u_t$ from $u_t \sim N(0,\Sigma_{u,t+1})$
+and then compute $y_{t+1}^{j}$ as per the usual way \[see step 4 in
+Algorithm 4 in Karlsson (2013)\]. Then continue on from
+$\ln \lambda_{T+1}^{(j)}$ and continue the procedure until you reach
+$h=H$. This incorporates uncertainty associated with the time variation
+of $\Sigma_{u,t}$.
 
 ``` r
 par(mfrow=c(2,1))

@@ -64,12 +64,12 @@ print.summary.bvar <- function(x) {
     cat("beta posterior mean\n"); print(s$beta); cat("\n")
     cat("Psi posterior mean\n"); print(s$Psi); cat("\n")
     if (is.null(x$SV)) {
-      cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n\n")
+      cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n")
     } else {
       cat("A posterior mean\n"); print(s$A); cat("\n")
       cat("gamma_0 posterior mean\n"); print(s$gamma_0); cat("\n")
-      cat("gamma_1 posterior mean\n"); print(s$gamma_1); cat("\n\n")
-      cat("Phi posterior mean\n"); print(s$Phi); cat("\n\n")
+      cat("gamma_1 posterior mean\n"); print(s$gamma_1); cat("\n")
+      cat("Phi posterior mean\n"); print(s$Phi); cat("\n")
     }
   }
   
