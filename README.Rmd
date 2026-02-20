@@ -879,12 +879,12 @@ Phi <- matrix(c( 0.8,-0.2,
                 -0.2, 0.6),2,2)
 
 log_lambda <- matrix(NA, N, 2)
-log_lambda[1,] <- gamma_0/(1-gamma_1) #lambda_{t=0}
+log_lambda[1,] <- gamma_0/(1-gamma_1) #ln lambda_t=0
 
 dummy <- c(rep(1,(floor(N/4)+1)), rep(0,N-(floor(N/4)+1)))
 d <- cbind(rep(1, N), dummy)
 y <- matrix(NA, N, 2)
-y[1,] <- Psi %*% d[1,] #y_{t=0}
+y[1,] <- Psi %*% d[1,] #y_t=0
 
 Sigma_u <- array(NA, dim = c(2, 2, N))
 
