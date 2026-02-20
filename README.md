@@ -170,7 +170,7 @@ dummy/trend variable if applicable), and $m_0=k+2$.
 In the last section, we introduce stochastic volatility and let the
 covariance matrix vary over time such that we have $\Sigma_{u,t}$.
 
-To forecast with the Steady-State BVAR, we simply follow step 4 in
+To forecast with the Steady-State BVAR, we simply follow step 4 of
 Algorithm 4 of Karlsson (2013).
 
 ## Example 1 (Villani, 2009)
@@ -1358,7 +1358,7 @@ bvar_obj$SV_priors <- SV_priors
 ```
 
 At last we need to supply our forecast horizon $H$, and also the
-deterministic variables for the future periods. Then we can fit fit the
+deterministic variables for the future periods. Then we can fit the
 model
 
 ``` r
@@ -1424,7 +1424,7 @@ $\Sigma_{u,T+h}^{(j)} = A^{(j)-1} \Lambda_{T+h}^{(j)} (A^{(j)-1})'$.
 
 Then generate the shock to the VAR $u_{T+h}^{(j)}$ from
 $u_{T+h} \sim N(0,\Sigma_{u,T+h}^{(j)})$ and then calculate the forecast
-$\tilde{y}_{T+h}^{(j)}$ as per the usual way \[see step 4 in Algorithm 4
+$\tilde{y}_{T+h}^{(j)}$ as per the usual way \[see step 4 of Algorithm 4
 in Karlsson (2013)\].
 
 As I have had some problems implementing the forecasting routine

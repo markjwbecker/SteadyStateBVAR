@@ -119,7 +119,7 @@ An uninformative prior can be (and is in this package) specified by setting $V_0
 
 In the last section, we introduce stochastic volatility and let the covariance matrix vary over time such that we have $\Sigma_{u,t}$.
 
-To forecast with the Steady-State BVAR, we simply follow step 4 in Algorithm 4 of Karlsson (2013).
+To forecast with the Steady-State BVAR, we simply follow step 4 of Algorithm 4 of Karlsson (2013).
 
 ## Example 1 (Villani, 2009)
 
@@ -974,7 +974,7 @@ bvar_obj$SV <- TRUE
 bvar_obj$SV_priors <- SV_priors
 ```
 
-At last we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods. Then we can fit fit the model
+At last we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods. Then we can fit the model
 
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 bvar_obj$predict$H <- 20
@@ -1001,7 +1001,7 @@ For $h=1,\dots,H$:
 
 generate $\nu_{T+h}^{(j)}$ from $\nu_{T+h}\sim N(0,\Phi^{(j)})$, then compute $\ln \lambda_{T+h}^{(j)} = \gamma_{0}^{(j)} + \gamma_{1}^{(j)} \ln \lambda_{T+h-1}^{(j)} + \nu_{T+h}^{(j)}$. After that form $\Lambda_{T+h}^{(j)}$, and then compute the implied covariance matrix $\Sigma_{u,T+h}^{(j)} = A^{(j)-1} \Lambda_{T+h}^{(j)} (A^{(j)-1})'$.
 
-Then generate the shock to the VAR $u_{T+h}^{(j)}$ from $u_{T+h} \sim N(0,\Sigma_{u,T+h}^{(j)})$ and then calculate the forecast $\tilde{y}_{T+h}^{(j)}$ as per the usual way [see step 4 in Algorithm 4 in Karlsson (2013)].
+Then generate the shock to the VAR $u_{T+h}^{(j)}$ from $u_{T+h} \sim N(0,\Sigma_{u,T+h}^{(j)})$ and then calculate the forecast $\tilde{y}_{T+h}^{(j)}$ as per the usual way [see step 4 of Algorithm 4 in Karlsson (2013)].
 
 As I have had some problems implementing the forecasting routine directly in the Stan code, it is done in R/fit.R instead (for those who are interested). It does not make a difference however if it is done inside or outside of Stan, but I am working on fixing it.
 
