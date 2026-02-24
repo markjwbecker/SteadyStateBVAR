@@ -1,4 +1,4 @@
-priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_prior_mean=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=FALSE){
+priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_prior_mean=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=TRUE){
   
   priors <- list()
   

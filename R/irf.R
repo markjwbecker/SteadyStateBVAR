@@ -140,10 +140,19 @@ IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c
     type_label <- "Mean"
   }
   
-  title(main = paste0(
-    "Posterior ", type_label, " ", method, " (", round(ci*100), "% probability bands)\n",
-    "\nShock: ", var_names[shock]
-  ))
+  if (x$SV == TRUE) {
+    title(main = paste0(
+      "Posterior ", type_label, " ", method, " (", round(ci*100), "% probability bands)\nt=", t, "\n",
+      "Shock: ", var_names[shock]
+    ))
+    
+  } else {
+    title(main = paste0(
+      "Posterior ", type_label, " ", method, " (", round(ci*100), "% probability bands)\n",
+      "\nShock: ", var_names[shock]
+    ))
+  }
+
   
   if (type == "median") {
     return(list(median_irf = m_irf, lower = lower_irf, upper = upper_irf))
