@@ -18,7 +18,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-With this package the user can estimate the Steady-State BVAR(p) model
+With this package the user can estimate the steady-state BVAR(p) model
 by Mattias Villani (Villani, 2009). The goal is to use modern Bayesian
 solutions i.e. Stan to: i) estimate the model as specified in the
 original paper, ii) extend the model in many different ways. Back in the
@@ -43,7 +43,7 @@ restricted to this case.*”
 
 Times are different, and with the help of Stan, we can basically do
 whatever we can imagine. To showcase this, in the last section we extend
-the Steady-State BVAR model of Clark (2011), which is an extension of
+the steady-state BVAR model of Clark (2011), which is an extension of
 the original model (Villani, 2009). And this is done without asking
 Professor Villani for derivations. I just simply wrote the model
 formulas, put some priors on the parameters, and Stan did the rest!
@@ -61,7 +61,7 @@ remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = 
 
 ## Introduction
 
-The Steady State BVAR($p$) model (Villani, 2009) is
+The steady-state BVAR($p$) model (Villani, 2009) is
 
 $$
 y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t
@@ -69,7 +69,7 @@ $$
 
 where $y_t$ is a $k$-dimensional vector of endogenous variables (time
 series) at time $t$, and $d_t$ is a $q$-dimensional vector of
-deterministic/exogenous variables at time $t$, and
+deterministic (exogenous) variables at time $t$, and
 $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also,
 $\Pi_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is
 $(k \times q)$. Note here that
@@ -100,7 +100,7 @@ $$
 
 where $w_t'=(y_{t-1}',\dots,y_{t-p}')$ is a $kp$-dimensional vector of
 lagged endogenous variables, and $q_t'=(d_{t-1}',\dots,d_{t-p}')$ is a
-$qp$-dimensional vector of lagged exogenous (deterministic) variables,
+$qp$-dimensional vector of lagged deterministic (exogenous) variables,
 $I_p$ is the $(p \times p)$ identity matrix and $\otimes$ denotes the
 Kronecker product. This is how the likelihood is written in the Stan
 code. The goal is to estimate $\beta, \Psi$ and $\Sigma_u$, therefore
@@ -143,7 +143,7 @@ $$
 \textrm{vec}(\Psi) \sim N_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
-This is really the core of the Steady State BVAR model. In $\theta_\Psi$
+This is really the core of the steady-state BVAR model. In $\theta_\Psi$
 we specify our prior beliefs of the location of the steady state, and in
 $\Omega_\Psi$, which we assume to be a diagonal matrix, we specify our
 degree of certainty in those prior beliefs. At last, the prior for
@@ -170,7 +170,7 @@ dummy/trend variable if applicable), and $m_0=k+2$.
 In the last section, we introduce stochastic volatility and let the
 covariance matrix vary over time such that we have $\Sigma_{u,t}$.
 
-To forecast with the Steady-State BVAR, we simply follow step 4 of
+To forecast with the steady-state BVAR, we simply follow step 4 of
 Algorithm 4 of Karlsson (2013).
 
 ## Example 1 (Villani, 2009)
@@ -229,11 +229,11 @@ bvar_obj <- bvar(data = yt)
 
 To model the Swedish financial crisis at the beginning of the 90s and
 the subsequent shift in monetary policy to inflation targeting and
-flexible exchange rate, $x_t$ (deterministic variables at time $t$)
+flexible exchange rate, $d_t$ (deterministic variables at time $t$)
 includes a constant term and a dummy for the pre-crisis period, i.e.
 
 $$
-x_{t}' =
+d_{t}' =
 \begin{cases}
 \begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 1992Q4 \\
 \begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 1992Q4
@@ -245,7 +245,7 @@ bp <- which(time(yt) == 1992.75)
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
 ```
 
-To formulate a prior on $\Psi$, note that the specification of $x_t$
+To formulate a prior on $\Psi$, note that the specification of $d_t$
 implies the following parametrization of the steady state:
 
 $$
@@ -290,7 +290,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$ for the steady state priors, we set them
+Now moving on to $\Psi$ for the steady-state priors, we set them
 according to the 95% prior probability intervals (normal distribution)
 in Table I in Villani (2009). We first note that for our data here, the
 growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified
@@ -305,7 +305,7 @@ probability interval (normal distribution) on the annualized scale with
 ‘annualized_growthrate=TRUE’ and we get the corresponding prior mean and
 variance in terms of the original scale (quarter-on-quarter growth). Of
 course we could also just annualize our data before, and set
-‘annualized_growthrate=’FALSE’. So now we do this for all steady state
+‘annualized_growthrate=’FALSE’. So now we do this for all steady-state
 coefficients. Again, see Table I in Villani (2009) for the 95% prior
 probability intervals.
 
@@ -372,7 +372,10 @@ Like in Villani (2009), to incorporate that Sweden is a small economy
 and therefore not likely to affect the foreign economy, we restrict the
 upper right submatrix in each $\Pi_\ell$ for $\ell =1,\dots,k$ or
 equivalently restricting the bottom left $\Pi_\ell'$ for
-$\ell =1,\dots,k$, to the zero matrix.
+$\ell =1,\dots,k$, to the zero matrix. This technique is called “block
+exogeneity”. In essence we treat the foreign economy as exogenous to the
+domestic economy, although it is not really exogenous in the strict
+sense (Karlsson, 2013).
 
 ``` r
 p <- bvar_obj$setup$p
@@ -422,18 +425,25 @@ We can look at the restriction matrix for $\beta$ to see which elements
 we restrict to zero. Since the priors means for these elements are zero,
 we do the restriction by setting the relevant prior variances in
 $\Omega_\beta$ to be very small. We just input our $(kp \times k)$
-restriction matrix to the ‘restrict’ function like below:
+restriction matrix to the ‘restrict_beta()’ function like below:
 
 ``` r
-bvar_obj <- restrict(bvar_obj, restriction_matrix)
+bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 ```
 
-At last we need to supply our forecast horizon $H$, and also the
-deterministic variables for the future periods.
+At last we need to supply our forecast horizon $H$, and also a matrix
+containing the deterministic variables ($d_t$) for the future periods
+
+$$
+d_{\text{pred}}=\begin{pmatrix}d_{t+1}' \\
+\vdots\\
+d_{t+H}'
+\end{pmatrix}
+$$
 
 ``` r
 bvar_obj$predict$H <- 12
-bvar_obj$predict$X_pred <- cbind(rep(1, 12), 0)
+bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
 ```
 
 Then we can fit the model.
@@ -449,105 +459,37 @@ Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>        
-#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
-#>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
-#>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
-#>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
-#>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
-#>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.20  3.95  0.76  0.93
-#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
-#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
-#>   [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
-#>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
-#>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.56 -0.38  0.30 -0.04
-#>   [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#>   [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
-#>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
-#>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
-#>   [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.58  0.00
-#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
-#>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
-#>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
-#>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
-#>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.17 -0.01
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.58  0.08
-#>   [2,] 0.51  0.46
-#>   [3,] 4.94  2.02
-#>   [4,] 0.58 -0.04
-#>   [5,] 0.49  1.15
-#>   [6,] 4.29  4.45
-#>   [7,] 3.92 -0.10
-#> 
-#> Sigma_u posterior mean
-#>       
-#>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
-#>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#>   [5,] -0.01  0.12 0.18 -0.05  0.60  0.12  0.00
-#>   [6,]  0.00  0.04 0.11 -0.01  0.12  1.56 -0.01
-#>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
 Note that ‘bvar_obj\$fit\$stan’ is an object of class ‘stanfit’. So we
 can do the usual rstan inference on our fitted model. Lets look at some
-examples for the post-crisis steady state coefficients of domestic gdp
-growth and inflation (multiply both coefficients by 4 to get on the
-annualized scale).
+examples for i) the first own lag of the domestic interest rate (for
+which we set the prior mean at 0.9) ii) the post-crisis steady-state
+coefficient of inflation (multiply the steady-state coefficient by 4 to
+get on the annualized scale).
 
 ``` r
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
             pars=c("Psi[4,1]", "Psi[5,1]"),
-            plotfun="trace")
-```
-
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
-
-``` r
-
-rstan::plot(stanfit,
-            pars=c("Psi[4,1]", "Psi[5,1]"),
             plotfun="hist")
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-2.png" width="100%" />
-
 We can also look at the model forecasts directly with rstan. Remember
 that we left out the last two observations/quarters, so let us look at
-our forecasts of the 3-month interest rate, and compare with the actual
+our forecasts of the domestic interest rate, and compare with the actual
 true values
 
 ``` r
 (villani2009[103:104,6]) #true values
-#> [1] 1.478503 1.563795
 
 rstan::plot(stanfit,
             pars=c("Y_pred[1,6]", "Y_pred[2,6]"),
             show_density = TRUE,
             ci_level = 0.68,
             fill_color = "blue")
-#> ci_level: 0.68 (68% intervals)
-#> outer_level: 0.95 (95% intervals)
 ```
-
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
 
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
@@ -561,74 +503,57 @@ $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by
 summing up to fourth differences.
 
 ``` r
-bvar_obj <- forecast(bvar_obj,
-                     ci = 0.95,
-                     fcst_type = "mean",
-                     growth_rate_idx = c(4,5),
-                     plot_idx = c(4,5,6))
+fcst <- forecast(bvar_obj,
+                 ci = 0.95,
+                 fcst_type = "mean",
+                 growth_rate_idx = c(4,5),
+                 plot_idx = c(4,5,6))
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-3.png" width="100%" />
-
-We can also do some impulse response analysis. We can choose between the
+Now for some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
-impulse response function (GIRF).
+impulse response function (GIRF). Similar to the forecasting, we can
+also choose between mean or median (default is median).
 
 ``` r
 par(mfrow=c(2,2))
 irf <- IRF(bvar_obj,
-           lag=20,
+           H=20,
            response=4,
            shock=6,
+           type="median",
            method="OIRF",
            ci=0.68)
 
 irf <- IRF(bvar_obj,
-           lag=20,
+           H=20,
            response=4,
            shock=6,
+           type="median",
            method="GIRF")
 
 irf <- IRF(bvar_obj,
-           lag=20,
+           H=20,
            response=5,
            shock=6,
+           type="median",
            method="OIRF",
            ci=0.68)
 
 irf <- IRF(bvar_obj,
-           lag=20,
+           H=20,
            response=5,
            shock=6,
+           type="median",
            method="GIRF",
            ci=0.68)
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
-
 Interestingly, for the response of inflation to the interest rate shock,
 we see the price puzzle taking effect.
 
-Even though we can see by the posterior means that the foreign economy
-is ““exogenous”” (not really exogenous in the strict sense), we can also
-see this by plotting the response of the foreign gdp growth to an
-increase in the Swedish interest rate (it should have no effect at all.)
-
-``` r
-irf <- IRF(bvar_obj,
-           lag=20,
-           response=1,
-           shock=6,
-           method="OIRF",
-           ci=0.68)
-```
-
-<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
-
-As we predicted, it has virtually no effect.
-
 Now if desired, the user can estimate the model with a Gibbs sampler
-instead and then repeat the analysis above.
+instead.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
@@ -639,19 +564,20 @@ bvar_obj <- fit(bvar_obj,
 
 summary(bvar_obj)
 
-bvar_obj <- forecast(bvar_obj,
-              ci = 0.95,
-              fcst_type = "mean",
-              growth_rate_idx = c(4,5),
-              plot_idx = c(4,5,6),
-              estimation="gibbs")
+fcst <- forecast(bvar_obj,
+                 ci = 0.95,
+                 fcst_type = "mean",
+                 growth_rate_idx = c(4,5),
+                 plot_idx = c(4,5,6),
+                 estimation="gibbs")
 
 irf <- IRF(bvar_obj,
-           lag=20,
+           H=20,
            response=4,
            shock=6,
+           type="mean"
            method="OIRF",
-           ci=0.68,
+           ci=0.95,
            estimation="gibbs")
 ```
 
@@ -674,7 +600,7 @@ yt <- GustafssonVillaniStockhammar2023
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
 
 Create the object
 
@@ -682,9 +608,9 @@ Create the object
 bvar_obj <- bvar(data = yt)
 ```
 
-Only a constant this time, thus $q=1$. The lag order $p$ is not
-specified, but looking at Gustafsson, Villani and Stockhammar (2023)
-(same data etc.) we can sort of infer that they use $p=2$.
+Only a constant this time, i.e. $d_t=1 \ \forall \ t$, thus $q=1$. The
+lag order $p$ is not specified, but looking at Gustafsson, Villani and
+Stockhammar (2023) (same data etc.) we can infer that they use $p=2$.
 
 ``` r
 bvar_obj <- setup(bvar_obj,
@@ -713,7 +639,7 @@ fol_pm=c(0,   #GDPC1
          )
 ```
 
-For the steady state coefficients, the prior probability intervals
+For the steady-state coefficients, the prior probability intervals
 (normal distribution) are mean plus/minus one standard deviation (i.e. a
 roughly 68% prior probability interval)
 
@@ -773,7 +699,7 @@ future periods.
 
 ``` r
 bvar_obj$predict$H <- 12
-bvar_obj$predict$X_pred <- matrix(rep(1, 12))
+bvar_obj$predict$d_pred <- matrix(rep(1, 12))
 ```
 
 Then estimate the model, both with Stan and the Gibbs sampler.
@@ -795,90 +721,6 @@ Lets check the posterior means (very similar as expected)
 
 ``` r
 summary(bvar_obj)
-#> ====================================
-#> Estimation Method: Stan 
-#> ====================================
-#> 
-#> beta posterior mean
-#>        
-#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.06 -0.02  0.03  0.07 -0.26  0.04 -0.03
-#>    [2,]  0.03  0.71  0.04 -0.17  0.77 -0.01  0.03
-#>    [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.02
-#>    [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
-#>    [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>    [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>    [7,]  0.09  0.00  0.03  0.03 -0.17 -0.13  0.36
-#>    [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>    [9,] -0.06  0.19  0.07  0.11 -0.68  0.04 -0.04
-#>   [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
-#>   [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
-#>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#>   [13,]  0.03 -0.01  0.01  0.01 -0.56  0.16 -0.01
-#>   [14,] -0.04  0.03  0.03  0.04 -0.38 -0.13  0.30
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1]
-#>   [1,] 3.19
-#>   [2,] 2.47
-#>   [3,] 4.45
-#>   [4,] 3.38
-#>   [5,] 4.63
-#>   [6,] 1.65
-#>   [7,] 1.02
-#> 
-#> Sigma_u posterior mean
-#>       
-#>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#>   [1,]  7.93 -0.01  0.49  4.25  26.82  3.97  0.45
-#>   [2,] -0.01  1.00  0.12 -0.14   0.87  0.34 -0.13
-#>   [3,]  0.49  0.12  0.70  0.27   2.24  0.62 -0.05
-#>   [4,]  4.25 -0.14  0.27  5.74   5.38  2.23  0.45
-#>   [5,] 26.82  0.87  2.24  5.38 161.41 16.51  2.08
-#>   [6,]  3.97  0.34  0.62  2.23  16.51  5.42  0.36
-#>   [7,]  0.45 -0.13 -0.05  0.45   2.08  0.36  1.26
-#> 
-#> ====================================
-#> Estimation Method: Gibbs 
-#> ====================================
-#> 
-#> beta posterior mean
-#>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.03  0.07 -0.26  0.04 -0.03
-#>  [2,]  0.03  0.71  0.04 -0.17  0.76 -0.01  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.02
-#>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
-#>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.20 -0.13  0.36
-#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.06  0.19  0.07  0.11 -0.67  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.08  0.38 -0.92 -0.11 -0.03
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
-#> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.04 -0.01  0.01  0.01 -0.56  0.16 -0.01
-#> [14,] -0.04  0.03  0.03  0.04 -0.36 -0.13  0.30
-#> 
-#> Psi posterior mean
-#>      [,1]
-#> [1,] 3.19
-#> [2,] 2.46
-#> [3,] 4.45
-#> [4,] 3.38
-#> [5,] 4.64
-#> [6,] 1.66
-#> [7,] 1.02
-#> 
-#> Sigma_u posterior mean
-#>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.95 -0.02  0.49  4.26  26.88  3.99  0.45
-#> [2,] -0.02  0.99  0.12 -0.14   0.86  0.34 -0.13
-#> [3,]  0.49  0.12  0.70  0.27   2.25  0.63 -0.05
-#> [4,]  4.26 -0.14  0.27  5.75   5.43  2.24  0.45
-#> [5,] 26.88  0.86  2.25  5.43 161.53 16.57  2.08
-#> [6,]  3.99  0.34  0.63  2.24  16.57  5.43  0.37
-#> [7,]  0.45 -0.13 -0.05  0.45   2.08  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -917,8 +759,6 @@ plot(dens1, xlab="Real consumption", main="", col="red", lwd=2, ylim=c(0,max(den
 lines(dens2, col="blue", lwd=2)
 legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="n")
 ```
-
-<img src="man/figures/README-unnamed-chunk-31-1.png" width="100%" />
 
 And Figure 11 (mean +/- 1 std deviation bands of predictive
 distribution)
@@ -994,33 +834,32 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(3), xlim=c(39.25,58), ylim=c(-0.5
 GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5,6.25))
 ```
 
-<img src="man/figures/README-unnamed-chunk-32-1.png" width="100%" />
-
 Now just for fun let us see the response of real gdp to a shock in the
 fed funds rate
 
 ``` r
 irf <- IRF(bvar_obj,
-           lag=20,
+           H=20,
            response=1,
            shock=3,
+           type="mean"
            method="OIRF",
            ci=0.68)
 ```
 
-<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
-
 ## Example 3 (Swedish data, 1987Q2-2025Q3)
 
 Now a quick last example, using Swedish data up until 2025 for real GDP
-growth, where $100 [ \ln( GDP_t) - \ln (GDP_{t-1}) ]$, CPIF inflation,
-where $100 [ \ln( CPIF_t) - \ln (CPIF_{t-1}) ]$, the unemployment rate,
-and the 3-month interest rate. The CPIF index is originally on a monthly
-frequency, as such the CPIF index value of the last month in each
-quarter is taken to be the quarterly value. We will do a similar setup
-as in the first example, except now we use the uninformative inverse
-wishart prior for the covariance matrix ($\Sigma_u$). Note that if you
-want to use an informative prior, you are free to do so by changing
+growth specified as
+$100 [ \ln( \textrm{realGDP}_t) - \ln (\textrm{realGDP}_{t-1}) ]$, CPIF
+inflation, where $100 [ \ln( CPIF_t) - \ln (CPIF_{t-1}) ]$, the
+unemployment rate, and the 3-month interest rate. The CPIF index
+$\textrm{CPIF}_t$ is originally on a monthly frequency, as such the CPIF
+index value of the last month in each quarter is taken to be the
+quarterly value. We will do a similar setup as in the first example,
+except now we use the uninformative inverse wishart prior for the
+covariance matrix ($\Sigma_u$). Note that if you want to use an
+informative prior, you are free to do so by changing
 ‘bvar_obj\$priors\$V_0’ (scale matrix) and ‘bvar_obj\$priors\$m_0’
 (degrees of freedom), before you fit the model. For the forecasts, we
 use median as the point forecast.
@@ -1032,7 +871,7 @@ yt <- SwedishData_1987_2025
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-34-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
 
 ``` r
 bvar_obj <- bvar(data = yt)
@@ -1090,7 +929,7 @@ bvar_obj <- priors(bvar_obj,
                    Jeffrey=FALSE) #inverse wishart prior for Sigma_u
 
 bvar_obj$predict$H <- 40
-bvar_obj$predict$X_pred <- cbind(rep(1, 40), 0)
+bvar_obj$predict$d_pred <- cbind(rep(1, 40), 0)
 bvar_obj <- fit(bvar_obj,
                 iter = 20000,
                 warmup = 10000,
@@ -1107,16 +946,14 @@ bvar_obj <- forecast(bvar_obj,
                      show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
-
 ## Stochastic volatility - extension of Clark (2011)
 
-Clark (2011) extends the Steady-State BVAR(p) model (Villani, 2009) to
+Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) to
 allow the errors/innovations $u_t$ to have time varying covariance
 matrix $\Sigma_{u,t}$. Here we further extend the model of Clark (2011),
 by following the setup in Carriero, Clark and Marcellino (2024), which
 uses a more flexible version of stochastic volatility for a conventional
-BVAR. But here we use it for the steady state BVAR. Our model is on the
+BVAR. But here we use it for the steady-state BVAR. Our model is on the
 surface exactly the same as before
 
 $$
@@ -1266,11 +1103,11 @@ par(mfrow = c(1, 1))
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-37-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
 
 Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we
 do the same setup as before i.e. Minnesota for dynamic coefficients and
-informative normal priors on steady state coefficients.
+informative normal priors on steady-state coefficients.
 
 ``` r
 bvar_obj <- bvar(data = yt)
@@ -1363,7 +1200,7 @@ model
 
 ``` r
 bvar_obj$predict$H <- 20
-bvar_obj$predict$X_pred <- cbind(rep(1, 20), 0)
+bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0)
 
 bvar_obj <- fit(bvar_obj,
                 iter = 20000,
@@ -1376,35 +1213,6 @@ Remember here since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.77 -0.20
-#>   [2,] 0.15  0.72
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.15 5.82
-#>   [2,] 3.12 9.02
-#> 
-#> A posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 1.00    0
-#>   [2,] 0.24    1
-#> 
-#> gamma_0 posterior mean
-#> [1] -0.13 -0.01
-#> 
-#> gamma_1 posterior mean
-#> [1] 0.74 0.87
-#> 
-#> Phi posterior mean
-#>       
-#>         [,1]  [,2]
-#>   [1,]  0.69 -0.10
-#>   [2,] -0.10  0.77
 ```
 
 Looks like it works quite well! Now lets forecast. We follow the
@@ -1441,8 +1249,6 @@ bvar_obj <- forecast(bvar_obj,
                      show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
-
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue we plot the forecasts of the log volatilities along
@@ -1456,8 +1262,6 @@ lines(2:N, log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol="log_lambda")
 lines(2:N, log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
-
-<img src="man/figures/README-unnamed-chunk-43-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1479,7 +1283,23 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="
 lines(2:N, sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-44-1.png" width="100%" />
+We can again do some impulse response analysis, almost as usual. Now,
+since our covariance matrix is time-varying $\Sigma_{u,t}$, we must
+choose which time point $t$ to use. The default setting is the most
+recent time point.
+
+``` r
+par(mfrow=c(4,2))
+irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=20,type="median")
+irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=20,type="median")
+irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=265,type="median")
+irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=265,type="median")
+
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=20,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=20,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=265,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=265,type="median")
+```
 
 ## References
 
