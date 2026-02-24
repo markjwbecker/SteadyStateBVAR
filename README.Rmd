@@ -307,6 +307,7 @@ $$
 
 Since the determinstic variables are i) a constant and ii) a dummy for if $t \leq 1992Q4$, we simply set $d_{t+1}'=\ldots=d_{t+H}'=\begin{pmatrix}1 & 0\end{pmatrix}$
 
+
 ```{r, fig.width=8, fig.height=8}
 bvar_obj$predict$H <- 12
 (bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0))
@@ -329,7 +330,7 @@ summary(bvar_obj)
 
 Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean at 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to get on the annualized scale).
 
-```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -742,7 +743,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1)
 ```
 
-```{r, fig.width=12, fig.height=12,eval=TRUE}
+```{r, fig.width=16, fig.height=12,eval=TRUE}
 par(mfrow=c(2,2))
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
@@ -1006,7 +1007,7 @@ As I have had some problems implementing the forecasting routine directly in the
 
 
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfrow=c(2,1))
 fcst <- forecast(bvar_obj,
                  ci = 0.95,
@@ -1019,7 +1020,7 @@ fcst <- forecast(bvar_obj,
 We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=8,eval=TRUE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
 lines(2:N, log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
@@ -1030,7 +1031,7 @@ lines(2:N, log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
-```{r, fig.width=12, fig.height=8,eval=TRUE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 sigma <- matrix(NA,N,2)
 for(t in 1:(N)){
   sigma[t,] <- sqrt(diag(Sigma_u[,,t])) #true sigmas from the DGP above
