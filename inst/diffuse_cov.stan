@@ -31,10 +31,10 @@ data {
   int<lower=1> p; //lag order
   int<lower=2> k; //number of endogenous variables
   int<lower=1> q; //number of deterministic variables
-  matrix[N, k] y; //endogenous variables (y_t)
-  matrix[N, q] d; //deterministic variables (d_t)
-  matrix[N, k*p] w; //lagged endogenous variables
-  matrix[N, q*p] q; //lagged deterministic variables
+  matrix[N, k] Y; //endogenous variables (y_t)
+  matrix[N, q] D; //deterministic variables (d_t)
+  matrix[N, k*p] W; //lagged endogenous variables
+  matrix[N, q*p] Q; //lagged deterministic variables
   vector[k*p*k] theta_beta; //vec_beta prior mean
   matrix[k*p*k, k*p*k] Omega_beta; //vec_beta prior covariance matrix
   vector[k*q] theta_Psi; //vec_Psi prior mean
@@ -55,7 +55,7 @@ parameters {
 
 model {
   for(t in 1:N){
-      vector[k] u_t = (y[t] - (d[t]*Psi' + (w[t]-q[t]*(kron(I_p,Psi')))*beta))';
+      vector[k] u_t = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
       u_t ~ multi_normal(rep_vector(0,k), Sigma_u);
   }
   to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
@@ -85,7 +85,7 @@ generated quantities {
 
     if (h <= p) {
       for (i in h:p) {
-        yhat_t += to_vector((y[N + h - i] - d[N + h - i]*Psi') * Pi[i]');
+        yhat_t += to_vector((Y[N + h - i] - D[N + h - i]*Psi') * Pi[i]');
       }
     }
     y_pred[h] = (yhat_t + u_t)';
