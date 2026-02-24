@@ -305,12 +305,14 @@ d_{t+H}'
 \end{bmatrix}
 $$
 
+Since the determinstic variables are i) a constant and ii) a dummy for if $t \leq 1992Q4$, we simply set $d_{t+1}'=\ldots=d_{t+H}'=\begin{pmatrix}1 & 0\end{pmatrix}$
+
 ```{r, fig.width=8, fig.height=8}
 bvar_obj$predict$H <- 12
-bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
+(bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0))
 ```
 
-Then we can fit the model.
+Now we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
@@ -325,7 +327,7 @@ Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 summary(bvar_obj)
 ```
 
-Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean at 0.9) ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to get on the annualized scale).
+Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean at 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to get on the annualized scale).
 
 ```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 stanfit <- bvar_obj$fit$stan
@@ -350,7 +352,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 95% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r, fig.width=8, fig.height=8,eval=TRUE}
+```{r, fig.width=8, fig.height=10,eval=TRUE}
 fcst <- forecast(bvar_obj,
                  ci = 0.95,
                  fcst_type = "mean",
@@ -740,7 +742,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1)
 ```
 
-```{r, fig.width=10, fig.height=8,eval=TRUE}
+```{r, fig.width=14, fig.height=10,eval=TRUE}
 par(mfrow=c(2,2))
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
@@ -1044,7 +1046,7 @@ lines(2:N, sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 We can again do some impulse response analysis, almost as usual. Now, since our covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which time point $t$ to use. The default setting is the most recent time point.
 
-```{r, fig.width=12, fig.height=8,eval=TRUE}
+```{r, fig.width=8, fig.height=16,eval=TRUE}
 par(mfrow=c(4,2))
 irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=20,type="median")
 irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=20,type="median")
