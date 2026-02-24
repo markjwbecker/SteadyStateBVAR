@@ -66,8 +66,8 @@ print.summary.bvar <- function(x) {
       cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n")
     } else {
       cat("A posterior mean\n"); print(s$A); cat("\n")
-      cat("gamma_0 posterior mean\n"); print(s$gamma_0); cat("\n")
-      cat("gamma_1 posterior mean\n"); print(s$gamma_1); cat("\n")
+      cat("gamma_0 posterior mean\n\n"); print(s$gamma_0); cat("\n")
+      cat("gamma_1 posterior mean\n\n"); print(s$gamma_1); cat("\n")
       cat("Phi posterior mean\n"); print(s$Phi); cat("\n")
     }
   }
