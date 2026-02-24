@@ -58,6 +58,7 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "
                   beta_OLS=beta_OLS,
                   Sigma_u_OLS=Sigma_u_OLS,
                   Psi_OLS=Psi_OLS,
-                  dt=dt)
+                  dt=dt,
+                  D=X)
   return(x)
 }
