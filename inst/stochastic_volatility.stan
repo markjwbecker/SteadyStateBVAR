@@ -31,10 +31,10 @@ data {
   int<lower=1> p; //lag order
   int<lower=2> k; //number of endogenous variables
   int<lower=1> q; //number of deterministic variables
-  matrix[N, k] Y; //endogenous variables (y_t)
-  matrix[N, q] X; //deterministic variables (d_t)
-  matrix[N, k*p] W; //lagged endogenous variables
-  matrix[N, q*p] Q; //lagged deterministic variables
+  matrix[N, k] y; //endogenous variables (y_t)
+  matrix[N, q] d; //deterministic variables (d_t)
+  matrix[N, k*p] w; //lagged endogenous variables
+  matrix[N, q*p] q; //lagged deterministic variables
   vector[k*p*k] theta_beta; //vec_beta prior mean
   matrix[k*p*k, k*p*k] Omega_beta; //vec_beta prior covariance matrix
   vector[k*q] theta_Psi; //vec_Psi prior mean
@@ -57,7 +57,7 @@ transformed data {
 
 parameters {
   matrix[k*p, k] beta; //beta' = (Pi_1,...,Pi_p)
-  matrix[k, q] Psi; //Psi * x_t = steady state
+  matrix[k, q] Psi; //Psi * d_t = steady state
   matrix[N, k] log_lambda; //log volatilities
   vector[k] gamma_0; //log volatility intercept
   vector[k] gamma_1; //log volatility slope
@@ -98,7 +98,7 @@ model {
     nu_t ~ multi_normal(rep_vector(0, k), Phi);
   }
   for(t in 1:N){
-      vector[k] u_t = (Y[t] - (X[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
+      vector[k] u_t = (y[t] - (d[t]*Psi' + (w[t]-q[t]*(kron(I_p,Psi')))*beta))';
       u_t ~ multi_normal(rep_vector(0,k), Sigma_u[t]);
   }
   to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
