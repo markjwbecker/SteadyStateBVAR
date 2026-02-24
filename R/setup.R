@@ -26,27 +26,26 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "
   Q <- embed(xt, dimension = p+1)[, -(1:q), drop=F]
   
   Z <- cbind(W,X)
-  beta_OLS = solve(crossprod(Z),crossprod(Z,Y))
-  U = Y-Z%*%beta_OLS
+  beta_hat = solve(crossprod(Z),crossprod(Z,Y))
+  U = Y-Z%*%beta_hat
   Sigma_u_OLS <- crossprod(U)/(N-k*p-q)
   
-  Gamma_d_OLS <- beta_OLS[1:(k*p),]
   if (q == 1) {
-    C_hat <- beta_OLS[(k*p+1):(k*p+q),]
+    C_hat <- beta_hat[(k*p+1):(k*p+q),]
   } else {
-    C_hat <- t(beta_OLS[(k*p+1):(k*p+q),])
+    C_hat <- t(beta_hat[(k*p+1):(k*p+q),])
   }
   A <- vector("list", p)
   for (i in 1:p) {
     rows_idx <- ((i - 1) * k + 1):(i * k)
-    A[[i]] <- matrix(t(beta_OLS[rows_idx, ]), nrow = k, ncol = k)
+    A[[i]] <- matrix(t(beta_hat[rows_idx, ]), nrow = k, ncol = k)
   }
   A_L <- diag(k)
   for (i in 1:p) {
     A_L <- A_L - A[[i]]
   }
   Psi_OLS <- solve(A_L, C_hat)
-  
+  beta_OLS = beta_hat[1:(k*p),]
   x$setup <- list(N=N,
                   k=k,
                   p=p,

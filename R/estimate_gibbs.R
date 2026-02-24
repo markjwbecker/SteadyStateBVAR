@@ -3,7 +3,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
   #### Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
   #### In: Elliott, G. and Timmerman, A. (eds) Handbook of Economic Forecasting.
   #### Elsevier B.V. Vol 2, Part B., pp. 791-897.
-  
+  #### Beware that I follow Karlssons notation here
   setup <- x$setup
   priors <- x$priors
   Y <- setup$Y
@@ -15,7 +15,7 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
   p  <- setup$p
   q  <- setup$q
   
-  Gamma_d_OLS <- setup$beta_OLS[1:(k*p),]
+  Gamma_d_OLS <- setup$beta_OLS
   Lambda_OLS <- setup$Psi_OLS
   
   gamma_d_lbar <-  priors$theta_beta

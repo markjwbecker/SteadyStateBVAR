@@ -23,8 +23,8 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_pri
     Q <- embed(xt, dimension = p+1)[, -(1:q)]
     
     Z <- cbind(W,X)
-    beta_OLS = solve(crossprod(Z,Z),crossprod(Z,Y))
-    U = Y-Z%*%beta_OLS
+    beta_hat = solve(crossprod(Z,Z),crossprod(Z,Y))
+    U = Y-Z%*%beta_hat
     sigma2 <- crossprod(U,U)/(nrow(Z)-ncol(Z))
     Sigma_AR[i,i] <- sigma2
   }

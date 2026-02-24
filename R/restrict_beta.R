@@ -1,4 +1,4 @@
-restrict <- function(x, restriction_matrix) {
+restrict_beta <- function(x, restriction_matrix) {
   
   k <- x$setup$k
   p <- x$setup$p

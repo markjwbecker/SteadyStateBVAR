@@ -1,7 +1,8 @@
-IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, estimation=c("stan","gibbs")) {
-
+IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c("OIRF", "GIRF"), ci=0.95, estimation=c("stan","gibbs"), t=NULL) {
+  
   method     <- match.arg(method)
   estimation <- match.arg(estimation)
+  type <- match.arg(type)
   
   
   compute_OIRF <- function(A, Sigma, e, N){
@@ -42,6 +43,12 @@ IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, 
   k <- x$setup$k
   p <- x$setup$p
   
+  var_names <- colnames(x$data)
+  
+  if (is.null(var_names)) {
+    var_names <- paste0("y_", 1:k)
+  }
+  
   
   if (estimation == "stan"){
     stan_draws <- rstan::extract(x$fit$stan)
@@ -52,7 +59,7 @@ IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, 
   }
   
   
-  irf_array <- array(NA, dim = c(N_draws, k, k, lag+1))
+  irf_array <- array(NA, dim = c(N_draws, k, k, H+1))
   
   e <- vector("list", k)
   for (nE in 1:k) {
@@ -61,11 +68,6 @@ IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, 
     e[[nE]] <- tmp
   }
   
-  if (estimation == "stan"){
-    stan_draws <- rstan::extract(x$fit$stan)
-  } else {
-    gibbs_draws <- x$fit$gibbs
-  }
   
   for (draw in 1:N_draws) {
     if (estimation == "gibbs") {
@@ -73,10 +75,15 @@ IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, 
       Sigma <- gibbs_draws$Sigma_u_draws[,,draw]
     } else {
       Phi <- t(stan_draws$beta[draw,,])
-      Sigma <- stan_draws$Sigma_u[draw,,]
+      if (x$SV == TRUE) {
+        if (is.null(t)) t = dim(stan_draws$Sigma_u)[2]
+        Sigma <- stan_draws$Sigma_u[draw,t,,]
+      } else {
+        Sigma <- stan_draws$Sigma_u[draw,,]
+      }
     }
     
-    N <- lag
+    N <- H
     Psi <- MTS::VARpsi(Phi, lag=N)$psi
     kk <- ncol(Psi)/nrow(Psi)
     
@@ -100,29 +107,48 @@ IRF<- function(x, lag = 16, response, shock, method=c("OIRF", "GIRF"), ci=0.95, 
     }
   }
   alpha <- 1 - ci
-  median_irf <- apply(irf_array, c(2,3,4), median)
+  if (type == "median") {
+    m_irf <- apply(irf_array, c(2,3,4), median)
+  } else {
+    m_irf <- apply(irf_array, c(2,3,4), mean)
+  }
   lower_irf  <- apply(irf_array, c(2,3,4), quantile, probs = alpha/2)
   upper_irf  <- apply(irf_array, c(2,3,4), quantile, probs = 1 - alpha/2)
   
-  horizon <- 0:lag
-  ylim_range <- range(c(lower_irf[response, shock, ], upper_irf[response, shock, ]))
+  horizon <- 0:H
+  max_abs <- max(abs(c(
+    lower_irf[response, shock, ],
+    upper_irf[response, shock, ],
+    m_irf[response, shock, ]
+  )))
   
-  plot(NA, xlim = c(0, lag), ylim = ylim_range, type="n",
-       xlab="Horizon", ylab=colnames(x$data)[response])
+  ylim_range <- c(-max_abs, max_abs)
+  
+  plot(NA, xlim = c(0, H), ylim = ylim_range, type="n",
+       xlab="Horizon", ylab=paste0("Response: ", var_names[response]), font.lab=2)
   
   polygon(c(horizon, rev(horizon)),
           c(upper_irf[response, shock, ], rev(lower_irf[response, shock, ])),
           col=rgb(0,0,1,0.2), border=NA)
   
-  lines(horizon, median_irf[response, shock, ], col="blue", lwd=2)
+  lines(horizon, m_irf[response, shock, ], col="blue", lwd=2)
   abline(h=0, col="black", lty=1)
   
+  if (type == "median") {
+    type_label <- "Median"
+  } else {
+    type_label <- "Mean"
+  }
+  
   title(main = paste0(
-    "Posterior Median ", method, " (", round(ci*100), "% probability bands)",
-    "\nShock from: ", colnames(x$data)[shock]
+    "Posterior ", type_label, " ", method, " (", round(ci*100), "% probability bands)\n",
+    "\nShock: ", var_names[shock]
   ))
   
-  return(list(median = median_irf, lower = lower_irf, upper = upper_irf))
+  if (type == "median") {
+    return(list(median_irf = m_irf, lower = lower_irf, upper = upper_irf))
+  } else {
+    return(list(mean_irf = m_irf, lower = lower_irf, upper = upper_irf))
+  }
 }
-      
-      
+

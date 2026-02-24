@@ -166,8 +166,5 @@ forecast <- function (x, ci = 0.95, fcst_type = c("mean", "median"), growth_rate
       lines(time_full, m_full, col = "blue", lwd = 2)
     }
   }
-  x$predict$forecast <- forecast_ret
-  x$predict$lower <- lower_ret
-  x$predict$upper <- upper_ret
-  return(x)
+  return(list(forecast = forecast_ret, lower = lower_ret, upper = upper_ret))
 }

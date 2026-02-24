@@ -1,15 +1,15 @@
-summary.bvar <- function(object) {
+summary.bvar <- function(x) {
   
-  has_stan  <- !is.null(object$fit$stan)
-  has_gibbs <- !is.null(object$fit$gibbs)
+  has_stan  <- !is.null(x$fit$stan)
+  has_gibbs <- !is.null(x$fit$gibbs)
   
   if (!has_stan && !has_gibbs)
-    stop("No estimation results found in object$fit.")
+    stop("No estimation results found in bvar_object$fit.")
   
   summaries <- list()
   
-  if (has_stan && is.null(object$SV)) {
-    fit <- object$fit$stan
+  if (has_stan && is.null(x$SV)) {
+    fit <- x$fit$stan
     posterior <- rstan::extract(fit)
     summaries$stan <- list(
       method = "Stan",
@@ -17,8 +17,8 @@ summary.bvar <- function(object) {
       Psi   = round(apply(posterior$Psi,   c(2,3), mean), 2),
       Sigma = round(apply(posterior$Sigma_u, c(2,3), mean), 2)
     )
-  } else if (has_stan && object$SV){
-    fit <- object$fit$stan
+  } else if (has_stan && x$SV){
+    fit <- x$fit$stan
     posterior <- rstan::extract(fit)
     summaries$stan <- list(
       method = "Stan",
@@ -32,7 +32,7 @@ summary.bvar <- function(object) {
   }
   
   if (has_gibbs) {
-    fit <- object$fit$gibbs
+    fit <- x$fit$gibbs
     summaries$gibbs <- list(
       method = "Gibbs",
       beta  = round(fit$beta_posterior_mean, 2),
@@ -41,8 +41,7 @@ summary.bvar <- function(object) {
     )
   }
   
-  out <- list(summaries = summaries,
-              SV = object$SV)
+  out <- list(summaries = summaries)
   class(out) <- "summary.bvar"
   return(out)
 }
