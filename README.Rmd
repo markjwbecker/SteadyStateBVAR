@@ -657,7 +657,7 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 Now just for fun let us see the response of real gdp to a shock in the fed funds rate
 
-```{r, fig.width=10, fig.height=6,eval=TRUE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 irf <- IRF(bvar_obj,
            H=20,
            response=1,
@@ -678,7 +678,7 @@ yt <- SwedishData_1987_2025
 plot.ts(yt)
 ```
 
-```{r, fig.width=10, fig.height=8, results='hide',eval=TRUE}
+```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- bvar(data = yt)
 bp <- which(time(yt) == 1992.75)
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
@@ -742,7 +742,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1)
 ```
 
-```{r, fig.width=14, fig.height=10,eval=TRUE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow=c(2,2))
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
@@ -1055,8 +1055,8 @@ irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=265,type="me
 
 irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=20,type="median")
 irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=265,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=265,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=155,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=155,type="median")
 ```
 
 ## References
