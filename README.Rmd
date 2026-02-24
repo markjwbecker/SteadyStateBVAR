@@ -299,10 +299,10 @@ bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 At last we need to supply our forecast horizon $H$, and also a matrix containing the deterministic variables ($d_t$) for the future periods
 
 $$
-d_{\text{pred}}=\begin{pmatrix}d_{t+1}' \\
+d_{\text{pred}}=\begin{bmatrix}d_{t+1}' \\
 \vdots\\
 d_{t+H}'
-\end{pmatrix}
+\end{bmatrix}
 $$
 
 ```{r, fig.width=8, fig.height=8}
@@ -312,36 +312,36 @@ bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
 
 Then we can fit the model.
 
-```{r, fig.width=8, fig.height=8, results='hide',eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 summary(bvar_obj)
 ```
 
 Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean at 0.9) ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to get on the annualized scale).
 
-```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
-            pars=c("Psi[4,1]", "Psi[5,1]"),
+            pars=c("beta[6,6]", "Psi[5,1]"),
             plotfun="hist")
 ```
 
 We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate, and compare with the actual true values
 
-```{r, fig.width=10, fig.height=8,eval=FALSE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 (villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
-            pars=c("Y_pred[1,6]", "Y_pred[2,6]"),
+            pars=c("y_pred[1,6]", "y_pred[2,6]"),
             show_density = TRUE,
             ci_level = 0.68,
             fill_color = "blue")
@@ -350,7 +350,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 95% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 fcst <- forecast(bvar_obj,
                  ci = 0.95,
                  fcst_type = "mean",
@@ -360,7 +360,7 @@ fcst <- forecast(bvar_obj,
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to the forecasting, we can also choose between mean or median (default is median).
 
-```{r, fig.width=10, fig.height=10,eval=FALSE}
+```{r, fig.width=10, fig.height=10,eval=TRUE}
 par(mfrow=c(2,2))
 irf <- IRF(bvar_obj,
            H=20,
@@ -525,27 +525,27 @@ bvar_obj$predict$d_pred <- matrix(rep(1, 12))
 
 Then estimate the model, both with Stan and the Gibbs sampler.
 
-```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 1000,
+                warmup = 250,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 1000,
+                warmup = 250,
                 chains = 1,
                 estimation = "gibbs")
 ```
 Lets check the posterior means (very similar as expected)
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 summary(bvar_obj)
 ```
 
 Now lets do Figure 10
 
-```{r, fig.width=10, fig.height=10,eval=FALSE}
+```{r, fig.width=10, fig.height=10,eval=TRUE}
 Psi_draws_gibbs  <- bvar_obj$fit$gibbs$Psi_draws
 Psi_draws_stan <- rstan::extract(bvar_obj$fit$stan)$Psi
 
@@ -582,14 +582,14 @@ legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="
 
 And Figure 11 (mean +/- 1 std deviation bands of predictive distribution)
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
   
-  Y_pred <- bvar_obj$fit$gibbs$fcst_draws
-  Y_pred_m <- apply(Y_pred, c(1, 2), mean)
-  Y_pred_sd <- apply(Y_pred, c(1, 2), sd)
-  Y_pred_lower <- Y_pred_m - 1 * Y_pred_sd
-  Y_pred_upper <- Y_pred_m + 1 * Y_pred_sd
+  y_pred <- bvar_obj$fit$gibbs$fcst_draws
+  y_pred_m <- apply(y_pred, c(1, 2), mean)
+  y_pred_sd <- apply(y_pred, c(1, 2), sd)
+  y_pred_lower <- y_pred_m - 1 * y_pred_sd
+  y_pred_upper <- y_pred_m + 1 * y_pred_sd
   
   Y <- bvar_obj$data
   freq <- frequency(Y)
@@ -600,9 +600,9 @@ GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
   time_fore <- seq(tail(time_hist, 1) + 1/freq, by = 1/freq, length.out = H)
   i = plot_idx
   smply <- Y[, i]
-  fcst_m <- Y_pred_m[, i]
-  fcst_lower <- Y_pred_lower[, i]
-  fcst_upper <- Y_pred_upper[, i]
+  fcst_m <- y_pred_m[, i]
+  fcst_lower <- y_pred_lower[, i]
+  fcst_upper <- y_pred_upper[, i]
   
   time_full <- c(tail(time_hist, 1), time_fore)
   m_full <- c(tail(smply, 1), fcst_m)
@@ -624,15 +624,15 @@ GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
   lines(time_full, m_full, col = "red", lwd = 2)
   
   posterior_stan <- rstan::extract(x$fit$stan)
-  Y_pred2 <- posterior_stan$Y_pred
-  Y_pred_m2 <- apply(Y_pred2, c(2, 3), mean)
-  Y_pred_sd2 <- apply(Y_pred2, c(2, 3), sd)
-  Y_pred_lower2 <- Y_pred_m2 - 1 * Y_pred_sd2
-  Y_pred_upper2 <- Y_pred_m2 + 1 * Y_pred_sd2
+  y_pred2 <- posterior_stan$y_pred
+  y_pred_m2 <- apply(y_pred2, c(2, 3), mean)
+  y_pred_sd2 <- apply(y_pred2, c(2, 3), sd)
+  y_pred_lower2 <- y_pred_m2 - 1 * y_pred_sd2
+  y_pred_upper2 <- y_pred_m2 + 1 * y_pred_sd2
   
-  fcst_m2 <- Y_pred_m2[, i]
-  fcst_lower2 <- Y_pred_lower2[, i]
-  fcst_upper2 <- Y_pred_upper2[, i]
+  fcst_m2 <- y_pred_m2[, i]
+  fcst_lower2 <- y_pred_lower2[, i]
+  fcst_upper2 <- y_pred_upper2[, i]
   
   m_full2 <- c(tail(smply, 1), fcst_m2)
   lower_full2 <- c(tail(smply, 1), fcst_lower2)
@@ -655,12 +655,12 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 Now just for fun let us see the response of real gdp to a shock in the fed funds rate
 
-```{r, fig.width=10, fig.height=6,eval=FALSE}
+```{r, fig.width=10, fig.height=6,eval=TRUE}
 irf <- IRF(bvar_obj,
            H=20,
            response=1,
            shock=3,
-           type="mean"
+           type="mean",
            method="OIRF",
            ci=0.68)
 ```
@@ -676,7 +676,7 @@ yt <- SwedishData_1987_2025
 plot.ts(yt)
 ```
 
-```{r, fig.width=10, fig.height=8, results='hide',eval=FALSE}
+```{r, fig.width=10, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- bvar(data = yt)
 bp <- which(time(yt) == 1992.75)
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
@@ -733,20 +733,21 @@ bvar_obj <- priors(bvar_obj,
 
 bvar_obj$predict$H <- 40
 bvar_obj$predict$d_pred <- cbind(rep(1, 40), 0)
+
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
-```{r, fig.width=10, fig.height=8,eval=FALSE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 par(mfrow=c(2,2))
-bvar_obj <- forecast(bvar_obj,
-                     ci = 0.68,
-                     fcst_type = "median", #point forecast
-                     growth_rate_idx = c(1,2),
-                     plot_idx = c(1,2,3,4),
-                     show_all = TRUE)
+fcst <- forecast(bvar_obj,
+                 ci = 0.68,
+                 fcst_type = "median", #point forecast
+                 growth_rate_idx = c(1,2),
+                 plot_idx = c(1,2,3,4),
+                 show_all = TRUE)
 ```
 
 ## Stochastic volatility - extension of Clark (2011)
@@ -972,19 +973,19 @@ bvar_obj$SV_priors <- SV_priors
 
 At last we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods. Then we can fit the model
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 bvar_obj$predict$H <- 20
 bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters... Remember here since $p=1$ we have $\beta'=\Pi_1$.
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 summary(bvar_obj)
 ```
 
@@ -1003,20 +1004,20 @@ As I have had some problems implementing the forecasting routine directly in the
 
 
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfrow=c(2,1))
-bvar_obj <- forecast(bvar_obj,
-                     ci = 0.95,
-                     fcst_type = "mean",
-                     plot_idx = c(1,2),
-                     show_all = TRUE)
+fcst <- forecast(bvar_obj,
+                 ci = 0.95,
+                 fcst_type = "mean",
+                 plot_idx = c(1,2),
+                 show_all = TRUE)
 ```
 
 
 We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=8,eval=FALSE}
+```{r, fig.width=12, fig.height=8,eval=TRUE}
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
 lines(2:N, log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
@@ -1027,7 +1028,7 @@ lines(2:N, log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
-```{r, fig.width=12, fig.height=8,eval=FALSE}
+```{r, fig.width=12, fig.height=8,eval=TRUE}
 sigma <- matrix(NA,N,2)
 for(t in 1:(N)){
   sigma[t,] <- sqrt(diag(Sigma_u[,,t])) #true sigmas from the DGP above
@@ -1043,7 +1044,7 @@ lines(2:N, sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 We can again do some impulse response analysis, almost as usual. Now, since our covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which time point $t$ to use. The default setting is the most recent time point.
 
-```{r, fig.width=12, fig.height=8,eval=FALSE}
+```{r, fig.width=12, fig.height=8,eval=TRUE}
 par(mfrow=c(4,2))
 irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=20,type="median")
 irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=20,type="median")
