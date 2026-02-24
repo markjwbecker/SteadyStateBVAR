@@ -13,7 +13,7 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
     } else {
       stan_data <- c(
         x$setup,
-        list(H = x$predict$H, X_pred = x$predict$X_pred),
+        list(H = x$predict$H, d_pred = x$predict$d_pred),
         x$priors
       )
     }
@@ -54,7 +54,7 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       k <- x$setup$k
       q <- x$setup$q
       H <- x$predict$H
-      X_pred <- x$predict$X_pred
+      d_pred <- x$predict$d_pred
       forecast_array <- array(NA, dim = c(n_draws, H, k))
       Sigma_u_array <- array(NA, dim = c(n_draws, H, k, k))
       log_lambda_array <- array(NA, dim = c(n_draws, H, k))
@@ -98,11 +98,11 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
           Sigma_u_pred[[h]] = solve(A) %*% Lambda_h %*% t(solve(A))
           u_t <- MASS::mvrnorm(1, rep(0, k), Sigma_u_pred[[h]])
           
-          yhat_t <- X_pred[h, ] %*% t(Psi)
+          yhat_t <- d_pred[h, ] %*% t(Psi)
           
           if (h > 1) {
             for (i in 1:min(h - 1, p)) {
-              term <- (Y_pred_mat[h - i,] - X_pred[h - i,] %*% t(Psi)) %*% t(Pi[[i]])
+              term <- (Y_pred_mat[h - i,] - d_pred[h - i,] %*% t(Psi)) %*% t(Pi[[i]])
               yhat_t <- yhat_t + term
             }
           }
@@ -136,7 +136,7 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       iter = iter,
       warmup = warmup,
       H = x$predict$H,
-      X_pred = x$predict$X_pred,
+      d_pred = x$predict$d_pred,
       Jeffrey = Jeffrey
     )
   }
