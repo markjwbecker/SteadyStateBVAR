@@ -75,7 +75,7 @@ IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c
       Sigma <- gibbs_draws$Sigma_u_draws[,,draw]
     } else {
       Phi <- t(stan_draws$beta[draw,,])
-      if (x$SV == TRUE) {
+      if (!is.null(x$SV)) {
         if (is.null(t)) t = dim(stan_draws$Sigma_u)[2]
         Sigma <- stan_draws$Sigma_u[draw,t,,]
       } else {
@@ -140,7 +140,7 @@ IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c
     type_label <- "Mean"
   }
   
-  if (x$SV == TRUE) {
+  if (!is.null(x$SV)) {
     title(main = paste0(
       "Posterior ", type_label, " ", method, " (", round(ci*100), "% probability bands)\nt=", t, "\n",
       "Shock: ", var_names[shock]

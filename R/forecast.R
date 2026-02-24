@@ -8,31 +8,31 @@ forecast <- function (x, ci = 0.95, fcst_type = c("mean", "median"), growth_rate
   if (is.null(plot_idx)) 
     plot_idx <- 1:ncol(Y)
   if (estimation == "gibbs") {
-    Y_pred <- x$fit$gibbs$fcst_draws
-    Y_pred_m <- apply(Y_pred, c(1, 2), fcst_type)
+    y_pred <- x$fit$gibbs$fcst_draws
+    y_pred_m <- apply(y_pred, c(1, 2), fcst_type)
     alpha <- 1 - ci
-    Y_pred_lower <- apply(Y_pred, c(1, 2), quantile, probs = alpha/2)
-    Y_pred_upper <- apply(Y_pred, c(1, 2), quantile, probs = 1 - 
+    y_pred_lower <- apply(y_pred, c(1, 2), quantile, probs = alpha/2)
+    y_pred_upper <- apply(y_pred, c(1, 2), quantile, probs = 1 - 
                             alpha/2)
   }
   else if (estimation == "stan" && !isTRUE(x$SV)) {
     posterior <- rstan::extract(x$fit$stan)
-    Y_pred <- posterior$Y_pred
-    Y_pred_m <- apply(Y_pred, c(2, 3), fcst_type)
+    y_pred <- posterior$y_pred
+    y_pred_m <- apply(y_pred, c(2, 3), fcst_type)
     alpha <- 1 - ci
-    Y_pred_lower <- apply(Y_pred, c(2, 3), quantile, probs = alpha/2)
-    Y_pred_upper <- apply(Y_pred, c(2, 3), quantile, probs = 1 - 
+    y_pred_lower <- apply(y_pred, c(2, 3), quantile, probs = alpha/2)
+    y_pred_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - 
                             alpha/2)
   } else {
-  Y_pred <- x$fit$stanf$fcst_draws
-  Y_pred_m <- apply(Y_pred, c(2, 3), fcst_type)
+  y_pred <- x$fit$stanf$fcst_draws
+  y_pred_m <- apply(y_pred, c(2, 3), fcst_type)
   alpha <- 1 - ci
-  Y_pred_lower <- apply(Y_pred, c(2, 3), quantile, probs = alpha/2)
-  Y_pred_upper <- apply(Y_pred, c(2, 3), quantile, probs = 1 - 
+  y_pred_lower <- apply(y_pred, c(2, 3), quantile, probs = alpha/2)
+  y_pred_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - 
                           alpha/2)
   }
   T <- nrow(Y)
-  H <- nrow(Y_pred_m)
+  H <- nrow(y_pred_m)
   m <- ncol(Y)
   forecast_ret <- matrix(NA, H, m)
   lower_ret <- matrix(NA, H, m)
@@ -47,9 +47,9 @@ forecast <- function (x, ci = 0.95, fcst_type = c("mean", "median"), growth_rate
     plot_idx <- 1:ncol(Y)
   for (i in plot_idx) {
     smply <- Y[, i]
-    fcst_m <- Y_pred_m[, i]
-    fcst_lower <- Y_pred_lower[, i]
-    fcst_upper <- Y_pred_upper[, i]
+    fcst_m <- y_pred_m[, i]
+    fcst_lower <- y_pred_lower[, i]
+    fcst_upper <- y_pred_upper[, i]
     if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
       annual_hist <- rep(NA, length(smply))
       for (t in freq:length(smply)) {
