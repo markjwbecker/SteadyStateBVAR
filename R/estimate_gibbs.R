@@ -1,4 +1,4 @@
-estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
+estimate_gibbs <- function(x, iter, warmup, H, d_pred, Jeffrey=FALSE){
   #### Algorithm 4 from:
   #### Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
   #### In: Elliott, G. and Timmerman, A. (eds) Handbook of Economic Forecasting.
@@ -110,11 +110,11 @@ estimate_gibbs <- function(x, iter, warmup, H, X_pred, Jeffrey=FALSE){
     for (h in 1:H) {
       
       u_t <- MASS::mvrnorm(1, rep(0, k), Psi_j)
-      ytilde_t <- X_pred[h, ] %*% t(Lambda_j)
+      ytilde_t <- d_pred[h, ] %*% t(Lambda_j)
       
       if (h > 1) {
         for (i in 1:min(h - 1, p)) {
-          term <- (Y_pred_mat[h - i,] - X_pred[h - i,] %*% t(Lambda_j)) %*% t(A_j[[i]])
+          term <- (Y_pred_mat[h - i,] - d_pred[h - i,] %*% t(Lambda_j)) %*% t(A_j[[i]])
           ytilde_t <- ytilde_t + term
         }
       }

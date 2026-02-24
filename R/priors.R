@@ -7,7 +7,7 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_pri
   k <- setup$k
   p <- setup$p
   q <- setup$q
-  xt <- setup$xt
+  dt <- setup$dt
   dummy <- setup$dummy
   
   Sigma_AR <- diag(0,k)
@@ -19,8 +19,8 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_pri
     
     Y <- y[-c(1:p)]
     W <- embed(y, dimension = p+1)[, -1]
-    X <- xt[-c(1:p), ,drop=F]
-    Q <- embed(xt, dimension = p+1)[, -(1:q)]
+    X <- dt[-c(1:p), ,drop=F]
+    Q <- embed(dt, dimension = p+1)[, -(1:q)]
     
     Z <- cbind(W,X)
     beta_hat = solve(crossprod(Z,Z),crossprod(Z,Y))

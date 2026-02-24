@@ -9,21 +9,21 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "
   deterministic <- match.arg(deterministic)
   
   if (deterministic == "constant") {
-    xt <- cbind(rep(1, nrow(yt)))
+    dt <- cbind(rep(1, nrow(yt)))
     q <- 1
   } else if (deterministic == "constant_and_dummy") {
-    xt <- cbind(rep(1, nrow(yt)), dummy)
+    dt <- cbind(rep(1, nrow(yt)), dummy)
     q <- 2
   } else {
     trend <- 1:nrow(yt)
-    xt <- cbind(rep(1, nrow(yt)), trend)
+    dt <- cbind(rep(1, nrow(yt)), trend)
     q <- 2
   }
   
   Y <- yt[-c(1:p), ]
   W <- embed(yt, dimension = p+1)[, -(1:k)]
-  X <- xt[-c(1:p), ,drop=F]
-  Q <- embed(xt, dimension = p+1)[, -(1:q), drop=F]
+  X <- dt[-c(1:p), ,drop=F]
+  Q <- embed(dt, dimension = p+1)[, -(1:q), drop=F]
   
   Z <- cbind(W,X)
   beta_hat = solve(crossprod(Z),crossprod(Z,Y))
@@ -58,6 +58,6 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "
                   beta_OLS=beta_OLS,
                   Sigma_u_OLS=Sigma_u_OLS,
                   Psi_OLS=Psi_OLS,
-                  xt=xt)
+                  dt=dt)
   return(x)
 }
