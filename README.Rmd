@@ -321,9 +321,9 @@ Now we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -543,13 +543,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -752,9 +752,9 @@ bvar_obj$predict$H <- 40
 bvar_obj$predict$d_pred <- cbind(rep(1, 40), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 ```{r, fig.width=10, fig.height=8,eval=TRUE}
@@ -995,8 +995,8 @@ bvar_obj$predict$H <- 20
 bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1)
 ```
 
@@ -1106,8 +1106,8 @@ bvar_obj$predict$H <- 20
 bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1,
                 estimation="gibbs")
 
