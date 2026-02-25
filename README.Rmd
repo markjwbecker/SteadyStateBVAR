@@ -274,7 +274,7 @@ bvar_obj <- priors(bvar_obj,
                    Jeffrey=TRUE)
 ```
 
-Like in Villani (2009), to incorporate that Sweden is a small economy and therefore not likely to affect the foreign economy, we restrict the upper right submatrix in each $\Pi_\ell$ for $\ell =1,\dots,k$ or equivalently restricting the bottom left $\Pi_\ell'$ for $\ell =1,\dots,k$, to the zero matrix. This technique is called "block exogeneity". In essence we treat the foreign economy as exogenous to the domestic economy, although it is not really exogenous in the strict sense (Karlsson, 2013).
+Like in Villani (2009), to incorporate that Sweden is a small economy and therefore not likely to affect the foreign economy, we restrict the upper right submatrix in each $\Pi_\ell$ for $\ell =1,\dots,k$ or equivalently restricting the bottom left $\Pi_\ell'$ for $\ell =1,\dots,k$, to the zero matrix. This technique is called "block exogeneity" (Dieppe, Legrand, and van Roye, 2018). In essence we treat the foreign economy as exogenous to the domestic economy, although it is not really exogenous in the strict sense (Karlsson, 2013).
 
 ```{r, fig.width=8, fig.height=8}
 p <- bvar_obj$setup$p
@@ -675,7 +675,7 @@ irf <- IRF(bvar_obj,
 
 ## Example 3 (Swedish data, 1987Q2-2025Q3)
 
-Now a quick last example, using Swedish data up until 2025 for real GDP growth specified as $100 [ \ln( \textrm{realGDP}_t) - \ln (\textrm{realGDP}_{t-1}) ]$, CPIF inflation, where $100 [ \ln( CPIF_t) - \ln (CPIF_{t-1}) ]$, the unemployment rate, and the 3-month interest rate. The CPIF index $\textrm{CPIF}_t$ is originally on a monthly frequency, as such the CPIF index value of the last month in each quarter is taken to be the quarterly value. We will do a similar setup as in the first example, except now we use the uninformative inverse wishart prior for the covariance matrix ($\Sigma_u$). Note that if you want to use an informative prior, you are free to do so by changing 'bvar_obj\$priors\$V_0' (scale matrix) and 'bvar_obj\$priors\$m_0' (degrees of freedom), before you fit the model. For the forecasts, we use median as the point forecast.
+Now a quick last example, using Swedish data up until 2025 for real GDP growth specified as $100 [\ln( realGDP_t) - \ln (realGDP_{t-1})]$, CPIF inflation, where $100 [\ln( CPIF_t) - \ln (CPIF_{t-1})]$, the unemployment rate, and the 3-month interest rate. The CPIF index $CPIF_t$ is originally on a monthly frequency, as such the CPIF index value of the last month in each quarter is taken to be the quarterly value. We will do a similar setup as in the first example, except now we use the uninformative inverse wishart prior for the covariance matrix ($\Sigma_u$). Note that if you want to use an informative prior, you are free to do so by changing 'bvar_obj\$priors\$V_0' (scale matrix) and 'bvar_obj\$priors\$m_0' (degrees of freedom), before you fit the model. For the forecasts, we use median as the point forecast.
 
 
 ```{r, fig.width=10, fig.height=8}
@@ -1057,13 +1057,13 @@ We can again do some impulse response analysis, almost as usual. Now, since our 
 par(mfrow=c(4,2))
 irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=20,type="median")
 irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=265,type="median")
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=265,type="median")
+irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=255,type="median")
+irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=255,type="median")
 
 irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=20,type="median")
 irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=155,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=155,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=152,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=152,type="median")
 ```
 
 
@@ -1071,7 +1071,7 @@ We see that the shapes of the IRFs are similar over time, but the magnitudes dif
 
 As a last analysis, let us plot the forecasts from the steady-state BVAR with (SS-BVAR-SV) and without (SS-BVAR) stochastic volatility to see the difference.
 
-```{r, fig.width=8, fig.height=16,eval=TRUE, results='hide'}
+```{r, echo=TRUE, results='hide', warning=FALSE, message=FALSE, fig.show='hide'}
 rm(bvar_obj)
 bvar_obj <- bvar(data = yt)
 bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant_and_dummy", dummy = dummy)
@@ -1111,7 +1111,7 @@ fcst2 <- forecast(bvar_obj,
                   estimation="gibbs")
 ```
 
-```{r, fig.width=8, fig.height=16,eval=TRUE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
   
   Y <- bvar_obj$data
@@ -1137,9 +1137,9 @@ compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
           ylim=ylim,
           col = "black", lwd = 2)
   
-  lines(time_full[-1], lower_full[-1], col = "red", lwd = 2,lty=3)
-  lines(time_full[-1], upper_full[-1], col = "red", lwd = 2,lty=3)
-  lines(time_full, m_full, col = "red", lwd = 2)
+  lines(time_full[-1], lower_full[-1], col = "blue", lwd = 2,lty=3)
+  lines(time_full[-1], upper_full[-1], col = "blue", lwd = 2,lty=3)
+  lines(time_full, m_full, col = "blue", lwd = 2)
   
   fcst_m2 <- fcst2$forecast[,i]
   fcst_lower2 <- fcst2$lower[,i]
@@ -1148,9 +1148,9 @@ compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
   m_full2 <- c(tail(smply, 1), fcst_m2)
   lower_full2 <- c(tail(smply, 1), fcst_lower2)
   upper_full2 <- c(tail(smply, 1), fcst_upper2)
-  lines(time_full[-1], lower_full2[-1], col = "blue", lwd = 2,lty=3)
-  lines(time_full[-1], upper_full2[-1], col = "blue", lwd = 2,lty=3)
-  lines(time_full, m_full2, col = "blue", lwd = 2)
+  lines(time_full[-1], lower_full2[-1], col = "red", lwd = 2,lty=3)
+  lines(time_full[-1], upper_full2[-1], col = "red", lwd = 2,lty=3)
+  lines(time_full, m_full2, col = "red", lwd = 2)
   
   legend("bottomleft", legend=c("SS-BVAR-SV", "SS-BVAR"), col=c("blue", "red"), lwd=2, bty="n")
 }

@@ -373,9 +373,9 @@ and therefore not likely to affect the foreign economy, we restrict the
 upper right submatrix in each $\Pi_\ell$ for $\ell =1,\dots,k$ or
 equivalently restricting the bottom left $\Pi_\ell'$ for
 $\ell =1,\dots,k$, to the zero matrix. This technique is called “block
-exogeneity”. In essence we treat the foreign economy as exogenous to the
-domestic economy, although it is not really exogenous in the strict
-sense (Karlsson, 2013).
+exogeneity” (Dieppe, Legrand, and van Roye, 2018). In essence we treat
+the foreign economy as exogenous to the domestic economy, although it is
+not really exogenous in the strict sense (Karlsson, 2013).
 
 ``` r
 p <- bvar_obj$setup$p
@@ -473,9 +473,6 @@ bvar_obj <- fit(bvar_obj,
                 iter = 1000,
                 warmup = 250,
                 chains = 1)
-#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#tail-ess
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -485,44 +482,44 @@ summary(bvar_obj)
 #> beta posterior mean
 #>        
 #>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
-#>    [2,] -0.02  0.31  0.25  0.12 -0.08  0.00  0.00
+#>    [1,]  0.18  0.03 -0.01  0.12  0.07 -0.11  0.00
+#>    [2,] -0.02  0.31  0.25  0.12 -0.07  0.00  0.00
 #>    [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
 #>    [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>    [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>    [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>    [7,]  0.00  0.00  0.00  1.20  3.95  0.72  0.93
-#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
-#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
-#>   [10,] -0.02 -0.01  0.00  0.00  0.04  0.07  0.00
-#>   [11,]  0.00  0.00  0.00  0.12 -0.01  0.16  0.00
-#>   [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
+#>    [7,]  0.00  0.00  0.00  1.25  3.97  0.74  0.93
+#>    [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
+#>    [9,]  0.01  0.02  0.04  0.00 -0.03 -0.16  0.00
+#>   [10,] -0.02 -0.01  0.00  0.00  0.05  0.07  0.00
+#>   [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
+#>   [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
 #>   [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#>   [14,]  0.00  0.00  0.00  0.57 -0.38  0.33 -0.04
-#>   [15,]  0.01 -0.01  0.01  0.01 -0.01  0.00  0.00
-#>   [16,] -0.02  0.06 -0.01  0.00  0.09  0.02  0.00
+#>   [14,]  0.00  0.00  0.00  0.58 -0.34  0.24 -0.04
+#>   [15,]  0.01 -0.01  0.00  0.01 -0.01  0.00  0.00
+#>   [16,] -0.02  0.05 -0.01  0.00  0.08  0.02  0.00
 #>   [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#>   [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
+#>   [18,]  0.00  0.00  0.00  0.07  0.01 -0.02  0.00
 #>   [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#>   [21,]  0.00  0.00  0.00 -0.14 -0.01 -0.60  0.00
-#>   [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
+#>   [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
+#>   [21,]  0.00  0.00  0.00 -0.13 -0.02 -0.59  0.00
+#>   [22,]  0.03 -0.01  0.00 -0.01  0.02  0.02  0.00
 #>   [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
 #>   [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #>   [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #>   [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #>   [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#>   [28,]  0.00  0.00  0.00 -0.15 -0.10 -0.17 -0.01
+#>   [28,]  0.00  0.00  0.00 -0.16 -0.06 -0.16 -0.01
 #> 
 #> Psi posterior mean
 #>       
 #>        [,1]  [,2]
 #>   [1,] 0.58  0.08
-#>   [2,] 0.51  0.46
-#>   [3,] 4.94  2.01
+#>   [2,] 0.51  0.47
+#>   [3,] 4.94  2.04
 #>   [4,] 0.58 -0.04
-#>   [5,] 0.49  1.14
-#>   [6,] 4.29  4.46
+#>   [5,] 0.49  1.15
+#>   [6,] 4.29  4.45
 #>   [7,] 3.92 -0.10
 #> 
 #> Sigma_u posterior mean
@@ -530,10 +527,10 @@ summary(bvar_obj)
 #>         [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #>   [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
 #>   [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#>   [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
-#>   [4,]  0.07  0.01 0.01  0.20 -0.05 -0.01  0.00
-#>   [5,] -0.01  0.12 0.18 -0.05  0.60  0.11  0.00
-#>   [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
+#>   [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
+#>   [4,]  0.07  0.01 0.01  0.19 -0.05 -0.02  0.00
+#>   [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
+#>   [6,]  0.00  0.04 0.11 -0.02  0.11  1.55 -0.01
 #>   [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
@@ -814,52 +811,43 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        
-#>           [,1]   [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>    [1,]  -4.95  -8.49  0.96  0.08  0.67 -1.70 -1.92
-#>    [2,]   1.77   1.75 -0.34  0.82  0.21  0.85 -1.13
-#>    [3,]   2.66   1.82 -1.35  1.69  1.94  1.66  1.72
-#>    [4,]  -2.66   0.21  1.31  0.13  0.83 -0.72 -1.08
-#>    [5,] -38.85 -42.56 -3.08  4.99 -0.28 -0.93 -2.05
-#>    [6,]  -4.07  -7.23 -0.50  2.09  1.68 -1.34  1.69
-#>    [7,]  -1.99   1.07  1.41  1.84  0.39 -1.30 -1.70
-#>    [8,]  -1.67  -2.27  1.07  1.16  0.07  0.34  0.58
-#>    [9,]   0.86   0.12 -0.10  1.22 -2.00  0.83  1.60
-#>   [10,]   0.91   0.66  0.12 -1.22  0.59 -0.71 -0.03
-#>   [11,]  -3.53  -4.32  1.77  1.54  1.85 -1.22  0.50
-#>   [12,] -10.22 -12.78  0.55  0.04 -1.06 -1.08  0.63
-#>   [13,]  -4.72  -2.72 -1.93 -1.61  0.86 -0.61 -1.37
-#>   [14,]   0.30  -1.49  1.56 -1.43 -1.64 -1.11  1.90
+#>          [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>    [1,]  0.06 -0.02  0.03  0.07 -0.28  0.05 -0.03
+#>    [2,]  0.03  0.70  0.03 -0.17  0.77 -0.02  0.03
+#>    [3,] -0.02  0.11  1.01 -0.40  0.23 -0.02 -0.03
+#>    [4,]  0.27  0.02  0.03  0.14  1.80  0.25  0.04
+#>    [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
+#>    [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
+#>    [7,]  0.09  0.00  0.03  0.04 -0.17 -0.13  0.36
+#>    [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
+#>    [9,] -0.06  0.20  0.07  0.11 -0.68  0.05 -0.04
+#>   [10,] -0.06 -0.08 -0.09  0.39 -0.93 -0.11 -0.02
+#>   [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
+#>   [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
+#>   [13,]  0.04 -0.01  0.01  0.01 -0.57  0.16 -0.01
+#>   [14,] -0.05  0.03  0.03  0.04 -0.40 -0.14  0.30
 #> 
 #> Psi posterior mean
 #>       
-#>         [,1]
-#>   [1,]  0.30
-#>   [2,] -0.07
-#>   [3,]  1.98
-#>   [4,] -0.92
-#>   [5,]  1.30
-#>   [6,]  1.87
-#>   [7,] -0.26
+#>        [,1]
+#>   [1,] 3.20
+#>   [2,] 2.48
+#>   [3,] 4.43
+#>   [4,] 3.38
+#>   [5,] 4.65
+#>   [6,] 1.65
+#>   [7,] 1.03
 #> 
 #> Sigma_u posterior mean
 #>       
-#>                 [,1]          [,2]          [,3]          [,4]          [,5]
-#>   [1,]  7.617009e+59  3.172209e+31  2.436331e+30 -2.267770e+30 -2.188671e+30
-#>   [2,]  3.172209e+31  3.485037e+76  4.408634e+39 -7.989577e+39 -3.095790e+39
-#>   [3,]  2.436331e+30  4.408634e+39  1.804417e+10 -1.771926e+06 -6.782711e+05
-#>   [4,] -2.267770e+30 -7.989577e+39 -1.771926e+06  5.157123e+70  4.031486e+36
-#>   [5,] -2.188671e+30 -3.095790e+39 -6.782711e+05  4.031486e+36  2.454221e+07
-#>   [6,]  2.612507e+30  5.781097e+39  1.010606e+06 -7.820534e+36 -2.153521e+04
-#>   [7,]  1.805781e+30  3.718318e+39  9.280637e+05 -4.920776e+36 -2.002638e+04
-#>       
-#>                 [,6]          [,7]
-#>   [1,]  2.612507e+30  1.805781e+30
-#>   [2,]  5.781097e+39  3.718318e+39
-#>   [3,]  1.010606e+06  9.280637e+05
-#>   [4,] -7.820534e+36 -4.920776e+36
-#>   [5,] -2.153521e+04 -2.002638e+04
-#>   [6,]  2.070609e+74  5.003415e+38
-#>   [7,]  5.003415e+38  8.967219e+12
+#>         [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
+#>   [1,]  7.95 -0.01  0.50  4.27  26.95  4.01  0.46
+#>   [2,] -0.01  0.99  0.12 -0.14   0.93  0.35 -0.13
+#>   [3,]  0.50  0.12  0.70  0.27   2.27  0.63 -0.05
+#>   [4,]  4.27 -0.14  0.27  5.74   5.58  2.24  0.45
+#>   [5,] 26.95  0.93  2.27  5.58 161.89 16.70  2.17
+#>   [6,]  4.01  0.35  0.63  2.24  16.70  5.44  0.38
+#>   [7,]  0.46 -0.13 -0.05  0.45   2.17  0.38  1.26
 #> 
 #> ====================================
 #> Estimation Method: Gibbs 
@@ -867,40 +855,40 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.04  0.07 -0.28  0.05 -0.03
-#>  [2,]  0.03  0.70  0.04 -0.16  0.75 -0.01  0.03
-#>  [3,] -0.02  0.10  1.01 -0.39  0.20 -0.02 -0.03
-#>  [4,]  0.26  0.02  0.03  0.13  1.79  0.25  0.04
+#>  [1,]  0.06 -0.02  0.03  0.06 -0.27  0.04 -0.03
+#>  [2,]  0.02  0.70  0.03 -0.17  0.75 -0.02  0.03
+#>  [3,] -0.01  0.10  1.01 -0.39  0.28 -0.02 -0.03
+#>  [4,]  0.27  0.02  0.03  0.14  1.79  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.22 -0.13  0.36
-#>  [8,]  0.04  0.00  0.01  0.03  0.12  0.00  0.02
-#>  [9,] -0.06  0.19  0.07  0.10 -0.68  0.04 -0.04
-#> [10,] -0.05 -0.07 -0.09  0.39 -0.89 -0.11 -0.02
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.03  0.06  0.01
+#>  [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
+#>  [7,]  0.08  0.00  0.03  0.04 -0.17 -0.13  0.36
+#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
+#>  [9,] -0.06  0.19  0.07  0.11 -0.67  0.04 -0.04
+#> [10,] -0.06 -0.07 -0.09  0.39 -0.98 -0.11 -0.03
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.01  0.05  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.04 -0.01  0.01  0.01 -0.56  0.16 -0.01
-#> [14,] -0.03  0.03  0.03  0.04 -0.35 -0.13  0.30
+#> [13,]  0.03 -0.01  0.01  0.00 -0.55  0.16 -0.01
+#> [14,] -0.04  0.03  0.03  0.04 -0.39 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
-#> [1,] 3.19
-#> [2,] 2.47
-#> [3,] 4.49
-#> [4,] 3.38
+#> [1,] 3.20
+#> [2,] 2.46
+#> [3,] 4.45
+#> [4,] 3.39
 #> [5,] 4.63
-#> [6,] 1.66
+#> [6,] 1.67
 #> [7,] 1.02
 #> 
 #> Sigma_u posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.89 -0.01  0.50  4.23  26.72  3.96  0.43
-#> [2,] -0.01  1.00  0.12 -0.14   0.82  0.34 -0.14
-#> [3,]  0.50  0.12  0.70  0.27   2.30  0.64 -0.05
-#> [4,]  4.23 -0.14  0.27  5.74   5.32  2.23  0.44
-#> [5,] 26.72  0.82  2.30  5.32 160.76 16.41  2.03
-#> [6,]  3.96  0.34  0.64  2.23  16.41  5.40  0.35
-#> [7,]  0.43 -0.14 -0.05  0.44   2.03  0.35  1.25
+#> [1,]  7.90 -0.02  0.50  4.20  26.76  3.97  0.45
+#> [2,] -0.02  1.00  0.12 -0.14   0.86  0.34 -0.14
+#> [3,]  0.50  0.12  0.70  0.27   2.28  0.64 -0.05
+#> [4,]  4.20 -0.14  0.27  5.69   5.26  2.20  0.45
+#> [5,] 26.76  0.86  2.28  5.26 161.23 16.57  2.06
+#> [6,]  3.97  0.34  0.64  2.20  16.57  5.45  0.37
+#> [7,]  0.45 -0.14 -0.05  0.45   2.06  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -1036,19 +1024,17 @@ irf <- IRF(bvar_obj,
 ## Example 3 (Swedish data, 1987Q2-2025Q3)
 
 Now a quick last example, using Swedish data up until 2025 for real GDP
-growth specified as
-$100 [ \ln( \textrm{realGDP}_t) - \ln (\textrm{realGDP}_{t-1}) ]$, CPIF
-inflation, where $100 [ \ln( CPIF_t) - \ln (CPIF_{t-1}) ]$, the
+growth specified as $100 [\ln( realGDP_t) - \ln (realGDP_{t-1})]$, CPIF
+inflation, where $100 [\ln( CPIF_t) - \ln (CPIF_{t-1})]$, the
 unemployment rate, and the 3-month interest rate. The CPIF index
-$\textrm{CPIF}_t$ is originally on a monthly frequency, as such the CPIF
-index value of the last month in each quarter is taken to be the
-quarterly value. We will do a similar setup as in the first example,
-except now we use the uninformative inverse wishart prior for the
-covariance matrix ($\Sigma_u$). Note that if you want to use an
-informative prior, you are free to do so by changing
-‘bvar_obj\$priors\$V_0’ (scale matrix) and ‘bvar_obj\$priors\$m_0’
-(degrees of freedom), before you fit the model. For the forecasts, we
-use median as the point forecast.
+$CPIF_t$ is originally on a monthly frequency, as such the CPIF index
+value of the last month in each quarter is taken to be the quarterly
+value. We will do a similar setup as in the first example, except now we
+use the uninformative inverse wishart prior for the covariance matrix
+($\Sigma_u$). Note that if you want to use an informative prior, you are
+free to do so by changing ‘bvar_obj\$priors\$V_0’ (scale matrix) and
+‘bvar_obj\$priors\$m_0’ (degrees of freedom), before you fit the model.
+For the forecasts, we use median as the point forecast.
 
 ``` r
 rm(list = ls())
@@ -1518,13 +1504,13 @@ recent time point.
 par(mfrow=c(4,2))
 irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=20,type="median")
 irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=265,type="median")
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=265,type="median")
+irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=255,type="median")
+irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=255,type="median")
 
 irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=20,type="median")
 irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=155,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=155,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=152,type="median")
+irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=152,type="median")
 ```
 
 <img src="man/figures/README-unnamed-chunk-44-1.png" width="100%" />
@@ -1577,8 +1563,6 @@ fcst2 <- forecast(bvar_obj,
                   estimation="gibbs")
 ```
 
-<img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-45-2.png" width="100%" />
-
 ``` r
 compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
   
@@ -1605,9 +1589,9 @@ compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
           ylim=ylim,
           col = "black", lwd = 2)
   
-  lines(time_full[-1], lower_full[-1], col = "red", lwd = 2,lty=3)
-  lines(time_full[-1], upper_full[-1], col = "red", lwd = 2,lty=3)
-  lines(time_full, m_full, col = "red", lwd = 2)
+  lines(time_full[-1], lower_full[-1], col = "blue", lwd = 2,lty=3)
+  lines(time_full[-1], upper_full[-1], col = "blue", lwd = 2,lty=3)
+  lines(time_full, m_full, col = "blue", lwd = 2)
   
   fcst_m2 <- fcst2$forecast[,i]
   fcst_lower2 <- fcst2$lower[,i]
@@ -1616,9 +1600,9 @@ compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
   m_full2 <- c(tail(smply, 1), fcst_m2)
   lower_full2 <- c(tail(smply, 1), fcst_lower2)
   upper_full2 <- c(tail(smply, 1), fcst_upper2)
-  lines(time_full[-1], lower_full2[-1], col = "blue", lwd = 2,lty=3)
-  lines(time_full[-1], upper_full2[-1], col = "blue", lwd = 2,lty=3)
-  lines(time_full, m_full2, col = "blue", lwd = 2)
+  lines(time_full[-1], lower_full2[-1], col = "red", lwd = 2,lty=3)
+  lines(time_full[-1], upper_full2[-1], col = "red", lwd = 2,lty=3)
+  lines(time_full, m_full2, col = "red", lwd = 2)
   
   legend("bottomleft", legend=c("SS-BVAR-SV", "SS-BVAR"), col=c("blue", "red"), lwd=2, bty="n")
 }
