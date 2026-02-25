@@ -451,7 +451,7 @@ bvar_obj <- bvar(data = yt)
 ```
 
 
-Only a constant this time, i.e. $d_t=1 \forall t$, thus $q=1$. The lag order $p$ is not specified, but looking at Gustafsson, Villani and Stockhammar (2023) (same data etc.) we can infer that they use $p=2$.
+Only a constant this time, i.e. $d_t = 1 \forall t$, and therefore $q=1$. The lag order $p$ is not specified, but looking at Gustafsson, Villani and Stockhammar (2023) (same data etc.) we can infer that they use $p=2$.
 
 
 ```{r, fig.width=8, fig.height=8}
@@ -484,7 +484,7 @@ For the steady-state coefficients, the prior probability intervals (normal distr
 pnorm(1)-pnorm(-1)
 ```
 
-Note that we only have a constant now, so then $q=1$ and $\Psi$ only has one column $\psi_1$. Also the growth rate variables (everything except 'FEDFUNDS') are already in the form $400 [ \ln (z_t) - \ln (z_{t-1}) ]$, so we can specify all of the intervals 'as is'. See Gustafsson and Villani (2025) for the intervals.
+Note that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. Also the growth rate variables (everything except 'FEDFUNDS') are already in the form $400 [ \ln (z_t) - \ln (z_{t-1}) ]$, so we can specify all of the intervals 'as is'. See Gustafsson and Villani (2025) for the intervals.
 
 
 ```{r, fig.width=8, fig.height=8}
