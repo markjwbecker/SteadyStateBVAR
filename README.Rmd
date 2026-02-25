@@ -55,7 +55,9 @@ $$
 E(y_t)=\mu_t=\Psi d_t
 $$
 
-is the **steady state**. Note that the current version of this package only allows for $d_t$ to either just contain a constant, a constant and a dummy variable, or a constant and a time trend. We can stack the (transposed) $\Pi_i$ matrices in the $(kp \times k)$ matrix $\beta$
+is the unconditional mean, or the **steady state**, of the process. Since long-horizon forecasts from stationary VARs converge to the unconditional mean/steady state, it is naturally very important from a forecasting perspective to have precise inference on $\Psi$.
+
+Note that the current version of this package only allows for $d_t$ to either just contain a constant, a constant and a dummy variable, or a constant and a time trend. We can stack the (transposed) $\Pi_i$ matrices in the $(kp \times k)$ matrix $\beta$
 
 $$
 \beta=
@@ -72,7 +74,7 @@ $$
 y_t' =d_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t'
 $$
 
-where $w_t'=(y_{t-1}',\dots,y_{t-p}')$ is a $kp$-dimensional vector of lagged endogenous variables, and $q_t'=(d_{t-1}',\dots,d_{t-p}')$ is a $qp$-dimensional vector of lagged deterministic (exogenous) variables, $I_p$ is the $(p \times p)$ identity matrix and $\otimes$ denotes the Kronecker product. This is how the likelihood is written in the Stan code. The goal is to estimate $\beta, \Psi$ and $\Sigma_u$, therefore priors are needed. Note that we assume prior independence between $\beta, \Psi$ and $\Sigma_u$. Starting with $\beta$, we use the Minnesota prior where
+where $w_t'=(y_{t-1}',\dots,y_{t-p}')$ is a $kp$-dimensional vector of lagged endogenous variables, and $q_t'=(d_{t-1}',\dots,d_{t-p}')$ is a $qp$-dimensional vector of lagged deterministic (exogenous) variables, $I_p$ is the $(p \times p)$ identity matrix and $\otimes$ denotes the Kronecker product. This is how the likelihood is written in the Stan code. The goal is to estimate $\beta, \Psi$ and $\Sigma_u$, therefore priors are needed. First, prior independence between $\beta, \Psi$ and $\Sigma_u$ is assumed. Starting with $\beta$, we use the Minnesota prior where
 
 
 $$
@@ -91,7 +93,7 @@ $$
 $$
 
 
-Here $\lambda_1$, $\lambda_2$ and $\lambda_3$ are scalar hyperparameters known as the overall tightness, the cross-equation tightness and the lag decay rate. Furthermore, $\sigma_i^2$ is the $(i,i)$:th element of $\Sigma_u$, which we do not know, and therefore replace with an estimate. In this package, it is replaced by the least squares residual variance from a univariate autoregression for variable $i$ with $p$ lags (including the constant and dummy variable if applicable). Moving on to $\Psi$ the prior we use is
+Here $\lambda_1$, $\lambda_2$ and $\lambda_3$ are scalar hyperparameters known as the overall tightness, the cross-equation tightness and the lag decay rate. Furthermore, $\sigma_i^2$ is the $(i,i)$:th element of $\Sigma_u$, which we do not know, and therefore replace with an estimate. In this package, it is replaced by the least squares residual variance from a univariate autoregression for variable $i$ with $p$ lags (including the constant and dummy/trend variable if applicable). Moving on to $\Psi$ the prior we use is
 
 
 $$
@@ -321,9 +323,9 @@ Now we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -407,8 +409,8 @@ Now if desired, the user can estimate the model with a Gibbs sampler instead.
 
 ```{r, fig.width=8, fig.height=8, eval=FALSE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 1000,
+                warmup = 250,
                 chains = 1,
                 estimation = "gibbs")
 
@@ -543,13 +545,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 1000,
+                warmup = 250,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 1000,
+                warmup = 250,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -752,9 +754,9 @@ bvar_obj$predict$H <- 40
 bvar_obj$predict$d_pred <- cbind(rep(1, 40), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 ```{r, fig.width=10, fig.height=8,eval=TRUE}
@@ -829,7 +831,7 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \end{aligned}
 $$
 
-We have $t=0,\dots,T=300$ observations, $k=2$, $p=1$, and parameters
+We have $t=0,\dots,T=350$ observations where the last $50$ observations are left as hold-out data, $k=2$, $p=1$, $q=1$ and parameters
 
 
 $$
@@ -859,8 +861,8 @@ $$
 y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
-\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 76 \\
-\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 76
+\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 75 \\
+\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 75
 \end{cases} \\
 \end{aligned}
 $$
@@ -872,13 +874,13 @@ Now lets simulate from this DGP
 ```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE}
 rm(list = ls())
 set.seed(123)
-N <- 301
+N <- 351
 
 Psi <- matrix(c(2, 6,
                 3, 9), 2, 2, byrow = TRUE)
 
 Pi_1 <- matrix(c( 0.80, 0.15,
-                 -0.20, 0.70), 2, 2, byrow = TRUE)
+                  -0.20, 0.70), 2, 2, byrow = TRUE)
 
 A <- matrix(c(1.00, 0.00,
               0.25, 1.00), 2, 2, byrow = TRUE)
@@ -890,12 +892,12 @@ gamma_1 <- c(0.85,
              0.95)
 
 Phi <- matrix(c( 0.8,-0.2,
-                -0.2, 0.6),2,2)
+                 -0.2, 0.6),2,2)
 
 log_lambda <- matrix(NA, N, 2)
 log_lambda[1,] <- gamma_0/(1-gamma_1) #ln lambda_t=0
 
-dummy <- c(rep(1,(floor(N/4)+1)), rep(0,N-(floor(N/4)+1)))
+dummy <- c(rep(1,76), rep(0,N-76))
 d <- cbind(rep(1, N), dummy)
 y <- matrix(NA, N, 2)
 y[1,] <- Psi %*% d[1,] #y_t=0
@@ -911,7 +913,9 @@ for (t in 2:N) {
   y[t, ] = Psi%*%d[t,] + Pi_1 %*% (y[t-1,] - Psi%*%d[t-1,])  + u_t
   Sigma_u[,,t] <- solve(A)%*%Lambda_t%*%t(solve(A))
 }
-yt <- y
+zt <- y
+yt <- y[1:301,]
+dummy <- dummy[1:301]
 par(mfrow = c(1, 1))
 plot.ts(yt)
 ```
@@ -934,9 +938,9 @@ lambda_3 <- 1.00
 
 fol_pm=c(0.9,0.9)
 
-theta_Psi <- c(2,6,6,10)
+theta_Psi <- c(2,3,6,9)
 Omega_Psi <- diag(rep(0.25,4))
-    
+
 bvar_obj <- priors(bvar_obj,
                    lambda_1,
                    lambda_2,
@@ -991,12 +995,12 @@ bvar_obj$SV_priors <- SV_priors
 At last we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods. Then we can fit the model
 
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
-bvar_obj$predict$H <- 20
-bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0)
+bvar_obj$predict$H <- 50
+bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 1000,
+                warmup = 250,
                 chains = 1)
 ```
 
@@ -1036,10 +1040,10 @@ We can also plot the estimates (posterior means) of the log volatilities ($\ln \
 ```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
-lines(2:N, log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol="log_lambda")
-lines(2:N, log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
 Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
@@ -1053,10 +1057,10 @@ for(t in 1:(N)){
 
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,4), plot_idx=1, vol="sd")
-lines(2:N, sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="sd")
-lines(2:N, sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
 We can again do some impulse response analysis, almost as usual. Now, since our covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which time point $t$ to use. The default setting is the most recent time point.
@@ -1077,23 +1081,14 @@ irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=152,type="me
 
 We see that the shapes of the IRFs are similar over time, but the magnitudes differ quite a lot depending on what time point $t$ we are in.
 
-As a last analysis, let us plot the forecasts from the steady-state BVAR with (SS-BVAR-SV) and without (SS-BVAR) stochastic volatility to see the difference.
+As a last analysis, let us compare the steady-state BVAR with (SS-BVAR-SV) and without (SS-BVAR) stochastic volatility specification to see the difference. For the SS-BVAR we do the exact same setup, except now we have constant $\Sigma_u$ and use Jeffreys prior.
+
 
 ```{r, echo=TRUE, results='hide', warning=FALSE, message=FALSE, fig.show='hide'}
-rm(bvar_obj)
-bvar_obj <- bvar(data = yt)
-bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant_and_dummy", dummy = dummy)
+bvar_obj2 <- bvar(data = yt)
+bvar_obj2 <- setup(bvar_obj2, p=1, deterministic = "constant_and_dummy", dummy = dummy)
 
-lambda_1 <- 0.20
-lambda_2 <- 0.50
-lambda_3 <- 1.00
-
-fol_pm=c(0.9,0.9)
-
-theta_Psi <- c(2,6,6,10)
-Omega_Psi <- diag(rep(0.25,4))
-
-bvar_obj <- priors(bvar_obj,
+bvar_obj2 <- priors(bvar_obj2,
                    lambda_1,
                    lambda_2,
                    lambda_3,
@@ -1102,16 +1097,16 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi,
                    Jeffrey=TRUE)
 
-bvar_obj$predict$H <- 20
-bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0)
+bvar_obj2$predict$H <- 50
+bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
-bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+bvar_obj2 <- fit(bvar_obj2,
+                iter = 1000,
+                warmup = 500,
                 chains = 1,
                 estimation="gibbs")
 
-fcst2 <- forecast(bvar_obj,
+fcst2 <- forecast(bvar_obj2,
                   ci = 0.95,
                   fcst_type = "mean",
                   plot_idx = c(1,2),
@@ -1119,7 +1114,19 @@ fcst2 <- forecast(bvar_obj,
                   estimation="gibbs")
 ```
 
-```{r, fig.width=10, fig.height=8,eval=TRUE}
+Lets compare the results
+
+```{r, fig.width=8, fig.height=16,eval=TRUE}
+#--- SS-BVAR ---
+summary(bvar_obj2)
+#--- SS-BVAR-SV ---
+summary(bvar_obj)
+```
+
+Very similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
+
+
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
   
   Y <- bvar_obj$data
@@ -1147,7 +1154,7 @@ compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
   
   lines(time_full[-1], lower_full[-1], col = "blue", lwd = 2,lty=3)
   lines(time_full[-1], upper_full[-1], col = "blue", lwd = 2,lty=3)
-  lines(time_full, m_full, col = "blue", lwd = 2)
+  lines(time_full, m_full, col = "blue", lwd = 3)
   
   fcst_m2 <- fcst2$forecast[,i]
   fcst_lower2 <- fcst2$lower[,i]
@@ -1158,15 +1165,26 @@ compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim){
   upper_full2 <- c(tail(smply, 1), fcst_upper2)
   lines(time_full[-1], lower_full2[-1], col = "red", lwd = 2,lty=3)
   lines(time_full[-1], upper_full2[-1], col = "red", lwd = 2,lty=3)
-  lines(time_full, m_full2, col = "red", lwd = 2)
+  lines(time_full, m_full2, col = "red", lwd = 3)
   
-  legend("bottomleft", legend=c("SS-BVAR-SV", "SS-BVAR"), col=c("blue", "red"), lwd=2, bty="n")
+  legend("bottomleft", legend=c("SS-BVAR-SV", "SS-BVAR", "true steady state", "hold-out data"),
+         col=c("blue", "red", "grey","green"),
+         lwd=c(3,3,5,2), lty=c(1,1,1,1),bty="n")
 }
 
 par(mfrow=c(2,1))
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,321), ylim=c(-6,11))
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,321), ylim=c(-5,18))
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-11,13))
+segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
+segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
+lines(301:351, c(tail(yt[,1],1),zt[302:351,1]), col="green", lty=1, lwd=2)
+
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-6,20))
+segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
+segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
+lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
+
+Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is in the prediction intervals. We can see that the SS-BVAR-SV has a wider interval, even though both are 95\% intervals. Looking at the hold-out data, it is clear that the SS-BVAR-SV does a better job at capturing the stochastic volatility in the data (how surprising!).
 
 ## References
 
