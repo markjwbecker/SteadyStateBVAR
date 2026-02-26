@@ -939,7 +939,7 @@ lambda_3 <- 1.00
 fol_pm=c(0.9,0.9)
 
 theta_Psi <- c(2,3,6,9)
-Omega_Psi <- diag(rep(0.25,4))
+Omega_Psi <- diag(rep(0.1,4))
 
 bvar_obj <- priors(bvar_obj,
                    lambda_1,
@@ -1123,7 +1123,7 @@ summary(bvar_obj2)
 summary(bvar_obj)
 ```
 
-Very similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
+Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 
 ```{r, fig.width=12, fig.height=12,eval=TRUE}
@@ -1184,7 +1184,7 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is in the prediction intervals. We can see that the SS-BVAR-SV has a wider interval, even though both are 95\% intervals. Looking at the hold-out data, it is clear that the SS-BVAR-SV does a better job at capturing the stochastic volatility in the data (how surprising!).
+Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is in the prediction intervals. We can see that the SS-BVAR-SV has a wider interval, even though both are 95\% intervals. Looking at the hold-out data, it is clear that the SS-BVAR-SV does a better job at capturing the stochastic volatility in the data (how surprising!).
 
 ## References
 
