@@ -323,9 +323,9 @@ Now we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -409,8 +409,8 @@ Now if desired, the user can estimate the model with a Gibbs sampler instead.
 
 ```{r, fig.width=8, fig.height=8, eval=FALSE}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1,
                 estimation = "gibbs")
 
@@ -545,13 +545,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 20000,
+                warmup = 10000,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -754,9 +754,9 @@ bvar_obj$predict$H <- 40
 bvar_obj$predict$d_pred <- cbind(rep(1, 40), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 ```{r, fig.width=10, fig.height=8,eval=TRUE}
@@ -999,9 +999,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 Let see if we managed to reasonably recover the true parameters... Remember here since $p=1$ we have $\beta'=\Pi_1$.
@@ -1101,8 +1101,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                iter = 1000,
-                warmup = 500,
+                iter = 50000,
+                warmup = 10000,
                 chains = 1,
                 estimation="gibbs")
 
