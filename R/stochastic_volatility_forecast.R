@@ -1,7 +1,7 @@
 stochastic_volatility_forecast <- function(x, ci=0.95, plot_idx=NULL, xlim=NULL, ylim=NULL,vol="log_lambda") {
   draws <- rstan::extract(x$fit$stan)
-  log_lambda_array <- x$fit$stanf$log_lambda_array
-  Sigma_u_array <- x$fit$stanf$Sigma_u_array
+  log_lambda_pred <- draws$log_lambda_pred
+  Sigma_u_pred <- draws$Sigma_u_pred
   N <- dim(bvar_obj$data)[1]
   p <- bvar_obj$setup$p
   k <- bvar_obj$setup$k
@@ -39,10 +39,10 @@ stochastic_volatility_forecast <- function(x, ci=0.95, plot_idx=NULL, xlim=NULL,
     
     for (h in 1:H) {
       if (vol == "sd") {
-        sigma2_draws <- Sigma_u_array[, h, i, i]
+        sigma2_draws <- Sigma_u_pred[, h, i, i]
         draws_h <- sqrt(sigma2_draws)
       } else {
-        draws_h <- log_lambda_array[, h, i]
+        draws_h <- log_lambda_pred[, h, i]
       }
       vol_pred[N_est+h]       <- mean(draws_h)
       vol_pred_lower[N_est+h] <- quantile(draws_h, alpha/2)
