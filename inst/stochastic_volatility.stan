@@ -95,10 +95,10 @@ model {
 
   for (t in 2:N) {
     vector[k] nu_t;
-    nu_t~ multi_normal(rep_vector(0, k), Phi);
     for (i in 1:k) {
-      log_lambda[t, i] = gamma_0[i]  + gamma_1[i] * log_lambda[t-1, i] + nu_t[i];
+      nu_t[i] = log_lambda[t, i] - gamma_0[i] - gamma_1[i] * log_lambda[t-1, i];
     }
+    nu_t ~ multi_normal(rep_vector(0, k), Phi);
   }
 
   for(t in 1:N){
@@ -127,6 +127,7 @@ generated quantities {
   vector[k] nu;
   
   nu = multi_normal_rng(rep_vector(0,k), Phi);
+  
   for (i in 1:k) {
     log_lambda_pred[1,i] = (gamma_0[i] + gamma_1[i] * log_lambda[N, i] + nu[i]);
     }
