@@ -1,4 +1,4 @@
-summary.bvar <- function(x) {
+summary.bvar <- function(x, pars = NULL) {
   
   has_stan  <- !is.null(x$fit$stan)
   has_gibbs <- !is.null(x$fit$gibbs)
@@ -8,19 +8,24 @@ summary.bvar <- function(x) {
   
   summaries <- list()
   
+  keep_param <- function(lst) {
+    if (is.null(pars)) return(lst)
+    lst[names(lst) %in% pars]
+  }
+  
   if (has_stan && is.null(x$SV)) {
     fit <- x$fit$stan
     posterior <- rstan::extract(fit)
-    summaries$stan <- list(
+    summaries$stan <- keep_param(list(
       method = "Stan",
       beta  = round(apply(posterior$beta,  c(2,3), mean), 2),
       Psi   = round(apply(posterior$Psi,   c(2,3), mean), 2),
       Sigma = round(apply(posterior$Sigma_u, c(2,3), mean), 2)
-    )
+    ))
   } else if (has_stan && x$SV){
     fit <- x$fit$stan
     posterior <- rstan::extract(fit)
-    summaries$stan <- list(
+    summaries$stan <- keep_param(list(
       method = "Stan",
       beta     = round(apply(posterior$beta,  c(2,3), mean), 2),
       Psi      = round(apply(posterior$Psi,   c(2,3), mean), 2),
@@ -28,17 +33,17 @@ summary.bvar <- function(x) {
       gamma_0  = round(apply(posterior$gamma_0, 2, mean), 2),
       gamma_1  = round(apply(posterior$gamma_1, 2, mean), 2),
       Phi      = round(apply(posterior$Phi,   c(2,3), mean), 2)
-    )
+    ))
   }
   
   if (has_gibbs) {
     fit <- x$fit$gibbs
-    summaries$gibbs <- list(
+    summaries$gibbs <- keep_param(list(
       method = "Gibbs",
       beta  = round(fit$beta_posterior_mean, 2),
       Psi   = round(fit$Psi_posterior_mean, 2),
       Sigma = round(fit$Sigma_u_posterior_mean, 2)
-    )
+    ))
   }
   
   out <- list(summaries = summaries,SV = x$SV)
@@ -60,15 +65,8 @@ print.summary.bvar <- function(x) {
       cat("====================================\n\n")
     }
     
-    cat("beta posterior mean\n"); print(s$beta); cat("\n")
-    cat("Psi posterior mean\n"); print(s$Psi); cat("\n")
-    if (is.null(x$SV)) {
-      cat("Sigma_u posterior mean\n"); print(s$Sigma); cat("\n")
-    } else {
-      cat("A posterior mean\n"); print(s$A); cat("\n")
-      cat("gamma_0 posterior mean\n\n"); print(s$gamma_0); cat("\n")
-      cat("gamma_1 posterior mean\n\n"); print(s$gamma_1); cat("\n")
-      cat("Phi posterior mean\n"); print(s$Phi); cat("\n")
+    for (param_name in setdiff(names(s), "method")) {
+      cat(param_name, "posterior mean\n"); print(s[[param_name]]); cat("\n")
     }
   }
   
