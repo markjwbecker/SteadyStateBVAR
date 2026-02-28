@@ -94,7 +94,8 @@ model {
   log_lambda[1] ~ multi_normal(theta_log_lambda_0, Omega_log_lambda_0);
 
   for (t in 2:N) {
-    vector[k] nu_t ~ multi_normal(rep_vector(0, k), Phi);
+    vector[k] nu_t;
+    nu_t~ multi_normal(rep_vector(0, k), Phi);
     for (i in 1:k) {
       log_lambda[t, i] = gamma_0[i]  + gamma_1[i] * log_lambda[t-1, i] + nu_t[i];
     }
