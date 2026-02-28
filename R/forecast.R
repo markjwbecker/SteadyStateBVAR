@@ -7,30 +7,22 @@ forecast <- function (x, ci = 0.95, fcst_type = c("mean", "median"), growth_rate
   freq <- frequency(Y)
   if (is.null(plot_idx)) 
     plot_idx <- 1:ncol(Y)
+  
   if (estimation == "gibbs") {
     y_pred <- x$fit$gibbs$fcst_draws
     y_pred_m <- apply(y_pred, c(1, 2), fcst_type)
     alpha <- 1 - ci
     y_pred_lower <- apply(y_pred, c(1, 2), quantile, probs = alpha/2)
-    y_pred_upper <- apply(y_pred, c(1, 2), quantile, probs = 1 - 
-                            alpha/2)
-  }
-  else if (estimation == "stan" && !isTRUE(x$SV)) {
+    y_pred_upper <- apply(y_pred, c(1, 2), quantile, probs = 1 - alpha/2)
+  } else {
     posterior <- rstan::extract(x$fit$stan)
     y_pred <- posterior$y_pred
     y_pred_m <- apply(y_pred, c(2, 3), fcst_type)
     alpha <- 1 - ci
     y_pred_lower <- apply(y_pred, c(2, 3), quantile, probs = alpha/2)
-    y_pred_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - 
-                            alpha/2)
-  } else {
-  y_pred <- x$fit$stanf$fcst_draws
-  y_pred_m <- apply(y_pred, c(2, 3), fcst_type)
-  alpha <- 1 - ci
-  y_pred_lower <- apply(y_pred, c(2, 3), quantile, probs = alpha/2)
-  y_pred_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - 
-                          alpha/2)
+    y_pred_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - alpha/2)
   }
+  
   T <- nrow(Y)
   H <- nrow(y_pred_m)
   m <- ncol(Y)
