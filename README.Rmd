@@ -38,7 +38,7 @@ https://github.com/stan-dev/rstan/wiki/Rstan-Getting-Started
 Then you can install SteadyStateBVAR with:
 
 ```{r, eval=FALSE}
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
 ```
 ## Introduction
 
@@ -321,7 +321,7 @@ bvar_obj$predict$H <- 12
 
 Now we can fit the model.
 
-```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
+```{r, fig.width=8, fig.height=8, results='hide',eval=FALSE}
 bvar_obj <- fit(bvar_obj,
                 iter = 20000,
                 warmup = 10000,
@@ -330,13 +330,13 @@ bvar_obj <- fit(bvar_obj,
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
-```{r, fig.width=8, fig.height=8,eval=TRUE}
+```{r, fig.width=8, fig.height=8,eval=FALSE}
 summary(bvar_obj)
 ```
 
 Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean at 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to get on the annualized scale).
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -346,7 +346,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate, and compare with the actual true values
 
-```{r, fig.width=10, fig.height=8,eval=TRUE}
+```{r, fig.width=10, fig.height=8,eval=FALSE}
 (villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -359,7 +359,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 95% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r, fig.width=8, fig.height=8,eval=TRUE}
+```{r, fig.width=8, fig.height=8,eval=FALSE}
 fcst <- forecast(bvar_obj,
                  ci = 0.95,
                  fcst_type = "mean",
@@ -369,7 +369,7 @@ fcst <- forecast(bvar_obj,
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to the forecasting, we can also choose between mean or median (default is median).
 
-```{r, fig.width=10, fig.height=10,eval=TRUE}
+```{r, fig.width=10, fig.height=10,eval=FALSE}
 par(mfrow=c(2,2))
 irf <- IRF(bvar_obj,
            H=20,
@@ -543,7 +543,7 @@ bvar_obj$predict$d_pred <- matrix(rep(1, 12))
 
 Then estimate the model, both with Stan and the Gibbs sampler.
 
-```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
+```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
 bvar_obj <- fit(bvar_obj,
                 iter = 20000,
                 warmup = 10000,
@@ -557,13 +557,13 @@ bvar_obj <- fit(bvar_obj,
 ```
 Lets check the posterior means (very similar as expected)
 
-```{r, fig.width=8, fig.height=8,eval=TRUE}
+```{r, fig.width=8, fig.height=8,eval=FALSE}
 summary(bvar_obj)
 ```
 
 Now lets do Figure 10
 
-```{r, fig.width=10, fig.height=10,eval=TRUE}
+```{r, fig.width=10, fig.height=10,eval=FALSE}
 Psi_draws_gibbs  <- bvar_obj$fit$gibbs$Psi_draws
 Psi_draws_stan <- rstan::extract(bvar_obj$fit$stan)$Psi
 
@@ -600,7 +600,7 @@ legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="
 
 And Figure 11 (mean +/- 1 std deviation bands of predictive distribution)
 
-```{r, fig.width=8, fig.height=8,eval=TRUE}
+```{r, fig.width=8, fig.height=8,eval=FALSE}
 GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
   
   y_pred <- bvar_obj$fit$gibbs$fcst_draws
@@ -673,7 +673,7 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 Now just for fun let us see the response of real gdp to a shock in the fed funds rate
 
-```{r, fig.width=10, fig.height=8,eval=TRUE}
+```{r, fig.width=10, fig.height=8,eval=FALSE}
 irf <- IRF(bvar_obj,
            H=20,
            response=1,
@@ -695,7 +695,7 @@ yt <- SwedishData_1987_2025
 plot.ts(yt)
 ```
 
-```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
+```{r, fig.width=8, fig.height=8, results='hide',eval=FALSE}
 bvar_obj <- bvar(data = yt)
 bp <- which(time(yt) == 1992.75)
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
@@ -759,7 +759,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 4)
 ```
 
-```{r, fig.width=10, fig.height=8,eval=TRUE}
+```{r, fig.width=10, fig.height=8,eval=FALSE}
 par(mfrow=c(2,2))
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
@@ -999,8 +999,8 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 5000,
                 chains = 4)
 ```
 
@@ -1020,9 +1020,6 @@ For $h=1,\dots,H$:
 generate $\nu_{T+h}^{(j)}$ from $\nu_{T+h}\sim N(0,\Phi^{(j)})$, then compute $\ln \lambda_{T+h}^{(j)} = \gamma_{0}^{(j)} + \gamma_{1}^{(j)} \ln \lambda_{T+h-1}^{(j)} + \nu_{T+h}^{(j)}$. After that form $\Lambda_{T+h}^{(j)}$, and then compute the implied covariance matrix $\Sigma_{u,T+h}^{(j)} = A^{(j)-1} \Lambda_{T+h}^{(j)} (A^{(j)-1})'$.
 
 Then generate the shock to the VAR $u_{T+h}^{(j)}$ from $u_{T+h} \sim N(0,\Sigma_{u,T+h}^{(j)})$ and then calculate the forecast $\tilde{y}_{T+h}^{(j)}$ as per the usual way [see step 4 of Algorithm 4 in Karlsson (2013)].
-
-As I have had some problems implementing the forecasting routine directly in the Stan code, it is done in R/fit.R instead (for those who are interested). It does not make a difference however if it is done inside or outside of Stan, but I am working on fixing it.
-
 
 
 ```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
@@ -1046,7 +1043,7 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol=
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
+Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
 
 
 ```{r, fig.width=12, fig.height=12,eval=TRUE}
@@ -1101,8 +1098,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                iter = 50000,
-                warmup = 10000,
+                iter = 25000,
+                warmup = 5000,
                 chains = 1,
                 estimation="gibbs")
 
@@ -1118,9 +1115,9 @@ Lets compare the results
 
 ```{r, fig.width=8, fig.height=16,eval=TRUE}
 #--- SS-BVAR ---
-summary(bvar_obj2)
+summary(bvar_obj2, pars = c("beta", "Psi"))
 #--- SS-BVAR-SV ---
-summary(bvar_obj)
+summary(bvar_obj, pars = c("beta", "Psi"))
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1185,6 +1182,56 @@ lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
 Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is in the prediction intervals. We can see that the SS-BVAR-SV has a wider interval, even though both are 95\% intervals. Looking at the hold-out data, it is clear that the SS-BVAR-SV does a better job at capturing the stochastic volatility in the data (how surprising!).
+
+We can illustrate this also by looking at the (estimated) forecast distributions, where we clearly see that the SS-BVAR-SV places a higher probability on "tail" observations.
+
+```{r, fig.width=8, fig.height=8,eval=TRUE}
+sf <- bvar_obj$fit$stan
+draws_stan <- extract(sf)$y_pred
+draws_gibbs <- bvar_obj2$fit$gibbs$fcst_draws
+
+y1h1_sv <- draws_stan[,1,1]
+y1h1 <- draws_gibbs[1,1,]
+
+y2h1_sv <- draws_stan[,1,2]
+y2h1 <- draws_gibbs[1,2,]
+
+y1h50_sv <- draws_stan[,50,1]
+y1h50 <- draws_gibbs[50,1,]
+
+y2h50_sv <- draws_stan[,50,2]
+y2h50 <- draws_gibbs[50,2,]
+
+par(mfrow=c(2,2))
+plot_pair <- function(f1, f2, title) {
+  
+  d1 <- density(f1)
+  d2 <- density(f2)
+  
+  xlim_range <- range(c(d1$x, d2$x))
+  ylim_range <- range(c(d1$y, d2$y))
+  
+  plot(d1,
+       xlim = xlim_range,
+       ylim = ylim_range,
+       col  = "blue",
+       lwd  = 2,
+       main = title,
+       xlab = "forecast")
+  
+  lines(d2, col = "red", lwd = 2)
+  
+  legend("topright",
+         legend = c("SS-BVAR-SV", "SS-BVAR"),
+         col    = c("blue", "red"),
+         lwd    = 2)
+}
+
+plot_pair(y1h1_sv,  y1h1,  "y1, h=1")
+plot_pair(y2h1_sv,  y2h1,  "y2, h=1")
+plot_pair(y1h50_sv, y1h50, "y1, h=50")
+plot_pair(y2h50_sv, y2h50, "y2, h=50")
+```
 
 ## References
 
