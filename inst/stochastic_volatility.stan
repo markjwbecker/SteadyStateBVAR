@@ -94,11 +94,10 @@ model {
   log_lambda[1] ~ multi_normal(theta_log_lambda_0, Omega_log_lambda_0);
 
   for (t in 2:N) {
-    vector[k] nu_t;
+    vector[k] nu_t ~ multi_normal(rep_vector(0, k), Phi);
     for (i in 1:k) {
-      nu_t[i] = log_lambda[t, i] - gamma_0[i] - gamma_1[i] * log_lambda[t-1, i];
+      log_lambda[t, i] = gamma_0[i]  + gamma_1[i] * log_lambda[t-1, i] + nu_t[i];
     }
-    nu_t ~ multi_normal(rep_vector(0, k), Phi);
   }
 
   for(t in 1:N){
@@ -127,7 +126,6 @@ generated quantities {
   vector[k] nu;
   
   nu = multi_normal_rng(rep_vector(0,k), Phi);
-  
   for (i in 1:k) {
     log_lambda_pred[1,i] = (gamma_0[i] + gamma_1[i] * log_lambda[N, i] + nu[i]);
     }
@@ -142,13 +140,13 @@ generated quantities {
   
   for (h in 1:H) {
     
-    matrix[k,k] sqrtLambda;
-    sqrtLambda = diag_matrix(sqrt(exp(log_lambda_pred[h]')));
+    matrix[k,k] sqrt_Lambda;
+    sqrt_Lambda = diag_matrix(sqrt(exp(log_lambda_pred[h]')));
     
     vector[k] epsilon = multi_normal_rng(rep_vector(0,k), diag_matrix(rep_vector(1, k)));
-    vector[k] u_t = Ainv * sqrtLambda * epsilon;
+    vector[k] u_t = Ainv * sqrt_Lambda * epsilon;
     
-    Sigma_u_pred[h] = Ainv * sqrtLambda * sqrtLambda * Ainv';
+    Sigma_u_pred[h] = Ainv * (sqrt_Lambda * sqrt_Lambda) * Ainv';
     
     vector[k] yhat_t = (d_pred[h]*Psi')';
 
