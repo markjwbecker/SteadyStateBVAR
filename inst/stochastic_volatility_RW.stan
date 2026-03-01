@@ -41,10 +41,10 @@ data {
   matrix[k*q, k*q] Omega_Psi; //vec_Psi prior covariance matrix
   vector[k*(k-1)/2] theta_A; //a prior mean
   matrix[k*(k-1)/2, k*(k-1)/2] Omega_A; //a prior covariance matrix
-  vector[k] theta_log_lambda_0; //log lambda initial condition prior mean
-  matrix[k, k] Omega_log_lambda_0; //log lambda initial condition prior covariance matrix
-  real<lower=0> alpha_phi; // phi prior shape
-  real<lower=0> beta_phi; // phi prior scale
+  vector[k] mu_log_lambda_0;        // log lambda initial condition prior means
+  vector<lower=0>[k] sigma2_log_lambda_0; // log lambda initial condition prior variances
+  vector<lower=0>[k] alpha_phi;     // phi prior shapes
+  vector<lower=0>[k] beta_phi;      // phi prior scales
   int<lower=0> H; // Forecast horizon
   matrix[H, q] d_pred; //future deterministic variables
 }
@@ -86,7 +86,10 @@ transformed parameters {
 }
 
 model {
-  log_lambda[1] ~ multi_normal(theta_log_lambda_0, Omega_log_lambda_0);
+  
+  for (i in 1:k) {
+  log_lambda[1, i] ~ normal(mu_log_lambda_0[i], sqrt(sigma2_log_lambda_0[i]));
+  }
 
   for (t in 2:N) {
     for (i in 1:k) {
@@ -102,7 +105,9 @@ model {
   to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
   to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
   a  ~ multi_normal(theta_A, Omega_A);
-  phi ~ inv_gamma(alpha_phi, beta_phi);
+  for (i in 1:k) {
+  phi[i] ~ inv_gamma(alpha_phi[i], beta_phi[i]);
+}
 }
 
 generated quantities {
