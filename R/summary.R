@@ -22,7 +22,7 @@ summary.bvar <- function(x, pars = NULL) {
       Psi   = round(apply(posterior$Psi,   c(2,3), mean), 2),
       Sigma = round(apply(posterior$Sigma_u, c(2,3), mean), 2)
     ))
-  } else if (has_stan && x$SV){
+  } else if (has_stan && x$SV && x$SV_type == "AR"){
     fit <- x$fit$stan
     posterior <- rstan::extract(fit)
     summaries$stan <- keep_param(list(
@@ -33,6 +33,19 @@ summary.bvar <- function(x, pars = NULL) {
       gamma_0  = round(apply(posterior$gamma_0, 2, mean), 2),
       gamma_1  = round(apply(posterior$gamma_1, 2, mean), 2),
       Phi      = round(apply(posterior$Phi,   c(2,3), mean), 2)
+    ))
+  } else if (has_stan && x$SV && x$SV_type == "RW") {
+    fit <- x$fit$stan
+    posterior <- rstan::extract(fit)
+    summaries$stan <- keep_param(list(
+      method = "Stan",
+      beta   = round(apply(posterior$beta, c(2,3), mean), 2),
+      Psi    = round(apply(posterior$Psi,  c(2,3), mean), 2),
+      A      = round(apply(posterior$A,    c(2,3), mean), 2),
+      phi    = setNames(
+        round(apply(posterior$phi, 2, mean), 2),
+        paste0("phi_", 1:ncol(posterior$phi))
+      )
     ))
   }
   
@@ -46,11 +59,10 @@ summary.bvar <- function(x, pars = NULL) {
     ))
   }
   
-  out <- list(summaries = summaries,SV = x$SV)
+  out <- list(summaries = summaries, SV = x$SV, SV_type = x$SV_type)
   class(out) <- "summary.bvar"
   return(out)
 }
-
 
 print.summary.bvar <- function(x) {
   
@@ -65,8 +77,16 @@ print.summary.bvar <- function(x) {
       cat("====================================\n\n")
     }
     
-    for (param_name in setdiff(names(s), "method")) {
+    for (param_name in setdiff(names(s), c("method", "phi"))) {
       cat(param_name, "posterior mean\n"); print(s[[param_name]]); cat("\n")
+    }
+    
+    if (!is.null(s$phi)) {
+      cat("phi posterior means\n")
+      for (nm in names(s$phi)) {
+        cat(" ", nm, ":", s$phi[[nm]], "\n")
+      }
+      cat("\n")
     }
   }
   
