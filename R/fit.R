@@ -18,7 +18,11 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
     }
     
     if (isTRUE(x$SV)) {
-      stan_file <- system.file("stochastic_volatility.stan", package = "SteadyStateBVAR")
+      if(x$SV_type == "RW") {
+        stan_file <- system.file("stochastic_volatility_RW.stan", package = "SteadyStateBVAR")
+      } else {
+        stan_file <- system.file("stochastic_volatility_stationaryAR.stan", package = "SteadyStateBVAR")
+      }
       stan_data <- c(x$SV_priors, stan_data)
       k <- x$setup$k
       if (k == 2) {
