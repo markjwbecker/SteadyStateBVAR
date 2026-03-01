@@ -62,7 +62,7 @@ parameters {
   matrix[k, q] Psi; //Psi * d_t = steady state
   matrix[N, k] log_lambda; //log volatilities
   vector[k] gamma_0; //log volatility intercept
-  vector[k] gamma_1; //log volatility slope
+  vector<lower=0, upper=1>[k] gamma_1; //log volatility slope
   cov_matrix[k] Phi; //log volatility innovation covariance matrix
   vector[k*(k-1)/2] a; //free parameters in A
 }
@@ -84,6 +84,7 @@ transformed parameters {
     }
   }
   Ainv = inverse(A);
+  
   for (t in 1:N) {
     matrix[k,k] Lambda_t = diag_matrix(exp(log_lambda[t]'));
     Sigma_u[t] = Ainv * Lambda_t * Ainv';
@@ -107,11 +108,11 @@ model {
   }
 
   to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
-  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
-  a  ~ multi_normal(theta_A, Omega_A);
-  gamma_0  ~ multi_normal(theta_gamma_0, Omega_gamma_0);
-  gamma_1  ~ multi_normal(theta_gamma_1, Omega_gamma_1);
-  Phi     ~ inv_wishart(m_0, V_0);
+  to_vector(Psi)  ~ multi_normal(theta_Psi, Omega_Psi);
+  a               ~ multi_normal(theta_A, Omega_A);
+  gamma_0         ~ multi_normal(theta_gamma_0, Omega_gamma_0);
+  gamma_1         ~ multi_normal(theta_gamma_1, Omega_gamma_1);
+  Phi             ~ inv_wishart(m_0, V_0);
 }
 
 generated quantities {
