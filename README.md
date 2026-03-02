@@ -1261,10 +1261,7 @@ model
 bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
-bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
-                chains = 4)
+bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 4)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1278,26 +1275,21 @@ Looks like it works reasonably well! Now we can turn to forecasting. We
 follow a similar approach in section 3.5 ‘Drawing Forecasts’ in Clark
 (2011), and also step 9 of Algorithm 13 in Karlsson (2013).
 
-For each (post warmup) draw $j$, and for $h=1,\dots,H$:
-
-generate $\nu_{T+h}^{(j)}$ from
-$\nu_{T+h}\sim \textrm{N}(0,\Phi^{(j)})$, then compute
-$\ln \lambda_{T+h}^{(j)} = \gamma_{0}^{(j)} + \gamma_{1}^{(j)} \ln \lambda_{T+h-1}^{(j)} + \nu_{T+h}^{(j)}$.
-After that form $\Lambda_{T+h}^{0.5(j)}$, then generate
+For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
+$\nu^{(j)}_{T+h}$ from $\nu_{T+h} \sim \textrm{N}(0,\Phi^{(j)})$, then
+compute
+$\ln \lambda^{(j)}_{T+h} = \gamma^{(j)}_{0} + \gamma^{(j)}_{1} \ln \lambda^{(j)}_{T+h-1} + \nu^{(j)}_{T+h}$.
+After that form $\Lambda^{0.5(j)}_{T+h}$, then generate
 $\epsilon^{(j)}_{T+h}$ from
 $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$, and then compute the
 shock to the VAR
-$u^{(j)}_{T+h} = A^{-1} \Lambda_{T+h}^{0.5(j)} \epsilon_{T+h}^{(j)}$.
-After that calculate the forecast $\tilde{y}_{T+h}^{(j)}$ as per the
+$u^{(j)}_{T+h} = A^{-1} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}$.
+After that calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the
 usual way \[see step 4 of Algorithm 4 in Karlsson (2013)\].
 
 ``` r
 par(mfrow=c(2,1))
-fcst1 <- forecast(bvar_obj,
-                  ci = 0.95,
-                  fcst_type = "mean",
-                  plot_idx = c(1,2),
-                  show_all = TRUE)
+fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
 
 We can also plot the estimates (posterior means) of the log volatilities
