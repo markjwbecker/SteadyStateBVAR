@@ -8,10 +8,11 @@
   - [Example 3 (Swedish data,
     1987Q2-2025Q3)](#example-3-swedish-data-1987q2-2025q3)
   - [Stochastic volatility](#stochastic-volatility)
-    - [Stochastic volatility - stationary AR(1) log
-      volatilities](#stochastic-volatility---stationary-ar1-log-volatilities)
-    - [Stochastic volatility - Random Walk log
-      volatilities](#stochastic-volatility---random-walk-log-volatilities)
+    - [Stochastic volatility: stationary AR(1) log volatilities
+      (Carriero, Clark and Marcellino,
+      2024)](#stochastic-volatility-stationary-ar1-log-volatilities-carriero-clark-and-marcellino-2024)
+    - [Stochastic volatility: Random Walk log volatilities (Clark,
+      2011)](#stochastic-volatility-random-walk-log-volatilities-clark-2011)
   - [References](#references)
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
@@ -290,6 +291,7 @@ lambda_1 <- 0.2
 lambda_2 <- 0.5
 lambda_3 <- 1.0
 
+#fol_pm = first own lag prior means
 fol_pm=c(0,   #delta y_f
          0,   #pi_f
          0.9, #i_f
@@ -445,9 +447,9 @@ At last we need to supply our forecast horizon $H$, and also a matrix
 containing the deterministic variables ($d_t$) for the future periods
 
 $$
-d_{\text{pred}}=\begin{bmatrix}d_{t+1}' \\
+d_{\text{pred}}=\begin{bmatrix}d_{T+1}' \\
 \vdots\\
-d_{t+H}'
+d_{T+H}'
 \end{bmatrix}
 $$
 
@@ -455,7 +457,7 @@ Since the determinstic variables are i) a constant and ii) a dummy for
 if $t \leq 1992Q4$, we simply set
 
 $$
-d_{t+1}'=\ldots=d_{t+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix}
+d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix}
 $$
 
 ``` r
@@ -984,24 +986,24 @@ fcst <- forecast(bvar_obj,
 ## Stochastic volatility
 
 Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) to
-allow the errors/innovations $u_t$ to have time varying covariance
+allow the errors/innovations $u_t$ to have time varying a covariance
 matrix $\Sigma_{u,t}$. Here we further build on the model of Clark
 (2011), by following the setup in section 1.1 (“*BVAR-SV Model*”) in
 Carriero, Clark and Marcellino (2024). That is, instead of letting the
 log volatilities follow driftless random walks, we specify them to
 follow (stationary) AR(1) processes. Carriero, Clark and Marcellino
 (2024) present the stochastic volatility specification for a
-conventional BVAR, but here we use it for the steady-state BVAR. But if
-the user wants to estimate the model in Clark (2011), that is also
-possible.
+conventional BVAR, but here we use it for the steady-state BVAR. However
+you can with this package also estimate the model in Clark (2011) (see
+the second subsection of this chapter).
 
-Our model is on the surface exactly the same as before
+Our model is (on the surface) exactly the same as before
 
 $$
 y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t
 $$
 
-but now…
+but now the innovations have the specification
 
 $$
 \begin{aligned}
@@ -1016,12 +1018,12 @@ $$
 \Lambda_t = \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
 $$
 
-contains the time-varying variances of conditionally Gaussian shocks
-(Carriero, Clark and Marcellino, 2024). The log volatilities follow
-AR(1) procceses
+contains the time-varying variances (log volatilities) of conditionally
+Gaussian shocks (Carriero, Clark and Marcellino, 2024). The log
+volatilities follow AR(1) procceses
 
 $$
-\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t} \ \ \ \ \ , i=1,\dots,k
+\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k
 $$
 
 Note here that we restrict the log volatility AR(1) processes to the
@@ -1034,33 +1036,34 @@ $$
 In the Clark (2011) model, then
 
 $$
-\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \ \forall i
+\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \forall i
 $$
 
-i.e. each log volatility process is a driftless random walk. The
-innovations to the log volatilities are
+i.e. each log volatility process is a driftless random walk. Continuing,
+the innovations to the log volatilities are
 
 $$
 \nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \textrm{N}(0, \Phi)
 $$
 
-Here $\Phi$ is not diagonal and as such we allow the innovations be
-correlated across variables. In the Clark (2011) model, $\Phi$ is
-diagonal with variances $\phi_i$ for $i=1,\dots,k$.
+where $\Phi$ is *not* diagonal and as such we allow the innovations be
+correlated across variables. In the Clark (2011) model however, $\Phi$
+is diagonal with variances $\phi_i$ for $i=1,\dots,k$.
 
-Under the foregoing specification, the time varying covariance matrix is
+Under the foregoing specification \[In the Clark (2011) model as well\],
+the time varying covariance matrix is
 
 $$
 \Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'
 $$
 
-### Stochastic volatility - stationary AR(1) log volatilities
+### Stochastic volatility: stationary AR(1) log volatilities (Carriero, Clark and Marcellino, 2024)
 
 Now we will simulate data from a steady-state BVAR with the stationary
-AR(1) log volatility specification above, estimate the model and see if
-we can recover the true parameters reasonably well. In the next chapter,
-we will provide a similar analysis with the Random Walk (RW) stochastic
-volatility specification.
+AR(1) log volatility specification, estimate the model and see if we can
+recover the true parameters reasonably well. In the next subsection, I
+will provide a similar analysis with the Clark (2011) \[i.e. the Random
+Walk (RW)\] stochastic volatility specification.
 
 Consider the following DGP
 
@@ -1076,7 +1079,7 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 $$
 
 We have $t=0,\dots,T=350$ observations where the last $50$ observations
-are left as hold-out data, $k=2$, $p=1$, $q=1$ and parameters
+are left as hold-out data. The parameters are
 
 $$
 \begin{aligned}
@@ -1095,9 +1098,9 @@ A &= \begin{bmatrix} 1 & 0 \\
 \end{aligned}                         
 $$
 
-Also, the initial conditions $\lambda_0$ and initial observations $y_0$
+The initial conditions ($\lambda_0$) and initial observations ($y_0$)
 are both set to their unconditional means (or as we like to call them:
-steady states)
+steady states).
 
 $$
 \begin{aligned}
@@ -1111,7 +1114,7 @@ d_{t}' &=
 \end{aligned}
 $$
 
-Now lets simulate from this DGP
+Now lets simulate a time series from this DGP
 
 ``` r
 rm(list = ls())
@@ -1165,8 +1168,8 @@ plot.ts(yt)
 <img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
 
 Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we
-do the same setup as before i.e. Minnesota for dynamic coefficients and
-informative normal priors on steady-state coefficients.
+do the same setup as before, i.e. Minnesota for dynamic coefficients and
+(very) informative normal priors on steady-state coefficients.
 
 ``` r
 bvar_obj <- bvar(data = yt)
@@ -1185,25 +1188,19 @@ fol_pm=c(0.9,0.9)
 theta_Psi <- c(2,3,6,9)
 Omega_Psi <- diag(rep(0.1,4))
 
-bvar_obj <- priors(bvar_obj,
-                   lambda_1,
-                   lambda_2,
-                   lambda_3,
-                   fol_pm,
-                   theta_Psi, 
-                   Omega_Psi)
+bvar_obj <- priors(bvar_obj, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, Omega_Psi)
 ```
 
-We also need to specify our stochastic volatility (SV) priors. For now,
-the package only supports the following priors for the AR(1) stochastic
-volatility specification
+Naturally, we also need to specify our stochastic volatility (SV)
+priors. For now, the package only supports the following priors for the
+AR(1) stochastic volatility specification
 
 $$
 \begin{aligned}
-a &\sim N(\theta_A, \Omega_A) \\
-\gamma_{0} &\sim N(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
-\gamma_{1} &\sim N(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
-\ln \lambda_{0} &\sim N(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
+a &\sim \textrm{N}(\theta_A, \Omega_A) \\
+\gamma_{0} &\sim \textrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
+\gamma_{1} &\sim \textrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
+\ln \lambda_{0} &\sim \textrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
 \Phi &\sim IW(V_0,m_0)
 \end{aligned}                         
 $$
@@ -1214,23 +1211,24 @@ in row major order, and $\ln \lambda_0$ are the time $t=0$ values
 is almost (except for $\Phi$) an exact copy of the setup in Carriero,
 Clark and Marcellino (2024).
 
-For $a$ we use an uninformative prior with means 0 and variances 10
-(assuming 0 covariance). For the coefficients
+For $a$ we use an uninformative (multivariate normal) prior with means 0
+and variances 10 (assuming 0 covariance). For the coefficients
 $(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log
-volatility process of equation $i=1,\dots,k$, the prior means are
-$(0.1 \ln \hat{\sigma^2_i}, \ 0.9)$, where $\hat{\sigma^2_i}$ is the
-residual variance of an AR(p) model i.e. the exact same estimate used in
-the Minnesota prior from before. Note that this prior implies that the
-steady states of the volatility processes are $\ln \hat{\sigma^2_i}$.
-The prior variances for the intercepts and slopes (assuming 0
-covariance) are $(2, \ 0.04)$. For $\ln \lambda_0$, we set the prior
-mean and variance at $\ln \hat{\sigma^2_i}$ and $2.0$ (assuming 0
-covariance). Now for $\Phi$, Carriero, Clark and Marcellino (2024) use
-an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of
-freedom. Instead we will use Inverse Wishart prior with mean of $I_k$,
-i.e. scale matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom.
-We can cheat a bit here since we know the DGP, and that the $0.03$
-factor is not suitable.
+volatility process of equation $i=1,\dots,k$ we also use Gaussian
+priors, where the prior means are $(0.1 \ln \hat{\sigma^2_i}, \ 0.9)$,
+where $\hat{\sigma^2_i}$ is the residual variance of an AR(p) model
+i.e. the exact same estimate used in the Minnesota prior from before.
+Note that this prior implies that the steady states of the volatility
+processes are $\ln \hat{\sigma^2_i}$. The prior variances for the
+intercepts and slopes (assuming 0 covariance) are $(2, \ 0.04)$. For
+$\ln \lambda_0$, we set the prior mean and variance (Gaussian prior) at
+$\ln \hat{\sigma^2_i}$ and $2.0$ (assuming 0 covariance). Now for
+$\Phi$, Carriero, Clark and Marcellino (2024) use an Inverse Wishart
+prior with mean of $0.03 I_k$ and 10 degrees of freedom. Instead we will
+use Inverse Wishart prior with mean of $I_k$, i.e. scale matrix
+$V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. We can cheat a
+bit here since we know the DGP, and that the $0.03$ factor is not
+suitable.
 
 ``` r
 k <- bvar_obj$setup$k
@@ -1255,7 +1253,7 @@ bvar_obj$SV_type <- "AR"
 bvar_obj$SV_priors <- SV_priors
 ```
 
-At last we need to supply our forecast horizon $H$, and also the
+Like usual we need to supply our forecast horizon $H$, and also the
 deterministic variables for the future periods. Then we can fit the
 model
 
@@ -1269,52 +1267,22 @@ bvar_obj <- fit(bvar_obj,
                 chains = 4)
 ```
 
-Let see if we managed to reasonably recover the true parameters…
-Remember here since $p=1$ we have $\beta'=\Pi_1$.
+Let see if we managed to reasonably recover the true parameters.
+Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.76 -0.20
-#>   [2,] 0.15  0.72
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.18 5.90
-#>   [2,] 2.91 8.94
-#> 
-#> A posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 1.00    0
-#>   [2,] 0.24    1
-#> 
-#> gamma_0 posterior mean
-#> [1] -0.14 -0.01
-#> 
-#> gamma_1 posterior mean
-#> [1] 0.74 0.87
-#> 
-#> Phi posterior mean
-#>       
-#>         [,1]  [,2]
-#>   [1,]  0.72 -0.10
-#>   [2,] -0.10  0.81
 ```
 
-Looks like it works quite well! Now lets forecast. We follow the
-approach in section 3.5 ‘Drawing Forecasts’ in Clark (2011), and also
-step 9 of Algorithm 13 in Karlsson (2013).
+Looks like it works reasonably well! Now we can turn to forecasting. We
+follow a similar approach in section 3.5 ‘Drawing Forecasts’ in Clark
+(2011), and also step 9 of Algorithm 13 in Karlsson (2013).
 
 For each (post warmup) draw $j$, and for $h=1,\dots,H$:
 
-generate $\nu_{T+h}^{(j)}$ from $\nu_{T+h}\sim N(0,\Phi^{(j)})$, then
-compute
+generate $\nu_{T+h}^{(j)}$ from
+$\nu_{T+h}\sim \textrm{N}(0,\Phi^{(j)})$, then compute
 $\ln \lambda_{T+h}^{(j)} = \gamma_{0}^{(j)} + \gamma_{1}^{(j)} \ln \lambda_{T+h-1}^{(j)} + \nu_{T+h}^{(j)}$.
-
 After that form $\Lambda_{T+h}^{0.5(j)}$, then generate
 $\epsilon^{(j)}_{T+h}$ from
 $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$, and then compute the
@@ -1332,11 +1300,9 @@ fcst1 <- forecast(bvar_obj,
                   show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-41-1.png" width="100%" />
-
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
-process. In blue we plot the forecasts of the log volatilities along
+process. In blue, we plot the forecasts of the log volatilities along
 with a 95% prediction interval.
 
 ``` r
@@ -1348,13 +1314,12 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol=
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
-
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
 i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we
-plot the true unobserved/latent process. In blue we plot the forecasts
-of the standard deviations along with a 95% prediction interval.
+plot the true unobserved/latent process and in blue we plot the
+forecasts of the standard deviations along with a 95% prediction
+interval.
 
 ``` r
 sigma <- matrix(NA,N,2)
@@ -1370,27 +1335,25 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-43-1.png" width="100%" />
-
-We can again do some impulse response analysis, almost as usual. Now,
-since our covariance matrix is time-varying $\Sigma_{u,t}$, we must
-choose which time point $t$ to use. The default setting is the most
-recent time point.
+For the stochastic volatility steady-state BVAR, we can of course also
+do impulse response analysis, almost like before. Now however, since our
+covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which
+time point $t$ to use. The default setting is the most recent time
+point.
 
 ``` r
 par(mfrow=c(4,2))
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=255,type="median")
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="GIRF",ci=0.68,t=255,type="median")
 
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=152,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="GIRF",ci=0.68,t=152,type="median")
+irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
+irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
+irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="GIRF", ci=0.68, type="median", t=20)
+irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="GIRF", ci=0.68, type="median", t=255)
+
+irf <- IRF(bvar_obj, H=20, response=2, shock=1, method="OIRF", ci=0.68, type="median", t=20)
+irf <- IRF(bvar_obj, H=20, response=2, shock=1, method="OIRF", ci=0.68, type="median", t=152)
+irf <- IRF(bvar_obj, H=20, response=2, shock=1, method="GIRF", ci=0.68, type="median", t=20)
+irf <- IRF(bvar_obj, H=20, response=2, shock=1, method="GIRF", ci=0.68, type="median", t=152)
 ```
-
-<img src="man/figures/README-unnamed-chunk-44-1.png" width="100%" />
 
 We see that the shapes of the IRFs are similar over time, but the
 magnitudes differ quite a lot depending on what time point $t$ we are
@@ -1405,30 +1368,14 @@ have constant $\Sigma_u$ and use Jeffreys prior.
 bvar_obj2 <- bvar(data = yt)
 bvar_obj2 <- setup(bvar_obj2, p=1, deterministic = "constant_and_dummy", dummy = dummy)
 
-bvar_obj2 <- priors(bvar_obj2,
-                   lambda_1,
-                   lambda_2,
-                   lambda_3,
-                   fol_pm,
-                   theta_Psi, 
-                   Omega_Psi,
-                   Jeffrey=TRUE)
+bvar_obj2 <- priors(bvar_obj2, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, Omega_Psi, Jeffrey=TRUE)
 
 bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
-bvar_obj2 <- fit(bvar_obj2,
-                iter = 20000,
-                warmup = 5000,
-                chains = 1,
-                estimation="gibbs")
+bvar_obj2 <- fit(bvar_obj2, iter = 20000, warmup = 5000, chains = 1, estimation="gibbs")
 
-fcst2 <- forecast(bvar_obj2,
-                  ci = 0.95,
-                  fcst_type = "mean",
-                  plot_idx = c(1,2),
-                  show_all = TRUE,
-                  estimation="gibbs")
+fcst2 <- forecast(bvar_obj2, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE, estimation="gibbs")
 ```
 
 Lets compare the results
@@ -1436,28 +1383,8 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
-#> beta posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.81 -0.25
-#> [2,] 0.11  0.62
-#> 
-#> Psi posterior mean
-#>      [,1] [,2]
-#> [1,] 2.09 5.98
-#> [2,] 3.18 9.03
 #--- SS-BVAR-SV-AR1 ---
 summary(bvar_obj, pars = c("beta", "Psi"))
-#> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.76 -0.20
-#>   [2,] 0.15  0.72
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.18 5.90
-#>   [2,] 2.91 8.94
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1520,21 +1447,19 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-47-1.png" width="100%" />
-
 Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior
 means for $\psi_1$ close to the true values of the DGP, as such we can
 see that both point forecasts (predictive means) converge closely to the
 true steady states. Also, before the convergence, the dynamics of the
 point forecasts are very similar. The key difference is in the
 prediction intervals. We can see that the SS-BVAR-SV has a wider
-interval, even though both are 95% intervals. Looking at the hold-out
-data, it is clear that the SS-BVAR-SV does a better job at capturing the
-stochastic volatility in the data (how surprising!).
+interval, even though both are 95% intervals. Looking at both the sample
+and hold-out data, it is clear that the SS-BVAR-SV does a better job at
+capturing the stochastic volatility in the data (how surprising!).
 
-We can illustrate this also by looking at the (estimated) forecast
-distributions, where we clearly see that the SS-BVAR-SV places a higher
-probability on “tail” observations.
+We can illustrate this also by looking at histograms of the forecast
+draws, where we clearly see that the SS-BVAR-SV places a higher
+probability on future “tail” observations.
 
 ``` r
 sf <- bvar_obj$fit$stan
@@ -1556,26 +1481,29 @@ y2h50 <- draws_gibbs[50,2,]
 par(mfrow=c(2,2))
 plot_pair <- function(f1, f2, title) {
   
-  d1 <- density(f1)
-  d2 <- density(f2)
+  xlim_range <- range(c(f1, f2))
+  breaks <- seq(xlim_range[1], xlim_range[2], length.out = 40)
   
-  xlim_range <- range(c(d1$x, d2$x))
-  ylim_range <- c(0, max(c(d1$y, d2$y)) * 1.5)
+  h1 <- hist(f1, breaks = breaks, plot = FALSE)
+  h2 <- hist(f2, breaks = breaks, plot = FALSE)
   
-  plot(d1,
+  ylim_range <- c(0, max(c(h1$counts, h2$counts)) * 1.5)
+  
+  plot(h1,
+       col  = rgb(0, 0, 1, 0.4),
        xlim = xlim_range,
        ylim = ylim_range,
-       col  = "blue",
-       lwd  = 2,
        main = title,
-       xlab = "forecast")
+       xlab = "forecast",
+       ylab = "count")
   
-  lines(d2, col = "red", lwd = 2)
+  plot(h2,
+       col  = rgb(1, 0, 0, 0.4),
+       add  = TRUE)
   
   legend("topright",
          legend = c("SS-BVAR-SV-AR1", "SS-BVAR"),
-         col    = c("blue", "red"),
-         lwd    = 2)
+         fill   = c(rgb(0, 0, 1, 0.4), rgb(1, 0, 0, 0.4)))
 }
 
 plot_pair(y1h1_sv,  y1h1,  "y1, h=1")
@@ -1584,9 +1512,7 @@ plot_pair(y1h50_sv, y1h50, "y1, h=50")
 plot_pair(y2h50_sv, y2h50, "y2, h=50")
 ```
 
-<img src="man/figures/README-unnamed-chunk-48-1.png" width="100%" />
-
-### Stochastic volatility - Random Walk log volatilities
+### Stochastic volatility: Random Walk log volatilities (Clark, 2011)
 
 Consider the following DGP
 
@@ -1602,7 +1528,7 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 $$
 
 We have $t=0,\dots,T=350$ observations where the last $50$ observations
-are left as hold-out data, $k=2$, $p=1$, $q=1$ and parameters
+are left as hold-out data. The parameters are
 
 $$
 \begin{aligned}
@@ -1617,9 +1543,9 @@ A &= \begin{bmatrix} 1 & 0 \\
 \end{aligned}                         
 $$
 
-Also, the initial observations $y_0$ are set to their steady states. The
-initial conditions $\lambda_0$ are set to the steady-states of the
-previous DGP
+The initial observations $y_0$ are set to their steady states. Since the
+log volatilities are Random Walks now, their steady states do not exist,
+and as such we specify some arbitrary initial conditions $\lambda_0$
 
 $$
 \begin{aligned}
@@ -1632,7 +1558,7 @@ d_{t}' &=
 \end{aligned}
 $$
 
-Now lets simulate from this DGP
+Now lets simulate a time series from this DGP
 
 ``` r
 set.seed(123)
@@ -1677,7 +1603,7 @@ plot.ts(yt)
 
 <img src="man/figures/README-unnamed-chunk-49-1.png" width="100%" />
 
-Like before: Minnesota for dynamic coefficients ($\beta$) and
+Like before: Minnesota for dynamic coefficients ($\beta$) and (very)
 informative normal priors on steady-state coefficients ($\Psi$).
 
 ``` r
@@ -1697,19 +1623,23 @@ Omega_Psi <- diag(rep(0.1,4))
 bvar_obj <- priors(bvar_obj, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, Omega_Psi)
 ```
 
-Now our stochastic volatility (SV) priors. For now, the package only
+Now to the stochastic volatility (SV) priors. For now, the package only
 supports the following priors for the RW stochastic volatility
 specification
 
 $$
 \begin{aligned}
-a &\sim N(\theta_A, \Omega_A) \\
-\ln \lambda_{0,i} &\sim N(\mu_{\ln \lambda_{0}}, \sigma^2_{\ln \lambda_{0}}) \\
+a &\sim \textrm{N}(\theta_A, \Omega_A) \\
+\ln \lambda_{0,i} &\sim \textrm{N}(\mu_{\ln \lambda_{0}}, \sigma^2_{\ln \lambda_{0}}) \\
 \phi_i &\sim IG(\alpha_{\phi},\beta_{\phi})
 \end{aligned}                         
 $$
 
-The following prior setup is a copy of the one in Clark (2011).
+Note here that the inverse gamma $IG(\alpha, \beta)$ distribution is the
+univariate version of the inverse Wishart distribution with
+$\alpha=m/2, \ \beta = V/2$.
+
+The following prior setup is a copy of the one in Clark (2011)
 
 ``` r
 k <- bvar_obj$setup$k
@@ -1730,9 +1660,9 @@ bvar_obj$SV_type <- "RW"
 bvar_obj$SV_priors <- SV_priors
 ```
 
-At last we need to supply our forecast horizon $H$, and also the
-deterministic variables for the future periods. Then we can fit the
-model
+Like usual, we need to supply our forecast horizon $H$, and also the
+deterministic variables for the future periods, and only then we can fit
+the model
 
 ``` r
 bvar_obj$predict$H <- 50
@@ -1744,42 +1674,22 @@ bvar_obj <- fit(bvar_obj,
                 chains = 4)
 ```
 
-Let see if we managed to reasonably recover the true parameters…
-Remember since $p=1$ we have $\beta'=\Pi_1$.
+Let see if we managed to reasonably recover the true parameters.
+Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.73 -0.17
-#>   [2,] 0.09  0.74
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.22 5.95
-#>   [2,] 3.01 9.07
-#> 
-#> A posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 1.00    0
-#>   [2,] 0.24    1
-#> 
-#> phi posterior means
-#>   phi_1 : 0.03 
-#>   phi_2 : 0.03
 ```
 
-Looks like it works quite well! Now lets forecast. Now instead we do
+Looks like it works reasonably well! With the respect to forecasting,
+the procedure is now similar in spirit but a bit different.
 
 For each (post warmup) draw $j$, and for $h=1,\dots,H$:
 
 generate $\nu_{i,T+h}^{(j)}$ from
-$\nu_{i,T+h} \sim \textrm{iid} \ N(0,\phi_i^{(j)})$, then compute
+$\nu_{i,T+h} \sim \textrm{iid} \ \textrm{N}(0,\phi_i^{(j)})$, then
+compute
 $\ln \lambda_{i,T+h}^{(j)} = \ln \lambda_{i,T+h-1}^{(j)} + \nu_{i,T+h}^{(j)}$.
-
 After that form $\Lambda_{T+h}^{0.5(j)}$, generate
 $\epsilon^{(j)}_{T+h}$ from
 $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$, and then compute the
@@ -1797,8 +1707,6 @@ fcst1 <- forecast(bvar_obj,
                   show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-54-1.png" width="100%" />
-
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue we plot the forecasts of the log volatilities along
@@ -1812,8 +1720,6 @@ lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-4,4), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
-
-<img src="man/figures/README-unnamed-chunk-55-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1835,19 +1741,16 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,5), plot_idx=2, vol="
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-56-1.png" width="100%" />
-
 We can again do some impulse response analysis.
 
 ``` r
 par(mfrow=c(2,2))
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=1,shock=2,method="OIRF",ci=0.68,t=255,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=20,type="median")
-irf <- IRF(bvar_obj,H=20,response=2,shock=1,method="OIRF",ci=0.68,t=152,type="median")
-```
 
-<img src="man/figures/README-unnamed-chunk-57-1.png" width="100%" />
+irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.95, type="mean", t=20)
+irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.95, type="mean", t=255)
+irf <- IRF(bvar_obj, H=20, response=2, shock=1, method="OIRF", ci=0.95, type="mean", t=20)
+irf <- IRF(bvar_obj, H=20, response=2, shock=1, method="OIRF", ci=0.95, type="mean", t=255)
+```
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-RW) and
 without (SS-BVAR) stochastic volatility RW specification to see the
@@ -1858,30 +1761,14 @@ have constant $\Sigma_u$ and use Jeffreys prior.
 bvar_obj2 <- bvar(data = yt)
 bvar_obj2 <- setup(bvar_obj2, p=1, deterministic = "constant_and_dummy", dummy = dummy)
 
-bvar_obj2 <- priors(bvar_obj2,
-                   lambda_1,
-                   lambda_2,
-                   lambda_3,
-                   fol_pm,
-                   theta_Psi, 
-                   Omega_Psi,
-                   Jeffrey=TRUE)
+bvar_obj2 <- priors(bvar_obj2, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, Omega_Psi, Jeffrey=TRUE)
 
 bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
-bvar_obj2 <- fit(bvar_obj2,
-                iter = 20000,
-                warmup = 5000,
-                chains = 1,
-                estimation="gibbs")
+bvar_obj2 <- fit(bvar_obj2, iter = 20000, warmup = 5000, chains = 1, estimation="gibbs")
 
-fcst2 <- forecast(bvar_obj2,
-                  ci = 0.95,
-                  fcst_type = "mean",
-                  plot_idx = c(1,2),
-                  show_all = TRUE,
-                  estimation="gibbs")
+fcst2 <- forecast(bvar_obj2, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE, estimation="gibbs")
 ```
 
 Lets compare the results
@@ -1889,28 +1776,8 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
-#> beta posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.72 -0.17
-#> [2,] 0.01  0.77
-#> 
-#> Psi posterior mean
-#>      [,1] [,2]
-#> [1,] 2.23 5.97
-#> [2,] 3.10 9.04
 #--- SS-BVAR-SV-RW ---
 summary(bvar_obj, pars = c("beta", "Psi"))
-#> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.73 -0.17
-#>   [2,] 0.09  0.74
-#> 
-#> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.22 5.95
-#>   [2,] 3.01 9.07
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1928,20 +1795,22 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-60-1.png" width="100%" />
+Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for
+$\psi_1$ close to the true values of the DGP, as such we can see that
+both point forecasts (predictive means) converge closely to the true
+steady states. Also, before the convergence, the dynamics of the point
+forecasts are very similar. The key difference is again in the
+prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and
+increasing) interval, even though both are 95% intervals. Looking at the
+hold-out data, it is clear that the SS-BVAR-SV-RW does a better job at
+capturing the stochastic volatility in the data (how surprising!). Also,
+if you think about it, since the log volatilities follow random walks,
+the prediction intervals **should** get wider and wider as
+$h \rightarrow \infty$, which is something the SS-BVAR does not account
+for.
 
-Some things to note. Both the SS-BVAR and SS-BVAR-SV-RW have posterior
-means for $\psi_1$ close to the true values of the DGP, as such we can
-see that both point forecasts (predictive means) converge closely to the
-true steady states. Also, before the convergence, the dynamics of the
-point forecasts are very similar. The key difference is in the
-prediction intervals. We can see that the SS-BVAR-SV-RW has a wider
-interval, even though both are 95% intervals. Looking at the hold-out
-data, it is clear that the SS-BVAR-SV-RW does a better job at capturing
-the stochastic volatility in the data (how surprising!).
-
-We can illustrate this also by looking at the (estimated) forecast
-distributions, where we clearly see that the SS-BVAR-SV-RW places a
+We can illustrate the differences by looking at the histograms of the
+forecast draws, where we clearly see that the SS-BVAR-SV-RW places a
 higher probability on “tail” observations.
 
 ``` r
@@ -1967,8 +1836,6 @@ plot_pair(y2h1_sv,  y2h1,  "y2, h=1")
 plot_pair(y1h50_sv, y1h50, "y1, h=50")
 plot_pair(y2h50_sv, y2h50, "y2, h=50")
 ```
-
-<img src="man/figures/README-unnamed-chunk-61-1.png" width="100%" />
 
 ## References
 
