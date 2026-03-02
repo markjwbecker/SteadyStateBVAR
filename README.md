@@ -177,7 +177,8 @@ least squares estimate from the VAR($p$) (including the constant and
 dummy/trend variable if applicable), and $m_0=k+2$.
 
 In the last section, we introduce stochastic volatility and let the
-covariance matrix vary over time such that we have $\Sigma_{u,t}$.
+covariance matrix of the innovations vary over time such that we have
+$\Sigma_{u,t}$.
 
 To forecast with the steady-state BVAR, we simply follow step 4 of
 Algorithm 4 of Karlsson (2013).
@@ -1263,7 +1264,7 @@ $$
 from $\nu_{T+h} \sim \textrm{N}(0,\Phi^{(j)})$, then compute
 
 $$
-\ln \lambda^{(j)}_{T+h} = \gamma^{(j)}_{0} + \gamma^{(j)}_{1} \ln \lambda^{(j)}_{T+h-1} + \nu^{(j)}_{T+h}
+\ln \lambda^{(j)}_{i,T+h} = \gamma^{(j)}_{0,i} + \gamma^{(j)}_{1,i} \ln \lambda^{(j)}_{T+h-1} + \nu^{(j)}_{i,T+h}
 $$
 
 After that form
@@ -1278,15 +1279,15 @@ $$
 \epsilon^{(j)}_{T+h}
 $$
 
-from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$, and then compute
-the shock to the VAR
+from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the
+shock to the VAR
 
 $$
 u^{(j)}_{T+h} = A^{-1} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}
 $$
 
-After that calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the
-usual way \[see step 4 of Algorithm 4 in Karlsson (2013)\].
+At last calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the usual
+way \[see step 4 of Algorithm 4 in Karlsson (2013)\].
 
 ``` r
 par(mfrow=c(2,1))
@@ -1516,7 +1517,7 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \epsilon_t &\sim \textrm{N}(0, \textrm{I}_k) \\
 \Lambda_t &= \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
 \ln \lambda_{i,t} &=  \ln \lambda_{i,t-1} + \nu_{i,t} \\
-\nu_{i,t} &\sim \textrm{iid} \ \textrm{N}(0, \phi_i) \ \ \ \ \ \ \ \ \ , i=1,\dots,k \\
+\nu_{i,t} &\sim \textrm{iid} \ \textrm{N}(0, \phi_i), \ i=1,\dots,k \\
 \end{aligned}
 $$
 
@@ -1531,8 +1532,7 @@ $$
                          -0.20 & 0.70 \end{bmatrix} \\
 A &= \begin{bmatrix} 1 & 0 \\
                          0.25 & 1 \end{bmatrix} \\
-\phi_1 &= 0.04\\
-\phi_2 &= 0.08
+\phi &= \begin{pmatrix}0.04 \\ 0.08 \end{pmatrix}\\
 \end{aligned}                         
 $$
 
@@ -1542,7 +1542,7 @@ and as such we specify some arbitrary initial conditions $\lambda_0$
 
 $$
 \begin{aligned}
-\ln \lambda_{0} &=  \begin{pmatrix} -0.4 & -0.6\end{pmatrix}\\
+\ln \lambda_{0} &=  \begin{pmatrix} -0.4 \\ -0.6\end{pmatrix}\\
 d_{t}' &=
 \begin{cases}
 \begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 75 \\
@@ -1623,7 +1623,7 @@ specification
 $$
 \begin{aligned}
 a &\sim \textrm{N}(\theta_A, \Omega_A) \\
-\ln \lambda_{0,i} &\sim \textrm{N}(\mu_{\ln \lambda_{0}}, \sigma^2_{\ln \lambda_{0}}) \\
+\ln \lambda_{i,0} &\sim \textrm{N}(\mu_{\ln \lambda_{0}}, \sigma^2_{\ln \lambda_{0}}) \\
 \phi_i &\sim IG(\alpha_{\phi},\beta_{\phi})
 \end{aligned}                         
 $$
@@ -1677,19 +1677,39 @@ summary(bvar_obj)
 Looks like it works reasonably well! With the respect to forecasting,
 the procedure is now similar in spirit but a bit different.
 
-For each (post warmup) draw $j$, and for $h=1,\dots,H$:
+For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
 
-generate $\nu_{i,T+h}^{(j)}$ from
-$\nu_{i,T+h} \sim \textrm{iid} \ \textrm{N}(0,\phi_i^{(j)})$, then
-compute
-$\ln \lambda_{i,T+h}^{(j)} = \ln \lambda_{i,T+h-1}^{(j)} + \nu_{i,T+h}^{(j)}$.
-After that form $\Lambda_{T+h}^{0.5(j)}$, generate
-$\epsilon^{(j)}_{T+h}$ from
-$\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$, and then compute the
+$$
+\nu^{(j)}_{i,T+h}
+$$
+
+from $\nu_{i,T+h} \sim \textrm{N}(0,\phi^{(j)}_i)$, then compute
+
+$$
+\ln \lambda^{(j)}_{i,T+h} = \ln \lambda^{(j)}_{i,T+h-1} + \nu^{(j)}_{i,T+h}
+$$
+
+After that form
+
+$$
+\Lambda^{0.5(j)}_{T+h}
+$$
+
+then generate
+
+$$
+\epsilon^{(j)}_{T+h}
+$$
+
+from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the
 shock to the VAR
-$u^{(j)}_{T+h} = A^{-1} \Lambda_{T+h}^{0.5(j)} \epsilon_{T+h}^{(j)}$.
-After that calculate the forecast $\tilde{y}_{T+h}^{(j)}$ as per the
-usual way \[see step 4 of Algorithm 4 in Karlsson (2013)\].
+
+$$
+u^{(j)}_{T+h} = A^{-1} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}
+$$
+
+At last calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the usual
+way \[see step 4 of Algorithm 4 in Karlsson (2013)\].
 
 ``` r
 par(mfrow=c(2,1))
