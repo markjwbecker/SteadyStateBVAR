@@ -1570,7 +1570,7 @@ Pi_1 <- matrix(c( 0.80, 0.15,
 A <- matrix(c(1.00, 0.00,
               0.25, 1.00), 2, 2, byrow = TRUE)
 
-phi <- c(0.6, 0.3)
+phi <- c(0.05, 0.10)
 
 log_lambda <- matrix(NA, N, 2)
 log_lambda[1,] <- c(-2,-3) #ln lambda_t=0
@@ -1600,8 +1600,9 @@ plot.ts(yt)
 
 <img src="man/figures/README-unnamed-chunk-47-1.png" width="100%" />
 
-Like before: Minnesota for dynamic coefficients ($\beta$) and (very)
-informative normal priors on steady-state coefficients ($\Psi$).
+Like before, we use the Minnesota prior for the dynamic coefficients
+($\beta$) and (very) informative normal priors on steady-state
+coefficients ($\Psi$).
 
 ``` r
 bvar_obj <- bvar(data = yt)
@@ -1632,9 +1633,9 @@ a &\sim \textrm{N}(\theta_A, \Omega_A) \\
 \end{aligned}                         
 $$
 
-Note here that the inverse gamma $IG(\alpha, \beta)$ distribution is the
-univariate version of the inverse Wishart distribution with
-$\alpha=m/2, \ \beta = V/2$.
+Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$
+distribution is the univariate version of the inverse Wishart
+distribution with $\alpha=m/2, \ \beta = V/2$.
 
 The following prior setup is a copy of the one in Clark (2011)
 
