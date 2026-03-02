@@ -1532,7 +1532,8 @@ $$
                          -0.20 & 0.70 \end{bmatrix} \\
 A &= \begin{bmatrix} 1 & 0 \\
                          0.25 & 1 \end{bmatrix} \\
-\phi &= \begin{pmatrix}0.04 \\ 0.08 \end{pmatrix}\\
+\phi &= \begin{pmatrix}0.04
+\\ 0.08 \end{pmatrix}\\
 \end{aligned}                         
 $$
 
@@ -1542,7 +1543,9 @@ and as such we specify some arbitrary initial conditions $\lambda_0$
 
 $$
 \begin{aligned}
-\ln \lambda_{0} &=  \begin{pmatrix} -0.4 \\ -0.6\end{pmatrix}\\
+\ln \lambda_{0} &=  \begin{pmatrix} -0.4 \\
+-0.6
+\end{pmatrix}\\
 d_{t}' &=
 \begin{cases}
 \begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 75 \\
@@ -1566,10 +1569,10 @@ Pi_1 <- matrix(c( 0.80, 0.15,
 A <- matrix(c(1.00, 0.00,
               0.25, 1.00), 2, 2, byrow = TRUE)
 
-phi <- c(0.04, 0.08)
+phi <- c(0.6, 0.3)
 
 log_lambda <- matrix(NA, N, 2)
-log_lambda[1,] <- c(-0.4,-0.6) #ln lambda_t=0
+log_lambda[1,] <- c(-2,-3) #ln lambda_t=0
 
 dummy <- c(rep(1,76), rep(0,N-76))
 d <- cbind(rep(1, N), dummy)
