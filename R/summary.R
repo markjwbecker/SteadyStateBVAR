@@ -6,6 +6,11 @@ summary.bvar <- function(x, pars = NULL) {
   if (!has_stan && !has_gibbs)
     stop("No estimation results found in bvar_object$fit.")
   
+  to_mat <- function(arr) {
+    m <- apply(arr, c(2,3), mean)
+    matrix(m, nrow = nrow(m), ncol = ncol(m))
+  }
+  
   summaries <- list()
   
   keep_param <- function(lst) {
@@ -18,30 +23,30 @@ summary.bvar <- function(x, pars = NULL) {
     posterior <- rstan::extract(fit)
     summaries$stan <- keep_param(list(
       method = "Stan",
-      beta  = round(apply(posterior$beta,  c(2,3), mean), 2),
-      Psi   = round(apply(posterior$Psi,   c(2,3), mean), 2),
-      Sigma = round(apply(posterior$Sigma_u, c(2,3), mean), 2)
+      beta  = round(to_mat(posterior$beta), 2),
+      Psi   = round(to_mat(posterior$Psi), 2),
+      Sigma = round(to_mat(posterior$Sigma_u), 2)
     ))
-  } else if (has_stan && x$SV && x$SV_type == "AR"){
+  } else if (has_stan && x$SV && x$SV_type == "AR") {
     fit <- x$fit$stan
     posterior <- rstan::extract(fit)
     summaries$stan <- keep_param(list(
       method  = "Stan",
-      beta    = round(apply(posterior$beta,    c(2,3), mean), 2),
-      Psi     = round(apply(posterior$Psi,     c(2,3), mean), 2),
-      A       = round(apply(posterior$A,       c(2,3), mean), 2),
+      beta    = round(to_mat(posterior$beta), 2),
+      Psi     = round(to_mat(posterior$Psi), 2),
+      A       = round(to_mat(posterior$A), 2),
       gamma_0 = round(apply(posterior$gamma_0, 2, mean), 2),
       gamma_1 = round(apply(posterior$gamma_1, 2, mean), 2),
-      Phi     = round(apply(posterior$Phi,     c(2,3), mean), 2)
+      Phi     = round(to_mat(posterior$Phi), 2)
     ))
   } else if (has_stan && x$SV && x$SV_type == "RW") {
     fit <- x$fit$stan
     posterior <- rstan::extract(fit)
     summaries$stan <- keep_param(list(
       method = "Stan",
-      beta   = round(apply(posterior$beta, c(2,3), mean), 2),
-      Psi    = round(apply(posterior$Psi,  c(2,3), mean), 2),
-      A      = round(apply(posterior$A,    c(2,3), mean), 2),
+      beta   = round(to_mat(posterior$beta), 2),
+      Psi    = round(to_mat(posterior$Psi), 2),
+      A      = round(to_mat(posterior$A), 2),
       phi    = setNames(
         round(apply(posterior$phi, 2, mean), 2),
         paste0("phi_", 1:ncol(posterior$phi))
@@ -77,9 +82,21 @@ print.summary.bvar <- function(x) {
       cat("====================================\n\n")
     }
     
-    for (param_name in setdiff(names(s), c("method", "phi"))) {
+    for (param_name in setdiff(names(s), c("method", "phi", "gamma_0", "gamma_1"))) {
       cat(param_name, "posterior mean\n")
       print(s[[param_name]])
+      cat("\n")
+    }
+    
+    if (!is.null(s$gamma_0)) {
+      cat("gamma_0 posterior means\n")
+      print(s$gamma_0)
+      cat("\n")
+    }
+    
+    if (!is.null(s$gamma_1)) {
+      cat("gamma_1 posterior means\n")
+      print(s$gamma_1)
       cat("\n")
     }
     
