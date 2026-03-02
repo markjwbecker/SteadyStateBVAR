@@ -5,8 +5,6 @@
   - [Example 1 (Villani, 2009)](#example-1-villani-2009)
   - [Example 2 (Gustafsson and Villani,
     2025)](#example-2-gustafsson-and-villani-2025)
-  - [Example 3 (Swedish data,
-    1987Q2-2025Q3)](#example-3-swedish-data-1987q2-2025q3)
   - [Stochastic volatility](#stochastic-volatility)
     - [Stochastic volatility: stationary AR(1) log volatilities
       (Carriero, Clark and Marcellino,
@@ -186,11 +184,90 @@ Algorithm 4 of Karlsson (2013).
 
 ## Example 1 (Villani, 2009)
 
-For a super quick example, please see Example 3, here I go quite
-in-depth to explain each step.
+To estimate the model in Section 4.1 in Villani (2009), and then
+forecast/do impulse response analysis, simply run the following code
 
-We will now replicate the model in the empirical analysis in Section 4.1
-in Villani (2009). First let us load the library and also load the data
+``` r
+library(SteadyStateBVAR)
+data("villani2009")
+yt <- villani2009
+bvar_obj <- bvar(data = yt)
+
+bp <- which(time(yt) == 1992.75)
+dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+
+bvar_obj <- setup(bvar_obj, p=4, deterministic = "constant_and_dummy", dummy = dum_var)
+lambda <- c(0.2, 0.5, 1.0)
+
+fol_pm=c(0, 0, 0.9, 0, 0, 0.9, 0.9)
+
+theta_Psi <- 
+  c(
+  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
+  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: pi_f
+  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i_f
+  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
+  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
+  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
+  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$mean,  #psi_1: q
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y_f
+  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_2: pi_f
+  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i_f
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
+  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
+  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i
+  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$mean   #psi_2: q
+  )
+
+Omega_Psi <- 
+  diag(
+  c(
+  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$var,    #psi_1: delta y_f
+  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: pi_f
+  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$var,   #psi_1: i_f
+  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: delta y
+  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$var,    #psi_1: pi
+  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$var,   #psi_1: i
+  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$var,   #psi_1: q
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y_f
+  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_2: pi_f
+  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$var,   #psi_2: i_f
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y
+  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,    #psi_2: pi
+  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$var,   #psi_2: i
+  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$var    #psi_2: q
+  )
+  )
+
+bvar_obj <- priors(bvar_obj, lambda[1], lambda[2], lambda[3], fol_pm, theta_Psi, Omega_Psi, Jeffrey=TRUE)
+
+p <- bvar_obj$setup$p
+k <- bvar_obj$setup$k
+kf <- 3
+restriction_matrix <- matrix(1, k*p, k)
+for(i in 1:p){
+  rows <- ((i-1)*k + kf + 1) : (i*k)
+  cols <- 1:kf
+  restriction_matrix[rows, cols] <- 0
+}
+bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
+
+bvar_obj$predict$H <- 20
+(bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0))
+
+bvar_obj <- fit(bvar_obj,iter = 20000,warmup = 10000, chains = 4)
+summary(bvar_obj)
+
+fcst <- forecast(bvar_obj,ci = 0.95,fcst_type = "mean",growth_rate_idx = c(4,5),plot_idx = c(4,5,6))
+
+irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.68)
+```
+
+Now I will go step-by step and explain each step.
+
+So we want to replicate the model in the empirical analysis in Section
+4.1 in Villani (2009). First let us load the library and also load the
+data
 
 ``` r
 library(SteadyStateBVAR)
@@ -230,7 +307,7 @@ yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-3-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-4-1.png" width="100%" />
 
 Also, let us create the bvar object which we will use throughout here.
 
@@ -632,7 +709,7 @@ yt <- GustafssonVillaniStockhammar2023
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-20-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-21-1.png" width="100%" />
 
 Create the object
 
@@ -885,104 +962,6 @@ irf <- IRF(bvar_obj,
            ci=0.68)
 ```
 
-## Example 3 (Swedish data, 1987Q2-2025Q3)
-
-Now a quick last example, using Swedish data up until 2025 for real GDP
-growth specified as $100 [\ln( realGDP_t) - \ln (realGDP_{t-1})]$, CPIF
-inflation, where $100 [\ln( CPIF_t) - \ln (CPIF_{t-1})]$, the
-unemployment rate, and the 3-month interest rate. The CPIF index
-$CPIF_t$ is originally on a monthly frequency, as such the CPIF index
-value of the last month in each quarter is taken to be the quarterly
-value. We will do a similar setup as in the first example, except now we
-use the uninformative inverse wishart prior for the covariance matrix
-($\Sigma_u$). Note that if you want to use an informative prior, you are
-free to do so by changing ‘bvar_obj\$priors\$V_0’ (scale matrix) and
-‘bvar_obj\$priors\$m_0’ (degrees of freedom), before you fit the model.
-For the forecasts, we use median as the point forecast.
-
-``` r
-rm(list = ls())
-data("SwedishData_1987_2025")
-yt <- SwedishData_1987_2025
-plot.ts(yt)
-```
-
-<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
-
-``` r
-bvar_obj <- bvar(data = yt)
-bp <- which(time(yt) == 1992.75)
-dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
-
-bvar_obj <- setup(bvar_obj,
-                  p=4,
-                  deterministic = "constant_and_dummy",
-                  dummy = dum_var)
-
-lambda_1 <- 0.20
-lambda_2 <- 0.50
-lambda_3 <- 1.00
-
-fol_pm=c(0,   #delta y
-         0,   #pi
-         0.9, #u
-         0.9  #i
-         )
-
-theta_Psi <- 
-   c(
-    ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
-    ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
-    ppi( 6.00,  8.00,  annualized_growthrate=FALSE)$mean,  #psi_1: u
-    ppi( 1.00,  2.00,  annualized_growthrate=FALSE)$mean,  #psi_1: i
-    ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
-    ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
-    ppi( 0.00, -2.00,  annualized_growthrate=FALSE)$mean,  #psi_1: u
-    ppi( 5.00,  9.00,  annualized_growthrate=FALSE)$mean   #psi_2: i
-    )
-
-Omega_Psi <- 
-  diag(
-     c(
-      ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,   #psi_1: delta y
-      ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$var,   #psi_1: pi
-      ppi( 6.00,  8.00,  annualized_growthrate=FALSE)$var,  #psi_1: u
-      ppi( 1.00,  2.00,  annualized_growthrate=FALSE)$var,  #psi_1: i
-      ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,   #psi_2: delta y
-      ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,   #psi_2: pi
-      ppi( 0.00, -2.00,  annualized_growthrate=FALSE)$var,  #psi_1: u
-      ppi( 5.00,  9.00,  annualized_growthrate=FALSE)$var   #psi_2: i
-      )
-      )
-
-bvar_obj <- priors(bvar_obj,
-                   lambda_1,
-                   lambda_2,
-                   lambda_3,
-                   fol_pm,
-                   theta_Psi, 
-                   Omega_Psi,
-                   Jeffrey=FALSE) #inverse wishart prior for Sigma_u
-
-bvar_obj$predict$H <- 40
-bvar_obj$predict$d_pred <- cbind(rep(1, 40), 0)
-
-bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
-                chains = 4)
-```
-
-``` r
-par(mfrow=c(2,2))
-fcst <- forecast(bvar_obj,
-                 ci = 0.68,
-                 fcst_type = "median", #point forecast
-                 growth_rate_idx = c(1,2),
-                 plot_idx = c(1,2,3,4),
-                 show_all = TRUE)
-```
-
 ## Stochastic volatility
 
 Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) to
@@ -1165,7 +1144,7 @@ par(mfrow = c(1, 1))
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-34-1.png" width="100%" />
 
 Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we
 do the same setup as before, i.e. Minnesota for dynamic coefficients and
@@ -1276,14 +1255,36 @@ follow a similar approach in section 3.5 ‘Drawing Forecasts’ in Clark
 (2011), and also step 9 of Algorithm 13 in Karlsson (2013).
 
 For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
-$\nu^{(j)}_{T+h}$ from $\nu_{T+h} \sim \textrm{N}(0,\Phi^{(j)})$, then
-compute
-$\ln \lambda^{(j)}_{T+h} = \gamma^{(j)}_{0} + \gamma^{(j)}_{1} \ln \lambda^{(j)}_{T+h-1} + \nu^{(j)}_{T+h}$.
-After that form $\Lambda^{0.5(j)}_{T+h}$, then generate
-$\epsilon^{(j)}_{T+h}$ from
-$\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$, and then compute the
-shock to the VAR
-$u^{(j)}_{T+h} = A^{-1} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}$.
+
+$$
+\nu^{(j)}_{T+h}
+$$
+
+from $\nu_{T+h} \sim \textrm{N}(0,\Phi^{(j)})$, then compute
+
+$$
+\ln \lambda^{(j)}_{T+h} = \gamma^{(j)}_{0} + \gamma^{(j)}_{1} \ln \lambda^{(j)}_{T+h-1} + \nu^{(j)}_{T+h}
+$$
+
+After that form
+
+$$
+\Lambda^{0.5(j)}_{T+h}
+$$
+
+then generate
+
+$$
+\epsilon^{(j)}_{T+h}
+$$
+
+from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$, and then compute
+the shock to the VAR
+
+$$
+u^{(j)}_{T+h} = A^{-1} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}
+$$
+
 After that calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the
 usual way \[see step 4 of Algorithm 4 in Karlsson (2013)\].
 
@@ -1593,7 +1594,7 @@ par(mfrow = c(1, 1))
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-49-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-47-1.png" width="100%" />
 
 Like before: Minnesota for dynamic coefficients ($\beta$) and (very)
 informative normal priors on steady-state coefficients ($\Psi$).
