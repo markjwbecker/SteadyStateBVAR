@@ -1524,8 +1524,19 @@ $$
 We have $t=0,\dots,T=350$ observations where the last $50$ observations
 are left as hold-out data. The parameters are
 
-\$\$
-\$\$
+$$
+\begin{aligned}
+\Psi &= \begin{bmatrix} 2 & 6 \\
+                        3 & 9\end{bmatrix} \\
+\Pi_1 &= \begin{bmatrix} 0.80 & 0.15 \\
+                         -0.20 & 0.70 \end{bmatrix} \\
+A &= \begin{bmatrix} 1 & 0 \\
+                         0.25 & 1 \end{bmatrix} \\
+\phi &= \begin{pmatrix}0.04 \\
+0.08
+\end{pmatrix}
+\end{aligned}                         
+$$
 
 The initial observations $y_0$ are set to their steady states. Since the
 log volatilities are Random Walks now, their steady states do not exist,

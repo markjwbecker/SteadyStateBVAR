@@ -78,7 +78,10 @@ print.summary.bvar <- function(x) {
     }
     
     for (param_name in setdiff(names(s), c("method", "phi"))) {
-      cat(param_name, "posterior mean\n"); print(s[[param_name]]); cat("\n")
+      cat(param_name, "posterior mean\n")
+      print(s[[param_name]])
+      if (!is.matrix(s[[param_name]])) cat("\n")
+      cat("\n")
     }
     
     if (!is.null(s$phi)) {
