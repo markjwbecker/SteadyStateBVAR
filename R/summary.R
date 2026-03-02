@@ -26,13 +26,13 @@ summary.bvar <- function(x, pars = NULL) {
     fit <- x$fit$stan
     posterior <- rstan::extract(fit)
     summaries$stan <- keep_param(list(
-      method = "Stan",
-      beta     = round(apply(posterior$beta,  c(2,3), mean), 2),
-      Psi      = round(apply(posterior$Psi,   c(2,3), mean), 2),
-      A        = round(apply(posterior$A,     c(2,3), mean), 2),
-      gamma_0  = round(apply(posterior$gamma_0, 2, mean), 2),
-      gamma_1  = round(apply(posterior$gamma_1, 2, mean), 2),
-      Phi      = round(apply(posterior$Phi,   c(2,3), mean), 2)
+      method  = "Stan",
+      beta    = round(apply(posterior$beta,    c(2,3), mean), 2),
+      Psi     = round(apply(posterior$Psi,     c(2,3), mean), 2),
+      A       = round(apply(posterior$A,       c(2,3), mean), 2),
+      gamma_0 = round(apply(posterior$gamma_0, 2, mean), 2),
+      gamma_1 = round(apply(posterior$gamma_1, 2, mean), 2),
+      Phi     = round(apply(posterior$Phi,     c(2,3), mean), 2)
     ))
   } else if (has_stan && x$SV && x$SV_type == "RW") {
     fit <- x$fit$stan
@@ -80,7 +80,6 @@ print.summary.bvar <- function(x) {
     for (param_name in setdiff(names(s), c("method", "phi"))) {
       cat(param_name, "posterior mean\n")
       print(s[[param_name]])
-      if (!is.matrix(s[[param_name]])) cat("\n")
       cat("\n")
     }
     
