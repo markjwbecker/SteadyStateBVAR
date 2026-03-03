@@ -2022,9 +2022,9 @@ both point forecasts (predictive means) converge closely to the true
 steady states. Also, before the convergence, the dynamics of the point
 forecasts are very similar. The key difference is again in the
 prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and
-increasing) interval, even though both are 95% intervals. Looking at the
-hold-out data, it is clear that the SS-BVAR-SV-RW does a better job at
-capturing the stochastic volatility in the data (how surprising!).
+increasing) interval, even though both are 95% intervals. Looking at both the
+sample and hold-out data, it is clear that the SS-BVAR-SV-RW does a better job
+at capturing the stochastic volatility in the data (how surprising!).
 
 We can illustrate the differences by looking at the histograms of the
 forecast draws, where we clearly see that the SS-BVAR-SV-RW places a
