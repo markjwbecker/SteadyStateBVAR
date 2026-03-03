@@ -1160,36 +1160,30 @@ Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 ``` r
 summary(bvar_obj)
 #> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.77 -0.20
-#>   [2,] 0.15  0.72
+#>      [,1]  [,2]
+#> [1,] 0.77 -0.20
+#> [2,] 0.15  0.72
 #> 
 #> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.18 5.91
-#>   [2,] 2.91 8.94
+#>      [,1] [,2]
+#> [1,] 2.18 5.91
+#> [2,] 2.91 8.94
 #> 
 #> A posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 1.00    0
-#>   [2,] 0.24    1
-#> 
-#> gamma_0 posterior mean
-#> [1] -0.15 -0.01
-#> 
-#> 
-#> gamma_1 posterior mean
-#> [1] 0.73 0.87
-#> 
+#>      [,1] [,2]
+#> [1,] 1.00    0
+#> [2,] 0.24    1
 #> 
 #> Phi posterior mean
-#>       
-#>         [,1]  [,2]
-#>   [1,]  0.78 -0.10
-#>   [2,] -0.10  0.76
+#>       [,1]  [,2]
+#> [1,]  0.78 -0.10
+#> [2,] -0.10  0.76
+#> 
+#> gamma_0 posterior means
+#> [1] -0.15 -0.01
+#> 
+#> gamma_1 posterior means
+#> [1] 0.73 0.87
 ```
 
 Looks like it works reasonably well! Now we can turn to forecasting. We
@@ -1324,7 +1318,8 @@ fcst2 <- forecast(bvar_obj2, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), s
 Lets compare the results
 
 ``` r
-#--- SS-BVAR ---
+print("--- SS-BVAR ---")
+#> [1] "--- SS-BVAR ---"
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>      [,1]  [,2]
@@ -1335,19 +1330,18 @@ summary(bvar_obj2, pars = c("beta", "Psi"))
 #>      [,1] [,2]
 #> [1,] 2.10 5.98
 #> [2,] 3.18 9.03
-#--- SS-BVAR-SV-AR1 ---
+print("--- SS-BVAR-SV-RW ---")
+#> [1] "--- SS-BVAR-SV-RW ---"
 summary(bvar_obj, pars = c("beta", "Psi"))
 #> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.77 -0.20
-#>   [2,] 0.15  0.72
+#>      [,1]  [,2]
+#> [1,] 0.77 -0.20
+#> [2,] 0.15  0.72
 #> 
 #> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.18 5.91
-#>   [2,] 2.91 8.94
+#>      [,1] [,2]
+#> [1,] 2.18 5.91
+#> [2,] 2.91 8.94
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1428,7 +1422,7 @@ probability on future “tail” observations.
 
 ``` r
 sf <- bvar_obj$fit$stan
-draws_stan <- extract(sf)$y_pred
+draws_stan <- rstan::extract(sf)$y_pred
 draws_gibbs <- bvar_obj2$fit$gibbs$fcst_draws
 
 y1h1_sv <- draws_stan[,1,1]
@@ -1444,37 +1438,38 @@ y2h50_sv <- draws_stan[,50,2]
 y2h50 <- draws_gibbs[50,2,]
 
 par(mfrow=c(2,2))
-plot_pair <- function(f1, f2, title) {
+plot_pair <- function(f1, f2, title, legend_labels = c("Model 1", "Model 2")) {
   
-  xlim_range <- range(c(f1, f2))
-  breaks <- seq(xlim_range[1], xlim_range[2], length.out = 40)
+  h1 <- hist(f1, plot = FALSE)
+  h2 <- hist(f2, plot = FALSE)
   
-  h1 <- hist(f1, breaks = breaks, plot = FALSE)
-  h2 <- hist(f2, breaks = breaks, plot = FALSE)
-  
-  ylim_range <- c(0, max(c(h1$counts, h2$counts)) * 1.5)
+  ylim_max <- 1.5 * max(c(h1$density, h2$density))
+  xlim_range <- range(c(h1$breaks, h2$breaks))
   
   plot(h1,
-       col  = rgb(0, 0, 1, 0.4),
-       xlim = xlim_range,
-       ylim = ylim_range,
-       main = title,
-       xlab = "forecast",
-       ylab = "count")
+       freq   = FALSE,
+       col    = rgb(0, 0, 1, 0.4),
+       border = "blue",
+       main   = title,
+       xlab   = "forecast",
+       ylim   = c(0, ylim_max))
   
   plot(h2,
-       col  = rgb(1, 0, 0, 0.4),
-       add  = TRUE)
+       freq   = FALSE,
+       col    = rgb(1, 0, 0, 0.4),
+       border = "red",
+       add    = TRUE)
   
   legend("topright",
-         legend = c("SS-BVAR-SV-AR1", "SS-BVAR"),
-         fill   = c(rgb(0, 0, 1, 0.4), rgb(1, 0, 0, 0.4)))
+         legend = legend_labels,
+         fill   = c(rgb(0,0,1,0.4), rgb(1,0,0,0.4)),
+         border = c("blue","red"))
 }
 
-plot_pair(y1h1_sv,  y1h1,  "y1, h=1")
-plot_pair(y2h1_sv,  y2h1,  "y2, h=1")
-plot_pair(y1h50_sv, y1h50, "y1, h=50")
-plot_pair(y2h50_sv, y2h50, "y2, h=50")
+plot_pair(y1h1_sv,  y1h1,  title = "y1, h=1",  legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
+plot_pair(y2h1_sv,  y2h1,  title = "y2, h=1",  legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
+plot_pair(y1h50_sv, y1h50, title = "y1, h=50", legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
+plot_pair(y2h50_sv, y2h50, title = "y2, h=50", legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
 ```
 
 <img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" />
@@ -1648,22 +1643,19 @@ Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 ``` r
 summary(bvar_obj)
 #> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.71 -0.17
-#>   [2,] 0.05  0.74
+#>      [,1]  [,2]
+#> [1,] 0.71 -0.17
+#> [2,] 0.05  0.74
 #> 
 #> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.17 5.89
-#>   [2,] 2.92 9.11
+#>      [,1] [,2]
+#> [1,] 2.17 5.89
+#> [2,] 2.92 9.11
 #> 
 #> A posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 1.00    0
-#>   [2,] 0.25    1
+#>      [,1] [,2]
+#> [1,] 1.00    0
+#> [2,] 0.25    1
 #> 
 #> phi posterior means
 #>   phi_1 : 0.03 
@@ -1725,10 +1717,10 @@ with a 95% prediction interval.
 
 ``` r
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-1,5.5), plot_idx=1, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-3,4), plot_idx=1, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-4,4), plot_idx=2, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-7,0), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
@@ -1747,10 +1739,10 @@ for(t in 1:(N)){
 }
 
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,15), plot_idx=1, vol="sd")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=1, vol="sd")
 lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,5), plot_idx=2, vol="sd")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2), plot_idx=2, vol="sd")
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
@@ -1791,7 +1783,8 @@ fcst2 <- forecast(bvar_obj2, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), s
 Lets compare the results
 
 ``` r
-#--- SS-BVAR ---
+print("--- SS-BVAR ---")
+#> [1] "--- SS-BVAR ---"
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>       [,1]  [,2]
@@ -1802,31 +1795,30 @@ summary(bvar_obj2, pars = c("beta", "Psi"))
 #>      [,1] [,2]
 #> [1,] 2.15 5.90
 #> [2,] 2.99 9.07
-#--- SS-BVAR-SV-RW ---
+print("--- SS-BVAR-SV-RW ---")
+#> [1] "--- SS-BVAR-SV-RW ---"
 summary(bvar_obj, pars = c("beta", "Psi"))
 #> beta posterior mean
-#>       
-#>        [,1]  [,2]
-#>   [1,] 0.71 -0.17
-#>   [2,] 0.05  0.74
+#>      [,1]  [,2]
+#> [1,] 0.71 -0.17
+#> [2,] 0.05  0.74
 #> 
 #> Psi posterior mean
-#>       
-#>        [,1] [,2]
-#>   [1,] 2.17 5.89
-#>   [2,] 2.92 9.11
+#>      [,1] [,2]
+#> [1,] 2.17 5.89
+#> [2,] 2.92 9.11
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 ``` r
 par(mfrow=c(2,1))
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-20,25), legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-10,15), legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 lines(301:351, c(tail(yt[,1],1),zt[302:351,1]), col="green", lty=1, lwd=2)
 
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-12,20), legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-5,15), legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
@@ -1870,10 +1862,10 @@ y2h50_sv <- draws_stan[,50,2]
 y2h50 <- draws_gibbs[50,2,]
 
 par(mfrow=c(2,2))
-plot_pair(y1h1_sv,  y1h1,  "y1, h=1")
-plot_pair(y2h1_sv,  y2h1,  "y2, h=1")
-plot_pair(y1h50_sv, y1h50, "y1, h=50")
-plot_pair(y2h50_sv, y2h50, "y2, h=50")
+plot_pair(y1h1_sv,  y1h1,  title = "y1, h=1",  legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
+plot_pair(y2h1_sv,  y2h1,  title = "y2, h=1",  legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
+plot_pair(y1h50_sv, y1h50, title = "y1, h=50", legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
+plot_pair(y2h50_sv, y2h50, title = "y2, h=50", legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
 ```
 
 <img src="man/figures/README-unnamed-chunk-58-1.png" width="100%" />
