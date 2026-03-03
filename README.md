@@ -240,7 +240,14 @@ Omega_Psi <-
   )
   )
 
-bvar_obj <- priors(bvar_obj, lambda[1], lambda[2], lambda[3], fol_pm, theta_Psi, Omega_Psi, Jeffrey=TRUE)
+bvar_obj <- priors(bvar_obj,
+                   lambda[1],
+                   lambda[2],
+                   lambda[3],
+                   fol_pm,
+                   theta_Psi,
+                   Omega_Psi,
+                   Jeffrey=TRUE)
 
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
@@ -256,7 +263,7 @@ bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 bvar_obj$predict$H <- 20
 (bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0))
 
-bvar_obj <- fit(bvar_obj, iter = 20000,warmup = 10000, chains = 4)
+bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 4)
 
 summary(bvar_obj)
 
@@ -265,7 +272,7 @@ fcst <- forecast(bvar_obj,ci = 0.95,fcst_type = "mean",growth_rate_idx = c(4,5),
 irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.68)
 ```
 
-Now I will go step-by step and explain each step.
+Now I will go step-by step and explain each step in detail.
 
 So we want to replicate the model in the empirical analysis in Section
 4.1 in Villani (2009). First let us load the library and also load the
@@ -446,7 +453,14 @@ input everything to the priors function. Note here that the function
 automatically creates $\theta_\beta$ and $\Omega_\beta$.
 
 ``` r
-bvar_obj <- priors(bvar_obj, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, Omega_Psi, Jeffrey=TRUE)
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi,
+                   Omega_Psi,
+                   Jeffrey=TRUE)
 ```
 
 Like in Villani (2009), to incorporate that Sweden is a small economy
@@ -550,7 +564,7 @@ bvar_obj$predict$H <- 12
 Now we can fit the model.
 
 ``` r
-bvar_obj <- fit(bvar_obj, iter = 1000, warmup = 200, chains = 1)
+bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -559,53 +573,53 @@ Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 summary(bvar_obj)
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.18  0.03 -0.02  0.11  0.07 -0.13  0.00
-#>  [2,] -0.01  0.31  0.25  0.12 -0.07  0.01  0.00
+#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
+#>  [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
 #>  [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
-#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.09  0.00
+#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>  [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.19  4.08  0.99  0.93
-#>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
-#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.16  0.00
+#>  [7,]  0.00  0.00  0.00  1.20  3.96  0.76  0.93
+#>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
+#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
 #> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #> [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
-#> [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00
+#> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.55 -0.48  0.35 -0.04
-#> [15,]  0.01 -0.01  0.00  0.01 -0.01  0.00  0.00
+#> [14,]  0.00  0.00  0.00  0.56 -0.38  0.32 -0.04
+#> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
 #> [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
-#> [17,]  0.00  0.00  0.02  0.00  0.00  0.02  0.00
-#> [18,]  0.00  0.00  0.00  0.07  0.01 -0.02  0.00
+#> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
+#> [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
 #> [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
 #> [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
-#> [21,]  0.00  0.00  0.00 -0.15  0.00 -0.68  0.00
+#> [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.58  0.00
 #> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#> [23,]  0.00  0.15 -0.03  0.00  0.01  0.02  0.00
+#> [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
 #> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #> [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
 #> [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.13 -0.06 -0.19 -0.01
+#> [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.17 -0.01
 #> 
 #> Psi posterior mean
 #>      [,1]  [,2]
 #> [1,] 0.58  0.08
-#> [2,] 0.51  0.47
-#> [3,] 4.95  2.01
-#> [4,] 0.58 -0.03
-#> [5,] 0.49  1.14
-#> [6,] 4.29  4.46
+#> [2,] 0.51  0.46
+#> [3,] 4.94  2.02
+#> [4,] 0.58 -0.04
+#> [5,] 0.49  1.15
+#> [6,] 4.29  4.45
 #> [7,] 3.92 -0.10
 #> 
 #> Sigma posterior mean
 #>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#> [1,]  0.15 -0.01 0.01  0.07  0.00  0.00  0.00
+#> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
 #> [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#> [3,]  0.01  0.05 0.52  0.01  0.18  0.12  0.00
+#> [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
 #> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#> [5,]  0.00  0.12 0.18 -0.05  0.59  0.12  0.00
-#> [6,]  0.00  0.04 0.12 -0.01  0.12  1.57 -0.01
+#> [5,] -0.01  0.12 0.18 -0.05  0.60  0.11  0.00
+#> [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
 #> [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
@@ -633,7 +647,8 @@ true values
 (villani2009[103:104,6]) #true values
 #> [1] 1.478503 1.563795
 
-rstan::plot(stanfit, pars=c("y_pred[1,6]", "y_pred[2,6]"), show_density = TRUE, ci_level = 0.68, fill_color = "blue")
+rstan::plot(stanfit, pars=c("y_pred[1,6]", "y_pred[2,6]"),
+            show_density = TRUE, ci_level = 0.68, fill_color = "blue")
 #> ci_level: 0.68 (68% intervals)
 #> outer_level: 0.95 (95% intervals)
 ```
@@ -652,7 +667,9 @@ $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by
 summing up to fourth differences.
 
 ``` r
-fcst <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", growth_rate_idx = c(4,5), plot_idx = c(4,5,6))
+fcst <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean",
+                 growth_rate_idx = c(4,5),
+                 plot_idx = c(4,5,6))
 ```
 
 <img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-18-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-18-3.png" width="100%" />
@@ -666,11 +683,8 @@ also choose between mean or median (default is median).
 par(mfrow=c(2,2))
 
 irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="OIRF", ci=0.68)
-
-irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="GIRF")
-
+irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="GIRF", ci=0.68)
 irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.68)
-
 irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="GIRF", ci=0.68)
 ```
 
@@ -683,13 +697,17 @@ Now if desired, the user can estimate the model with a Gibbs sampler
 instead.
 
 ``` r
-bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 10000, chains = 1, estimation = "gibbs")
+bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 1,
+                estimation = "gibbs")
 
 summary(bvar_obj)
 
-fcst <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", growth_rate_idx = c(4,5), plot_idx = c(4,5,6), estimation="gibbs")
+fcst <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean",
+                 growth_rate_idx = c(4,5), plot_idx = c(4,5,6),
+                 estimation="gibbs")
 
-irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="mean" method="OIRF", ci=0.95, estimation="gibbs")
+irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="mean" method="OIRF", ci=0.95,
+           estimation="gibbs")
 ```
 
 It will give very similar results (as it should be). We will test if
@@ -798,7 +816,14 @@ Lets put everything into the ‘priors function’. They also use Jeffreys
 prior for $\Sigma_u$.
 
 ``` r
-bvar_obj <- priors(bvar_obj, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, Omega_Psi, Jeffrey=TRUE)
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi,
+                   Omega_Psi,
+                   Jeffrey=TRUE)
 ```
 
 We supply our forecast horizon and the deterministic variables for the
@@ -812,9 +837,9 @@ bvar_obj$predict$d_pred <- matrix(rep(1, 12))
 Then estimate the model, both with Stan and the Gibbs sampler.
 
 ``` r
-bvar_obj <- fit(bvar_obj, iter = 1000, warmup = 200, chains = 1)
+bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 1)
 
-bvar_obj <- fit(bvar_obj, iter = 1000, warmup = 200, chains = 1, estimation = "gibbs")
+bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 1, estimation = "gibbs")
 ```
 
 Lets check the posterior means (very similar as expected)
@@ -827,40 +852,40 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.01  0.03  0.07 -0.28  0.04 -0.03
-#>  [2,]  0.02  0.71  0.03 -0.17  0.74 -0.02  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.21 -0.02 -0.03
-#>  [4,]  0.27  0.02  0.03  0.14  1.82  0.25  0.04
+#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
+#>  [2,]  0.03  0.70  0.04 -0.17  0.76 -0.01  0.03
+#>  [3,] -0.02  0.11  1.01 -0.39  0.23 -0.02 -0.02
+#>  [4,]  0.27  0.02  0.03  0.14  1.80  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.10  0.05  0.06 -0.03  1.21  0.31  0.01
-#>  [7,]  0.08  0.00  0.02  0.03 -0.19 -0.14  0.36
-#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.05  0.19  0.07  0.11 -0.67  0.05 -0.04
-#> [10,] -0.06 -0.08 -0.08  0.39 -0.90 -0.11 -0.02
-#> [11,]  0.12 -0.01 -0.04  0.12  0.00  0.06  0.01
+#>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
+#>  [7,]  0.08  0.00  0.03  0.03 -0.19 -0.13  0.36
+#>  [8,]  0.04  0.00  0.01  0.03  0.11  0.00  0.02
+#>  [9,] -0.05  0.19  0.07  0.11 -0.68  0.04 -0.04
+#> [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.04 -0.01  0.01  0.01 -0.56  0.16 -0.01
+#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
 #> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
-#> [1,] 3.20
-#> [2,] 2.44
-#> [3,] 4.41
+#> [1,] 3.19
+#> [2,] 2.47
+#> [3,] 4.44
 #> [4,] 3.38
-#> [5,] 4.67
+#> [5,] 4.62
 #> [6,] 1.66
-#> [7,] 1.03
+#> [7,] 1.02
 #> 
 #> Sigma posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.89 -0.01  0.49  4.25  26.71  3.95  0.44
-#> [2,] -0.01  0.99  0.12 -0.14   0.87  0.34 -0.13
-#> [3,]  0.49  0.12  0.69  0.27   2.21  0.62 -0.05
-#> [4,]  4.25 -0.14  0.27  5.74   5.45  2.24  0.45
-#> [5,] 26.71  0.87  2.21  5.45 160.67 16.42  2.06
-#> [6,]  3.95  0.34  0.62  2.24  16.42  5.41  0.36
-#> [7,]  0.44 -0.13 -0.05  0.45   2.06  0.36  1.26
+#> [1,]  7.93 -0.01  0.50  4.25  26.80  3.98  0.45
+#> [2,] -0.01  1.00  0.12 -0.13   0.86  0.34 -0.14
+#> [3,]  0.50  0.12  0.70  0.27   2.26  0.63 -0.05
+#> [4,]  4.25 -0.13  0.27  5.74   5.40  2.23  0.45
+#> [5,] 26.80  0.86  2.26  5.40 161.13 16.52  2.08
+#> [6,]  3.98  0.34  0.63  2.23  16.52  5.43  0.36
+#> [7,]  0.45 -0.14 -0.05  0.45   2.08  0.36  1.26
 #> 
 #> ====================================
 #> Estimation Method: Gibbs 
@@ -868,40 +893,40 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.04  0.07 -0.27  0.05 -0.03
-#>  [2,]  0.03  0.70  0.03 -0.16  0.76 -0.02  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.20 -0.02 -0.02
-#>  [4,]  0.26  0.02  0.03  0.14  1.78  0.25  0.04
+#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
+#>  [2,]  0.02  0.71  0.04 -0.17  0.75 -0.02  0.03
+#>  [3,] -0.02  0.11  1.01 -0.39  0.23 -0.02 -0.03
+#>  [4,]  0.26  0.02  0.03  0.14  1.80  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.10  0.05  0.06 -0.02  1.22  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.04 -0.21 -0.13  0.36
-#>  [8,]  0.05  0.00  0.01  0.03  0.11  0.00  0.02
-#>  [9,] -0.05  0.19  0.07  0.11 -0.68  0.05 -0.04
-#> [10,] -0.06 -0.07 -0.08  0.38 -0.90 -0.12 -0.03
-#> [11,]  0.11 -0.01 -0.04  0.12 -0.03  0.06  0.01
+#>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
+#>  [7,]  0.08  0.00  0.03  0.03 -0.20 -0.13  0.36
+#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
+#>  [9,] -0.06  0.19  0.07  0.11 -0.67  0.04 -0.04
+#> [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.05  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.03 -0.01  0.01  0.00 -0.58  0.16 -0.01
-#> [14,] -0.04  0.03  0.03  0.04 -0.36 -0.14  0.30
+#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
+#> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
-#> [1,] 3.18
-#> [2,] 2.45
+#> [1,] 3.19
+#> [2,] 2.46
 #> [3,] 4.45
-#> [4,] 3.37
+#> [4,] 3.38
 #> [5,] 4.63
-#> [6,] 1.64
-#> [7,] 1.00
+#> [6,] 1.66
+#> [7,] 1.02
 #> 
 #> Sigma posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.95 -0.03  0.50  4.26  26.86  3.99  0.44
-#> [2,] -0.03  0.99  0.12 -0.14   0.83  0.33 -0.14
-#> [3,]  0.50  0.12  0.70  0.28   2.25  0.63 -0.05
-#> [4,]  4.26 -0.14  0.28  5.76   5.43  2.24  0.44
-#> [5,] 26.86  0.83  2.25  5.43 161.26 16.50  2.06
-#> [6,]  3.99  0.33  0.63  2.24  16.50  5.44  0.37
-#> [7,]  0.44 -0.14 -0.05  0.44   2.06  0.37  1.25
+#> [1,]  7.94 -0.01  0.50  4.26  26.84  3.98  0.45
+#> [2,] -0.01  1.00  0.12 -0.13   0.87  0.34 -0.14
+#> [3,]  0.50  0.12  0.70  0.27   2.26  0.63 -0.05
+#> [4,]  4.26 -0.13  0.27  5.75   5.43  2.24  0.45
+#> [5,] 26.84  0.87  2.26  5.43 161.21 16.51  2.09
+#> [6,]  3.98  0.34  0.63  2.24  16.51  5.43  0.36
+#> [7,]  0.45 -0.14 -0.05  0.45   2.09  0.36  1.26
 ```
 
 Now lets do Figure 10
@@ -1224,7 +1249,13 @@ fol_pm=c(0.9,0.9)
 theta_Psi <- c(2,3,6,9)
 Omega_Psi <- diag(rep(0.1,4))
 
-bvar_obj <- priors(bvar_obj, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, Omega_Psi)
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi,
+                   Omega_Psi)
 ```
 
 Naturally, we also need to specify our stochastic volatility (SV)
@@ -1297,7 +1328,7 @@ model
 bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
-bvar_obj <- fit(bvar_obj, iter = 1000, warmup = 200, chains = 1)
+bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 4)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1307,12 +1338,12 @@ Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 summary(bvar_obj)
 #> beta posterior mean
 #>      [,1]  [,2]
-#> [1,] 0.77 -0.20
+#> [1,] 0.76 -0.20
 #> [2,] 0.15  0.72
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.18 5.91
+#> [1,] 2.18 5.90
 #> [2,] 2.91 8.94
 #> 
 #> A posterior mean
@@ -1322,14 +1353,14 @@ summary(bvar_obj)
 #> 
 #> Phi posterior mean
 #>       [,1]  [,2]
-#> [1,]  0.78 -0.10
-#> [2,] -0.10  0.76
+#> [1,]  0.72 -0.10
+#> [2,] -0.10  0.81
 #> 
 #> gamma_0 posterior means
-#> [1] -0.15 -0.01
+#> [1] -0.14 -0.01
 #> 
 #> gamma_1 posterior means
-#> [1] 0.73 0.87
+#> [1] 0.74 0.87
 ```
 
 Looks like it works reasonably well! Now we can turn to forecasting. We
@@ -1451,42 +1482,48 @@ have constant $\Sigma_u$ and use Jeffreys prior.
 bvar_obj2 <- bvar(data = yt)
 bvar_obj2 <- setup(bvar_obj2, p=1, deterministic = "constant_and_dummy", dummy = dummy)
 
-bvar_obj2 <- priors(bvar_obj2, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, Omega_Psi, Jeffrey=TRUE)
+bvar_obj2 <- priors(bvar_obj2,
+                    lambda_1,
+                    lambda_2,
+                    lambda_3,
+                    fol_pm,
+                    theta_Psi,
+                    Omega_Psi,
+                    Jeffrey=TRUE)
 
 bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
-bvar_obj2 <- fit(bvar_obj2, iter = 1000, warmup = 200, chains = 1, estimation="gibbs")
+bvar_obj2 <- fit(bvar_obj2, iter = 50000, warmup = 5000, chains = 1, estimation="gibbs")
 
-fcst2 <- forecast(bvar_obj2, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE, estimation="gibbs")
+fcst2 <- forecast(bvar_obj2, ci = 0.95, fcst_type = "mean",
+                  plot_idx = c(1,2), show_all = TRUE, estimation="gibbs")
 ```
 
 Lets compare the results
 
 ``` r
-print("--- SS-BVAR ---")
-#> [1] "--- SS-BVAR ---"
+#--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>      [,1]  [,2]
 #> [1,] 0.81 -0.25
-#> [2,] 0.10  0.62
+#> [2,] 0.11  0.62
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.08 5.97
-#> [2,] 3.17 9.04
-print("--- SS-BVAR-SV-RW ---")
-#> [1] "--- SS-BVAR-SV-RW ---"
+#> [1,] 2.09 5.98
+#> [2,] 3.18 9.03
+#--- SS-BVAR-SV-AR1 ---
 summary(bvar_obj, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>      [,1]  [,2]
-#> [1,] 0.77 -0.20
+#> [1,] 0.76 -0.20
 #> [2,] 0.15  0.72
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.18 5.91
+#> [1,] 2.18 5.90
 #> [2,] 2.91 8.94
 ```
 
@@ -1539,12 +1576,16 @@ compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim, legend=NULL
 }
 
 par(mfrow=c(2,1))
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-11,13),legend=c("SS-BVAR-SV-AR1", "SS-BVAR", "true steady state", "hold-out data"))
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-11,13),
+             legend=c("SS-BVAR-SV-AR1", "SS-BVAR", "true steady state", "hold-out data"))
+
 segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 lines(301:351, c(tail(yt[,1],1),zt[302:351,1]), col="green", lty=1, lwd=2)
 
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-6,20),legend=c("SS-BVAR-SV-AR1", "SS-BVAR", "true steady state", "hold-out data"))
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-6,20),
+             legend=c("SS-BVAR-SV-AR1", "SS-BVAR", "true steady state", "hold-out data"))
+
 segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
@@ -1780,7 +1821,7 @@ the model
 bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
-bvar_obj <- fit(bvar_obj, iter = 1000, warmup = 200, chains = 1)
+bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 4)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1795,7 +1836,7 @@ summary(bvar_obj)
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.17 5.89
+#> [1,] 2.18 5.88
 #> [2,] 2.92 9.11
 #> 
 #> A posterior mean
@@ -1863,10 +1904,10 @@ with a 95% prediction interval.
 
 ``` r
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-3,4), plot_idx=1, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-3,5), plot_idx=1, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-7,0), plot_idx=2, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-7,1), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
@@ -1888,7 +1929,7 @@ par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=1, vol="sd")
 lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2), plot_idx=2, vol="sd")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2.25), plot_idx=2, vol="sd")
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
@@ -1921,16 +1962,16 @@ bvar_obj2 <- priors(bvar_obj2, lambda_1, lambda_2, lambda_3, fol_pm, theta_Psi, 
 bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
-bvar_obj2 <- fit(bvar_obj2, iter = 1000, warmup = 200, chains = 1, estimation="gibbs")
+bvar_obj2 <- fit(bvar_obj2, iter = 50000, warmup = 5000, chains = 1, estimation="gibbs")
 
-fcst2 <- forecast(bvar_obj2, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE, estimation="gibbs")
+fcst2 <- forecast(bvar_obj2, ci = 0.95, fcst_type = "mean",
+                  plot_idx = c(1,2), show_all = TRUE, estimation="gibbs")
 ```
 
 Lets compare the results
 
 ``` r
-print("--- SS-BVAR ---")
-#> [1] "--- SS-BVAR ---"
+#--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>       [,1]  [,2]
@@ -1939,10 +1980,9 @@ summary(bvar_obj2, pars = c("beta", "Psi"))
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.15 5.89
+#> [1,] 2.15 5.90
 #> [2,] 2.99 9.07
-print("--- SS-BVAR-SV-RW ---")
-#> [1] "--- SS-BVAR-SV-RW ---"
+#--- SS-BVAR-SV-RW ---
 summary(bvar_obj, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>      [,1]  [,2]
@@ -1951,7 +1991,7 @@ summary(bvar_obj, pars = c("beta", "Psi"))
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.17 5.89
+#> [1,] 2.18 5.88
 #> [2,] 2.92 9.11
 ```
 
@@ -1959,12 +1999,16 @@ Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 ``` r
 par(mfrow=c(2,1))
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-10,15), legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-10,15),
+             legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
+
 segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 lines(301:351, c(tail(yt[,1],1),zt[302:351,1]), col="green", lty=1, lwd=2)
 
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-5,15), legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-5,15),
+             legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
+
 segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
@@ -1980,11 +2024,7 @@ forecasts are very similar. The key difference is again in the
 prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and
 increasing) interval, even though both are 95% intervals. Looking at the
 hold-out data, it is clear that the SS-BVAR-SV-RW does a better job at
-capturing the stochastic volatility in the data (how surprising!). Also,
-if you think about it, since the log volatilities follow random walks,
-the prediction intervals **should** get wider and wider as
-$h \rightarrow \infty$, which is something the SS-BVAR does not account
-for.
+capturing the stochastic volatility in the data (how surprising!).
 
 We can illustrate the differences by looking at the histograms of the
 forecast draws, where we clearly see that the SS-BVAR-SV-RW places a
