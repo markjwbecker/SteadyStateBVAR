@@ -1784,15 +1784,17 @@ $$
 \begin{aligned}
 a &\sim \textrm{N}(\theta_A, \Omega_A) \\
 \ln \lambda_{i,0} &\sim \textrm{N}(\mu_{\ln \lambda_{0}}, \sigma^2_{\ln \lambda_{0}}) \\
-\phi_i &\sim \textrm{IG}(\alpha_{\phi},\beta_{\phi})
+\phi_i &\sim \textrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})
 \end{aligned}                         
 $$
 
-Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$
-distribution is the univariate version of the inverse Wishart
-distribution with $\alpha=m/2, \ \beta = V/2$.
+
+Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$ distribution
+is the univariate version of the inverse Wishart distribution
+with $\alpha=m/2, \ \beta = V/2$.
 
 The following prior setup is a copy of the one in Clark (2011)
+
 
 ``` r
 k <- bvar_obj$setup$k
