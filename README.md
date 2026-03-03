@@ -1783,7 +1783,7 @@ specification
 $$
 \begin{aligned}
 a &\sim \textrm{N}(\theta_A, \Omega_A) \\
-\ln \lambda_{i,0} &\sim \textrm{N}(\mu_{\ln \lambda_{0}}, \sigma^2_{\ln \lambda_{0}}) \\
+\ln \lambda_{i,0} &\sim \textrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
 \phi_i &\sim \textrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})
 \end{aligned}                         
 $$
