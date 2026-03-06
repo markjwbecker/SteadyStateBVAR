@@ -964,7 +964,7 @@ $$
 from $\nu_{T+h} \sim \textrm{N}(0,\Phi^{(j)})$, then compute
 
 $$
-\ln \lambda^{(j)}_{i,T+h} = \gamma^{(j)}_{0,i} + \gamma^{(j)}_{1,i} \ln \lambda^{(j)}_{T+h-1} + \nu^{(j)}_{i,T+h}
+\ln \lambda^{(j)}_{i,T+h} = \gamma^{(j)}_{0,i} + \gamma^{(j)}_{1,i} \ln \lambda^{(j)}_{i,T+h-1} + \nu^{(j)}_{i,T+h}
 $$
 
 After that form
@@ -982,7 +982,7 @@ $$
 from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the shock to the VAR
 
 $$
-u^{(j)}_{T+h} = A^{-1} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}
+u^{(j)}_{T+h} = A^{-1(j)} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}
 $$
 
 At last calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the usual way [see step 4 of Algorithm 4 in Karlsson (2013)].
@@ -1393,7 +1393,7 @@ $$
 from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the shock to the VAR
 
 $$
-u^{(j)}_{T+h} = A^{-1} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}
+u^{(j)}_{T+h} = A^{-1(j)} \Lambda^{0.5(j)}_{T+h} \epsilon^{(j)}_{T+h}
 $$
 
 At last calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the usual way [see step 4 of Algorithm 4 in Karlsson (2013)].
