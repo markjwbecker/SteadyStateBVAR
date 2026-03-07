@@ -1,4 +1,4 @@
-priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_prior_mean=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=TRUE){
+priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_prior_mean=NULL, theta_Psi=NULL, Omega_Psi=NULL, Jeffrey=TRUE, sigma2_type=c("AR_OLS", "VAR_OLS")){
   
   priors <- list()
   
@@ -10,27 +10,28 @@ priors<- function(x, lambda_1=0.2, lambda_2=0.5, lambda_3 = 1, first_own_lag_pri
   dt <- setup$dt
   dummy <- setup$dummy
   
-  Sigma_AR <- diag(0,k)
-  
-  for (i in 1:k){
-    
-    y <- yt[,i]
-    N = length(y)-p
-    
-    Y <- y[-c(1:p)]
-    W <- embed(y, dimension = p+1)[, -1]
-    X <- dt[-c(1:p), ,drop=F]
-    Q <- embed(dt, dimension = p+1)[, -(1:q)]
-    
-    Z <- cbind(W,X)
-    beta_hat = solve(crossprod(Z,Z),crossprod(Z,Y))
-    U = Y-Z%*%beta_hat
-    sigma2 <- crossprod(U,U)/(nrow(Z)-ncol(Z))
-    Sigma_AR[i,i] <- sigma2
+  if (sigma2_type == "AR_OLS"){
+    Sigma_AR <- diag(0,k)
+    for (i in 1:k){
+      
+      y <- yt[,i]
+      N = length(y)-p
+      
+      Y <- y[-c(1:p)]
+      W <- embed(y, dimension = p+1)[, -1]
+      X <- dt[-c(1:p), ,drop=F]
+      Z <- cbind(W,X)
+      beta_hat = solve(crossprod(Z,Z),crossprod(Z,Y))
+      U = Y-Z%*%beta_hat
+      sigma2 <- crossprod(U,U)/(nrow(Z)-ncol(Z))
+      Sigma_AR[i,i] <- sigma2
+    }
+    sigma <- sqrt(diag(Sigma_AR))
+  } else if (sigma2_type == "VAR_OLS") {
+    sigma <- sqrt(diag(x$setup$Sigma_OLS))
   }
   
   V <- lapply(1:p, function(x) matrix(0, k, k))
-  sigma <- sqrt(diag(Sigma_AR))
   
   for (l in 1:p) {
     for (i in 1:k) {
