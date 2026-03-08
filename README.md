@@ -60,7 +60,7 @@ First, you need to install Rstan:
 Then you can install SteadyStateBVAR with:
 
 ``` r
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 
 ## Introduction
@@ -73,7 +73,7 @@ $$
 
 where $y_t$ is a $k$-dimensional vector of endogenous variables (time
 series) at time $t$, and $d_t$ is a $q$-dimensional vector of
-deterministic (exogenous) variables at time $t$, and
+deterministic (exogenous) variables at time $t$, and the innovations are
 $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also,
 $\Pi_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is
 $(k \times q)$. Note here that
@@ -200,7 +200,13 @@ dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
 bvar_obj <- setup(bvar_obj, p=4, deterministic = "constant_and_dummy", dummy = dum_var)
 lambda <- c(0.2, 0.5, 1.0)
 
-fol_pm=c(0, 0, 0.9, 0, 0, 0.9, 0.9)
+fol_pm=c(0,
+         0,
+         0.9,
+         0,
+         0,
+         0.9,
+         0.9)
 
 theta_Psi <- 
   c(
@@ -261,15 +267,28 @@ for(i in 1:p){
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
 bvar_obj$predict$H <- 20
-(bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0))
+bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0)
 
-bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 4)
+bvar_obj <- fit(bvar_obj,
+                iter = 20000,
+                warmup = 5000,
+                chains = 4)
 
 summary(bvar_obj)
 
-fcst <- forecast(bvar_obj,ci = 0.95,fcst_type = "mean",growth_rate_idx = c(4,5),plot_idx = c(4,5,6))
+fcst <- forecast(bvar_obj,
+                 ci = 0.95,
+                 fcst_type = "mean",
+                 growth_rate_idx = c(4,5),
+                 plot_idx = c(4,5,6))
 
-irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.68)
+irf <- IRF(bvar_obj,
+           H=20,
+           response=5,
+           shock=6,
+           type="median",
+           method="OIRF",
+           ci=0.68)
 ```
 
 Now I will go step-by step and explain each step in detail.
@@ -575,18 +594,18 @@ summary(bvar_obj)
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
 #>  [2,] -0.02  0.31  0.25  0.12 -0.07  0.01  0.00
-#>  [3,] -0.01  0.04  0.92 -0.04  0.06  0.05  0.00
+#>  [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
 #>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>  [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.20  3.96  0.76  0.93
+#>  [7,]  0.00  0.00  0.00  1.21  3.96  0.74  0.93
 #>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
 #>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
 #> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #> [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
 #> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.56 -0.38  0.32 -0.04
+#> [14,]  0.00  0.00  0.00  0.56 -0.38  0.30 -0.04
 #> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
 #> [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
 #> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
@@ -607,7 +626,7 @@ summary(bvar_obj)
 #> [1,] 0.58  0.08
 #> [2,] 0.51  0.46
 #> [3,] 4.94  2.02
-#> [4,] 0.58 -0.04
+#> [4,] 0.58 -0.03
 #> [5,] 0.49  1.15
 #> [6,] 4.29  4.45
 #> [7,] 3.92 -0.10
@@ -616,9 +635,9 @@ summary(bvar_obj)
 #>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
 #> [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#> [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
+#> [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
 #> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#> [5,] -0.01  0.12 0.18 -0.05  0.60  0.11  0.00
+#> [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
 #> [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
 #> [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
@@ -852,40 +871,40 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
-#>  [2,]  0.03  0.70  0.04 -0.17  0.76 -0.01  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.23 -0.02 -0.02
-#>  [4,]  0.27  0.02  0.03  0.14  1.80  0.25  0.04
+#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.05 -0.03
+#>  [2,]  0.02  0.71  0.04 -0.17  0.76 -0.02  0.03
+#>  [3,] -0.02  0.11  1.01 -0.39  0.24 -0.02 -0.03
+#>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
 #>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.19 -0.13  0.36
-#>  [8,]  0.04  0.00  0.01  0.03  0.11  0.00  0.02
+#>  [7,]  0.09  0.00  0.03  0.04 -0.19 -0.13  0.36
+#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
 #>  [9,] -0.05  0.19  0.07  0.11 -0.68  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
+#> [10,] -0.06 -0.08 -0.09  0.39 -0.93 -0.11 -0.02
 #> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
+#> [13,]  0.04 -0.01  0.01  0.00 -0.56  0.16 -0.01
 #> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
-#> [1,] 3.19
-#> [2,] 2.47
-#> [3,] 4.44
+#> [1,] 3.20
+#> [2,] 2.46
+#> [3,] 4.45
 #> [4,] 3.38
-#> [5,] 4.62
+#> [5,] 4.63
 #> [6,] 1.66
-#> [7,] 1.02
+#> [7,] 1.03
 #> 
 #> Sigma posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.93 -0.01  0.50  4.25  26.80  3.98  0.45
-#> [2,] -0.01  1.00  0.12 -0.13   0.86  0.34 -0.14
-#> [3,]  0.50  0.12  0.70  0.27   2.26  0.63 -0.05
-#> [4,]  4.25 -0.13  0.27  5.74   5.40  2.23  0.45
-#> [5,] 26.80  0.86  2.26  5.40 161.13 16.52  2.08
-#> [6,]  3.98  0.34  0.63  2.23  16.52  5.43  0.36
-#> [7,]  0.45 -0.14 -0.05  0.45   2.08  0.36  1.26
+#> [1,]  7.93 -0.02  0.50  4.24  26.83  3.98  0.45
+#> [2,] -0.02  1.00  0.12 -0.14   0.87  0.34 -0.14
+#> [3,]  0.50  0.12  0.70  0.27   2.25  0.63 -0.05
+#> [4,]  4.24 -0.14  0.27  5.73   5.41  2.23  0.45
+#> [5,] 26.83  0.87  2.25  5.41 161.29 16.53  2.09
+#> [6,]  3.98  0.34  0.63  2.23  16.53  5.43  0.37
+#> [7,]  0.45 -0.14 -0.05  0.45   2.09  0.37  1.26
 #> 
 #> ====================================
 #> Estimation Method: Gibbs 
@@ -894,16 +913,16 @@ summary(bvar_obj)
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
 #>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
-#>  [2,]  0.02  0.71  0.04 -0.17  0.75 -0.02  0.03
-#>  [3,] -0.02  0.11  1.01 -0.39  0.23 -0.02 -0.03
-#>  [4,]  0.26  0.02  0.03  0.14  1.80  0.25  0.04
+#>  [2,]  0.03  0.70  0.04 -0.17  0.76 -0.02  0.03
+#>  [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.03
+#>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
+#>  [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
 #>  [7,]  0.08  0.00  0.03  0.03 -0.20 -0.13  0.36
 #>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.06  0.19  0.07  0.11 -0.67  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.05  0.01
+#>  [9,] -0.05  0.19  0.07  0.11 -0.67  0.04 -0.04
+#> [10,] -0.06 -0.08 -0.09  0.38 -0.91 -0.11 -0.03
+#> [11,]  0.12 -0.01 -0.04  0.12 -0.02  0.06  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
 #> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
 #> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
@@ -912,7 +931,7 @@ summary(bvar_obj)
 #>      [,1]
 #> [1,] 3.19
 #> [2,] 2.46
-#> [3,] 4.45
+#> [3,] 4.44
 #> [4,] 3.38
 #> [5,] 4.63
 #> [6,] 1.66
@@ -920,13 +939,13 @@ summary(bvar_obj)
 #> 
 #> Sigma posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.94 -0.01  0.50  4.26  26.84  3.98  0.45
-#> [2,] -0.01  1.00  0.12 -0.13   0.87  0.34 -0.14
+#> [1,]  7.95 -0.02  0.50  4.25  26.88  3.98  0.45
+#> [2,] -0.02  1.00  0.12 -0.14   0.86  0.34 -0.14
 #> [3,]  0.50  0.12  0.70  0.27   2.26  0.63 -0.05
-#> [4,]  4.26 -0.13  0.27  5.75   5.43  2.24  0.45
-#> [5,] 26.84  0.87  2.26  5.43 161.21 16.51  2.09
-#> [6,]  3.98  0.34  0.63  2.24  16.51  5.43  0.36
-#> [7,]  0.45 -0.14 -0.05  0.45   2.09  0.36  1.26
+#> [4,]  4.25 -0.14  0.27  5.74   5.41  2.23  0.45
+#> [5,] 26.88  0.86  2.26  5.41 161.56 16.56  2.08
+#> [6,]  3.98  0.34  0.63  2.23  16.56  5.43  0.37
+#> [7,]  0.45 -0.14 -0.05  0.45   2.08  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -1047,13 +1066,13 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 ## Stochastic volatility
 
 Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) to
-allow the errors/innovations $u_t$ to have time varying a covariance
-matrix $\Sigma_{u,t}$. Here we further build on the model of Clark
-(2011), by following the setup in section 1.1 (“*BVAR-SV Model*”) in
-Carriero, Clark and Marcellino (2024). That is, instead of letting the
-log volatilities follow driftless random walks, we specify them to
-follow (stationary) AR(1) processes. Carriero, Clark and Marcellino
-(2024) present the stochastic volatility specification for a
+allow the innovations $u_t$ to have a time varying covariance matrix
+$\Sigma_{u,t}$. Here we further build on the model of Clark (2011), by
+following the setup in section 1.1 (“*BVAR-SV Model*”) in Carriero,
+Clark and Marcellino (2024). That is, instead of letting the log
+volatilities follow uncorrelated driftless random walks, we specify them
+to follow correlated (stationary) AR(1) processes. Carriero, Clark and
+Marcellino (2024) present the stochastic volatility specification for a
 conventional BVAR, but here we use it for the steady-state BVAR. However
 you can with this package also estimate the model in Clark (2011) (see
 the second subsection of this chapter).
@@ -1276,26 +1295,7 @@ Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in $A$
 in row major order, and $\ln \lambda_0$ are the time $t=0$ values
 (initial conditions) of $\ln \lambda_{i,t}$. The following prior setup
 is almost (except for $\Phi$) an exact copy of the setup in Carriero,
-Clark and Marcellino (2024).
-
-For $a$ we use an uninformative (multivariate normal) prior with means 0
-and variances 10 (assuming 0 covariance). For the coefficients
-$(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log
-volatility process of equation $i=1,\dots,k$ we also use Gaussian
-priors, where the prior means are $(0.1 \ln \hat{\sigma^2_i}, \ 0.9)$,
-where $\hat{\sigma^2_i}$ is the residual variance of an AR(p) model
-i.e. the exact same estimate used in the Minnesota prior from before.
-Note that this prior implies that the steady states of the volatility
-processes are $\ln \hat{\sigma^2_i}$. The prior variances for the
-intercepts and slopes (assuming 0 covariance) are $(2, \ 0.04)$. For
-$\ln \lambda_0$, we set the prior mean and variance (Gaussian prior) at
-$\ln \hat{\sigma^2_i}$ and $2.0$ (assuming 0 covariance). Now for
-$\Phi$, Carriero, Clark and Marcellino (2024) use an Inverse Wishart
-prior with mean of $0.03 I_k$ and 10 degrees of freedom. Instead we will
-use Inverse Wishart prior with mean of $I_k$, i.e. scale matrix
-$V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. We can cheat a
-bit here since we know the DGP, and that the $0.03$ factor is not
-suitable.
+Clark and Marcellino (2024), please see the paper for the exact details.
 
 ``` r
 k <- bvar_obj$setup$k
@@ -1365,9 +1365,8 @@ summary(bvar_obj)
 
 Looks like it works reasonably well! Now we can turn to forecasting. We
 follow a similar approach in section 3.5 ‘Drawing Forecasts’ in Clark
-(2011), and also step 9 of Algorithm 13 in Karlsson (2013).
-
-For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
+(2011), and also step 9 of Algorithm 13 in Karlsson (2013). For each
+(post warmup) draw $j$, and for $h=1,\dots,H$, generate
 
 $$
 \nu^{(j)}_{T+h}
@@ -1627,8 +1626,8 @@ y2h50 <- draws_gibbs[50,2,]
 par(mfrow=c(2,2))
 plot_pair <- function(f1, f2, title, legend_labels = c("Model 1", "Model 2")) {
   
-  h1 <- hist(f1, plot = FALSE, breaks = 20)
-  h2 <- hist(f2, plot = FALSE, breaks = 20)
+  h1 <- hist(f1, plot = FALSE)
+  h2 <- hist(f2, plot = FALSE)
   
   ylim_max <- 1.5 * max(c(h1$density, h2$density))
   xlim_range <- range(c(h1$breaks, h2$breaks))
@@ -1788,13 +1787,11 @@ a &\sim \textrm{N}(\theta_A, \Omega_A) \\
 \end{aligned}                         
 $$
 
+Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$
+distribution is the univariate version of the inverse Wishart
+distribution with $\alpha=m/2, \ \beta = V/2$.
 
-Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$ distribution
-is the univariate version of the inverse Wishart distribution
-with $\alpha=m/2, \ \beta = V/2$.
-
-The following prior setup is a copy of the one in Clark (2011)
-
+The following prior setup is a copy of the one in Clark (2011).
 
 ``` r
 k <- bvar_obj$setup$k
@@ -1852,9 +1849,8 @@ summary(bvar_obj)
 ```
 
 Looks like it works reasonably well! With the respect to forecasting,
-the procedure is now similar in spirit but a bit different.
-
-For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
+the procedure is now similar in spirit but a bit different. For each
+(post warmup) draw $j$, and for $h=1,\dots,H$, generate
 
 $$
 \nu^{(j)}_{i,T+h}
@@ -2024,9 +2020,10 @@ both point forecasts (predictive means) converge closely to the true
 steady states. Also, before the convergence, the dynamics of the point
 forecasts are very similar. The key difference is again in the
 prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and
-increasing) interval, even though both are 95% intervals. Looking at both the
-sample and hold-out data, it is clear that the SS-BVAR-SV-RW does a better job
-at capturing the stochastic volatility in the data (how surprising!).
+increasing) interval, even though both are 95% intervals. Looking at
+both the sample and hold-out data, it is clear that the SS-BVAR-SV does
+a better job at capturing the stochastic volatility in the data (how
+surprising!).
 
 We can illustrate the differences by looking at the histograms of the
 forecast draws, where we clearly see that the SS-BVAR-SV-RW places a
