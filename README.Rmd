@@ -38,7 +38,7 @@ https://github.com/stan-dev/rstan/wiki/Rstan-Getting-Started
 Then you can install SteadyStateBVAR with:
 
 ```{r, eval=FALSE}
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 ## Introduction
 
@@ -48,7 +48,7 @@ $$
 y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t
 $$
 
-where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, and $d_t$ is a $q$-dimensional vector of deterministic (exogenous) variables at time $t$, and $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also, $\Pi_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is $(k \times q)$. Note here that
+where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, and $d_t$ is a $q$-dimensional vector of deterministic (exogenous) variables at time $t$, and the innovations are $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Also, $\Pi_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is $(k \times q)$. Note here that
 
 
 $$
@@ -139,7 +139,13 @@ dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
 bvar_obj <- setup(bvar_obj, p=4, deterministic = "constant_and_dummy", dummy = dum_var)
 lambda <- c(0.2, 0.5, 1.0)
 
-fol_pm=c(0, 0, 0.9, 0, 0, 0.9, 0.9)
+fol_pm=c(0,
+         0,
+         0.9,
+         0,
+         0,
+         0.9,
+         0.9)
 
 theta_Psi <- 
   c(
@@ -200,15 +206,28 @@ for(i in 1:p){
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
 bvar_obj$predict$H <- 20
-(bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0))
+bvar_obj$predict$d_pred <- cbind(rep(1, 20), 0)
 
-bvar_obj <- fit(bvar_obj, iter = 20000, warmup = 5000, chains = 4)
+bvar_obj <- fit(bvar_obj,
+                iter = 20000,
+                warmup = 5000,
+                chains = 4)
 
 summary(bvar_obj)
 
-fcst <- forecast(bvar_obj,ci = 0.95,fcst_type = "mean",growth_rate_idx = c(4,5),plot_idx = c(4,5,6))
+fcst <- forecast(bvar_obj,
+                 ci = 0.95,
+                 fcst_type = "mean",
+                 growth_rate_idx = c(4,5),
+                 plot_idx = c(4,5,6))
 
-irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.68)
+irf <- IRF(bvar_obj,
+           H=20,
+           response=5,
+           shock=6,
+           type="median",
+           method="OIRF",
+           ci=0.68)
 ```
 
 Now I will go step-by step and explain each step in detail.
@@ -701,7 +720,7 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 ## Stochastic volatility
 
-Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) to allow the errors/innovations $u_t$ to have time varying a covariance matrix $\Sigma_{u,t}$. Here we further build on the model of Clark (2011), by following the setup in section 1.1 ("*BVAR-SV Model*") in Carriero, Clark and Marcellino (2024). That is, instead of letting the log volatilities follow driftless random walks, we specify them to follow (stationary) AR(1) processes. Carriero, Clark and Marcellino (2024) present the stochastic volatility specification for a conventional BVAR, but here we use it for the steady-state BVAR. However you can with this package also estimate the model in Clark (2011) (see the second subsection of this chapter).
+Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) to allow the innovations $u_t$ to have a time varying covariance matrix $\Sigma_{u,t}$. Here we further build on the model of Clark (2011), by following the setup in section 1.1 ("*BVAR-SV Model*") in Carriero, Clark and Marcellino (2024). That is, instead of letting the log volatilities follow uncorrelated driftless random walks, we specify them to follow correlated (stationary) AR(1) processes. Carriero, Clark and Marcellino (2024) present the stochastic volatility specification for a conventional BVAR, but here we use it for the steady-state BVAR. However you can with this package also estimate the model in Clark (2011) (see the second subsection of this chapter).
 
 Our model is (on the surface) exactly the same as before
 
@@ -909,9 +928,7 @@ a &\sim \textrm{N}(\theta_A, \Omega_A) \\
 \end{aligned}                         
 $$
 
-Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in $A$ in row major order, and $\ln \lambda_0$ are the time $t=0$ values (initial conditions) of $\ln \lambda_{i,t}$. The following prior setup is almost (except for $\Phi$) an exact copy of the setup in Carriero, Clark and Marcellino (2024).
-
-For $a$ we use an uninformative (multivariate normal) prior with means 0 and variances 10 (assuming 0 covariance). For the coefficients $(\gamma_{i,0}, \ \gamma_{i_1})$ (intercept, slope) of the log volatility process of equation $i=1,\dots,k$ we also use Gaussian priors, where the prior means are $(0.1 \ln \hat{\sigma^2_i}, \ 0.9)$, where $\hat{\sigma^2_i}$ is the residual variance of an AR(p) model i.e. the exact same estimate used in the Minnesota prior from before. Note that this prior implies that the steady states of the volatility processes are $\ln \hat{\sigma^2_i}$.  The prior variances for the intercepts and slopes (assuming 0 covariance) are $(2, \ 0.04)$. For $\ln \lambda_0$, we set the prior mean and variance (Gaussian prior) at $\ln \hat{\sigma^2_i}$ and $2.0$ (assuming 0 covariance). Now for $\Phi$, Carriero, Clark and Marcellino (2024) use an Inverse Wishart prior with mean of $0.03 I_k$ and 10 degrees of freedom. Instead we will use Inverse Wishart prior with mean of $I_k$, i.e. scale matrix $V_0=(m_0-k-1) I_k$, and $m_0=k+2$ degrees of freedom. We can cheat a bit here since we know the DGP, and that the $0.03$ factor is not suitable.
+Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in $A$ in row major order, and $\ln \lambda_0$ are the time $t=0$ values (initial conditions) of $\ln \lambda_{i,t}$. The following prior setup is almost (except for $\Phi$) an exact copy of the setup in Carriero, Clark and Marcellino (2024), please see the paper for the exact details.
 
 
 ```{r, fig.width=8, fig.height=8}
@@ -953,9 +970,7 @@ summary(bvar_obj)
 ```
 
 
-Looks like it works reasonably well! Now we can turn to forecasting. We follow a similar approach in section 3.5 'Drawing Forecasts' in Clark (2011), and also step 9 of Algorithm 13 in Karlsson (2013).
-
-For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
+Looks like it works reasonably well! Now we can turn to forecasting. We follow a similar approach in section 3.5 'Drawing Forecasts' in Clark (2011), and also step 9 of Algorithm 13 in Karlsson (2013). For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
 
 $$
 \nu^{(j)}_{T+h}
@@ -1164,8 +1179,8 @@ y2h50 <- draws_gibbs[50,2,]
 par(mfrow=c(2,2))
 plot_pair <- function(f1, f2, title, legend_labels = c("Model 1", "Model 2")) {
   
-  h1 <- hist(f1, plot = FALSE, breaks = 20)
-  h2 <- hist(f2, plot = FALSE, breaks = 20)
+  h1 <- hist(f1, plot = FALSE)
+  h2 <- hist(f2, plot = FALSE)
   
   ylim_max <- 1.5 * max(c(h1$density, h2$density))
   xlim_range <- range(c(h1$breaks, h2$breaks))
@@ -1328,7 +1343,7 @@ $$
 
 Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$ distribution is the univariate version of the inverse Wishart distribution with $\alpha=m/2, \ \beta = V/2$.
 
-The following prior setup is a copy of the one in Clark (2011)
+The following prior setup is a copy of the one in Clark (2011).
 
 ```{r, fig.width=8, fig.height=8}
 k <- bvar_obj$setup$k
@@ -1364,9 +1379,7 @@ Let see if we managed to reasonably recover the true parameters. Remember again,
 summary(bvar_obj)
 ```
 
-Looks like it works reasonably well! With the respect to forecasting, the procedure is now similar in spirit but a bit different.
-
-For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
+Looks like it works reasonably well! With the respect to forecasting, the procedure is now similar in spirit but a bit different. For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
 
 $$
 \nu^{(j)}_{i,T+h}
