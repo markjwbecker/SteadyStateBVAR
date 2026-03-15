@@ -765,7 +765,7 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 ## Conditional forecasting
 
-Here I will show how the user can perform conditional forecasting. I follow the implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2018)].
+Here I will show how the user can perform conditional forecasting. I follow the implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2018)]. Note that for the structural shocks, we use Choleski factorisation as the identification scheme.
 
 We consider the same data as in the previous section. Now suppose we are interested in the forecast of FEDFUNDS conditional on a severe economic downturn. In the downturn, we assume that GDPC1 (real GDP growth) and GPDIC1 (real investment growth) face sharp and sudden large declines, and then quickly recover to positive but historically low levels of growth, until they finally get back to historical levels (their estimated steady-states). What do we expect the FED to do in such a scenario? We would expect the FED to lower rates at the onset of the severe downturn, and then keep them low in an effort to get real GDP growth and real investment growth back to historical levels. After they would have accomplished that, and the economy is back to historical levels (the estimated steady-states), they might consider raising rates.
 
@@ -775,9 +775,9 @@ First we will re-estimate the model (with Stan), such that the forecast horizon 
 bvar_obj$predict$H <- 100
 bvar_obj$predict$d_pred <- matrix(rep(1, 100))
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
-                chains = 1)
+                iter = 5000,
+                warmup = 1000,
+                chains = 4)
 ```
 
 Now we need set up our conditions/scenarios, i.e., which variables, which horizons, and what values the variables will take during those horizons.
@@ -806,7 +806,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
 
 Now we plot the conditional forecasts. The scenarios are the blue lines without intervals (since they are fixed). The red lines are the unconditional forecasts.
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfcol = c(3, 1))
 cond_fcst_plot <- conditional_forecast_plot(cond_fcst,
                                             bvar_obj,

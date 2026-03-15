@@ -968,7 +968,8 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 Here I will show how the user can perform conditional forecasting. I
 follow the implementation used in the BEAR toolbox (see Algorithm 3.3.1
-in Dieppe, Legrand, and van Roye (2018)\].
+in Dieppe, Legrand, and van Roye (2018)\]. Note that for the structural
+shocks, we use Choleski factorisation as the identification scheme.
 
 We consider the same data as in the previous section. Now suppose we are
 interested in the forecast of FEDFUNDS conditional on a severe economic
@@ -990,9 +991,9 @@ horizon is 100 this time (this is not a serious exercise)
 bvar_obj$predict$H <- 100
 bvar_obj$predict$d_pred <- matrix(rep(1, 100))
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 500,
-                chains = 1)
+                iter = 5000,
+                warmup = 1000,
+                chains = 4)
 ```
 
 Now we need set up our conditions/scenarios, i.e., which variables,
@@ -1045,9 +1046,9 @@ then converge to ……..
 
 ``` r
 round(tail(cond_fcst_plot$forecast[,3],1),2)
-#> [1] 4.77
+#> [1] 4.53
 smry$summaries$stan$Psi[3]
-#> [1] 4.39
+#> [1] 4.45
 ```
 
 the (estimated) steady state! Note that they are not exactly the same
