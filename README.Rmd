@@ -131,7 +131,7 @@ To estimate the model in Section 4.1 in Villani (2009), and then forecast/do imp
 library(SteadyStateBVAR)
 data("villani2009")
 yt <- villani2009
-yt <- ts(yt, start = start(yt), frequency = frequency(yt))
+yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 
 bvar_obj <- bvar(data = yt)
 
@@ -225,9 +225,9 @@ bvar_obj$predict$H <- 12
 bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 
 summary(bvar_obj)
 
@@ -313,7 +313,10 @@ $$
 where $\psi_i$ is the $i$:th column of $\Psi$. Now to setup the model. Although it is not mentioned which lag length is used in Villani (2009) we assume it is $p=4$.
 
 ```{r, fig.width=8, fig.height=8}
-bvar_obj <- setup(bvar_obj, p=4, deterministic = "constant_and_dummy", dummy = dum_var)
+bvar_obj <- setup(bvar_obj,
+                  p=4,
+                  deterministic = "constant_and_dummy",
+                  dummy = dum_var)
 ```
 
 Now let us specify the priors. We first consider $\beta$. We choose the same values for the hyperparameters as in Villani (2009), i.e. overall tightness $\lambda_1=0.2$, cross equation tightness $\lambda_2=0.5$ and lag decay rate $\lambda_3=1$. We then specify the prior means for the first own lags of the variables. For variables in growth rates, we set the prior mean to $0$, for variables in levels, we set the prior mean to $0.9$.
@@ -440,22 +443,22 @@ bvar_obj$predict$H <- 12
 
 Now we can fit the model.
 
-```{r, fig.width=8, fig.height=8, results='hide',eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 summary(bvar_obj)
 ```
 
 Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean at 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to get on the annualized scale).
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -465,7 +468,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate, and compare with the actual true values
 
-```{r, fig.width=10, fig.height=8,eval=FALSE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 (villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -478,7 +481,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 95% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 fcst <- forecast(bvar_obj,
                  ci = 0.95,
                  fcst_type = "mean",
@@ -488,7 +491,7 @@ fcst <- forecast(bvar_obj,
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to the forecasting, we can also choose between mean or median (default is median).
 
-```{r, fig.width=10, fig.height=10,eval=FALSE}
+```{r, fig.width=10, fig.height=10,eval=TRUE}
 par(mfrow=c(2,2))
 
 irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="OIRF", ci=0.68)
@@ -635,27 +638,27 @@ bvar_obj$predict$d_pred <- matrix(rep(1, 12))
 
 Then estimate the model, both with Stan and the Gibbs sampler.
 
-```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
                 iter = 1000,
-                warmup = 500,
+                warmup = 250,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
                 iter = 1000,
-                warmup = 500,
+                warmup = 250,
                 chains = 1,
                 estimation = "gibbs")
 ```
 Lets check the posterior means (very similar as expected)
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 summary(bvar_obj)
 ```
 
 Now lets do Figure 10
 
-```{r, fig.width=10, fig.height=10,eval=FALSE}
+```{r, fig.width=10, fig.height=10,eval=TRUE}
 Psi_draws_gibbs  <- bvar_obj$fit$gibbs$Psi_draws
 Psi_draws_stan <- rstan::extract(bvar_obj$fit$stan)$Psi
 
@@ -692,7 +695,7 @@ legend("topright", legend=c("Gibbs", "Stan"), col=c("red", "blue"), lwd=2, bty="
 
 And Figure 11 (mean +/- 1 std deviation bands of predictive distribution)
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 GustafssonVillani2025plot <- function(x, plot_idx=NULL, xlim, ylim){
   
   y_pred <- bvar_obj$fit$gibbs$fcst_draws
@@ -765,19 +768,20 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 ## Conditional forecasting
 
-Here I will show how the user can perform conditional forecasting. I follow the implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2018)]. Note that for the structural shocks, we use Choleski factorisation as the identification scheme.
+Here I will show how the user can perform conditional forecasting. I follow the implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2018)]. Note that for the structural shocks, we use Cholesky factorisation as the identification scheme.
 
-We consider the same data as in the previous section. Now suppose we are interested in the forecast of FEDFUNDS conditional on a severe economic downturn. In the downturn, we assume that GDPC1 (real GDP growth) and GPDIC1 (real investment growth) face sharp and sudden large declines, and then quickly recover to positive but historically low levels of growth, until they finally get back to historical levels (their estimated steady-states). What do we expect the FED to do in such a scenario? We would expect the FED to lower rates at the onset of the severe downturn, and then keep them low in an effort to get real GDP growth and real investment growth back to historical levels. After they would have accomplished that, and the economy is back to historical levels (the estimated steady-states), they might consider raising rates.
+We continue with the same data/model as in the previous section. Now suppose we are interested in the forecast of FEDFUNDS conditional on a severe economic downturn. In the downturn, we assume that GDPC1 (real GDP growth) and GPDIC1 (real investment growth) face sharp and sudden large declines, and then quickly recover to positive but low levels of growth, until they finally get back to historical levels (their estimated steady-states). What do we expect the FED to do in such a scenario? We would expect the FED to lower rates at the onset of the severe downturn, and then keep them low in an effort to get real GDP growth and real investment growth back to historical levels. Once the economy starts to get back on its feet, they would start to raise rates. Then when the economy finally is back to the historical levels (the estimated steady-states), we can imagine that the FED rate would stabilize (at the steady-state!).
 
 First we will re-estimate the model (with Stan), such that the forecast horizon is 100 this time (this is not a serious exercise)
 
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 bvar_obj$predict$H <- 100
 bvar_obj$predict$d_pred <- matrix(rep(1, 100))
+
 bvar_obj <- fit(bvar_obj,
-                iter = 5000,
-                warmup = 1000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Now we need set up our conditions/scenarios, i.e., which variables, which horizons, and what values the variables will take during those horizons.
@@ -801,7 +805,7 @@ We then do the conditional forecasting. We select a 95\% CI and the mean of the 
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   ci=0.95,
-                                  fcst_type = "median")
+                                  fcst_type = "mean")
 ```
 
 Now we plot the conditional forecasts. The scenarios are the blue lines without intervals (since they are fixed). The red lines are the unconditional forecasts.
@@ -813,14 +817,14 @@ cond_fcst_plot <- conditional_forecast_plot(cond_fcst,
                                             plot_idx = c(1,5,3))
 ```
 
-The conditional forecasts of the FED rate seems reasonable, and is in line with what we expect from economic theory! We can see that in the onset of the economic downturn, the prediction is that the FED rate will be lowered, and stay low until the economy gets back on its feet, and at that time the FED will raise the rate again. When the economy has converged to (estimated) steady-state levels, the FEDFUNDS rate will then converge to ........
+The conditional forecasts of the FED rate seems reasonable, and is in line with what we expect from economic theory! We can see that in the onset of the economic downturn, the prediction is that the FED rate will be lowered, and stay low until the economy starts to get back on its feet, and when that starts to happen, the FED will raise the rate again. When the economy has converged to historical levels (estimated steady-states), the FED funds rate will then converge to ... (take a guess)
 
 ```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 round(tail(cond_fcst_plot$forecast[,3],1),2)
 smry$summaries$stan$Psi[3]
 ```
-the (estimated) steady state! Note that they are not exactly the same (but will be as our HMC draws -> infinity)
 
+the (estimated) steady state! Note that the above are not exactly the same (but will be as the number of posterior draws goes towards infinity).
 
 ## Stochastic volatility
 
@@ -1060,19 +1064,19 @@ bvar_obj$SV_priors <- SV_priors
 
 Like usual we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods. Then we can fit the model
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters. Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 summary(bvar_obj)
 ```
 
@@ -1110,7 +1114,7 @@ $$
 At last calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the usual way [see step 4 of Algorithm 4 in Karlsson (2013)].
 
 
-```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
@@ -1118,7 +1122,7 @@ fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), sh
 We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue, we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
@@ -1130,7 +1134,7 @@ lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process and in blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 sigma <- matrix(NA,N,2)
 for(t in 1:(N)){
   sigma[t,] <- sqrt(diag(Sigma_u[,,t])) #true sigmas from the DGP above
@@ -1146,7 +1150,7 @@ lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 For the stochastic volatility steady-state BVAR, we can of course also do impulse response analysis, almost like before. Now however, since our covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which time point $t$ to use. The default setting is the most recent time point.
 
-```{r, fig.width=8, fig.height=16,eval=FALSE}
+```{r, fig.width=8, fig.height=16,eval=TRUE}
 par(mfrow=c(1,2))
 
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
@@ -1176,8 +1180,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 50000,
-                 warmup = 5000,
+                 iter = 1000,
+                 warmup = 250,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1191,7 +1195,7 @@ fcst2 <- forecast(bvar_obj2,
 
 Lets compare the results
 
-```{r, fig.width=8, fig.height=16,eval=FALSE}
+```{r, fig.width=8, fig.height=16,eval=TRUE}
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #--- SS-BVAR-SV-AR1 ---
@@ -1201,7 +1205,7 @@ summary(bvar_obj, pars = c("beta", "Psi"))
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim, legend=NULL){
   
   Y <- bvar_obj$data
@@ -1267,7 +1271,7 @@ Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\
 
 We can illustrate this difference by looking at histograms of the forecast draws, where we clearly see that the SS-BVAR-SV places a higher probability on future "tail" observations.
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 sf <- bvar_obj$fit$stan
 draws_stan <- rstan::extract(sf)$y_pred
 draws_gibbs <- bvar_obj2$fit$gibbs$fcst_draws
@@ -1480,19 +1484,19 @@ bvar_obj$SV_priors <- SV_priors
 
 Like usual, we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods, and only then we can fit the model
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
-                chains = 4)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters. Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 summary(bvar_obj)
 ```
 
@@ -1529,7 +1533,7 @@ $$
 At last calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the usual way [see step 4 of Algorithm 4 in Karlsson (2013)].
 
 
-```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj,
                   ci = 0.95,
@@ -1541,7 +1545,7 @@ fcst1 <- forecast(bvar_obj,
 We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow = c(2,1))
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-3,5), plot_idx=1, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
@@ -1553,7 +1557,7 @@ lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
 
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 sigma <- matrix(NA,N,2)
 for(t in 1:(N)){
   sigma[t,] <- sqrt(diag(Sigma_u[,,t])) #true sigmas from the DGP above
@@ -1569,7 +1573,7 @@ lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 We can again do some impulse response analysis.
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 par(mfrow=c(1,2))
 
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
@@ -1600,8 +1604,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 50000,
-                 warmup = 5000,
+                 iter = 1000,
+                 warmup = 250,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1615,7 +1619,7 @@ fcst2 <- forecast(bvar_obj2,
 
 Lets compare the results
 
-```{r, fig.width=8, fig.height=16,eval=FALSE}
+```{r, fig.width=8, fig.height=16,eval=TRUE}
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #--- SS-BVAR-SV-RW ---
@@ -1625,7 +1629,7 @@ summary(bvar_obj, pars = c("beta", "Psi"))
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow=c(2,1))
 compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-10,15),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
@@ -1646,7 +1650,7 @@ Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for $\psi_1$ clo
 
 We can illustrate the differences again by looking at the histograms of the forecast draws, where we clearly see that the SS-BVAR-SV-RW places a higher probability on "tail" observations.
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 sf <- bvar_obj$fit$stan
 draws_stan <- extract(sf)$y_pred
 draws_gibbs <- bvar_obj2$fit$gibbs$fcst_draws
