@@ -225,9 +225,9 @@ bvar_obj$predict$H <- 12
 bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 5000,
+                chains = 4)
 
 summary(bvar_obj)
 
@@ -445,9 +445,9 @@ Now we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 5000,
+                chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
@@ -640,13 +640,13 @@ Then estimate the model, both with Stan and the Gibbs sampler.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 10000,
+                warmup = 5000,
                 chains = 1)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
+                iter = 10000,
+                warmup = 5000,
                 chains = 1,
                 estimation = "gibbs")
 ```
@@ -772,16 +772,16 @@ Here I will show how the user can perform conditional forecasting. I follow the 
 
 We continue with the same data/model as in the previous section. Now suppose we are interested in the forecast of FEDFUNDS conditional on a severe economic downturn. In the downturn, we assume that GDPC1 (real GDP growth) and GPDIC1 (real investment growth) face sharp and sudden large declines, and then quickly recover to positive but low levels of growth, until they finally get back to historical levels (their estimated steady-states). What do we expect the FED to do in such a scenario? We would expect the FED to lower rates at the onset of the severe downturn, and then keep them low in an effort to get real GDP growth and real investment growth back to historical levels. Once the economy starts to get back on its feet, they would start to raise rates. Then when the economy finally is back to the historical levels (the estimated steady-states), we can imagine that the FED rate would stabilize (at the steady-state!).
 
-First we will re-estimate the model (with Stan), such that the forecast horizon is 100 this time (this is not a serious exercise)
+First we will re-estimate the model (with Stan), such that the forecast horizon is 100 this time (this is not really a serious exercise)
 
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 bvar_obj$predict$H <- 100
 bvar_obj$predict$d_pred <- matrix(rep(1, 100))
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 5000,
+                chains = 4)
 ```
 
 Now we need set up our conditions/scenarios, i.e., which variables, which horizons, and what values the variables will take during those horizons.
@@ -810,14 +810,14 @@ cond_fcst <- conditional_forecast(bvar_obj,
 
 Now we plot the conditional forecasts. The scenarios are the blue lines without intervals (since they are fixed). The red lines are the unconditional forecasts.
 
-```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfcol = c(3, 1))
 cond_fcst_plot <- conditional_forecast_plot(cond_fcst,
                                             bvar_obj,
                                             plot_idx = c(1,5,3))
 ```
 
-The conditional forecasts of the FED rate seems reasonable, and is in line with what we expect from economic theory! We can see that in the onset of the economic downturn, the prediction is that the FED rate will be lowered, and stay low until the economy starts to get back on its feet, and when that starts to happen, the FED will raise the rate again. When the economy has converged to historical levels (estimated steady-states), the FED funds rate will then converge to ... (take a guess)
+The conditional forecasts of the FED rate seem reasonable, and is in line with what we expect from economic theory. We can see that in the onset of the economic downturn, the prediction is that the FED rate will be lowered, and stay low until the economy starts to get back on its feet, and when that starts to happen, the FED will raise the rate again. When the economy has converged to historical levels (estimated steady-states), the FED funds rate will then converge to ... (take a guess)
 
 ```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 round(tail(cond_fcst_plot$forecast[,3],1),2)
@@ -1069,9 +1069,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 2)
 ```
 
 Let see if we managed to reasonably recover the true parameters. Remember here that since $p=1$ we have $\beta'=\Pi_1$.
@@ -1150,7 +1150,7 @@ lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 For the stochastic volatility steady-state BVAR, we can of course also do impulse response analysis, almost like before. Now however, since our covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which time point $t$ to use. The default setting is the most recent time point.
 
-```{r, fig.width=8, fig.height=16,eval=TRUE}
+```{r, fig.width=8, fig.height=6,eval=TRUE}
 par(mfrow=c(1,2))
 
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
@@ -1180,8 +1180,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 1000,
-                 warmup = 250,
+                 iter = 30000,
+                 warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1489,9 +1489,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 2)
 ```
 
 Let see if we managed to reasonably recover the true parameters. Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
@@ -1573,7 +1573,7 @@ lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 We can again do some impulse response analysis.
 
-```{r, fig.width=8, fig.height=8,eval=TRUE}
+```{r, fig.width=8, fig.height=6,eval=TRUE}
 par(mfrow=c(1,2))
 
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
@@ -1604,8 +1604,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 1000,
-                 warmup = 250,
+                 iter = 30000,
+                 warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
 
