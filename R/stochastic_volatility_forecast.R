@@ -63,7 +63,7 @@ stochastic_volatility_forecast <- function(x, ci=0.95, plot_idx=NULL, xlim=NULL,
             col = "red",
             lwd = 2,
             main = if (vol == "sd") {
-              paste0("sd(u_", i, ",t)")
+              paste0("sd(u_", i, ")")
             } else {
               paste0("ln(lambda_", i, ")")
             },

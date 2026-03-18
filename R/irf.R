@@ -1,9 +1,9 @@
-IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c("OIRF", "GIRF"), ci=0.95, estimation=c("stan","gibbs"), t=NULL) {
+IRF2 <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c("OIRF", "GIRF"), ci=0.95, estimation=c("stan","gibbs"), t=NULL,growth_rate_idx = NULL) {
   
   method     <- match.arg(method)
   estimation <- match.arg(estimation)
   type <- match.arg(type)
-  
+  freq <- frequency(x$data)
   
   compute_OIRF <- function(A, Sigma, e, N){
     k <- nrow(Sigma)
@@ -115,6 +115,45 @@ IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c
   lower_irf  <- apply(irf_array, c(2,3,4), quantile, probs = alpha/2)
   upper_irf  <- apply(irf_array, c(2,3,4), quantile, probs = 1 - alpha/2)
   
+  if (!is.null(growth_rate_idx)) {
+    
+    transform_irf <- function(irf_mat, freq) {
+      
+      k  <- dim(irf_mat)[1]
+      k2 <- dim(irf_mat)[2]
+      H1 <- dim(irf_mat)[3]
+      
+      irf_yoy <- array(NA, dim = dim(irf_mat))
+      
+      for (i in 1:k) {
+        for (j in 1:k2) {
+          if (i %in% growth_rate_idx) {
+            
+            irf <- irf_mat[i, j, ]
+            all_irf <- c(rep(0, freq - 1), irf)
+            
+            tmp <- numeric(H1)
+            
+            for (h in 1:H1) {
+              tmp[h] <- sum(all_irf[h:(h + freq - 1)])
+            }
+            
+            irf_yoy[i, j, ] <- tmp
+            
+          } else {
+            irf_yoy[i, j, ] <- irf_mat[i, j, ]
+          }
+        }
+      }
+      
+      return(irf_yoy)
+    }
+    
+    m_irf     <- transform_irf(m_irf, freq)
+    lower_irf <- transform_irf(lower_irf, freq)
+    upper_irf <- transform_irf(upper_irf, freq)
+  }
+  
   horizon <- 0:H
   max_abs <- max(abs(c(
     lower_irf[response, shock, ],
@@ -124,8 +163,14 @@ IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c
   
   ylim_range <- c(-max_abs, max_abs)
   
+  if (!is.null(growth_rate_idx) && response %in% growth_rate_idx) {
+    ylab_label <- paste0("Response: ", var_names[response], " (annual)")
+  } else {
+    ylab_label <- paste0("Response: ", var_names[response])
+  }
+  
   plot(NA, xlim = c(0, H), ylim = ylim_range, type="n",
-       xlab="Horizon", ylab=paste0("Response: ", var_names[response]), font.lab=2)
+       xlab="Horizon", ylab=ylab_label, font.lab=2)
   
   polygon(c(horizon, rev(horizon)),
           c(upper_irf[response, shock, ], rev(lower_irf[response, shock, ])),
@@ -152,7 +197,7 @@ IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c
       "\nShock: ", var_names[shock]
     ))
   }
-
+  
   
   if (type == "median") {
     return(list(median_irf = m_irf, lower = lower_irf, upper = upper_irf))
