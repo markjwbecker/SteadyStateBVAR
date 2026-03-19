@@ -38,7 +38,7 @@ https://github.com/stan-dev/rstan/wiki/Rstan-Getting-Started
 Then you can install SteadyStateBVAR with:
 
 ```{r, eval=FALSE}
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 ## Introduction
 
@@ -52,7 +52,7 @@ where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at
 
 
 $$
-E(y_t)=\mu_t=\Psi d_t
+\textrm{E}(y_t)=\mu_t=\Psi d_t
 $$
 
 is the unconditional mean, or the **steady state**, of the process. Since long-horizon forecasts from stationary VARs converge to the unconditional mean/steady state, it is naturally very important from a forecasting perspective to have precise inference on $\Psi$.
@@ -78,7 +78,7 @@ where $w_t'=(y_{t-1}',\dots,y_{t-p}')$ is a $kp$-dimensional vector of lagged en
 
 
 $$
-\textrm{vec}(\beta) \sim N_{kpk}\left[\theta_\beta,\Omega_\beta\right]
+\textrm{vec}(\beta) \sim \textrm{N}_{kpk}\left[\theta_\beta,\Omega_\beta\right]
 $$
 
 First for $\theta_\beta$, the Minnesota prior sets all prior means for the elements in $\beta$ to $0$, except for the elements that relate to the first own lags of the variables, which are often set to $0.9$ or $1$ for level variables or also to $0$ for growth rate variables. Further, $\Omega_\beta$ is a diagonal matrix containing the prior variances for the elements in $\beta$. The prior is constructed such that for the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ which is element $\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$ the prior variance is given by
@@ -97,7 +97,7 @@ Here $\lambda_1$, $\lambda_2$ and $\lambda_3$ are scalar hyperparameters known a
 
 
 $$
-\textrm{vec}(\Psi) \sim N_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
+\textrm{vec}(\Psi) \sim \textrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
 This is really the core of the steady-state BVAR model. In $\theta_\Psi$ we specify our prior beliefs of the location of the steady state, and in $\Omega_\Psi$, which we assume to be a diagonal matrix, we specify our degree of certainty in those prior beliefs. At last, the prior for $\Sigma_u$ is the usual noninformative Jeffreys prior
@@ -111,7 +111,7 @@ However if the user wants, an inverse Wishart prior can be used instead
 
 
 $$
-\Sigma_u \sim IW(V_0,m_0)
+\Sigma_u \sim \textrm{IW}(V_0,m_0)
 $$
 
 
@@ -458,7 +458,7 @@ summary(bvar_obj)
 
 Note that 'bvar_obj\$fit\$stan' is an object of class 'stanfit'. So we can do the usual rstan inference on our fitted model. Lets look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean at 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to get on the annualized scale).
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
+```{r, fig.width=6, fig.height=6, warning=FALSE, message=FALSE,eval=TRUE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -468,7 +468,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with rstan. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate, and compare with the actual true values
 
-```{r, fig.width=10, fig.height=8,eval=TRUE}
+```{r, fig.width=6, fig.height=6,eval=TRUE}
 (villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -489,15 +489,15 @@ fcst <- forecast(bvar_obj,
                  plot_idx = c(4,5,6))
 ```
 
-Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to the forecasting, we can also choose between mean or median (default is median).
+Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to the forecasting, we can also choose between mean or median (default is median). Also similarly, we can transform the IRFs for the quarter on quarter growth rate variables to the annual/yearly scale.
 
 ```{r, fig.width=10, fig.height=10,eval=TRUE}
 par(mfrow=c(2,2))
 
-irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="OIRF", ci=0.68)
-irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="GIRF", ci=0.68)
-irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.68)
-irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="GIRF", ci=0.68)
+irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="OIRF", ci=0.95, growth_rate_idx=4)
+irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="GIRF", ci=0.95, growth_rate_idx=4)
+irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.95, growth_rate_idx=5)
+irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="GIRF", ci=0.95, growth_rate_idx=5)
 ```
 
 Now if desired, the user can estimate the model with a Gibbs sampler instead.
@@ -770,33 +770,32 @@ GustafssonVillani2025plot(bvar_obj, plot_idx=c(4), xlim=c(39.25,58), ylim=c(-3.5
 
 Here I will show how the user can perform conditional forecasting. I follow the implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2018)]. Note that for the structural shocks, we use Cholesky factorisation as the identification scheme.
 
-We continue with the same data/model as in the previous section. Now suppose we are interested in the forecast of FEDFUNDS conditional on a severe economic downturn. In the downturn, we assume that GDPC1 (real GDP growth) and GPDIC1 (real investment growth) face sharp and sudden large declines, and then quickly recover to positive but low levels of growth, until they finally get back to historical levels (their estimated steady-states). What do we expect the FED to do in such a scenario? We would expect the FED to lower rates at the onset of the severe downturn, and then keep them low in an effort to get real GDP growth and real investment growth back to historical levels. Once the economy starts to get back on its feet, they would start to raise rates. Then when the economy finally is back to the historical levels (the estimated steady-states), we can imagine that the FED rate would stabilize (at the steady-state!).
+We continue with the same data/model as in the previous section. Now suppose we are interested in the forecast of the Fed rate (FEDFUNDS) conditional on a sudden severe economic downturn. We can imagine this is a COVID-19 type of crash scenario. In this hypothetical downturn, GDPC1 (real GDP growth) and GPDIC1 (real investment growth) face sharp and sudden large declines, and then quickly recover to positive but low levels of growth. After a while, both variables get back to historical levels (their estimated steady-states), albeit at different speeds. How will the Fed set their interest rate in such a scenario? This is a question we can attempt to answer with conditional forecasting! Another common example (not shown here) is: what will the inflation rate be conditional on a certain interest rate path (for example the path communicated by the central bank)?
 
-First we will re-estimate the model (with Stan), such that the forecast horizon is 100 this time (this is not really a serious exercise)
+First we will re-estimate the model (with Stan), such that the forecast horizon is 40 this time
 
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
-bvar_obj$predict$H <- 100
-bvar_obj$predict$d_pred <- matrix(rep(1, 100))
+bvar_obj$predict$H <- 40
+bvar_obj$predict$d_pred <- matrix(rep(1, 40))
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
+                iter = 10000,
                 warmup = 5000,
-                chains = 4)
+                chains = 2)
 ```
 
 Now we need set up our conditions/scenarios, i.e., which variables, which horizons, and what values the variables will take during those horizons.
 
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
-smry <- summary(bvar_obj)
-Psi_11_hat <- smry$summaries$stan$Psi[1]
-Psi_51_hat <- smry$summaries$stan$Psi[5]
+posterior <- rstan::extract(bvar_obj$fit$stan)
+Psi_mean <- apply(posterior$Psi, c(2, 3), mean)
 
 conditions <- data.frame(
-  var     = c(rep(1, 100), rep(5, 100)),
-  horizon = c(1:100, 1:100),
-  value   = c(c(3,-9,0,0.2,0.4,0.5,1,1.5,2.5,2.90,rep(Psi_11_hat,90)),
-              c(3,-50,0,0.5,0.6,0.8,0.9,1.5,1.8,2.0,2.2,2.5,2.9,3.2,3.5,rep(Psi_51_hat,85)))
-  )
+  var     = c(rep(1, 40), rep(5, 40)),
+  horizon = c(1:40, 1:40),
+  value   = c(c(3,-9,seq(0, 2.90, length.out = 8),rep(Psi_mean[1],30)),
+              c(3,-50,seq(0, 4.20, length.out = 18),rep(Psi_mean[5],20)))
+)
 ```
 
 We then do the conditional forecasting. We select a 95\% CI and the mean of the predictive distribution as the point forecast.
@@ -817,14 +816,7 @@ cond_fcst_plot <- conditional_forecast_plot(cond_fcst,
                                             plot_idx = c(1,5,3))
 ```
 
-The conditional forecasts of the FED rate seem reasonable, and is in line with what we expect from economic theory. We can see that in the onset of the economic downturn, the prediction is that the FED rate will be lowered, and stay low until the economy starts to get back on its feet, and when that starts to happen, the FED will raise the rate again. When the economy has converged to historical levels (estimated steady-states), the FED funds rate will then converge to ... (take a guess)
-
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
-round(tail(cond_fcst_plot$forecast[,3],1),2)
-smry$summaries$stan$Psi[3]
-```
-
-the (estimated) steady state! Note that the above are not exactly the same (but will be as the number of posterior draws goes towards infinity).
+Results look reasonable. We predict that the FED will lower the rate quite drastically in the crash scenario, and then later the rate will go back towards its steady state.
 
 ## Stochastic volatility
 
@@ -1032,7 +1024,7 @@ a &\sim \textrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &\sim \textrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &\sim \textrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
 \ln \lambda_{0} &\sim \textrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
-\Phi &\sim IW(V_0,m_0)
+\Phi &\sim \textrm{IW}(V_0,m_0)
 \end{aligned}                         
 $$
 
@@ -1150,7 +1142,7 @@ lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 For the stochastic volatility steady-state BVAR, we can of course also do impulse response analysis, almost like before. Now however, since our covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which time point $t$ to use. The default setting is the most recent time point.
 
-```{r, fig.width=8, fig.height=6,eval=TRUE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 par(mfrow=c(1,2))
 
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
@@ -1573,7 +1565,7 @@ lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 We can again do some impulse response analysis.
 
-```{r, fig.width=8, fig.height=6,eval=TRUE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 par(mfrow=c(1,2))
 
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)

@@ -61,7 +61,7 @@ First, you need to install Rstan:
 Then you can install SteadyStateBVAR with:
 
 ``` r
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 
 ## Introduction
@@ -80,7 +80,7 @@ $\Pi_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$, and $\Psi$ is
 $(k \times q)$. Note here that
 
 $$
-E(y_t)=\mu_t=\Psi d_t
+\textrm{E}(y_t)=\mu_t=\Psi d_t
 $$
 
 is the unconditional mean, or the **steady state**, of the process.
@@ -119,7 +119,7 @@ $\Sigma_u$ is assumed. Starting with $\beta$, we use the Minnesota prior
 where
 
 $$
-\textrm{vec}(\beta) \sim N_{kpk}\left[\theta_\beta,\Omega_\beta\right]
+\textrm{vec}(\beta) \sim \textrm{N}_{kpk}\left[\theta_\beta,\Omega_\beta\right]
 $$
 
 First for $\theta_\beta$, the Minnesota prior sets all prior means for
@@ -150,7 +150,7 @@ variance from a univariate autoregression for variable $i$ with $p$ lags
 on to $\Psi$ the prior we use is
 
 $$
-\textrm{vec}(\Psi) \sim N_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
+\textrm{vec}(\Psi) \sim \textrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
 This is really the core of the steady-state BVAR model. In $\theta_\Psi$
@@ -166,7 +166,7 @@ $$
 However if the user wants, an inverse Wishart prior can be used instead
 
 $$
-\Sigma_u \sim IW(V_0,m_0)
+\Sigma_u \sim \textrm{IW}(V_0,m_0)
 $$
 
 where $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of
@@ -621,14 +621,14 @@ summary(bvar_obj)
 #>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
 #>  [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
 #>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.21  3.96  0.74  0.93
+#>  [7,]  0.00  0.00  0.00  1.21  3.96  0.77  0.93
 #>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
 #>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
 #> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
 #> [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
 #> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
 #> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.55 -0.38  0.31 -0.04
+#> [14,]  0.00  0.00  0.00  0.55 -0.38  0.28 -0.04
 #> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
 #> [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
 #> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
@@ -637,7 +637,7 @@ summary(bvar_obj)
 #> [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
 #> [21,]  0.00  0.00  0.00 -0.14 -0.03 -0.58  0.00
 #> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#> [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
+#> [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
 #> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
 #> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
 #> [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
@@ -649,8 +649,8 @@ summary(bvar_obj)
 #> [1,] 0.58  0.08
 #> [2,] 0.51  0.46
 #> [3,] 4.94  2.02
-#> [4,] 0.58 -0.03
-#> [5,] 0.49  1.14
+#> [4,] 0.58 -0.04
+#> [5,] 0.49  1.15
 #> [6,] 4.29  4.45
 #> [7,] 3.92 -0.10
 #> 
@@ -658,7 +658,7 @@ summary(bvar_obj)
 #>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
 #> [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00
-#> [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
+#> [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
 #> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
 #> [5,] -0.01  0.12 0.18 -0.05  0.59  0.11  0.00
 #> [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01
@@ -726,15 +726,17 @@ fcst <- forecast(bvar_obj,
 Now for some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
 impulse response function (GIRF). Similar to the forecasting, we can
-also choose between mean or median (default is median).
+also choose between mean or median (default is median). Also similarly,
+we can transform the IRFs for the quarter on quarter growth rate
+variables to the annual/yearly scale.
 
 ``` r
 par(mfrow=c(2,2))
 
-irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="OIRF", ci=0.68)
-irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="GIRF", ci=0.68)
-irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.68)
-irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="GIRF", ci=0.68)
+irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="OIRF", ci=0.95, growth_rate_idx=4)
+irf <- IRF(bvar_obj, H=20, response=4, shock=6, type="median", method="GIRF", ci=0.95, growth_rate_idx=4)
+irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="OIRF", ci=0.95, growth_rate_idx=5)
+irf <- IRF(bvar_obj, H=20, response=5, shock=6, type="median", method="GIRF", ci=0.95, growth_rate_idx=5)
 ```
 
 <img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
@@ -920,41 +922,49 @@ summary(bvar_obj)
 #> ====================================
 #> 
 #> beta posterior mean
-#>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.03  0.07 -0.26  0.05 -0.03
-#>  [2,]  0.02  0.70  0.04 -0.17  0.77 -0.01  0.03
-#>  [3,] -0.01  0.11  1.01 -0.39  0.24 -0.02 -0.02
-#>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
-#>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
-#>  [6,]  0.11  0.05  0.06 -0.02  1.21  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.19 -0.13  0.36
-#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.06  0.19  0.07  0.11 -0.69  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.09  0.39 -0.93 -0.11 -0.03
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.01  0.06  0.01
-#> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
-#> [14,] -0.04  0.03  0.03  0.04 -0.37 -0.13  0.30
+#>         [,1]   [,2]  [,3]  [,4]  [,5]  [,6]   [,7]
+#>  [1,] -24.34 -10.30 -0.50 -2.50  1.69 -0.26  -1.93
+#>  [2,] -28.52 -13.91  1.21 -2.44  1.86 -1.59  -4.87
+#>  [3,] -34.56 -16.17  1.30  0.29  0.63  1.58  -5.75
+#>  [4,] -15.15  -6.42  1.53  0.29  1.69  0.07  -1.73
+#>  [5,] -95.53 -42.95  0.12 -1.73  1.69 -0.39 -11.83
+#>  [6,] -26.38 -13.22  0.67 -2.72  0.74  1.15  -4.87
+#>  [7,]  -4.44  -3.37 -1.23  0.46 -0.25  0.66  -2.33
+#>  [8,] -11.88  -5.76 -1.38  0.74  2.45  1.49  -2.71
+#>  [9,] -26.27 -11.36 -1.21  1.08  2.09  1.72  -2.86
+#> [10,] -31.89 -16.03  0.78 -1.70  2.99  1.28  -3.59
+#> [11,] -18.07  -8.48 -0.27  1.44 -0.37 -0.62  -1.23
+#> [12,] -27.60 -11.58 -0.04 -0.71 -0.05 -0.70  -2.60
+#> [13,] -23.49 -10.73 -1.43  0.78  0.30  1.15  -4.90
+#> [14,]  -4.03  -0.89 -1.74  1.75  2.09 -0.57  -1.82
 #> 
 #> Psi posterior mean
-#>      [,1]
-#> [1,] 3.20
-#> [2,] 2.47
-#> [3,] 4.45
-#> [4,] 3.38
-#> [5,] 4.62
-#> [6,] 1.66
-#> [7,] 1.03
+#>        [,1]
+#> [1,] -12.42
+#> [2,]   6.44
+#> [3,]   6.31
+#> [4,]  -1.30
+#> [5,]   4.67
+#> [6,]  16.62
+#> [7,]  -1.40
 #> 
 #> Sigma posterior mean
-#>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.94 -0.01  0.50  4.26  26.88  3.99  0.45
-#> [2,] -0.01  1.00  0.12 -0.14   0.89  0.34 -0.13
-#> [3,]  0.50  0.12  0.70  0.27   2.27  0.63 -0.05
-#> [4,]  4.26 -0.14  0.27  5.75   5.44  2.24  0.45
-#> [5,] 26.88  0.89  2.27  5.44 161.57 16.58  2.11
-#> [6,]  3.99  0.34  0.63  2.24  16.58  5.44  0.37
-#> [7,]  0.45 -0.13 -0.05  0.45   2.11  0.37  1.26
+#>               [,1]           [,2]          [,3]          [,4]          [,5]
+#> [1,]  2.140209e+95   6.047293e+49 -6.004996e+45  4.008331e+48 -5.815587e+48
+#> [2,]  6.047293e+49  1.992193e+128  8.221447e+64  4.780136e+65 -6.371674e+65
+#> [3,] -6.004996e+45   8.221447e+64  1.105868e+13  4.337963e+07 -6.875974e+07
+#> [4,]  4.008331e+48   4.780136e+65  4.337963e+07  1.039540e+39 -1.727224e+21
+#> [5,] -5.815587e+48  -6.371674e+65 -6.875974e+07 -1.727224e+21  4.958727e+15
+#> [6,]  1.687823e+48   1.171800e+65  1.285797e+07  3.875476e+20  7.514126e+07
+#> [7,]  1.714934e+49   2.209814e+66  2.253588e+08  5.813316e+21 -4.020298e+08
+#>              [,6]           [,7]
+#> [1,] 1.687823e+48   1.714934e+49
+#> [2,] 1.171800e+65   2.209814e+66
+#> [3,] 1.285797e+07   2.253588e+08
+#> [4,] 3.875476e+20   5.813316e+21
+#> [5,] 7.514126e+07  -4.020298e+08
+#> [6,] 9.653240e+11   3.675823e+07
+#> [7,] 3.675823e+07  3.876932e+136
 #> 
 #> ====================================
 #> Estimation Method: Gibbs 
@@ -962,26 +972,26 @@ summary(bvar_obj)
 #> 
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.06 -0.02  0.03  0.07 -0.28  0.04 -0.03
-#>  [2,]  0.03  0.71  0.04 -0.17  0.75 -0.02  0.03
+#>  [1,]  0.06 -0.02  0.03  0.07 -0.27  0.04 -0.03
+#>  [2,]  0.03  0.71  0.04 -0.17  0.77 -0.01  0.03
 #>  [3,] -0.02  0.11  1.01 -0.39  0.22 -0.02 -0.02
 #>  [4,]  0.26  0.02  0.03  0.14  1.79  0.25  0.04
 #>  [5,] -0.01  0.00  0.00  0.01  0.03  0.01 -0.01
 #>  [6,]  0.11  0.05  0.06 -0.02  1.22  0.31  0.01
-#>  [7,]  0.08  0.00  0.03  0.03 -0.19 -0.14  0.36
-#>  [8,]  0.04  0.00  0.01  0.03  0.10  0.00  0.02
-#>  [9,] -0.06  0.19  0.07  0.11 -0.67  0.04 -0.04
-#> [10,] -0.06 -0.08 -0.09  0.38 -0.91 -0.11 -0.03
-#> [11,]  0.12 -0.01 -0.04  0.12 -0.01  0.06  0.01
+#>  [7,]  0.09  0.00  0.03  0.03 -0.17 -0.13  0.36
+#>  [8,]  0.04  0.00  0.01  0.03  0.11  0.00  0.02
+#>  [9,] -0.05  0.19  0.07  0.11 -0.68  0.04 -0.04
+#> [10,] -0.06 -0.08 -0.09  0.38 -0.92 -0.11 -0.03
+#> [11,]  0.11 -0.01 -0.04  0.12 -0.03  0.06  0.01
 #> [12,] -0.01  0.00  0.00  0.01  0.01  0.00  0.00
-#> [13,]  0.03 -0.01  0.01  0.00 -0.55  0.16 -0.01
+#> [13,]  0.03 -0.01  0.01  0.00 -0.56  0.16 -0.01
 #> [14,] -0.04  0.03  0.03  0.04 -0.38 -0.13  0.30
 #> 
 #> Psi posterior mean
 #>      [,1]
-#> [1,] 3.19
-#> [2,] 2.47
-#> [3,] 4.47
+#> [1,] 3.20
+#> [2,] 2.45
+#> [3,] 4.45
 #> [4,] 3.38
 #> [5,] 4.63
 #> [6,] 1.66
@@ -989,13 +999,13 @@ summary(bvar_obj)
 #> 
 #> Sigma posterior mean
 #>       [,1]  [,2]  [,3]  [,4]   [,5]  [,6]  [,7]
-#> [1,]  7.93 -0.01  0.50  4.25  26.84  3.98  0.45
-#> [2,] -0.01  0.99  0.12 -0.14   0.87  0.34 -0.14
-#> [3,]  0.50  0.12  0.70  0.28   2.26  0.63 -0.05
-#> [4,]  4.25 -0.14  0.28  5.74   5.45  2.24  0.45
-#> [5,] 26.84  0.87  2.26  5.45 161.27 16.55  2.11
-#> [6,]  3.98  0.34  0.63  2.24  16.55  5.44  0.37
-#> [7,]  0.45 -0.14 -0.05  0.45   2.11  0.37  1.26
+#> [1,]  7.93 -0.01  0.49  4.25  26.85  3.98  0.45
+#> [2,] -0.01  1.00  0.12 -0.14   0.89  0.34 -0.13
+#> [3,]  0.49  0.12  0.70  0.27   2.25  0.63 -0.05
+#> [4,]  4.25 -0.14  0.27  5.74   5.41  2.23  0.46
+#> [5,] 26.85  0.89  2.25  5.41 161.50 16.55  2.08
+#> [6,]  3.98  0.34  0.63  2.23  16.55  5.43  0.37
+#> [7,]  0.45 -0.13 -0.05  0.46   2.08  0.37  1.26
 ```
 
 Now lets do Figure 10
@@ -1121,31 +1131,30 @@ in Dieppe, Legrand, and van Roye (2018)\]. Note that for the structural
 shocks, we use Cholesky factorisation as the identification scheme.
 
 We continue with the same data/model as in the previous section. Now
-suppose we are interested in the forecast of FEDFUNDS conditional on a
-severe economic downturn. In the downturn, we assume that GDPC1 (real
-GDP growth) and GPDIC1 (real investment growth) face sharp and sudden
-large declines, and then quickly recover to positive but low levels of
-growth, until they finally get back to historical levels (their
-estimated steady-states). What do we expect the FED to do in such a
-scenario? We would expect the FED to lower rates at the onset of the
-severe downturn, and then keep them low in an effort to get real GDP
-growth and real investment growth back to historical levels. Once the
-economy starts to get back on its feet, they would start to raise rates.
-Then when the economy finally is back to the historical levels (the
-estimated steady-states), we can imagine that the FED rate would
-stabilize (at the steady-state!).
+suppose we are interested in the forecast of the Fed rate (FEDFUNDS)
+conditional on a sudden severe economic downturn. We can imagine this is
+a COVID-19 type of crash scenario. In this hypothetical downturn, GDPC1
+(real GDP growth) and GPDIC1 (real investment growth) face sharp and
+sudden large declines, and then quickly recover to positive but low
+levels of growth. After a while, both variables get back to historical
+levels (their estimated steady-states), albeit at different speeds. How
+will the Fed set their interest rate in such a scenario? This is a
+question we can attempt to answer with conditional forecasting! Another
+common example (not shown here) is: what will the inflation rate be
+conditional on a certain interest rate path (for example the path
+communicated by the central bank)?
 
 First we will re-estimate the model (with Stan), such that the forecast
-horizon is 100 this time (this is not really a serious exercise)
+horizon is 40 this time
 
 ``` r
-bvar_obj$predict$H <- 100
-bvar_obj$predict$d_pred <- matrix(rep(1, 100))
+bvar_obj$predict$H <- 40
+bvar_obj$predict$d_pred <- matrix(rep(1, 40))
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
+                iter = 10000,
                 warmup = 5000,
-                chains = 4)
+                chains = 2)
 ```
 
 Now we need set up our conditions/scenarios, i.e., which variables,
@@ -1153,16 +1162,15 @@ which horizons, and what values the variables will take during those
 horizons.
 
 ``` r
-smry <- summary(bvar_obj)
-Psi_11_hat <- smry$summaries$stan$Psi[1]
-Psi_51_hat <- smry$summaries$stan$Psi[5]
+posterior <- rstan::extract(bvar_obj$fit$stan)
+Psi_mean <- apply(posterior$Psi, c(2, 3), mean)
 
 conditions <- data.frame(
-  var     = c(rep(1, 100), rep(5, 100)),
-  horizon = c(1:100, 1:100),
-  value   = c(c(3,-9,0,0.2,0.4,0.5,1,1.5,2.5,2.90,rep(Psi_11_hat,90)),
-              c(3,-50,0,0.5,0.6,0.8,0.9,1.5,1.8,2.0,2.2,2.5,2.9,3.2,3.5,rep(Psi_51_hat,85)))
-  )
+  var     = c(rep(1, 40), rep(5, 40)),
+  horizon = c(1:40, 1:40),
+  value   = c(c(3,-9,seq(0, 2.90, length.out = 8),rep(Psi_mean[1],30)),
+              c(3,-50,seq(0, 4.20, length.out = 18),rep(Psi_mean[5],20)))
+)
 ```
 
 We then do the conditional forecasting. We select a 95% CI and the mean
@@ -1188,25 +1196,9 @@ cond_fcst_plot <- conditional_forecast_plot(cond_fcst,
 
 <img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
 
-The conditional forecasts of the FED rate seem reasonable, and is in
-line with what we expect from economic theory. We can see that in the
-onset of the economic downturn, the prediction is that the FED rate will
-be lowered, and stay low until the economy starts to get back on its
-feet, and when that starts to happen, the FED will raise the rate again.
-When the economy has converged to historical levels (estimated
-steady-states), the FED funds rate will then converge to … (take a
-guess)
-
-``` r
-round(tail(cond_fcst_plot$forecast[,3],1),2)
-#> [1] 4.52
-smry$summaries$stan$Psi[3]
-#> [1] 4.45
-```
-
-the (estimated) steady state! Note that the above are not exactly the
-same (but will be as the number of posterior draws goes towards
-infinity).
+Results look reasonable. We predict that the FED will lower the rate
+quite drastically in the crash scenario, and then later the rate will go
+back towards its steady state.
 
 ## Stochastic volatility
 
@@ -1390,7 +1382,7 @@ par(mfrow = c(1, 1))
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-38-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-37-1.png" width="100%" />
 
 Lets do the usual setup. Regarding the priors for $\beta$ and $\Psi$, we
 do the same setup as before, i.e. Minnesota for dynamic coefficients and
@@ -1432,7 +1424,7 @@ a &\sim \textrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &\sim \textrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &\sim \textrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
 \ln \lambda_{0} &\sim \textrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
-\Phi &\sim IW(V_0,m_0)
+\Phi &\sim \textrm{IW}(V_0,m_0)
 \end{aligned}                         
 $$
 
@@ -1553,7 +1545,7 @@ par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-43-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
 
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
@@ -1569,7 +1561,7 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol=
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-44-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-43-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1592,7 +1584,7 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-44-1.png" width="100%" />
 
 For the stochastic volatility steady-state BVAR, we can of course also
 do impulse response analysis, almost like before. Now however, since our
@@ -1607,7 +1599,7 @@ irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="me
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
 
-<img src="man/figures/README-unnamed-chunk-46-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-AR1) and
 without (SS-BVAR) stochastic volatility specification to see the
@@ -1738,7 +1730,7 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-49-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-48-1.png" width="100%" />
 
 Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior
 means for $\psi_1$ close to the true values of the DGP, as such we can
@@ -1804,7 +1796,7 @@ plot_pair(y1h50_sv, y1h50, title = "y1, h=50", legend_labels = c("SS-BVAR-SV-AR1
 plot_pair(y2h50_sv, y2h50, title = "y2, h=50", legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-50-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-49-1.png" width="100%" />
 
 ### Stochastic volatility: Random Walk log volatilities (Clark, 2011)
 
@@ -1901,7 +1893,7 @@ par(mfrow = c(1, 1))
 plot.ts(yt)
 ```
 
-<img src="man/figures/README-unnamed-chunk-51-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-50-1.png" width="100%" />
 
 Like before, we use the Minnesota prior for the dynamic coefficients
 ($\beta$) and (very) informative normal priors on steady-state
@@ -2050,7 +2042,7 @@ fcst1 <- forecast(bvar_obj,
                   show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-56-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-55-1.png" width="100%" />
 
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
@@ -2066,7 +2058,7 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-7,1), plot_idx=2, vol=
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-57-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-56-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -2088,7 +2080,7 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2.25), plot_idx=2, vo
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-58-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-57-1.png" width="100%" />
 
 We can again do some impulse response analysis.
 
@@ -2099,7 +2091,7 @@ irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="me
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
 
-<img src="man/figures/README-unnamed-chunk-59-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-58-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-RW) and
 without (SS-BVAR) stochastic volatility RW specification to see the
@@ -2185,7 +2177,7 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-62-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-61-1.png" width="100%" />
 
 Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for
 $\psi_1$ close to the true values of the DGP, as such we can see that
@@ -2225,7 +2217,7 @@ plot_pair(y1h50_sv, y1h50, title = "y1, h=50", legend_labels = c("SS-BVAR-SV-RW"
 plot_pair(y2h50_sv, y2h50, title = "y2, h=50", legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
 ```
 
-<img src="man/figures/README-unnamed-chunk-63-1.png" width="100%" />
+<img src="man/figures/README-unnamed-chunk-62-1.png" width="100%" />
 
 ## References
 
