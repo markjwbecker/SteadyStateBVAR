@@ -1,4 +1,4 @@
-IRF2 <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c("OIRF", "GIRF"), ci=0.95, estimation=c("stan","gibbs"), t=NULL,growth_rate_idx = NULL) {
+IRF <- function(x, H = 16, response, shock, type = c("median", "mean"), method=c("OIRF", "GIRF"), ci=0.95, estimation=c("stan","gibbs"), t=NULL,growth_rate_idx = NULL) {
   
   method     <- match.arg(method)
   estimation <- match.arg(estimation)
