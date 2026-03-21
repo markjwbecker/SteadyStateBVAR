@@ -11,7 +11,7 @@ restrict_beta <- function(x, restriction_matrix) {
   zero_indices <- which(c(restriction_matrix) == 0)
   
   if (!is.null(x$priors$Omega_beta)) {
-    diag(x$priors$Omega_beta[zero_indices, zero_indices]) <- 0.00001
+    diag(x$priors$Omega_beta)[zero_indices] <- 0.00001
   } else {
     warning("Omega_beta not found in priors: restriction applied but Omega_beta not updated")
   }
