@@ -43,7 +43,28 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       chains = chains,
       verbose = FALSE
     )
-    
+    posterior <- rstan::extract(x$fit$stan)
+    if (!isTRUE(x$SV)) {
+      x$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
+      x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
+      x$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3), mean)
+      
+    } else if (isTRUE(x$SV) && x$SV_type == "AR"){
+      
+      x$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
+      x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
+      x$posterior_means$A <- apply(posterior$A, c(2, 3), mean)
+      x$posterior_means$gamma_0 <- apply(posterior$gamma_0, 2, mean)
+      x$posterior_means$gamma_1 <- apply(posterior$gamma_1, 2, mean)
+      x$posterior_means$Phi <- apply(posterior$Phi, c(2, 3), mean)
+      
+      
+    } else if (isTRUE(x$SV) && x$SV_type == "RW"){
+      x$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
+      x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
+      x$posterior_means$A <- apply(posterior$A, c(2, 3), mean)
+      x$posterior_means$phi <- apply(posterior$phi, 2, mean)
+    }
   } else {
     
     if (chains != 1) {
@@ -58,6 +79,11 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       d_pred = x$predict$d_pred,
       Jeffrey = Jeffrey
     )
+    
+    x$posterior_means$beta <- x$fit$gibbs$beta_posterior_mean
+    x$posterior_means$Psi <- x$fit$gibbs$Psi_posterior_mean
+    x$posterior_means$Sigma_u <- x$fit$gibbs$Sigmna_u_posterior_mean
+    
   }
   
   return(x)

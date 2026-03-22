@@ -19,18 +19,16 @@ summary.bvar <- function(x, pars = NULL) {
   }
   
   if (has_stan && is.null(x$SV)) {
-    fit <- x$fit$stan
-    posterior <- rstan::extract(fit)
-    summaries$stan <- keep_param(list(
+    posterior <- rstan::extract(x$fit$stan)
+    summaries$results <- keep_param(list(
       method = "Stan",
       beta  = round(to_mat(posterior$beta), 2),
       Psi   = round(to_mat(posterior$Psi), 2),
       Sigma = round(to_mat(posterior$Sigma_u), 2)
     ))
   } else if (has_stan && x$SV && x$SV_type == "AR") {
-    fit <- x$fit$stan
-    posterior <- rstan::extract(fit)
-    summaries$stan <- keep_param(list(
+    posterior <- rstan::extract(x$fit$stan)
+    summaries$results <- keep_param(list(
       method  = "Stan",
       beta    = round(to_mat(posterior$beta), 2),
       Psi     = round(to_mat(posterior$Psi), 2),
@@ -40,9 +38,8 @@ summary.bvar <- function(x, pars = NULL) {
       Phi     = round(to_mat(posterior$Phi), 2)
     ))
   } else if (has_stan && x$SV && x$SV_type == "RW") {
-    fit <- x$fit$stan
-    posterior <- rstan::extract(fit)
-    summaries$stan <- keep_param(list(
+    posterior <- rstan::extract(x$fit$stan)
+    summaries$results <- keep_param(list(
       method = "Stan",
       beta   = round(to_mat(posterior$beta), 2),
       Psi    = round(to_mat(posterior$Psi), 2),
@@ -56,7 +53,7 @@ summary.bvar <- function(x, pars = NULL) {
   
   if (has_gibbs) {
     fit <- x$fit$gibbs
-    summaries$gibbs <- keep_param(list(
+    summaries$results <- keep_param(list(
       method = "Gibbs",
       beta  = round(fit$beta_posterior_mean, 2),
       Psi   = round(fit$Psi_posterior_mean, 2),
@@ -71,42 +68,32 @@ summary.bvar <- function(x, pars = NULL) {
 
 print.summary.bvar <- function(x) {
   
-  both_methods <- length(x$summaries) > 1
+  s <- x$summaries$results
   
-  for (method_name in names(x$summaries)) {
-    s <- x$summaries[[method_name]]
-    
-    if (both_methods) {
-      cat("====================================\n")
-      cat("Estimation Method:", s$method, "\n")
-      cat("====================================\n\n")
+  for (param_name in setdiff(names(s), c("method", "phi", "gamma_0", "gamma_1"))) {
+    cat(param_name, "posterior mean\n")
+    print(s[[param_name]])
+    cat("\n")
+  }
+  
+  if (!is.null(s$gamma_0)) {
+    cat("gamma_0 posterior means\n")
+    print(s$gamma_0)
+    cat("\n")
+  }
+  
+  if (!is.null(s$gamma_1)) {
+    cat("gamma_1 posterior means\n")
+    print(s$gamma_1)
+    cat("\n")
+  }
+  
+  if (!is.null(s$phi)) {
+    cat("phi posterior means\n")
+    for (nm in names(s$phi)) {
+      cat(" ", nm, ":", s$phi[[nm]], "\n")
     }
-    
-    for (param_name in setdiff(names(s), c("method", "phi", "gamma_0", "gamma_1"))) {
-      cat(param_name, "posterior mean\n")
-      print(s[[param_name]])
-      cat("\n")
-    }
-    
-    if (!is.null(s$gamma_0)) {
-      cat("gamma_0 posterior means\n")
-      print(s$gamma_0)
-      cat("\n")
-    }
-    
-    if (!is.null(s$gamma_1)) {
-      cat("gamma_1 posterior means\n")
-      print(s$gamma_1)
-      cat("\n")
-    }
-    
-    if (!is.null(s$phi)) {
-      cat("phi posterior means\n")
-      for (nm in names(s$phi)) {
-        cat(" ", nm, ":", s$phi[[nm]], "\n")
-      }
-      cat("\n")
-    }
+    cat("\n")
   }
   
   invisible(x)
