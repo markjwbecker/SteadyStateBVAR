@@ -1,4 +1,4 @@
-conditional_forecast <- function(x,
+conditional_forecast <- function(bvar_obj,
                                  conditions,
                                  ci=0.95,
                                  fcst_type = c("mean", "median"),
@@ -6,12 +6,12 @@ conditional_forecast <- function(x,
   fcst_fun <- match.arg(fcst_type)
   estim    <- match.arg(estimation)
   ################################################################################
-  p      <- x$setup$p
-  k      <- x$setup$k
-  Y      <- x$setup$Y
-  X      <- x$setup$X
-  N      <- x$setup$N
-  d_pred <- x$predict$d_pred
+  p      <- bvar_obj$setup$p
+  k      <- bvar_obj$setup$k
+  Y      <- bvar_obj$setup$Y
+  X      <- bvar_obj$setup$X
+  N      <- bvar_obj$setup$N
+  d_pred <- bvar_obj$predict$d_pred
   ################################################################################
   # Step 1: define post-warmup draws ("It-Bu"),
   #         forecast horizon h
@@ -19,13 +19,13 @@ conditional_forecast <- function(x,
   
   #post warmup draws
   if (estim == "stan") {
-    posterior <- rstan::extract(x$fit$stan)
+    posterior <- rstan::extract(bvar_obj$fit$stan)
     n_draws   <- dim(posterior$beta)[1]
   } else {
-    n_draws   <- dim(x$fit$gibbs$beta_draws)[3]
+    n_draws   <- dim(bvar_obj$fit$gibbs$beta_draws)[3]
   }
   #forecast horizon
-  H       <- x$predict$H
+  H       <- bvar_obj$predict$H
   #v conditions
   #these are in 'conditions' argument
   ################################################################################
@@ -37,26 +37,15 @@ conditional_forecast <- function(x,
     # Step 2: at iteration n, recycle Gibbs draws
     
     if (estim == "stan") {
-      
       beta_n    <- posterior$beta[n,,]
-      
-      if (!is.null(x$SV)) {
-      t       <- dim(posterior$Sigma_u)[2]
-      Sigma_n <- posterior$Sigma_u[n,t,,]
-      } else {
-      Sigma_n <- posterior$Sigma_u[n,,]
-      }
-      
+      Sigma_n   <- posterior$Sigma_u[n,,]
       Psi_n     <- posterior$Psi[n,,]
       D_n       <- t(chol(Sigma_n))
-      
     } else {
-      
-      beta_n    <- x$fit$gibbs$beta_draws[,,n]
-      Sigma_n   <- x$fit$gibbs$Sigma_u_draws[,,n]
-      Psi_n     <- x$fit$gibbs$Psi_draws[,,n]
+      beta_n    <- bvar_obj$fit$gibbs$beta_draws[,,n]
+      Sigma_n   <- bvar_obj$fit$gibbs$Sigma_u_draws[,,n]
+      Psi_n     <- bvar_obj$fit$gibbs$Psi_draws[,,n]
       D_n       <- t(chol(Sigma_n))
-      
     }
     
     # Step 3: at iteration n, compute the unconditional forecasts excl. shocks
