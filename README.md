@@ -60,7 +60,7 @@ First, you need to install Rstan:
 Then you can install SteadyStateBVAR with:
 
 ``` r
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
 ```
 
 ## Introduction
@@ -636,8 +636,8 @@ Now we can fit the model.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 5000,
+                iter = 2000,
+                warmup = 500,
                 chains = 4)
 ```
 
@@ -645,6 +645,56 @@ Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
+#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
+#>  [2,] -0.02  0.32  0.25  0.12 -0.07  0.01  0.00
+#>  [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
+#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
+#>  [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
+#>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
+#>  [7,]  0.00  0.00  0.00  1.20  3.95  0.79  0.93
+#>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
+#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
+#> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
+#> [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
+#> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
+#> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
+#> [14,]  0.00  0.00  0.00  0.57 -0.38  0.31 -0.04
+#> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
+#> [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
+#> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
+#> [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
+#> [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
+#> [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
+#> [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.59  0.00
+#> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
+#> [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
+#> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
+#> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
+#> [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
+#> [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
+#> [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.16 -0.01
+#> 
+#> Psi posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.58  0.08
+#> [2,] 0.50  0.46
+#> [3,] 4.95  2.01
+#> [4,] 0.58 -0.04
+#> [5,] 0.49  1.15
+#> [6,] 4.29  4.45
+#> [7,] 3.92 -0.10
+#> 
+#> Sigma posterior mean
+#>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
+#> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
+#> [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
+#> [3,]  0.01  0.05 0.51  0.01  0.18  0.11  0.00
+#> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
+#> [5,] -0.01  0.13 0.18 -0.05  0.60  0.11  0.00
+#> [6,]  0.00  0.04 0.11 -0.01  0.11  1.57 -0.01
+#> [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
 We can access the posterior means with ‘bvar_obj\$posterior_means’ if
@@ -665,6 +715,8 @@ rstan::plot(stanfit,
             plotfun="hist")
 ```
 
+<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
+
 We can also look at the model forecasts directly with rstan. Remember
 that we left out the last two observations/quarters, so let us look at
 our forecasts of the domestic interest rate, and compare with the actual
@@ -672,13 +724,18 @@ true values
 
 ``` r
 (villani2009[103:104,6]) #true values
+#> [1] 1.478503 1.563795
 
 rstan::plot(stanfit,
             pars=c("y_pred[1,6]", "y_pred[2,6]"),
             show_density = TRUE,
             ci_level = 0.68,
             fill_color = "blue")
+#> ci_level: 0.68 (68% intervals)
+#> outer_level: 0.95 (95% intervals)
 ```
+
+<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
 
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
@@ -699,6 +756,8 @@ fcst <- forecast(bvar_obj,
                  plot_idx = c(4,5,6))
 ```
 
+<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-18-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-18-3.png" width="100%" />
+
 Now for some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
 impulse response function (GIRF). Similar to the forecasting, we can
@@ -714,6 +773,8 @@ irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="GIRF",ci=0.95,
 irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=5)
 irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=5)
 ```
+
+<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
 
 Now if desired, the user can estimate the model with a Gibbs sampler
 instead (see Algorithm 4 of Karlsson \[2013\]). Gibbs sampling is only
@@ -819,9 +880,9 @@ range is defined as ‘*The range for a variable in a given year includes
 all participants’ projections, from lowest to highest, for that variable
 in that year*’.
 
-For the unemployment rate, the ‘Longer run’ range is 3.8-4.5 and for the
-Federal funds rate the ‘Longer run’ range is 2.6-3.9. For PCE inflation
-the ‘Longer run’ range is simply 2.0, i.e. fixed and not a range at all.
+For the unemployment rate, the longer run range is 3.8-4.5 and for the
+Federal funds rate the longer run range is 2.6-3.9. For PCE inflation
+the longer run range is simply 2.0, i.e. fixed and not a range at all.
 This is because [‘The Federal Reserve seeks to achieve inflation at the
 rate of 2 percent over the longer run as measured by the annual change
 in the price index for personal consumption expenditures
@@ -889,28 +950,56 @@ Lets check posterior means
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>        [,1]  [,2]  [,3]
+#>  [1,]  0.55  0.00  0.06
+#>  [2,]  0.06  0.87 -0.08
+#>  [3,]  0.15 -0.05  1.09
+#>  [4,]  0.11  0.01  0.02
+#>  [5,] -0.02  0.01  0.03
+#>  [6,] -0.04  0.03 -0.21
+#>  [7,]  0.11  0.01  0.00
+#>  [8,]  0.04  0.04  0.02
+#>  [9,] -0.04  0.03  0.07
+#> [10,]  0.02  0.01  0.00
+#> [11,] -0.01  0.00  0.02
+#> [12,] -0.02  0.01 -0.02
+#> 
+#> Psi posterior mean
+#>      [,1]
+#> [1,] 2.00
+#> [2,] 4.21
+#> [3,] 3.22
+#> 
+#> Sigma posterior mean
+#>       [,1]  [,2]  [,3]
+#> [1,]  1.92 -0.20  0.22
+#> [2,] -0.20  0.46 -0.16
+#> [3,]  0.22 -0.16  0.63
 ```
 
 For the posterior means of $\Psi$, we see that they are well calibrated
-to be in the middle of the ‘Longer run’ ranges (as expected). Now lets
+to be in the middle of the longer run ranges (as expected). Now lets
 forecast with a 95% CI and use the median of the predictive distribution
 as the point forecast
 
 ``` r
 par(mfrow=c(3,1))
 fcst <- forecast(bvar_obj,
-                 ci = 0.68,
+                 ci = 0.95,
                  fcst_type = "median",
                  plot_idx = c(1,2,3),
                  show_all = TRUE)
 ```
 
-Now remember, for the unemployment rate, the ‘Longer run’ range was
+<img src="man/figures/README-unnamed-chunk-30-1.png" width="100%" />
+
+Now remember, for the unemployment rate, the longer run range was
 3.8-4.5 (with mid point 4.15), and for the Federal funds rate the Longer
 run range was 2.6-3.9 (with mid point 3.25). If we look at their “point
 projections” instead of the ranges, we can see that the median
-projections for the ‘Longer run’ values are 4.2 for the unemployment
-rate and 3.0 for the federal funds rate (and 2.0 for PCE inflation).
+projections for the longer run values are 4.2 for the unemployment rate
+and 3.0 for the federal funds rate (and 2.0 for PCE inflation).
 
 As such, our long-run forecasts should hopefully be close to the mid
 points and/or median longer run projections of the Fed board members and
@@ -918,6 +1007,8 @@ FED Bank presidents.
 
 ``` r
 tail(fcst$forecast,1)
+#>             pi       u        R
+#> [40,] 2.242318 4.38625 3.656276
 ```
 
 Seems like it!
@@ -932,6 +1023,8 @@ OLS_VAR_pred <- MTS::VARpred(OLS_VAR,h=40)
 
 ``` r
 tail(OLS_VAR_pred$pred,1)
+#>             pi        u        R
+#> [40,] 3.162341 5.771915 4.633363
 ```
 
 We can see that the long-run forecasts of the OLS VAR are not well
@@ -947,9 +1040,9 @@ in Dieppe, Legrand, and van Roye (2018)\]. Note that for the structural
 shocks, we use Cholesky factorisation as the identification scheme.
 
 We continue with the same data/model as in the previous section. Now
-suppose we are interested in the forecast of the Fed rate ($R_t$)
-conditional on a scenario where the economy really heats up (inflation
-\[$\pi_t$\]) rises and unemployment \[$u_t$\] decreases quickly).
+suppose we are interested in the forecast of the Fed rate conditional on
+a scenario where the economy really heats up (inflation rises and
+unemployment decreases quickly).
 
 First we set up our conditions/scenarios, i.e., which variables, which
 horizons, and what values the variables will take during those horizons.
@@ -984,6 +1077,8 @@ unconditional forecasts.
 par(mfcol = c(3, 1))
 cond_fcst_plot <- conditional_forecast_plot(cond_fcst, bvar_obj)
 ```
+
+<img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
 
 ## Stochastic volatility
 
@@ -1251,8 +1346,8 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 2000,
+                warmup = 1000,
                 chains = 2)
 ```
 
@@ -1261,6 +1356,31 @@ Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.76 -0.20
+#> [2,] 0.15  0.72
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.18 5.89
+#> [2,] 2.91 8.94
+#> 
+#> A posterior mean
+#>      [,1] [,2]
+#> [1,] 1.00    0
+#> [2,] 0.24    1
+#> 
+#> Phi posterior mean
+#>       [,1]  [,2]
+#> [1,]  0.71 -0.11
+#> [2,] -0.11  0.80
+#> 
+#> gamma_0 posterior means
+#> [1] -0.14 -0.01
+#> 
+#> gamma_1 posterior means
+#> [1] 0.74 0.87
 ```
 
 Looks like it works reasonably well! Now we can turn to forecasting. We
@@ -1305,6 +1425,8 @@ par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
 
+<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
+
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue, we plot the forecasts of the log volatilities along
@@ -1318,6 +1440,8 @@ lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-43-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1340,6 +1464,8 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
+<img src="man/figures/README-unnamed-chunk-44-1.png" width="100%" />
+
 For the stochastic volatility steady-state BVAR, we can of course also
 do impulse response analysis, almost like before. Now however, since our
 covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which
@@ -1352,6 +1478,8 @@ par(mfrow=c(1,2))
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
+
+<img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-AR1) and
 without (SS-BVAR) stochastic volatility specification to see the
@@ -1378,8 +1506,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 30000,
-                 warmup = 10000,
+                 iter = 3000,
+                 warmup = 1000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1396,8 +1524,26 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.81 -0.25
+#> [2,] 0.11  0.62
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.09 5.99
+#> [2,] 3.18 9.03
 #--- SS-BVAR-SV-AR1 ---
 summary(bvar_obj, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.76 -0.20
+#> [2,] 0.15  0.72
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.18 5.89
+#> [2,] 2.91 8.94
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1464,6 +1610,8 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
+<img src="man/figures/README-unnamed-chunk-48-1.png" width="100%" />
+
 Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior
 means for $\psi_1$ close to the true values of the DGP, as such we can
 see that both point forecasts (predictive means) converge closely to the
@@ -1527,6 +1675,8 @@ plot_pair(y2h1_sv,  y2h1,  title = "y2, h=1",  legend_labels = c("SS-BVAR-SV-AR1
 plot_pair(y1h50_sv, y1h50, title = "y1, h=50", legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
 plot_pair(y2h50_sv, y2h50, title = "y2, h=50", legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
 ```
+
+<img src="man/figures/README-unnamed-chunk-49-1.png" width="100%" />
 
 ### Stochastic volatility: Random Walk log volatilities (Clark, 2011)
 
@@ -1697,8 +1847,8 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 2000,
+                warmup = 1000,
                 chains = 2)
 ```
 
@@ -1707,6 +1857,24 @@ Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.71 -0.17
+#> [2,] 0.05  0.74
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.18 5.88
+#> [2,] 2.91 9.11
+#> 
+#> A posterior mean
+#>      [,1] [,2]
+#> [1,] 1.00    0
+#> [2,] 0.25    1
+#> 
+#> phi posterior means
+#>   phi_1 : 0.03 
+#>   phi_2 : 0.04
 ```
 
 Looks like it works reasonably well! With the respect to forecasting,
@@ -1754,6 +1922,8 @@ fcst1 <- forecast(bvar_obj,
                   show_all = TRUE)
 ```
 
+<img src="man/figures/README-unnamed-chunk-55-1.png" width="100%" />
+
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue we plot the forecasts of the log volatilities along
@@ -1767,6 +1937,8 @@ lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-7,1), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-56-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1788,6 +1960,8 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2.25), plot_idx=2, vo
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
+<img src="man/figures/README-unnamed-chunk-57-1.png" width="100%" />
+
 We can again do some impulse response analysis.
 
 ``` r
@@ -1796,6 +1970,8 @@ par(mfrow=c(1,2))
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
+
+<img src="man/figures/README-unnamed-chunk-58-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-RW) and
 without (SS-BVAR) stochastic volatility RW specification to see the
@@ -1822,8 +1998,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 30000,
-                 warmup = 10000,
+                 iter = 3000,
+                 warmup = 1000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1840,8 +2016,26 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>       [,1]  [,2]
+#> [1,]  0.71 -0.17
+#> [2,] -0.02  0.77
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.15 5.90
+#> [2,] 2.99 9.07
 #--- SS-BVAR-SV-RW ---
 summary(bvar_obj, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.71 -0.17
+#> [2,] 0.05  0.74
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.18 5.88
+#> [2,] 2.91 9.11
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1862,6 +2056,8 @@ segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", a
 segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
+
+<img src="man/figures/README-unnamed-chunk-61-1.png" width="100%" />
 
 Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for
 $\psi_1$ close to the true values of the DGP, as such we can see that
@@ -1900,6 +2096,8 @@ plot_pair(y2h1_sv,  y2h1,  title = "y2, h=1",  legend_labels = c("SS-BVAR-SV-RW"
 plot_pair(y1h50_sv, y1h50, title = "y1, h=50", legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
 plot_pair(y2h50_sv, y2h50, title = "y2, h=50", legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
 ```
+
+<img src="man/figures/README-unnamed-chunk-62-1.png" width="100%" />
 
 ## References
 
