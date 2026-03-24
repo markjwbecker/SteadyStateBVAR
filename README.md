@@ -137,7 +137,7 @@ $$
 \end{aligned}
 $$
 
-where the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element
+here the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element
 $\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$. As such, the
 Minnesota prior sets all prior means for the elements in $\beta$ to $0$,
 except for the elements that relate to the first own lags of the
@@ -217,8 +217,8 @@ possible for the homoskedastic steady-state BVAR.
 
 ## Example 1 (Villani, 2009)
 
-To estimate the model in Section 4.1 in Villani (2009), and then
-forecast/do impulse response analysis, simply run the following code
+To estimate the model in Section 4.1 in Villani (2009), and then do
+impulse response analysis/forecast, simply run the following code
 
 ``` r
 library(SteadyStateBVAR)
@@ -716,7 +716,8 @@ irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,
 ```
 
 Now if desired, the user can estimate the model with a Gibbs sampler
-instead.
+instead (see Algorithm 4 of Karlsson \[2013\]). Gibbs sampling is only
+implemented for the homoskedastic steady-state BVAR.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
@@ -743,10 +744,6 @@ irf <- IRF(bvar_obj,
            ci=0.95,
            estimation="gibbs")
 ```
-
-The Gibbs estimation will give very similar results (as it should be).
-We will test if Gibbs and Stan truly give similar results in the
-following section.
 
 ## Example 2 (US data)
 

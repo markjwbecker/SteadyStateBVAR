@@ -100,7 +100,7 @@ $$
 $$
 
 
-where the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element $\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$. As such, the Minnesota prior sets all prior means for the elements in $\beta$ to $0$, except for the elements that relate to the first own lags of the variables, which are set to $\kappa$.
+here the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element $\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$. As such, the Minnesota prior sets all prior means for the elements in $\beta$ to $0$, except for the elements that relate to the first own lags of the variables, which are set to $\kappa$.
 
 If variable $i$ is in level (e.g. nominal interest rate), then $\kappa=\kappa^{level}$, and typical choices for $\kappa^{level}$ are $1$ or $0.9$. Evaluating the VAR at its priors means, each equation becomes an univariate random walk if $\kappa^{level}=1$ and a stationary but persistent AR process if $\kappa^{levels}=0.9$. Since the steady state only exists if the process is stationary, $0.9$ is recommended for the steady-state BVAR. If variable $i$ is in difference (e.g. output growth), then $\kappa=\kappa^{\Delta}$, and the most common choice for $\kappa^{\Delta}$ are $0$.
 
@@ -151,7 +151,7 @@ To produce unconditional forecasts with the steady-state BVAR, we simply follow 
 
 ## Example 1 (Villani, 2009)
 
-To estimate the model in Section 4.1 in Villani (2009), and then forecast/do impulse response analysis, simply run the following code
+To estimate the model in Section 4.1 in Villani (2009), and then do impulse response analysis/forecast, simply run the following code
 
 ```{r, message=FALSE, warning=FALSE, eval=FALSE}
 library(SteadyStateBVAR)
@@ -529,7 +529,7 @@ irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="OIRF",ci=0.95,
 irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=5)
 ```
 
-Now if desired, the user can estimate the model with a Gibbs sampler instead.
+Now if desired, the user can estimate the model with a Gibbs sampler instead (see Algorithm 4 of Karlsson [2013]). Gibbs sampling is only implemented for the homoskedastic steady-state BVAR.
 
 ```{r, fig.width=8, fig.height=8, eval=FALSE}
 bvar_obj <- fit(bvar_obj,
@@ -557,7 +557,6 @@ irf <- IRF(bvar_obj,
            estimation="gibbs")
 ```
 
-The Gibbs estimation will give very similar results (as it should be). We will test if Gibbs and Stan truly give similar results in the following section.
 
 ## Example 2 (US data)
 
