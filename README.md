@@ -3,8 +3,7 @@
   - [Installation](#installation)
   - [Introduction](#introduction)
   - [Example 1 (Villani, 2009)](#example-1-villani-2009)
-  - [Example 2 (Monetary policy VAR, US
-    data)](#example-2-monetary-policy-var-us-data)
+  - [Example 2 (US data)](#example-2-us-data)
   - [Conditional forecasting](#conditional-forecasting)
   - [Stochastic volatility](#stochastic-volatility)
     - [Stochastic volatility: stationary AR(1) log volatilities
@@ -119,7 +118,9 @@ $\Sigma_u$ is assumed. Starting with $\beta$, we use the Minnesota prior
 
 $$
 \textrm{vec}(\beta) \sim \textrm{N}_{kpk}\left[\theta_\beta,\Omega_\beta\right]
-$$ For the priors means, i.e. $\theta_\beta$, they are set to
+$$
+
+For the priors means, i.e. $\theta_\beta$, they are set to
 
 $$
 \begin{aligned}
@@ -134,20 +135,22 @@ $$
 \kappa^{\Delta} & \text{if }\textrm{variable} \ i \ \textrm{is in difference}
 \end{cases}\\
 \end{aligned}
-$$ where the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element
-$\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$
+$$
 
-As such, the Minnesota prior sets all prior means for the elements in
-$\beta$ to $0$, except for the elements that relate to the first own
-lags of the variables, which are set to $\kappa$. If variable $i$ is in
-level (e.g. nominal interest rate), then $\kappa=\kappa^{level}$, and
-typical choices for $\kappa^{level}$ are $1$ or $0.9$. Evaluating the
-VAR at its priors means, each equation becomes an univariate random walk
-if $\kappa^{level}=1$ and a stationary but persistent AR process if
-$\kappa^{levels}=0.9$. Since the steady state only exists if the process
-is stationary, $0.9$ is recommended for the steady-state BVAR. If
-variable $i$ is in difference (e.g. output growth), then
-$\kappa=\kappa^{\Delta}$, and the most common choice for
+where the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element
+$\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$. As such, the
+Minnesota prior sets all prior means for the elements in $\beta$ to $0$,
+except for the elements that relate to the first own lags of the
+variables, which are set to $\kappa$.
+
+If variable $i$ is in level (e.g. nominal interest rate), then
+$\kappa=\kappa^{level}$, and typical choices for $\kappa^{level}$ are
+$1$ or $0.9$. Evaluating the VAR at its priors means, each equation
+becomes an univariate random walk if $\kappa^{level}=1$ and a stationary
+but persistent AR process if $\kappa^{levels}=0.9$. Since the steady
+state only exists if the process is stationary, $0.9$ is recommended for
+the steady-state BVAR. If variable $i$ is in difference (e.g. output
+growth), then $\kappa=\kappa^{\Delta}$, and the most common choice for
 $\kappa^{\Delta}$ are $0$.
 
 Moving on to the prior variances, $\Omega_\beta$ is a diagonal matrix
@@ -636,11 +639,14 @@ bvar_obj <- fit(bvar_obj,
                 chains = 4)
 ```
 
-Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$
+Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
 
 ``` r
 summary(bvar_obj)
 ```
+
+We can access the posterior means with ‘bvar_obj\$posterior_means’ if
+needed.
 
 Note that ‘bvar_obj\$fit\$stan’ is an object of class ‘stanfit’. So we
 can do the usual rstan inference on our fitted model. Lets look at some
@@ -740,12 +746,12 @@ The Gibbs estimation will give very similar results (as it should be).
 We will test if Gibbs and Stan truly give similar results in the
 following section.
 
-## Example 2 (Monetary policy VAR, US data)
+## Example 2 (US data)
 
 Now we will estimate the steady-state BVAR on US data of annualized PCE
 inflation, the unemployment rate and the federal funds rate. The data
 runs from 1954Q3-2025Q3, and are constructed as follows. The inflation
-data are computed as $\pi_t=400 \ln (P_t/P_{t-1})$, where $P_t$, is the
+data are computed as $\pi_t=400 \ln (P_t/P_{t-1})$, where $P_t$ is the
 Personal Consumption Expenditures: Chain-type Price Index on a quarterly
 frequency (PCECTPI), $u_t$ is the monthly unemployment rate (UNRATE) and
 $R_t$ is the monthly effective federal funds rate (FEDFUNDS). Quarterly
@@ -801,31 +807,33 @@ fol_pm=c(0.0, #pi
 Now for the steady-state coefficients I use the “Longer run” values from
 the [‘Summary of Economic Projections, December 10,
 2025’](https://www.federalreserve.gov/monetarypolicy/files/fomcprojtabl20251210.pdf)
-which contains ‘Table 1. Economic projections of Federal Reserve Board
+contained in ‘*Table 1. Economic projections of Federal Reserve Board
 members and Federal Reserve Bank presidents, under their individual
-assumptions of projected appropriate monetary policy, December 2025’.
+assumptions of projected appropriate monetary policy, December 2025*’.
 Note that I use the December instead of the June report since we
 generally have macro data for Q3 in Q4.
 
 Specifically, I set 99% prior probability intervals for annualized PCE
-inflation ($\pi_t$), the unemployment rate ($\u_t$) and the Federal
-funds rate ($R_t$) according to the ‘Range’ for the ‘Longer run’, where
-the range is defined as ‘The range for a variable in a given year
-includes all participants’ projections, from lowest to highest, for that
-variable in that year’. For the unemployment rate, the ‘Longer run’
-range is 3.8-4.5 and for the Federal funds rate the ‘Longer run’ range
-is 2.6-3.9. For PCE inflation the ‘Longer run’ range is simply 2.0,
-i.e. fixed and not a range at all. This is because [‘The Federal Reserve
-seeks to achieve inflation at the rate of 2 percent over the longer run
-as measured by the annual change in the price index for personal
-consumption expenditures
-(PCE).’](https://www.federalreserve.gov/economy-at-a-glance-inflation-pce.htm).
-Therefore, in the spirit of the Fed board members, I put a very very
-tight prior on the steady-state of $\pi$.
+inflation ($\pi_t$), the unemployment rate ($u_t$) and the Federal funds
+rate ($R_t$) according to the ‘Range’ for the ‘Longer run’, where the
+range is defined as ‘*The range for a variable in a given year includes
+all participants’ projections, from lowest to highest, for that variable
+in that year*’.
 
-Now lets set the intervals. Note that we only have a constant now, so
-$q=1$ and therefore $\Psi$ only has one column $\psi_1$. As such, in the
-case with only a constant we can directly interpret $\Psi$ as the
+For the unemployment rate, the ‘Longer run’ range is 3.8-4.5 and for the
+Federal funds rate the ‘Longer run’ range is 2.6-3.9. For PCE inflation
+the ‘Longer run’ range is simply 2.0, i.e. fixed and not a range at all.
+This is because [‘The Federal Reserve seeks to achieve inflation at the
+rate of 2 percent over the longer run as measured by the annual change
+in the price index for personal consumption expenditures
+(PCE)’](https://www.federalreserve.gov/economy-at-a-glance-inflation-pce.htm).
+Therefore, in the spirit of the Federal Reserve Board members and
+Federal Reserve Bank presidents, I put a very very tight prior on the
+steady-state of $\pi$.
+
+Now lets set the intervals. Remember that we only have a constant now,
+so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. As such, in
+the case with only a constant we can directly interpret $\Psi$ as the
 unconditional mean.
 
 ``` r
@@ -878,68 +886,39 @@ bvar_obj <- fit(bvar_obj,
                 chains = 2)
 ```
 
-Lets check posterior means (very similar as expected)
+Lets check posterior means
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>        [,1]  [,2]  [,3]
-#>  [1,]  0.56  0.01  0.06
-#>  [2,]  0.06  0.87 -0.07
-#>  [3,]  0.16 -0.05  1.09
-#>  [4,]  0.11  0.01  0.01
-#>  [5,] -0.02  0.02  0.03
-#>  [6,] -0.04  0.03 -0.21
-#>  [7,]  0.11  0.01  0.00
-#>  [8,]  0.04  0.03  0.02
-#>  [9,] -0.04  0.03  0.07
-#> [10,]  0.02  0.01  0.00
-#> [11,] -0.01  0.00  0.02
-#> [12,] -0.02  0.02 -0.02
-#> 
-#> Psi posterior mean
-#>      [,1]
-#> [1,] 2.00
-#> [2,] 4.22
-#> [3,] 3.22
-#> 
-#> Sigma posterior mean
-#>       [,1]  [,2]  [,3]
-#> [1,]  1.92 -0.19  0.21
-#> [2,] -0.19  0.46 -0.16
-#> [3,]  0.21 -0.16  0.63
-#we can access the posterior means with
-#bvar_obj$posterior_means 
 ```
 
-For the posterior means of Psi, we see that they are well calibrated to
-be in the middle of the ‘Longer run’ ranges (as expected). Now lets
-forecast with a 95% CI and use the mean of the predictive distribution
+For the posterior means of $\Psi$, we see that they are well calibrated
+to be in the middle of the ‘Longer run’ ranges (as expected). Now lets
+forecast with a 95% CI and use the median of the predictive distribution
 as the point forecast
 
 ``` r
 par(mfrow=c(3,1))
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
-                 fcst_type = "mean",
+                 fcst_type = "median",
                  plot_idx = c(1,2,3),
                  show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-30-1.png" width="100%" />
-
 Now remember, for the unemployment rate, the ‘Longer run’ range was
-3.8-4.5, with mid point 4.15, and for the Federal funds rate the Longer
-run range was 2.6-3.9 with mid point 3.25. Now the Median projection for
-the ‘Longer run’ values were 4.2 for the Unemployment rate and 3.0 for
-the Federal funds rate (and 2.0 for PCE inflation). As such, our
-forecasts at the last horizon should be close to the mid points and/or
-median projections.
+3.8-4.5 (with mid point 4.15), and for the Federal funds rate the Longer
+run range was 2.6-3.9 (with mid point 3.25). If we look at their “point
+projections” instead of the ranges, we can see that the median
+projections for the ‘Longer run’ values are 4.2 for the unemployment
+rate and 3.0 for the federal funds rate (and 2.0 for PCE inflation).
+
+As such, our long-run forecasts should hopefully be close to the mid
+points and/or median longer run projections of the Fed board members and
+FED Bank presidents.
 
 ``` r
 tail(fcst$forecast,1)
-#>             pi        u        R
-#> [40,] 2.311379 4.540286 3.728374
 ```
 
 Seems like it!
@@ -949,13 +928,11 @@ information on the steady-states
 
 ``` r
 OLS_VAR <- MTS::VAR(yt,p=4,output=F)
-OLS_VAR_pred <- VARpred(OLS_VAR,h=40)
+OLS_VAR_pred <- MTS::VARpred(OLS_VAR,h=40)
 ```
 
 ``` r
 tail(OLS_VAR_pred$pred,1)
-#>             pi        u        R
-#> [40,] 3.162341 5.771915 4.633363
 ```
 
 We can see that the long-run forecasts of the OLS VAR are not well
@@ -971,9 +948,9 @@ in Dieppe, Legrand, and van Roye (2018)\]. Note that for the structural
 shocks, we use Cholesky factorisation as the identification scheme.
 
 We continue with the same data/model as in the previous section. Now
-suppose we are interested in the forecast of the Fed rate (FEDFUNDS)
+suppose we are interested in the forecast of the Fed rate ($R_t$)
 conditional on a scenario where the economy really heats up (inflation
-rises and unemployment decreases quickly).
+\[$\pi_t$\]) rises and unemployment \[$u_t$\] decreases quickly).
 
 First we set up our conditions/scenarios, i.e., which variables, which
 horizons, and what values the variables will take during those horizons.
@@ -990,7 +967,7 @@ conditions <- data.frame(
 )
 ```
 
-We then do the conditional forecasting. We again select a 68% CI and the
+We then do the conditional forecasting. We again select a 95% CI and the
 median of the predictive distribution as the point forecast.
 
 ``` r
@@ -1008,8 +985,6 @@ unconditional forecasts.
 par(mfcol = c(3, 1))
 cond_fcst_plot <- conditional_forecast_plot(cond_fcst, bvar_obj)
 ```
-
-<img src="man/figures/README-unnamed-chunk-36-1.png" width="100%" />
 
 ## Stochastic volatility
 
