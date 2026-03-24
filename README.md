@@ -117,10 +117,10 @@ priors are needed. First, prior independence between $\beta, \Psi$ and
 $\Sigma_u$ is assumed. Starting with $\beta$, we use the Minnesota prior
 
 $$
-\textrm{vec}(\beta) \sim \textrm{N}_{kpk}\left[\theta_\beta,\Omega_\beta\right]
+\textrm{vec}(\beta) \sim \textrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]
 $$
 
-For the priors means, i.e. $\theta_\beta$, they are set to
+For the priors means (elements in $\theta_\beta$), they are set to
 
 $$
 \begin{aligned}
@@ -163,14 +163,16 @@ $$
 \left(\frac{\lambda_1}{\ell^{\lambda_3}}\right)^2 & \text{if } i = j \\
 \left(\frac{\lambda_1 \lambda_2\sigma_i}{\ell^{\lambda_3}\sigma_j}\right)^2& \text{if } i \neq j
 \end{cases}
-$$ Here $\lambda_1$, $\lambda_2$ and $\lambda_3$ are scalar
-hyperparameters known as the overall tightness, the cross-equation
-tightness and the lag decay rate. Furthermore, $\sigma_i^2$ is the
-$(i,i)$:th element of $\Sigma_u$, which we do not know, and therefore
-replace with an estimate. In this package, it is replaced by the least
-squares residual variance from a univariate autoregression for variable
-$i$ with $p$ lags (including the constant and dummy/trend variable if
-applicable). Moving on to $\Psi$ the prior we use is
+$$
+
+Here $\lambda_1$, $\lambda_2$ and $\lambda_3$ are scalar hyperparameters
+known as the overall tightness, the cross-equation tightness and the lag
+decay rate. Furthermore, $\sigma_i^2$ is the $(i,i)$:th element of
+$\Sigma_u$, which we do not know, and therefore replace with an
+estimate. In this package, it is replaced by the least squares residual
+variance from a univariate autoregression for variable $i$ with $p$ lags
+(including the constant and dummy/trend variable if applicable). Moving
+on to $\Psi$ the prior we use is
 
 $$
 \textrm{vec}(\Psi) \sim \textrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
