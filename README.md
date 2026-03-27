@@ -147,15 +147,17 @@ variables, which are set to $\kappa$.
 
 If variable $i$ is in level (e.g. nominal interest rate), then
 $\kappa=\kappa^{level}$, and typical choices for $\kappa^{level}$ are
-$1$ or $0.9$. Evaluating the VAR at its priors means, each equation
-becomes an univariate random walk if $\kappa^{level}=1$ and a stationary
-but persistent AR process if $\kappa^{levels}=0.9$. Since the steady
+$1$ or $0.9$. Evaluating the equations at their priors means, equation
+$i$ becomes a random walk if $\kappa^{level}=1$ and a persistent
+stationary AR(1) process if $\kappa^{levels}=0.9$. Since the steady
 state only exists if the process is stationary, $0.9$ is recommended for
 the steady-state BVAR. If variable $i$ is in difference (e.g. output
 growth), then $\kappa=\kappa^{\Delta}$, and the most common choice for
-$\kappa^{\Delta}$ are $0$. If a differenced variable still shows some
-degree of persistence (can be examined with an ACF plot), a suitable
-value for $\kappa^{\Delta}$ can be (for example) $0.6$ instead of $0$.
+$\kappa^{\Delta}$ are $0$, i.e. equation $i$ becomes (when evaluating it
+at its prior means) a random walk expressed in first differences. If a
+differenced variable still shows some degree of persistence (can be
+examined with an ACF plot), a suitable value for $\kappa^{\Delta}$ can
+be (for example) $0.6$ instead of $0$.
 
 Moving on to the prior variances, $\Omega_\beta$ is a diagonal matrix
 containing the prior variances for the elements in $\beta$. They are
@@ -777,30 +779,30 @@ Lets check posterior means
 summary(bvar_obj)
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]
-#>  [1,]  1.39  0.04  0.28
-#>  [2,] -0.12  1.22 -0.32
-#>  [3,] -0.01 -0.02  0.83
-#>  [4,] -0.28 -0.03 -0.10
-#>  [5,]  0.04 -0.22  0.17
+#>  [1,]  1.39  0.04  0.29
+#>  [2,] -0.12  1.22 -0.33
+#>  [3,] -0.01 -0.02  0.82
+#>  [4,] -0.28 -0.02 -0.11
+#>  [5,]  0.03 -0.21  0.18
 #>  [6,]  0.01  0.01 -0.05
-#>  [7,] -0.11  0.00  0.01
-#>  [8,]  0.04 -0.15  0.06
+#>  [7,] -0.12  0.00  0.01
+#>  [8,]  0.04 -0.15  0.07
 #>  [9,]  0.00  0.03  0.14
-#> [10,] -0.01  0.01 -0.09
+#> [10,]  0.00  0.01 -0.09
 #> [11,]  0.04  0.06  0.11
 #> [12,]  0.00  0.01 -0.01
 #> 
 #> Psi posterior mean
 #>      [,1]
-#> [1,] 1.99
-#> [2,] 4.29
-#> [3,] 3.22
+#> [1,] 2.00
+#> [2,] 4.28
+#> [3,] 3.21
 #> 
 #> Sigma posterior mean
 #>      [,1]  [,2]  [,3]
 #> [1,] 0.10  0.00  0.04
 #> [2,] 0.00  0.11 -0.10
-#> [3,] 0.04 -0.10  0.59
+#> [3,] 0.04 -0.10  0.60
 ```
 
 Now lets forecast with a 68% CI and use the median of the predictive
