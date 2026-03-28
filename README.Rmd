@@ -100,9 +100,7 @@ $$
 $$
 
 
-here the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element $\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$. As such, the Minnesota prior sets all prior means for the elements in $\beta$ to $0$, except for the elements that relate to the first own lags of the variables, which are set to $\kappa$. If variable $i$ is in level (e.g. nominal interest rate), then $\kappa=\kappa^{level}$, and typical choices for $\kappa^{level}$ are $1$ or $0.9$. Evaluating the equations at their priors means, equation $i$ becomes a random walk if $\kappa^{level}=1$ and a persistent stationary AR(1) process if $\kappa^{levels}=0.9$. Since the steady state only exists if the process is stationary, $0.9$ is recommended for the steady-state BVAR. If variable $i$ is in difference (e.g. output growth), then $\kappa=\kappa^{\Delta}$, and the most common choice for $\kappa^{\Delta}$ is $0$, i.e. equation $i$ becomes (when evaluating it at its prior means) a random walk expressed in first differences. If a differenced variable still shows some degree of persistence (can be examined with an ACF plot), a suitable value for $\kappa^{\Delta}$ can be (for example) $0.6$ instead of $0$.
-
-Moving on to the prior variances, $\Omega_\beta$ is a diagonal matrix containing the prior variances for the elements in $\beta$. They are specified such that for the  the prior variance is given by
+here the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element $\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$. As such, the Minnesota prior sets all prior means for the elements in $\beta$ to $0$, except for the elements that relate to the first own lags of the variables, which are set to $\kappa$. If variable $i$ is in level (e.g. nominal interest rate), then $\kappa=\kappa^{level}$, and typical choices for $\kappa^{level}$ are $1$ or $0.9$. Evaluating the equations at their priors means, equation $i$ becomes a random walk if $\kappa^{level}=1$ and a persistent stationary AR(1) process if $\kappa^{levels}=0.9$. Since the steady state only exists if the process is stationary, $0.9$ is recommended for the steady-state BVAR. If variable $i$ is in difference (e.g. output growth), then $\kappa=\kappa^{\Delta}$, and the most common choice for $\kappa^{\Delta}$ is $0$, i.e. equation $i$ becomes (when evaluating it at its prior means) a random walk expressed in first differences. If a differenced variable still shows some degree of persistence (can be examined with an ACF plot), a suitable value for $\kappa^{\Delta}$ can be (for example) $0.6$ instead of $0$. Moving on to the prior variances, $\Omega_\beta$ is a diagonal matrix containing the prior variances for the elements in $\beta$. They are specified such that for the  the prior variance is given by
 
 
 $$
@@ -136,9 +134,7 @@ $$
 $$
 
 
-where $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. An uninformative prior can be (and is in this package) specified by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including the constant and dummy/trend variable if applicable), and $m_0=k+2$.
-
-Later on, we introduce stochastic volatility and let the covariance matrix of the innovations vary over time such that we have a time-varying covariance matrix $\Sigma_{u,t}$.
+where $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of freedom. An uninformative prior can be (and is in this package) specified by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$) (including the constant and dummy/trend variable if applicable), and $m_0=k+2$. Later on, we introduce stochastic volatility and let the covariance matrix of the innovations vary over time such that we have a time-varying covariance matrix $\Sigma_{u,t}$.
 
 After estimation, you can produce IRFs. The two available choices are i) Orthogonalized IRFs (Cholesky identification) or ii) Generalized IRFs. To produce unconditional forecasts with the steady-state BVAR, we simply follow step 4 of Algorithm 4 of Karlsson (2013). To produce conditional forecasts, we follow Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2018). Please note that for the moment, conditional forecasting is only possible for the homoskedastic steady-state BVAR.
 
@@ -431,7 +427,9 @@ irf <- IRF(bvar_obj,
 
 ## Example 2 US data (Koop and Koribilis, 2010)
 
-Now we will estimate the steady-state BVAR on a quarterly US data set (from Koop and Koribilis [2010]) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all workers over age 16) and the interest rate $r_t$ (yield on the three month Treasury bill rate). Thus $$yt = \begin{pmatrix} \Delta \pi_t & u_t & r_t \end{pmatrix}'$$ The sample runs from 1953Q1-2006Q3.
+
+Now we will estimate the steady-state BVAR on a quarterly US data set (from Koop and Koribilis [2010]) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all workers over age 16) and the interest rate $r_t$ (yield on the three month Treasury bill rate). Thus $yt = \begin{pmatrix} \Delta \pi_t & u_t & r_t \end{pmatrix}'$ The sample runs from 1953Q1-2006Q3.
+
 
 
 ```{r, fig.width=10, fig.height=10}
@@ -465,7 +463,7 @@ bvar_obj <- setup(bvar_obj,
 ```
 
 
-This time we try out the hyperparameters from Gustafsson and Villani (2025), i.e. $\lambda_1 = 0.27$, $\lambda_2 = 0.43$ and $\lambda_3 = 0.76$. For the prior means on the first own lags, we set them to $0.6$ for $\Delta \pi_t$ and $0.9$ for $u_t$ and $r_t$. Note here that the prior mean on first own lag of the inflation rate is set to $0.6$ instead of $0$ to reflect some degree of persistence in the series (even though it is a growth rate variable).
+This time we try out the hyperparameters from Gustafsson and Villani (2025), i.e. $\lambda_1 = 0.27, \lambda_2 = 0.43$ and $\lambda_3 = 0.76$. For the prior means on the first own lags, we set them to $0.6$ for $\Delta \pi_t$ and $0.9$ for $u_t$ and $r_t$. Note here that the prior mean on first own lag of the inflation rate is set to $0.6$ instead of $0$ to reflect some degree of persistence in the series (even though it is a growth rate variable).
 
 
 ```{r, fig.width=8, fig.height=8}
@@ -480,9 +478,8 @@ fol_pm=c(0.6, # delta pi
 
 Now for the steady-state coefficients I use the "Longer run" values from the ['Summary of Economic Projections, March 18, 2026'](https://www.federalreserve.gov/monetarypolicy/files/fomcprojtabl20260318.pdf) contained in '*Table 1. Economic projections of Federal Reserve Board members and Federal Reserve Bank presidents, under their individual assumptions of projected appropriate monetary policy, March 2026*'. Specifically, I set 99\% prior probability intervals for the $u_t$ and $r_t$ according to their respective 'Range' for the 'Longer run', where the range is defined as '*The range for a variable in a given year includes all participants’ projections, from lowest to highest, for that variable in that year*'.
 
-For the unemployment rate, the long run range is $3.8-4.5$ and for the Federal funds rate the long run range is $2.6-3.9$. Note that we use the three month Treasury bill rate here and not the federal funds rate, but it is common knowledge that they mirror each other very closely. For inflation, I put a strong prior at around 2\%, since the Fed has an annual 2\% PCE inflation goal. Note again that we do not use PCE inflation here (we use inflation in the GDP price index), but anyhow this is just a demonstration.
+For the unemployment rate, the long run range is $3.8-4.5$ and for the Federal funds rate the long run range is $2.6-3.9$. Note that we use the three month Treasury bill rate here and not the federal funds rate, but it is common knowledge that they mirror each other very closely. For inflation, I put a strong prior at around 2\%, since the Fed has an annual 2\% PCE inflation goal. Note again that we do not use PCE inflation here (we use inflation in the GDP price index), but anyhow this is just a demonstration. Now lets set the intervals. Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. As such, in the case with only a constant, we can directly interpret $\Psi$ as the unconditional mean, i.e. $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$.
 
-Now lets set the intervals. Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. As such, in the case with only a constant, we can directly interpret $\Psi$ as the unconditional mean, i.e. $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$.
 
 
 ```{r, fig.width=8, fig.height=8}

@@ -156,11 +156,10 @@ $\kappa^{\Delta}$ is $0$, i.e. equation $i$ becomes (when evaluating it
 at its prior means) a random walk expressed in first differences. If a
 differenced variable still shows some degree of persistence (can be
 examined with an ACF plot), a suitable value for $\kappa^{\Delta}$ can
-be (for example) $0.6$ instead of $0$.
-
-Moving on to the prior variances, $\Omega_\beta$ is a diagonal matrix
-containing the prior variances for the elements in $\beta$. They are
-specified such that for the the prior variance is given by
+be (for example) $0.6$ instead of $0$. Moving on to the prior variances,
+$\Omega_\beta$ is a diagonal matrix containing the prior variances for
+the elements in $\beta$. They are specified such that for the the prior
+variance is given by
 
 $$
 \textrm{Var}\left(\Pi_{\ell}^{(i,j)}\right)=
@@ -204,10 +203,8 @@ freedom. An uninformative prior can be (and is in this package)
 specified by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where
 $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$)
 (including the constant and dummy/trend variable if applicable), and
-$m_0=k+2$.
-
-Later on, we introduce stochastic volatility and let the covariance
-matrix of the innovations vary over time such that we have a
+$m_0=k+2$. Later on, we introduce stochastic volatility and let the
+covariance matrix of the innovations vary over time such that we have a
 time-varying covariance matrix $\Sigma_{u,t}$.
 
 After estimation, you can produce IRFs. The two available choices are i)
@@ -638,7 +635,7 @@ Now we will estimate the steady-state BVAR on a quarterly US data set
 unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate,
 all workers over age 16) and the interest rate $r_t$ (yield on the three
 month Treasury bill rate). Thus
-$$yt = \begin{pmatrix} \Delta \pi_t & u_t & r_t \end{pmatrix}'$$ The
+$yt = \begin{pmatrix} \Delta \pi_t & u_t & r_t \end{pmatrix}'$ The
 sample runs from 1953Q1-2006Q3.
 
 ``` r
@@ -676,7 +673,7 @@ bvar_obj <- setup(bvar_obj,
 ```
 
 This time we try out the hyperparameters from Gustafsson and Villani
-(2025), i.e. $\lambda_1 = 0.27$, $\lambda_2 = 0.43$ and
+(2025), i.e. $\lambda_1 = 0.27, \lambda_2 = 0.43$ and
 $\lambda_3 = 0.76$. For the prior means on the first own lags, we set
 them to $0.6$ for $\Delta \pi_t$ and $0.9$ for $u_t$ and $r_t$. Note
 here that the prior mean on first own lag of the inflation rate is set
@@ -712,12 +709,11 @@ it is common knowledge that they mirror each other very closely. For
 inflation, I put a strong prior at around 2%, since the Fed has an
 annual 2% PCE inflation goal. Note again that we do not use PCE
 inflation here (we use inflation in the GDP price index), but anyhow
-this is just a demonstration.
-
-Now lets set the intervals. Remember that we only have a constant now,
-so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. As such, in
-the case with only a constant, we can directly interpret $\Psi$ as the
-unconditional mean, i.e. $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$.
+this is just a demonstration. Now lets set the intervals. Remember that
+we only have a constant now, so $q=1$ and therefore $\Psi$ only has one
+column $\psi_1$. As such, in the case with only a constant, we can
+directly interpret $\Psi$ as the unconditional mean,
+i.e. $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$.
 
 ``` r
 theta_Psi <- 
