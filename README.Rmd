@@ -433,7 +433,11 @@ irf <- IRF(bvar_obj,
 Now we will estimate the steady-state BVAR on a quarterly US data set (from Koop and Koribilis [2010]) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all workers over age 16) and the interest rate $r_t$ (yield on the three month Treasury bill rate). 1953Q1-2006Q3. So we have 
 
 $$
-y_t = \begin{pmatrix} \Delta \pi_t \\ u_t \\ r_t \end{pmatrix}
+y_t = 
+\begin{pmatrix} \Delta \pi_t \\
+u_t \\
+r_t
+\end{pmatrix}
 $$
 
 
@@ -483,18 +487,13 @@ fol_pm=c(0.6, # delta pi
 
 Now for the steady-state coefficients I use the "Longer run" values from the ['Summary of Economic Projections, March 18, 2026'](https://www.federalreserve.gov/monetarypolicy/files/fomcprojtabl20260318.pdf) contained in '*Table 1. Economic projections of Federal Reserve Board members and Federal Reserve Bank presidents, under their individual assumptions of projected appropriate monetary policy, March 2026*'. Specifically, I set 99\% prior probability intervals for the $u_t$ and $r_t$ according to their respective 'Range' for the 'Longer run', where the range is defined as '*The range for a variable in a given year includes all participants’ projections, from lowest to highest, for that variable in that year*'.
 
-For the unemployment rate, the long run range is $3.8-4.5$ and for the Federal funds rate the long run range is $2.6-3.9$. Note that we use the three month Treasury bill rate here and not the federal funds rate, but it is common knowledge that they mirror each other very closely. For inflation, I put a strong prior at around 2\%, since the Fed has an annual 2\% PCE inflation goal. Note again that we do not use PCE inflation here (we use inflation in the GDP price index), but anyhow this is just a demonstration. Now lets set the intervals. Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. As such, in the case with only a constant, we can directly interpret $\Psi$ as the unconditional mean, i.e.
+For the unemployment rate, the long run range is $3.8-4.5$ and for the Federal funds rate the long run range is $2.6-3.9$. Note that we use the three month Treasury bill rate here and not the federal funds rate, but it is common knowledge that they mirror each other very closely. For inflation, I put a strong prior at around 2\%, since the Fed has an annual 2\% PCE inflation goal. Note again that we do not use PCE inflation here (we use inflation in the GDP price index), but anyhow this is just a demonstration. Now lets set the intervals. Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. And since $d_t = 1 \ \forall \ t$ we have the case where $\Psi d_t = \mu_t$ simplifies to
 
-
-$$
-\Psi d_t = \mu_t
-$$
-simplifies to
 
 $$
 \Psi = \mu
 $$
-
+and as such we can directly interpret $\Psi$ as the unconditional mean
 
 ```{r, fig.width=8, fig.height=8}
 theta_Psi <- 

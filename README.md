@@ -639,7 +639,11 @@ all workers over age 16) and the interest rate $r_t$ (yield on the three
 month Treasury bill rate). 1953Q1-2006Q3. So we have
 
 $$
-y_t = \begin{pmatrix} \Delta \pi_t \\ u_t \\ r_t \end{pmatrix}
+y_t = 
+\begin{pmatrix} \Delta \pi_t \\
+u_t \\
+r_t
+\end{pmatrix}
 $$
 
 ``` r
@@ -716,16 +720,13 @@ annual 2% PCE inflation goal. Note again that we do not use PCE
 inflation here (we use inflation in the GDP price index), but anyhow
 this is just a demonstration. Now lets set the intervals. Remember that
 we only have a constant now, so $q=1$ and therefore $\Psi$ only has one
-column $\psi_1$. As such, in the case with only a constant, we can
-directly interpret $\Psi$ as the unconditional mean, i.e.
-
-$$
-\Psi d_t = \mu_t
-$$ simplifies to
+column $\psi_1$. And since $d_t = 1 \ \forall \ t$ we have the case
+where $\Psi d_t = \mu_t$ simplifies to
 
 $$
 \Psi = \mu
-$$
+$$ and as such we can directly interpret $\Psi$ as the unconditional
+mean
 
 ``` r
 theta_Psi <- 
