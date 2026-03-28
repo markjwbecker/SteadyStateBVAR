@@ -636,7 +636,7 @@ Now we will estimate the steady-state BVAR on a quarterly US data set
 (the annual percentage change in a chain-weighted GDP price index), the
 unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate,
 all workers over age 16) and the interest rate $r_t$ (yield on the three
-month Treasury bill rate). The sample is 1953Q1-2006Q3. So we have
+month Treasury bill rate). The sample is 1953Q1-2006Q3 and we have
 
 $$
 y_t = 
@@ -648,7 +648,6 @@ $$
 
 ``` r
 rm(list = ls())
-library(SteadyStateBVAR)
 data("KoopKorobilis2010")
 yt <- KoopKorobilis2010
 plot.ts(yt)
@@ -670,8 +669,7 @@ $$
 d_t = 1 \ \forall \ t
 $$
 
-and therefore $q=1$. We follow Koop and Koribilis (2010) and chose 4
-lags.
+We follow Koop and Koribilis (2010) and chose 4 lags.
 
 ``` r
 bvar_obj <- setup(bvar_obj,

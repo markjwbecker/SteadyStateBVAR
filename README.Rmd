@@ -430,7 +430,7 @@ irf <- IRF(bvar_obj,
 ## Example 2 US data (Koop and Koribilis, 2010)
 
 
-Now we will estimate the steady-state BVAR on a quarterly US data set (from Koop and Koribilis [2010]) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all workers over age 16) and the interest rate $r_t$ (yield on the three month Treasury bill rate). The sample is 1953Q1-2006Q3. So we have 
+Now we will estimate the steady-state BVAR on a quarterly US data set (from Koop and Koribilis [2010]) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all workers over age 16) and the interest rate $r_t$ (yield on the three month Treasury bill rate). The sample is 1953Q1-2006Q3 and we have
 
 $$
 y_t = 
@@ -443,7 +443,6 @@ $$
 
 ```{r, fig.width=10, fig.height=10}
 rm(list = ls())
-library(SteadyStateBVAR)
 data("KoopKorobilis2010")
 yt <- KoopKorobilis2010
 plot.ts(yt)
@@ -461,7 +460,7 @@ $$
 d_t = 1 \ \forall \ t
 $$
 
-and therefore $q=1$. We follow Koop and Koribilis (2010) and chose 4 lags.
+We follow Koop and Koribilis (2010) and chose 4 lags.
 
 
 ```{r, fig.width=8, fig.height=8}
