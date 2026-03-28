@@ -636,13 +636,11 @@ Now we will estimate the steady-state BVAR on a quarterly US data set
 (the annual percentage change in a chain-weighted GDP price index), the
 unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate,
 all workers over age 16) and the interest rate $r_t$ (yield on the three
-month Treasury bill rate). Thus
+month Treasury bill rate). 1953Q1-2006Q3. So we have
 
 $$
-yt = \begin{pmatrix} \Delta \pi_t & u_t & r_t \end{pmatrix}'
+y_t = \begin{pmatrix} \Delta \pi_t \\ u_t \\ r_t \end{pmatrix}
 $$
-
-The sample runs from 1953Q1-2006Q3.
 
 ``` r
 rm(list = ls())
@@ -679,8 +677,9 @@ bvar_obj <- setup(bvar_obj,
 ```
 
 This time we try out the hyperparameters from Gustafsson and Villani
-(2025), i.e. $\lambda_1 = 0.27$, $\lambda_2 = 0.43$ and
-$\lambda_3 = 0.76$. For the prior means on the first own lags, we set
+(2025), i.e. overall tightness is set to $\lambda_1 = 0.27$, cross
+equation tightness is set to $\lambda_2 = 0.43$ and the lag decay rate
+is $\lambda_3 = 0.76$. For the prior means on the first own lags, we set
 them to $0.6$ for $\Delta \pi_t$ and $0.9$ for $u_t$ and $r_t$. Note
 here that the prior mean on first own lag of the inflation rate is set
 to $0.6$ instead of $0$ to reflect some degree of persistence in the
