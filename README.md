@@ -637,8 +637,9 @@ Now we will estimate the steady-state BVAR on a quarterly US data set
 (the annual percentage change in a chain-weighted GDP price index), the
 unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate,
 all workers over age 16) and the interest rate $r_t$ (yield on the three
-month Treasury bill rate). Thus \$ yt =
-’\$ The sample runs from 1953Q1-2006Q3.
+month Treasury bill rate). Thus
+$$yt = \begin{pmatrix} \Delta \pi_t & u_t & r_t \end{pmatrix}'$$ The
+sample runs from 1953Q1-2006Q3.
 
 ``` r
 rm(list = ls())
@@ -675,12 +676,12 @@ bvar_obj <- setup(bvar_obj,
 ```
 
 This time we try out the hyperparameters from Gustafsson and Villani
-(2025), i.e. \$ \_1 = 0.27\$, \$ \_2 = 0.43\$ and \$ \_3 = 0.76\$. For
-the prior means on the first own lags, we set them to $0.6$ for
-$\Delta \pi_t$ and $0.9$ for $u_t$ and $r_t$. Note here that the prior
-mean on first own lag of the inflation rate is set to $0.6$ instead of
-$0$ to reflect some degree of persistence in the series (even though it
-is a growth rate variable).
+(2025), i.e. $\lambda_1 = 0.27$, $\lambda_2 = 0.43$ and
+$\lambda_3 = 0.76$. For the prior means on the first own lags, we set
+them to $0.6$ for $\Delta \pi_t$ and $0.9$ for $u_t$ and $r_t$. Note
+here that the prior mean on first own lag of the inflation rate is set
+to $0.6$ instead of $0$ to reflect some degree of persistence in the
+series (even though it is a growth rate variable).
 
 ``` r
 lambda_1 <- 0.27
@@ -698,7 +699,6 @@ the [‘Summary of Economic Projections, March 18,
 contained in ‘*Table 1. Economic projections of Federal Reserve Board
 members and Federal Reserve Bank presidents, under their individual
 assumptions of projected appropriate monetary policy, March 2026*’.
-
 Specifically, I set 99% prior probability intervals for the $u_t$ and
 $r_t$ according to their respective ‘Range’ for the ‘Longer run’, where
 the range is defined as ‘*The range for a variable in a given year
@@ -717,7 +717,7 @@ this is just a demonstration.
 Now lets set the intervals. Remember that we only have a constant now,
 so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. As such, in
 the case with only a constant, we can directly interpret $\Psi$ as the
-unconditional mean, i.e. \$ d_t = \_t\$ simplifies to \$ = \$.
+unconditional mean, i.e. $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$.
 
 ``` r
 theta_Psi <- 
