@@ -62,7 +62,7 @@ First, you need to install Rstan:
 Then you can install SteadyStateBVAR with:
 
 ``` r
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
 ```
 
 ## Introduction
@@ -976,6 +976,7 @@ $$
 Now lets simulate a time series from this DGP
 
 ``` r
+library(SteadyStateBVAR)
 rm(list = ls())
 set.seed(123)
 N <- 351
@@ -1072,26 +1073,25 @@ $$
 
 Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in $A$
 in row major order, and $\ln \lambda_0$ are the time $t=0$ values
-(initial conditions) of $\ln \lambda_{i,t}$. The following prior setup
-is almost (except for $\Phi$) an exact copy of the setup in Carriero,
-Clark and Marcellino (2024), please see the paper for the exact details.
+(initial conditions) of $\ln \lambda_{i,t}$. Now we cheat and use super
+good priors with prior means centered on the true values and low prior
+variances
 
 ``` r
 k <- bvar_obj$setup$k
-n_free_params_A <- k*(k-1)/2
-sigma2_hat <- diag(bvar_obj$priors$Sigma_AR)
+n_free_params_A <- k*(k-1)/2 #1 free parameter for k=2
 
 SV_priors <- list(
-  theta_A            = rep(0, n_free_params_A),
-  Omega_A            = diag(10, n_free_params_A),
-  theta_gamma_0      = 0.1 * log(sigma2_hat),
-  theta_gamma_1      = rep(0.9, k),
-  Omega_gamma_0      = diag(2, k),
-  Omega_gamma_1      = diag(0.04, k),
-  theta_log_lambda_0 = log(sigma2_hat),
-  Omega_log_lambda_0 = diag(2.0, k),
-  V_0                = (k+2 - k - 1) * diag(k),
-  m_0                =  k+2
+  theta_A            = rep(A[2,1], n_free_params_A),
+  Omega_A            = diag(0.1, n_free_params_A),
+  theta_gamma_0      = gamma_0,
+  Omega_gamma_0      = diag(0.1, k),
+  theta_gamma_1      = gamma_1,
+  Omega_gamma_1      = diag(0.1, k),
+  theta_log_lambda_0 = gamma_0/(1-gamma_1),
+  Omega_log_lambda_0 = diag(0.1, k),
+  V_0                = (20 - k - 1) * Phi,
+  m_0                =  20
   )
 
 bvar_obj$SV <- TRUE
@@ -1108,9 +1108,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 1000,
-                chains = 2)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1118,6 +1118,31 @@ Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.76 -0.20
+#> [2,] 0.15  0.72
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.18 5.90
+#> [2,] 2.92 8.93
+#> 
+#> A posterior mean
+#>      [,1] [,2]
+#> [1,] 1.00    0
+#> [2,] 0.24    1
+#> 
+#> Phi posterior mean
+#>       [,1]  [,2]
+#> [1,]  0.79 -0.14
+#> [2,] -0.14  0.71
+#> 
+#> gamma_0 posterior means
+#> [1] -0.15 -0.01
+#> 
+#> gamma_1 posterior means
+#> [1] 0.71 0.88
 ```
 
 Looks like it works reasonably well! Now we can turn to forecasting. We
@@ -1162,6 +1187,8 @@ par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
 
+<img src="man/figures/README-unnamed-chunk-39-1.png" width="100%" />
+
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue, we plot the forecasts of the log volatilities along
@@ -1175,6 +1202,8 @@ lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-40-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1197,6 +1226,8 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
+<img src="man/figures/README-unnamed-chunk-41-1.png" width="100%" />
+
 For the stochastic volatility steady-state BVAR, we can of course also
 do impulse response analysis, almost like before. Now however, since our
 covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which
@@ -1209,6 +1240,8 @@ par(mfrow=c(1,2))
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
+
+<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-AR1) and
 without (SS-BVAR) stochastic volatility specification to see the
@@ -1253,8 +1286,26 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.81 -0.25
+#> [2,] 0.11  0.62
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.09 5.97
+#> [2,] 3.19 9.02
 #--- SS-BVAR-SV-AR1 ---
 summary(bvar_obj, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.76 -0.20
+#> [2,] 0.15  0.72
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.18 5.90
+#> [2,] 2.92 8.93
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1321,6 +1372,8 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
+<img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" />
+
 Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior
 means for $\psi_1$ close to the true values of the DGP, as such we can
 see that both point forecasts (predictive means) converge closely to the
@@ -1339,50 +1392,38 @@ draws_gibbs <- bvar_obj2$fit$gibbs$fcst_draws
 
 y1h1_sv <- draws_stan[,1,1]
 y1h1 <- draws_gibbs[1,1,]
-
 y2h1_sv <- draws_stan[,1,2]
 y2h1 <- draws_gibbs[1,2,]
 
 y1h50_sv <- draws_stan[,50,1]
 y1h50 <- draws_gibbs[50,1,]
-
 y2h50_sv <- draws_stan[,50,2]
 y2h50 <- draws_gibbs[50,2,]
 
-par(mfrow=c(2,2))
-plot_pair <- function(f1, f2, title, legend_labels = c("Model 1", "Model 2")) {
+plot_pair <- function(x, y, title, labels = c("Model 1", "Model 2")) {
   
-  h1 <- hist(f1, plot = FALSE)
-  h2 <- hist(f2, plot = FALSE)
+  df <- data.frame(value = c(x, y),
+                   model = factor(rep(labels, c(length(x), length(y))))
+                  )
   
-  ylim_max <- 1.5 * max(c(h1$density, h2$density))
-  xlim_range <- range(c(h1$breaks, h2$breaks))
-  
-  plot(h1,
-       freq   = FALSE,
-       col    = rgb(0, 0, 1, 0.4),
-       border = "blue",
-       main   = title,
-       xlab   = "forecast",
-       ylim   = c(0, ylim_max))
-  
-  plot(h2,
-       freq   = FALSE,
-       col    = rgb(1, 0, 0, 0.4),
-       border = "red",
-       add    = TRUE)
-  
-  legend("topright",
-         legend = legend_labels,
-         fill   = c(rgb(0,0,1,0.4), rgb(1,0,0,0.4)),
-         border = c("blue","red"))
+ggplot2::ggplot(df, ggplot2::aes(value, fill = model)) +
+  ggplot2::geom_histogram(position = "identity",
+                          alpha = 0.3,
+                          bins = 30) +
+  ggplot2::scale_fill_manual(values = c("blue", "red")) +
+  ggplot2::labs(title = title, x = "forecast", y = "count") +
+  ggplot2::theme_minimal()
 }
 
-plot_pair(y1h1_sv,  y1h1,  title = "y1, h=1",  legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
-plot_pair(y2h1_sv,  y2h1,  title = "y2, h=1",  legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
-plot_pair(y1h50_sv, y1h50, title = "y1, h=50", legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
-plot_pair(y2h50_sv, y2h50, title = "y2, h=50", legend_labels = c("SS-BVAR-SV-AR1", "SS-BVAR"))
+p1 <- plot_pair(y1h1_sv,  y1h1,  "y1, h=1",  c("SS-BVAR-SV-AR1", "SS-BVAR"))
+p2 <- plot_pair(y2h1_sv,  y2h1,  "y2, h=1",  c("SS-BVAR-SV-AR1", "SS-BVAR"))
+p3 <- plot_pair(y1h50_sv, y1h50, "y1, h=50", c("SS-BVAR-SV-AR1", "SS-BVAR"))
+p4 <- plot_pair(y2h50_sv, y2h50, "y2, h=50", c("SS-BVAR-SV-AR1", "SS-BVAR"))
+
+patchwork::wrap_plots(p1, p2, p3, p4, ncol = 2)
 ```
+
+<img src="man/figures/README-unnamed-chunk-46-1.png" width="100%" />
 
 ### Stochastic volatility: Random Walk log volatilities (Clark, 2011)
 
@@ -1451,7 +1492,7 @@ Pi_1 <- matrix(c( 0.80, 0.15,
 A <- matrix(c(1.00, 0.00,
               0.25, 1.00), 2, 2, byrow = TRUE)
 
-phi <- c(0.05, 0.10)
+phi <- c(0.04, 0.08)
 
 log_lambda <- matrix(NA, N, 2)
 log_lambda[1,] <- c(-2,-3) #ln lambda_t=0
@@ -1527,16 +1568,15 @@ is a copy of the one in Clark (2011), see the paper for details.
 
 ``` r
 k <- bvar_obj$setup$k
-n_free_params_A <- k*(k-1)/2
-sigma2_hat <- diag(bvar_obj$priors$Sigma_AR)
+n_free_params_A <- k*(k-1)/2 #1 free parameter for k=2
 
 SV_priors <- list(
-  theta_A            = rep(0, n_free_params_A),
-  Omega_A            = diag(1000^2, n_free_params_A),
-  mu_log_lambda_0    = log(sigma2_hat),
-  sigma2_log_lambda_0 = rep(4, k),
-  alpha_phi          = rep(2.5, k),
-  beta_phi           = rep(0.0875, k) 
+  theta_A             = rep(A[2,1], n_free_params_A),
+  Omega_A             = diag(0.1, n_free_params_A),
+  mu_log_lambda_0     = log_lambda[1,],
+  sigma2_log_lambda_0 = rep(0.1, k),
+  alpha_phi           =  c(25, 15),
+  beta_phi            = (c(25, 15) - 1) * phi
 )
 
 bvar_obj$SV <- TRUE
@@ -1553,9 +1593,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 1000,
-                chains = 2)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1563,6 +1603,24 @@ Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.72 -0.17
+#> [2,] 0.06  0.74
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.17 5.89
+#> [2,] 2.92 9.10
+#> 
+#> A posterior mean
+#>      [,1] [,2]
+#> [1,] 1.00    0
+#> [2,] 0.25    1
+#> 
+#> phi posterior means
+#>   phi_1 : 0.03 
+#>   phi_2 : 0.07
 ```
 
 Looks like it works reasonably well! With the respect to forecasting,
@@ -1610,6 +1668,8 @@ fcst1 <- forecast(bvar_obj,
                   show_all = TRUE)
 ```
 
+<img src="man/figures/README-unnamed-chunk-52-1.png" width="100%" />
+
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue we plot the forecasts of the log volatilities along
@@ -1623,6 +1683,8 @@ lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-7,1), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-53-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1644,6 +1706,8 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2.25), plot_idx=2, vo
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
+<img src="man/figures/README-unnamed-chunk-54-1.png" width="100%" />
+
 We can again do some impulse response analysis.
 
 ``` r
@@ -1652,6 +1716,8 @@ par(mfrow=c(1,2))
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
+
+<img src="man/figures/README-unnamed-chunk-55-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-RW) and
 without (SS-BVAR) stochastic volatility RW specification to see the
@@ -1696,8 +1762,26 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>       [,1]  [,2]
+#> [1,]  0.72 -0.18
+#> [2,] -0.01  0.76
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.15 5.90
+#> [2,] 2.97 9.08
 #--- SS-BVAR-SV-RW ---
 summary(bvar_obj, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.72 -0.17
+#> [2,] 0.06  0.74
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.17 5.89
+#> [2,] 2.92 9.10
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1719,6 +1803,8 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
+<img src="man/figures/README-unnamed-chunk-58-1.png" width="100%" />
+
 Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for
 $\psi_1$ close to the true values of the DGP, as such we can see that
 both point forecasts (predictive means) converge closely to the true
@@ -1739,22 +1825,23 @@ draws_gibbs <- bvar_obj2$fit$gibbs$fcst_draws
 
 y1h1_sv <- draws_stan[,1,1]
 y1h1 <- draws_gibbs[1,1,]
-
 y2h1_sv <- draws_stan[,1,2]
 y2h1 <- draws_gibbs[1,2,]
 
 y1h50_sv <- draws_stan[,50,1]
 y1h50 <- draws_gibbs[50,1,]
-
 y2h50_sv <- draws_stan[,50,2]
 y2h50 <- draws_gibbs[50,2,]
 
-par(mfrow=c(2,2))
-plot_pair(y1h1_sv,  y1h1,  title = "y1, h=1",  legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
-plot_pair(y2h1_sv,  y2h1,  title = "y2, h=1",  legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
-plot_pair(y1h50_sv, y1h50, title = "y1, h=50", legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
-plot_pair(y2h50_sv, y2h50, title = "y2, h=50", legend_labels = c("SS-BVAR-SV-RW", "SS-BVAR"))
+p1 <- plot_pair(y1h1_sv,  y1h1,  "y1, h=1",  c("SS-BVAR-SV-RW", "SS-BVAR"))
+p2 <- plot_pair(y2h1_sv,  y2h1,  "y2, h=1",  c("SS-BVAR-SV-RW", "SS-BVAR"))
+p3 <- plot_pair(y1h50_sv, y1h50, "y1, h=50", c("SS-BVAR-SV-RW", "SS-BVAR"))
+p4 <- plot_pair(y2h50_sv, y2h50, "y2, h=50", c("SS-BVAR-SV-RW", "SS-BVAR"))
+
+patchwork::wrap_plots(p1, p2, p3, p4, ncol = 2)
 ```
+
+<img src="man/figures/README-unnamed-chunk-59-1.png" width="100%" />
 
 ## References
 
