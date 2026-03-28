@@ -636,7 +636,7 @@ Now we will estimate the steady-state BVAR on a quarterly US data set
 (the annual percentage change in a chain-weighted GDP price index), the
 unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate,
 all workers over age 16) and the interest rate $r_t$ (yield on the three
-month Treasury bill rate). 1953Q1-2006Q3. So we have
+month Treasury bill rate). The sample is 1953Q1-2006Q3. So we have
 
 $$
 y_t = 
@@ -721,12 +721,8 @@ inflation here (we use inflation in the GDP price index), but anyhow
 this is just a demonstration. Now lets set the intervals. Remember that
 we only have a constant now, so $q=1$ and therefore $\Psi$ only has one
 column $\psi_1$. And since $d_t = 1 \ \forall \ t$ we have the case
-where $\Psi d_t = \mu_t$ simplifies to
-
-$$
-\Psi = \mu
-$$ and as such we can directly interpret $\Psi$ as the unconditional
-mean
+where $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$ and as such we can
+directly interpret $\Psi$ as the unconditional mean.
 
 ``` r
 theta_Psi <- 
