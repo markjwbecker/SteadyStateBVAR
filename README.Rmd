@@ -341,8 +341,8 @@ Now we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 2000,
                 chains = 4)
 ```
 
@@ -427,7 +427,7 @@ irf <- IRF(bvar_obj,
 ```
 
 
-## Example 2 US data (Koop and Koribilis, 2010)
+## Example 2 (Koop and Koribilis, 2010)
 
 
 Now we will estimate the steady-state BVAR on a quarterly US data set (from Koop and Koribilis [2010]) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all workers over age 16) and the interest rate $r_t$ (yield on the three month Treasury bill rate). The sample is 1953Q1-2006Q3 and we have
@@ -532,8 +532,8 @@ Then estimate the model.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 2000,
                 chains = 4)
 ```
 
@@ -813,15 +813,15 @@ n_free_params_A <- k*(k-1)/2 #1 free parameter for k=2
 
 SV_priors <- list(
   theta_A            = rep(A[2,1], n_free_params_A),
-  Omega_A            = diag(0.1, n_free_params_A),
+  Omega_A            = diag(0.01, n_free_params_A),
   theta_gamma_0      = gamma_0,
-  Omega_gamma_0      = diag(0.1, k),
+  Omega_gamma_0      = diag(0.01, k),
   theta_gamma_1      = gamma_1,
-  Omega_gamma_1      = diag(0.1, k),
+  Omega_gamma_1      = diag(0.01, k),
   theta_log_lambda_0 = gamma_0/(1-gamma_1),
-  Omega_log_lambda_0 = diag(0.1, k),
-  V_0                = (20 - k - 1) * Phi,
-  m_0                =  20
+  Omega_log_lambda_0 = diag(0.01, k),
+  V_0                = (50 - k - 1) * Phi,
+  m_0                =  50
   )
 
 bvar_obj$SV <- TRUE
@@ -836,8 +836,8 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 5000,
                 chains = 2)
 ```
 
@@ -947,7 +947,7 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 30000,
+                 iter = 20000,
                  warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
@@ -1034,45 +1034,7 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is in the prediction intervals. We can see that the SS-BVAR-SV has a wider interval, even though both are 95\% intervals. We can illustrate this difference by looking at histograms of the forecast draws, where we clearly see that the SS-BVAR-SV places a higher probability on future "tail" observations.
-
-```{r, fig.width=12, fig.height=8,eval=TRUE, warning=FALSE, message=FALSE}
-sf <- bvar_obj$fit$stan
-draws_stan <- rstan::extract(sf)$y_pred
-draws_gibbs <- bvar_obj2$fit$gibbs$fcst_draws
-
-y1h1_sv <- draws_stan[,1,1]
-y1h1 <- draws_gibbs[1,1,]
-y2h1_sv <- draws_stan[,1,2]
-y2h1 <- draws_gibbs[1,2,]
-
-y1h50_sv <- draws_stan[,50,1]
-y1h50 <- draws_gibbs[50,1,]
-y2h50_sv <- draws_stan[,50,2]
-y2h50 <- draws_gibbs[50,2,]
-
-plot_pair <- function(x, y, title, labels = c("Model 1", "Model 2")) {
-  
-  df <- data.frame(value = c(x, y),
-                   model = factor(rep(labels, c(length(x), length(y))))
-                  )
-  
-ggplot2::ggplot(df, ggplot2::aes(value, fill = model)) +
-  ggplot2::geom_histogram(position = "identity",
-                          alpha = 0.3,
-                          bins = 30) +
-  ggplot2::scale_fill_manual(values = c("blue", "red")) +
-  ggplot2::labs(title = title, x = "forecast", y = "count") +
-  ggplot2::theme_minimal()
-}
-
-p1 <- plot_pair(y1h1_sv,  y1h1,  "y1, h=1",  c("SS-BVAR-SV-AR1", "SS-BVAR"))
-p2 <- plot_pair(y2h1_sv,  y2h1,  "y2, h=1",  c("SS-BVAR-SV-AR1", "SS-BVAR"))
-p3 <- plot_pair(y1h50_sv, y1h50, "y1, h=50", c("SS-BVAR-SV-AR1", "SS-BVAR"))
-p4 <- plot_pair(y2h50_sv, y2h50, "y2, h=50", c("SS-BVAR-SV-AR1", "SS-BVAR"))
-
-patchwork::wrap_plots(p1, p2, p3, p4, ncol = 2)
-```
+Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is in the prediction intervals. We can see that the SS-BVAR-SV has a wider interval, even though both are 95\% intervals.
 
 
 ### Stochastic volatility: Random Walk log volatilities (Clark, 2011)
@@ -1239,8 +1201,8 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 5000,
                 chains = 2)
 ```
 
@@ -1354,7 +1316,7 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 30000,
+                 iter = 20000,
                  warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
@@ -1396,30 +1358,7 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is again in the prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and increasing) interval, even though both are 95\% intervals. Since the log volatilities now follow random walks, it is not surprising to see that the intervals now increase in width over time. We can illustrate the differences again by looking at the histograms of the forecast draws, where we clearly see that the SS-BVAR-SV-RW places a higher probability on "tail" observations.
-
-```{r, fig.width=8, fig.height=8,eval=TRUE, warning=FALSE, message=FALSE}
-sf <- bvar_obj$fit$stan
-draws_stan <- extract(sf)$y_pred
-draws_gibbs <- bvar_obj2$fit$gibbs$fcst_draws
-
-y1h1_sv <- draws_stan[,1,1]
-y1h1 <- draws_gibbs[1,1,]
-y2h1_sv <- draws_stan[,1,2]
-y2h1 <- draws_gibbs[1,2,]
-
-y1h50_sv <- draws_stan[,50,1]
-y1h50 <- draws_gibbs[50,1,]
-y2h50_sv <- draws_stan[,50,2]
-y2h50 <- draws_gibbs[50,2,]
-
-p1 <- plot_pair(y1h1_sv,  y1h1,  "y1, h=1",  c("SS-BVAR-SV-RW", "SS-BVAR"))
-p2 <- plot_pair(y2h1_sv,  y2h1,  "y2, h=1",  c("SS-BVAR-SV-RW", "SS-BVAR"))
-p3 <- plot_pair(y1h50_sv, y1h50, "y1, h=50", c("SS-BVAR-SV-RW", "SS-BVAR"))
-p4 <- plot_pair(y2h50_sv, y2h50, "y2, h=50", c("SS-BVAR-SV-RW", "SS-BVAR"))
-
-patchwork::wrap_plots(p1, p2, p3, p4, ncol = 2)
-```
+Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is again in the prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and increasing) interval, even though both are 95\% intervals. Since the log volatilities now follow random walks, it is not surprising to see that the intervals now increase in width over time.
 
 
 ## References
