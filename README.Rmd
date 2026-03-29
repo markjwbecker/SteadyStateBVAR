@@ -341,9 +341,9 @@ Now we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 250,
-                chains = 2)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
@@ -379,7 +379,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter on quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r, fig.width=10, fig.height=10,eval=TRUE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
                  fcst_type = "mean",
@@ -532,9 +532,9 @@ Then estimate the model.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 250,
-                chains = 2)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 Lets check posterior means
@@ -836,9 +836,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 2)
 ```
 
 Let see if we managed to reasonably recover the true parameters. Remember here that since $p=1$ we have $\beta'=\Pi_1$.
@@ -947,8 +947,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 3000,
-                 warmup = 1000,
+                 iter = 30000,
+                 warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1239,9 +1239,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 2)
 ```
 
 Let see if we managed to reasonably recover the true parameters. Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
@@ -1354,8 +1354,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 3000,
-                 warmup = 1000,
+                 iter = 30000,
+                 warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1541,8 +1541,8 @@ bvar_obj$predict$H <- 12
 bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 500,
+                iter = 20000,
+                warmup = 10000,
                 chains = 4)
 
 summary(bvar_obj)

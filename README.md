@@ -520,9 +520,22 @@ Now we can fit the model.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 250,
-                chains = 2)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
+#> Warning: There were 10000 divergent transitions after warmup. See
+#> https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+#> to find out why this is a problem and how to eliminate them.
+#> Warning: Examine the pairs() plot to diagnose sampling problems
+#> Warning: The largest R-hat is 1.53, indicating chains have not mixed.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#r-hat
+#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#bulk-ess
+#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#tail-ess
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
@@ -531,54 +544,62 @@ Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
 summary(bvar_obj)
 #> beta posterior mean
 #>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.18  0.03 -0.02  0.12  0.07 -0.13  0.00
-#>  [2,] -0.02  0.32  0.25  0.12 -0.08  0.02  0.00
-#>  [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
-#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.09  0.00
-#>  [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
-#>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.21  3.98  0.82  0.93
-#>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00
-#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
-#> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
-#> [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
-#> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
-#> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.56 -0.39  0.23 -0.04
-#> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#> [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
-#> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#> [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
-#> [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#> [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00
-#> [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.60  0.00
-#> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#> [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00
-#> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
-#> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
-#> [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
-#> [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.17 -0.01
+#>  [1,] -1.16  0.14  0.32 -0.04  0.21 -0.09 -0.22
+#>  [2,] -0.85 -0.07  0.14  0.20  0.13 -0.31 -0.17
+#>  [3,] -2.62  0.23  0.19  0.01  0.20  0.28  0.36
+#>  [4,] -1.25  0.19 -0.43  0.35 -0.07  0.34 -0.49
+#>  [5,]  0.17 -0.84  0.10  0.06  0.25  0.14 -0.35
+#>  [6,] -4.60 -0.70 -1.11  0.74 -0.03  1.91  0.15
+#>  [7,] -1.61 -1.83  0.61  0.85  3.29  0.42  0.70
+#>  [8,] -0.70  0.21 -0.09  0.32  0.42  0.57 -0.34
+#>  [9,] -0.49  0.29  0.47  0.07 -0.02  0.18 -0.40
+#> [10,] -2.71 -0.28 -0.07  0.71  0.77  0.37 -0.48
+#> [11,] -0.92 -0.29 -1.04  0.18  0.40  0.35  0.35
+#> [12,]  0.21  0.29 -1.89  0.00  0.22  0.43  0.04
+#> [13,] -5.75 -1.61  0.77  0.30  0.42  0.74 -0.40
+#> [14,] -2.38 -0.42  1.77  0.58  0.05  0.24 -0.33
+#> [15,] -1.26 -0.36 -0.46 -0.32  0.16  0.19  0.30
+#> [16,] -0.96 -0.10  0.36 -0.21  0.48  0.26 -0.08
+#> [17,] -2.89 -0.41  0.41  0.74 -0.16  0.97 -0.13
+#> [18,]  0.26  0.01 -1.23  0.59  0.27  0.44 -0.30
+#> [19,] -1.09  1.78 -0.65 -0.43  0.11  0.16 -0.20
+#> [20,] -4.07  1.91 -0.56  0.31  0.55  1.45 -0.14
+#> [21,] -2.65  0.82 -0.47 -0.21 -0.02 -0.52  0.29
+#> [22,] -1.21  0.35 -0.40 -0.11  0.21  0.56 -0.07
+#> [23,] -0.38  0.57 -0.45  0.31  0.46  0.21 -0.09
+#> [24,] -3.36 -0.15  0.37  0.47  0.14  0.57 -0.34
+#> [25,] -2.15  0.84 -0.25 -0.45 -0.22 -0.34  0.36
+#> [26,]  1.16 -0.16 -1.73 -0.06  0.48  0.39 -0.02
+#> [27,] -6.09 -0.63  1.45  0.60  0.40  0.67 -0.01
+#> [28,] -1.05  0.92 -1.87  0.31 -0.43 -0.37 -0.06
 #> 
 #> Psi posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.58  0.08
-#> [2,] 0.50  0.46
-#> [3,] 4.95  2.02
-#> [4,] 0.58 -0.03
-#> [5,] 0.49  1.14
-#> [6,] 4.29  4.45
-#> [7,] 3.92 -0.10
+#>       [,1]  [,2]
+#> [1,] -1.07 -1.07
+#> [2,] -0.30  0.05
+#> [3,]  4.81  2.16
+#> [4,]  1.29 -0.06
+#> [5,] -0.80  0.40
+#> [6,]  3.49  3.84
+#> [7,]  5.70  1.65
 #> 
 #> Sigma posterior mean
-#>       [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#> [1,]  0.15 -0.01  0.01  0.07 -0.01  0.00  0.00
-#> [2,] -0.01  0.09  0.05  0.01  0.13  0.04  0.00
-#> [3,]  0.01  0.05  0.52  0.01  0.18  0.11 -0.01
-#> [4,]  0.07  0.01  0.01  0.19 -0.05 -0.01  0.00
-#> [5,] -0.01  0.13  0.18 -0.05  0.60  0.12  0.00
-#> [6,]  0.00  0.04  0.11 -0.01  0.12  1.57 -0.01
-#> [7,]  0.00  0.00 -0.01  0.00  0.00 -0.01  0.00
+#>               [,1]          [,2]          [,3]          [,4]          [,5]
+#> [1,]  7.705232e+41 -9.313355e+19  1.723909e+21 -6.622928e+21 -6.193855e+21
+#> [2,] -9.313355e+19  4.102000e+01 -3.370000e+00  6.870000e+00  1.227000e+01
+#> [3,]  1.723909e+21 -3.370000e+00  7.350000e+00 -1.454000e+01 -1.286000e+01
+#> [4,] -6.622928e+21  6.870000e+00 -1.454000e+01  2.195621e+16  7.764120e+08
+#> [5,] -6.193855e+21  1.227000e+01 -1.286000e+01  7.764120e+08  8.195000e+01
+#> [6,] -1.386257e+22  1.104000e+01 -3.120000e+01  1.821821e+09  1.788300e+02
+#> [7,]  2.386202e+21  3.400000e-01  5.310000e+00 -2.093219e+08 -2.639000e+01
+#>               [,6]          [,7]
+#> [1,] -1.386257e+22  2.386202e+21
+#> [2,]  1.104000e+01  3.400000e-01
+#> [3,] -3.120000e+01  5.310000e+00
+#> [4,]  1.821821e+09 -2.093219e+08
+#> [5,]  1.788300e+02 -2.639000e+01
+#> [6,]  4.037955e+49 -1.207655e+26
+#> [7,] -1.207655e+26  1.278737e+20
 ```
 
 We can access the posterior means with ‘bvar_obj\$posterior_means’ if
@@ -828,9 +849,9 @@ Then estimate the model.
 
 ``` r
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 250,
-                chains = 2)
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
 ```
 
 Lets check posterior means
@@ -845,7 +866,7 @@ summary(bvar_obj)
 #>  [4,] -0.28 -0.02 -0.11
 #>  [5,]  0.04 -0.22  0.17
 #>  [6,]  0.01  0.01 -0.05
-#>  [7,] -0.12  0.00  0.01
+#>  [7,] -0.11  0.00  0.01
 #>  [8,]  0.04 -0.15  0.07
 #>  [9,]  0.00  0.03  0.14
 #> [10,]  0.00  0.01 -0.09
@@ -862,7 +883,7 @@ summary(bvar_obj)
 #>      [,1]  [,2]  [,3]
 #> [1,] 0.10  0.00  0.04
 #> [2,] 0.00  0.11 -0.10
-#> [3,] 0.04 -0.10  0.59
+#> [3,] 0.04 -0.10  0.60
 ```
 
 Now lets forecast with a 68% CI and use the median of the predictive
@@ -1201,9 +1222,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 2)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1218,8 +1239,8 @@ summary(bvar_obj)
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.18 5.90
-#> [2,] 2.92 8.93
+#> [1,] 2.19 5.90
+#> [2,] 2.91 8.95
 #> 
 #> A posterior mean
 #>      [,1] [,2]
@@ -1228,14 +1249,14 @@ summary(bvar_obj)
 #> 
 #> Phi posterior mean
 #>       [,1]  [,2]
-#> [1,]  0.79 -0.14
+#> [1,]  0.78 -0.14
 #> [2,] -0.14  0.71
 #> 
 #> gamma_0 posterior means
 #> [1] -0.15 -0.01
 #> 
 #> gamma_1 posterior means
-#> [1] 0.71 0.88
+#> [1] 0.72 0.88
 ```
 
 Looks like it works reasonably well! Now we can turn to forecasting. We
@@ -1361,8 +1382,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 3000,
-                 warmup = 1000,
+                 iter = 30000,
+                 warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1386,8 +1407,8 @@ summary(bvar_obj2, pars = c("beta", "Psi"))
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.09 5.97
-#> [2,] 3.19 9.02
+#> [1,] 2.09 5.98
+#> [2,] 3.18 9.03
 #--- SS-BVAR-SV-AR1 ---
 summary(bvar_obj, pars = c("beta", "Psi"))
 #> beta posterior mean
@@ -1397,8 +1418,8 @@ summary(bvar_obj, pars = c("beta", "Psi"))
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.18 5.90
-#> [2,] 2.92 8.93
+#> [1,] 2.19 5.90
+#> [2,] 2.91 8.95
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1685,9 +1706,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 20000,
+                warmup = 10000,
+                chains = 2)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1711,7 +1732,7 @@ summary(bvar_obj)
 #> [2,] 0.25    1
 #> 
 #> phi posterior means
-#>   phi_1 : 0.03 
+#>   phi_1 : 0.04 
 #>   phi_2 : 0.07
 ```
 
@@ -1836,8 +1857,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 3000,
-                 warmup = 1000,
+                 iter = 30000,
+                 warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1862,7 +1883,7 @@ summary(bvar_obj2, pars = c("beta", "Psi"))
 #> Psi posterior mean
 #>      [,1] [,2]
 #> [1,] 2.15 5.90
-#> [2,] 2.97 9.08
+#> [2,] 2.98 9.08
 #--- SS-BVAR-SV-RW ---
 summary(bvar_obj, pars = c("beta", "Psi"))
 #> beta posterior mean
@@ -2062,8 +2083,8 @@ bvar_obj$predict$H <- 12
 bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 500,
+                iter = 20000,
+                warmup = 10000,
                 chains = 4)
 
 summary(bvar_obj)
