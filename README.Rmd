@@ -341,8 +341,8 @@ Now we can fit the model.
 
 ```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 2000,
+                iter = 20000,
+                warmup = 10000,
                 chains = 4)
 ```
 
@@ -532,8 +532,8 @@ Then estimate the model.
 
 ```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 2000,
+                iter = 20000,
+                warmup = 10000,
                 chains = 4)
 ```
 
@@ -781,7 +781,7 @@ lambda_3 <- 1.00
 fol_pm=c(0.9, 0.9)
 
 theta_Psi <- c(2,3,6,9)
-Omega_Psi <- diag(rep(0.1,4))
+Omega_Psi <- diag(rep(0.01,4))
 
 bvar_obj <- priors(bvar_obj,
                    lambda_1,
@@ -836,8 +836,8 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 5000,
+                iter = 20000,
+                warmup = 10000,
                 chains = 2)
 ```
 
@@ -947,7 +947,7 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 20000,
+                 iter = 30000,
                  warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
@@ -1150,7 +1150,7 @@ lambda_3 <- 1.00
 fol_pm=c(0.9, 0.9)
 
 theta_Psi <- c(2,3,6,9)
-Omega_Psi <- diag(rep(0.1,4))
+Omega_Psi <- diag(rep(0.01,4))
 
 bvar_obj <- priors(bvar_obj,
                    lambda_1,
@@ -1182,9 +1182,9 @@ n_free_params_A <- k*(k-1)/2 #1 free parameter for k=2
 
 SV_priors <- list(
   theta_A             = rep(A[2,1], n_free_params_A),
-  Omega_A             = diag(0.1, n_free_params_A),
+  Omega_A             = diag(0.01, n_free_params_A),
   mu_log_lambda_0     = log_lambda[1,],
-  sigma2_log_lambda_0 = rep(0.1, k),
+  sigma2_log_lambda_0 = rep(0.01, k),
   alpha_phi           =  c(25, 15),
   beta_phi            = (c(25, 15) - 1) * phi
 )
@@ -1201,8 +1201,8 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 5000,
+                iter = 20000,
+                warmup = 10000,
                 chains = 2)
 ```
 
@@ -1316,7 +1316,7 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 20000,
+                 iter = 30000,
                  warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
