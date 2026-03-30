@@ -32,6 +32,10 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2, estimation = c("stan"
       }
       
     }
+    
+    if (isTRUE(x$priors$multi_student_t)) {
+      stan_file <- system.file("multivariate_t.stan", package = "SteadyStateBVAR")
+    }
     rstan::rstan_options(auto_write = TRUE)
     options(mc.cores = parallel::detectCores())
     
