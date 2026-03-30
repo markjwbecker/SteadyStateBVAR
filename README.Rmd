@@ -454,7 +454,7 @@ Create the object
 bvar_obj <- bvar(data = yt)
 ```
 
-One could perhaps argue to have a dummy variable for the time around 1975-1985, but this time we skip it and have only the constant as the deterministic variable
+One could perhaps argue to have a dummy variable for the time around 1970-1985, but this time we skip it and have only the constant as the deterministic variable
 
 $$
 d_t = 1 \ \forall \ t
@@ -486,23 +486,23 @@ fol_pm=c(0.6, # delta pi
 
 Now for the steady-state coefficients I use the "Longer run" values from the ['Summary of Economic Projections, March 18, 2026'](https://www.federalreserve.gov/monetarypolicy/files/fomcprojtabl20260318.pdf) contained in '*Table 1. Economic projections of Federal Reserve Board members and Federal Reserve Bank presidents, under their individual assumptions of projected appropriate monetary policy, March 2026*'. Specifically, I set 99\% prior probability intervals for the $u_t$ and $r_t$ according to their respective 'Range' for the 'Longer run', where the range is defined as '*The range for a variable in a given year includes all participants’ projections, from lowest to highest, for that variable in that year*'.
 
-For the unemployment rate, the long run range is $3.8-4.5$ and for the Federal funds rate the long run range is $2.6-3.9$. Note that we use the three month Treasury bill rate here and not the federal funds rate, but it is common knowledge that they mirror each other very closely. For inflation, I put a strong prior at around 2\%, since the Fed has an annual 2\% PCE inflation goal. Note again that we do not use PCE inflation here (we use inflation in the GDP price index), but anyhow this is just a demonstration. Now lets set the intervals. Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1$. And since $d_t = 1 \ \forall \ t$ we have the case where $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$ and as such we can directly interpret $\Psi$ as the unconditional mean.
+For the unemployment rate, the long run range is $3.8-4.5$ and for the Federal funds rate the long run range is $2.6-3.9$. Note that we use the three month Treasury bill rate here and not the federal funds rate, but it is common knowledge that they mirror each other very closely. For inflation, I put a strong prior at around 2\%, since the Fed has an annual 2\% PCE inflation goal. Note again that we do not use PCE inflation here (we use inflation in the GDP price index), but anyhow this is just a demonstration. Now lets set the intervals. Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1=\Psi$. And since $d_t = 1 \ \forall \ t$ we have the case where $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$ and as such we can directly interpret $\Psi$ as the unconditional mean.
 
 
 ```{r, fig.width=8, fig.height=8}
 theta_Psi <- 
   c(
-  ppi(1.90, 2.10, interval=0.99)$mean,   #psi_1: delta pi
-  ppi(3.80, 4.50, interval=0.99)$mean,   #psi_1: u
-  ppi(2.60, 3.90, interval=0.99)$mean    #psi_1: r
+  ppi(1.90, 2.10, interval=0.99)$mean,   #Psi: delta pi
+  ppi(3.80, 4.50, interval=0.99)$mean,   #Psi: u
+  ppi(2.60, 3.90, interval=0.99)$mean    #Psi: r
   )
 
 Omega_Psi <- 
   diag(
   c(
-  ppi(1.90, 2.10, interval=0.99)$var,    #psi_1: delta pi
-  ppi(3.80, 4.50, interval=0.99)$var,    #psi_1: u
-  ppi(2.60, 3.90, interval=0.99)$var     #psi_1: r
+  ppi(1.90, 2.10, interval=0.99)$var,    #Psi: delta pi
+  ppi(3.80, 4.50, interval=0.99)$var,    #Psi: u
+  ppi(2.60, 3.90, interval=0.99)$var     #Psi: r
   )
   )
 ```
@@ -565,7 +565,7 @@ Here I will show how the user can perform conditional forecasting. I follow the 
 
 We continue with the same data/model as in the previous section. Now suppose we are interested in the forecasts of inflation $\Delta \pi_t$ and the unemployment rate $u_t$ conditional on a scenario where the three month Treasury bill rate $r_t$ (a proxy for the federal funds rate) rises a lot very quickly and unexpectedly, and then goes back down (this is just a toy example).
 
-First we set up our conditions/scenarios, i.e., which variables, which horizons, and what values the variables will take during those horizons. Our conditions is that $r_t$ will take a certain path at forecast horizons $h=1,\dots,H$.
+First we set up our conditions/scenarios, i.e., which variables, which horizons, and which values the variables will take during those horizons. Our conditions are that $r_t$ will take a certain path at forecast horizons $h=1,\dots,H$.
 
 ```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 conditions <- data.frame(
@@ -620,7 +620,7 @@ $$
 \Lambda_t = \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
 $$
 
-contains the time-varying variances (log volatilities) of conditionally Gaussian shocks (Carriero, Clark and Marcellino, 2024). The log volatilities follow AR(1) procceses
+contains the time-varying variances (log volatilities) of conditionally Gaussian shocks. The log volatilities follow AR(1) procceses
 
 
 $$
@@ -711,11 +711,10 @@ d_{t}' &=
 $$
 
 
-Now lets simulate a time series from this DGP
+Now lets simulate a multivariate time series from this DGP
 
 
 ```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE}
-library(SteadyStateBVAR)
 rm(list = ls())
 set.seed(123)
 N <- 351
@@ -1034,7 +1033,7 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is in the prediction intervals. We can see that the SS-BVAR-SV has a wider interval, even though both are 95\% intervals.
+Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior means for $\Psi$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is in the prediction intervals. We can see that the SS-BVAR-SV has a wider interval, even though both are 95\% intervals.
 
 
 ### Stochastic volatility: Random Walk log volatilities (Clark, 2011)
@@ -1090,7 +1089,7 @@ d_{t}' &=
 $$
 
 
-Now lets simulate a time series from this DGP
+Now lets simulate a multivariate time series from this DGP
 
 
 ```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE}
@@ -1212,7 +1211,7 @@ Let see if we managed to reasonably recover the true parameters. Remember again,
 summary(bvar_obj)
 ```
 
-Looks like it works reasonably well! With the respect to forecasting, the procedure is now similar in spirit but a bit different. For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
+Looks like it works reasonably well! With the respect to forecasting, the procedure is very similar to before. For each (post warmup) draw $j$, and for $h=1,\dots,H$, generate
 
 $$
 \nu^{(j)}_{i,T+h}
@@ -1358,7 +1357,7 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for $\psi_1$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is again in the prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and increasing) interval, even though both are 95\% intervals. Since the log volatilities now follow random walks, it is not surprising to see that the intervals now increase in width over time.
+Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for $\Psi$ close to the true values of the DGP, as such we can see that both point forecasts (predictive means) converge closely to the true steady states. Also, before the convergence, the dynamics of the point forecasts are very similar. The key difference is again in the prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and increasing) interval, even though both are 95\% intervals. Since the log volatilities now follow random walks, it is not surprising to see that the intervals now increase in width over time.
 
 
 ## References

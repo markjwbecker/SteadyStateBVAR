@@ -523,7 +523,6 @@ bvar_obj <- fit(bvar_obj,
                 iter = 20000,
                 warmup = 10000,
                 chains = 4)
-#> recompiling to avoid crashing R session
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
@@ -724,7 +723,7 @@ bvar_obj <- bvar(data = yt)
 ```
 
 One could perhaps argue to have a dummy variable for the time around
-1975-1985, but this time we skip it and have only the constant as the
+1970-1985, but this time we skip it and have only the constant as the
 deterministic variable
 
 $$
@@ -780,24 +779,24 @@ annual 2% PCE inflation goal. Note again that we do not use PCE
 inflation here (we use inflation in the GDP price index), but anyhow
 this is just a demonstration. Now lets set the intervals. Remember that
 we only have a constant now, so $q=1$ and therefore $\Psi$ only has one
-column $\psi_1$. And since $d_t = 1 \ \forall \ t$ we have the case
+column $\psi_1=\Psi$. And since $d_t = 1 \ \forall \ t$ we have the case
 where $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$ and as such we can
 directly interpret $\Psi$ as the unconditional mean.
 
 ``` r
 theta_Psi <- 
   c(
-  ppi(1.90, 2.10, interval=0.99)$mean,   #psi_1: delta pi
-  ppi(3.80, 4.50, interval=0.99)$mean,   #psi_1: u
-  ppi(2.60, 3.90, interval=0.99)$mean    #psi_1: r
+  ppi(1.90, 2.10, interval=0.99)$mean,   #Psi: delta pi
+  ppi(3.80, 4.50, interval=0.99)$mean,   #Psi: u
+  ppi(2.60, 3.90, interval=0.99)$mean    #Psi: r
   )
 
 Omega_Psi <- 
   diag(
   c(
-  ppi(1.90, 2.10, interval=0.99)$var,    #psi_1: delta pi
-  ppi(3.80, 4.50, interval=0.99)$var,    #psi_1: u
-  ppi(2.60, 3.90, interval=0.99)$var     #psi_1: r
+  ppi(1.90, 2.10, interval=0.99)$var,    #Psi: delta pi
+  ppi(3.80, 4.50, interval=0.99)$var,    #Psi: u
+  ppi(2.60, 3.90, interval=0.99)$var     #Psi: r
   )
   )
 ```
@@ -902,8 +901,8 @@ rate) rises a lot very quickly and unexpectedly, and then goes back down
 (this is just a toy example).
 
 First we set up our conditions/scenarios, i.e., which variables, which
-horizons, and what values the variables will take during those horizons.
-Our conditions is that $r_t$ will take a certain path at forecast
+horizons, and which values the variables will take during those horizons.
+Our conditions are that $r_t$ will take a certain path at forecast
 horizons $h=1,\dots,H$.
 
 ``` r
@@ -972,8 +971,7 @@ $$
 $$
 
 contains the time-varying variances (log volatilities) of conditionally
-Gaussian shocks (Carriero, Clark and Marcellino, 2024). The log
-volatilities follow AR(1) procceses
+Gaussian shocks. The log volatilities follow AR(1) procceses
 
 $$
 \ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k
@@ -1067,10 +1065,9 @@ d_{t}' &=
 \end{aligned}
 $$
 
-Now lets simulate a time series from this DGP
+Now lets simulate a multivariate time series from this DGP
 
 ``` r
-library(SteadyStateBVAR)
 rm(list = ls())
 set.seed(123)
 N <- 351
@@ -1469,7 +1466,7 @@ lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 <img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" />
 
 Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior
-means for $\psi_1$ close to the true values of the DGP, as such we can
+means for $\Psi$ close to the true values of the DGP, as such we can
 see that both point forecasts (predictive means) converge closely to the
 true steady states. Also, before the convergence, the dynamics of the
 point forecasts are very similar. The key difference is in the
@@ -1528,7 +1525,7 @@ d_{t}' &=
 \end{aligned}
 $$
 
-Now lets simulate a time series from this DGP
+Now lets simulate a multivariate time series from this DGP
 
 ``` r
 set.seed(123)
@@ -1674,7 +1671,7 @@ summary(bvar_obj)
 ```
 
 Looks like it works reasonably well! With the respect to forecasting,
-the procedure is now similar in spirit but a bit different. For each
+the procedure is very similar to before. For each
 (post warmup) draw $j$, and for $h=1,\dots,H$, generate
 
 $$
@@ -1856,7 +1853,7 @@ lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 <img src="man/figures/README-unnamed-chunk-57-1.png" width="100%" />
 
 Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for
-$\psi_1$ close to the true values of the DGP, as such we can see that
+$\Psi$ close to the true values of the DGP, as such we can see that
 both point forecasts (predictive means) converge closely to the true
 steady states. Also, before the convergence, the dynamics of the point
 forecasts are very similar. The key difference is again in the
