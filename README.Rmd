@@ -1374,6 +1374,8 @@ Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state B
 
 Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression. In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
+Koop, G. and Korobilis, D. (2010). Bayesian Multivariate Time Series Methods for Empirical Macroeconomics. *Foundations and Trends in Econometrics*. 3(4), pp. 267-358. 
+
 Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*. 24(4), pp. 630-650. 
 
 ## Appendix {#appendix}
