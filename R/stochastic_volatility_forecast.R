@@ -1,83 +1,92 @@
-stochastic_volatility_forecast <- function(x, ci=0.95, plot_idx=NULL, xlim=NULL, ylim=NULL,vol="log_lambda") {
+stochastic_volatility_forecast <- function(x, ci = 0.95, vol = "log_lambda",
+                                           plot_idx = NULL, xlim = NULL, ylim = NULL)
+{
   draws <- rstan::extract(x$fit$stan)
   log_lambda_pred <- draws$log_lambda_pred
-  Sigma_u_pred <- draws$Sigma_u_pred
-  N <- dim(bvar_obj$data)[1]
-  p <- bvar_obj$setup$p
-  k <- bvar_obj$setup$k
-  N_est <- N-p
-  H <- bvar_obj$predict$H
-  alpha = 1-ci
+  Sigma_u_pred   <- draws$Sigma_u_pred
   
-  log_lambda_post_mean <- apply(draws$log_lambda, c(2,3), mean)
+  N     <- dim(x$data)[1]
+  p     <- x$setup$p
+  k     <- x$setup$k
+  N_est <- N - p
+  H     <- x$predict$H
+  alpha <- 1 - ci
+  
+  log_lambda_post_mean  <- apply(draws$log_lambda, c(2, 3), mean)
+  log_lambda_post_lower <- apply(draws$log_lambda, c(2, 3), quantile, probs = alpha / 2)
+  log_lambda_post_upper <- apply(draws$log_lambda, c(2, 3), quantile, probs = 1 - alpha / 2)
+  
   if (vol == "sd") {
-    sigma_posterior_mean <- matrix(NA, N_est, k)
-    for(t in 1:N_est){
-      Sigma_mean <- apply(draws$Sigma_u[,t,,], c(2,3), mean)
-      sigma_posterior_mean[t,] <- sqrt(diag(Sigma_mean))
+    sigma_post_mean  <- matrix(NA, N_est, k)
+    sigma_post_lower <- matrix(NA, N_est, k)
+    sigma_post_upper <- matrix(NA, N_est, k)
+    for (t in 1:N_est) {
+      Sigma_draws_t <- draws$Sigma_u[, t, , ]
+      sigma_draws_t <- apply(Sigma_draws_t, 1, function(S) sqrt(diag(S)))  # k x draws
+      sigma_post_mean[t, ]  <- apply(sigma_draws_t, 1, mean)
+      sigma_post_lower[t, ] <- apply(sigma_draws_t, 1, quantile, probs = alpha / 2)
+      sigma_post_upper[t, ] <- apply(sigma_draws_t, 1, quantile, probs = 1 - alpha / 2)
     }
   }
   
+  if (is.null(plot_idx)) plot_idx <- 1:k
   
-  if (is.null(plot_idx)) {
-    plot_idx <- k
-  }
+  user_xlim <- xlim
+  user_ylim <- ylim
   
   for (i in plot_idx) {
     
     if (vol == "sd") {
-      vol_est <- sigma_posterior_mean[, i]
+      vol_mean  <- sigma_post_mean[, i]
+      vol_lower <- sigma_post_lower[, i]
+      vol_upper <- sigma_post_upper[, i]
     } else {
-      vol_est <- log_lambda_post_mean[, i]
+      vol_mean  <- log_lambda_post_mean[, i]
+      vol_lower <- log_lambda_post_lower[, i]
+      vol_upper <- log_lambda_post_upper[, i]
     }
+    
     vol_pred       <- rep(NA, N_est + H)
     vol_pred_lower <- rep(NA, N_est + H)
     vol_pred_upper <- rep(NA, N_est + H)
-    vol_pred[N_est] <- tail(vol_est, 1)
-    vol_pred_lower[N_est] <- tail(vol_est, 1)
-    vol_pred_upper[N_est] <- tail(vol_est, 1)
+    
+    vol_pred[N_est]       <- tail(vol_mean,  1)
+    vol_pred_lower[N_est] <- tail(vol_lower, 1)
+    vol_pred_upper[N_est] <- tail(vol_upper, 1)
     
     for (h in 1:H) {
       if (vol == "sd") {
-        sigma2_draws <- Sigma_u_pred[, h, i, i]
-        draws_h <- sqrt(sigma2_draws)
+        draws_h <- sqrt(Sigma_u_pred[, h, i, i])
       } else {
         draws_h <- log_lambda_pred[, h, i]
       }
-      vol_pred[N_est+h]       <- mean(draws_h)
-      vol_pred_lower[N_est+h] <- quantile(draws_h, alpha/2)
-      vol_pred_upper[N_est+h] <- quantile(draws_h, 1-alpha/2)
+      vol_pred[N_est + h]       <- mean(draws_h)
+      vol_pred_lower[N_est + h] <- quantile(draws_h, alpha / 2)
+      vol_pred_upper[N_est + h] <- quantile(draws_h, 1 - alpha / 2)
     }
     
-    
-    if (is.null(xlim)) {
-      xlim <- c(0, N + H + 10)
+    xlim_i <- if (is.null(user_xlim)) c(0, N + H + 10) else user_xlim
+    ylim_i <- if (is.null(user_ylim)) {
+      range(c(vol_mean, vol_lower, vol_upper,
+              vol_pred_lower, vol_pred_upper), na.rm = TRUE)
+    } else {
+      user_ylim
     }
-    if (is.null(ylim)) {
-      ylim <- range(c(vol_est,
-                      vol_pred_lower,
-                      vol_pred_upper),
-                    na.rm = TRUE)
-    }
-    ts.plot(vol_est,
-            col = "red",
-            lwd = 2,
-            main = if (vol == "sd") {
-              paste0("sd(u_", i, ")")
-            } else {
-              paste0("ln(lambda_", i, ")")
-            },
-            ylim = ylim,
-            xlim = xlim)
     
-    x_fore <- (N_est):(N_est + H)
-    mean_full  <- vol_pred[x_fore]
-    lower_full <- vol_pred_lower[x_fore]
-    upper_full <- vol_pred_upper[x_fore]
-    polygon(x = c(x_fore, rev(x_fore)),
-            y = c(upper_full, rev(lower_full)),
+    ts.plot(vol_mean,
+            col  = "red", lwd = 2,
+            main = if (vol == "sd") paste0("sd(u_", i, ")") else paste0("ln(lambda_", i, ")"),
+            ylim = ylim_i, xlim = xlim_i)
+    
+    x_insample <- 1:N_est
+    polygon(x   = c(x_insample, rev(x_insample)),
+            y   = c(vol_upper, rev(vol_lower)),
+            col = rgb(1, 0, 0, 0.15), border = NA)
+    
+    x_fore <- N_est:(N_est + H)
+    polygon(x   = c(x_fore, rev(x_fore)),
+            y   = c(vol_pred_upper[x_fore], rev(vol_pred_lower[x_fore])),
             col = rgb(0, 0, 1, 0.2), border = NA)
-    lines(x_fore, mean_full, col = "blue", lwd = 2)
-    
+    lines(x_fore, vol_pred[x_fore], col = "blue", lwd = 2)
   }
 }
