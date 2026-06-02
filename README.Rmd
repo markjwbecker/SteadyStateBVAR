@@ -207,7 +207,7 @@ $$
 $$
 
 
-where $\psi_i$ denotes the $i$:th column of $\Psi$ (i.e. $\Psi = \begin{bmatrix} \psi_1 & \dots & \psi_q \end{bmatrix}$). We are now ready to set up the model. Although it is not mentioned which lag length is used in Villani (2009), we assume $p=4$.
+where $\psi_i$ denotes the $i$:th column of $\Psi$. We are now ready to set up the model. Although it is not mentioned which lag length is used in Villani (2009), we assume $p=4$.
 
 
 ```{r, fig.width=8, fig.height=8}
@@ -887,19 +887,22 @@ par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
 
-We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue, we plot the forecasts of the log volatilities along with a 95\% prediction interval.
+We can also plot the estimates (posterior means) along with 95\% credible intervals of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue, we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
 ```{r, fig.width=12, fig.height=12,eval=FALSE}
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-6,4), plot_idx=1, vol="log_lambda")
+
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-6,4), plot_idx=1)
+#add true log lambdas
 lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-8,6), plot_idx=2)
+#add true log lambdas
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process and in blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
+Now let us plot the estimates (posterior means) along with 95\% credible intervals of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process and in blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
 
 
 ```{r, fig.width=12, fig.height=12,eval=FALSE}
@@ -909,10 +912,13 @@ for(t in 1:(N)){
 }
 
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,4), plot_idx=1, vol="sd")
+
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", ylim=c(0,4), plot_idx=1)
+#add true sd
 lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="sd")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", ylim=c(0,8), plot_idx=2)
+#add true sd
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
@@ -1255,19 +1261,22 @@ fcst1 <- forecast(bvar_obj,
                   show_all = TRUE)
 ```
 
-We can also plot the estimates (posterior means) of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
+We can also plot the estimates (posterior means) along with 95\% credible intervals of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
 ```{r, fig.width=12, fig.height=12,eval=FALSE}
 par(mfrow = c(2,1))
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-3,5), plot_idx=1, vol="log_lambda")
+
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-3,5), plot_idx=1)
+#add true log lambdas
 lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-7,1), plot_idx=2, vol="log_lambda")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-7,1), plot_idx=2)
+#add true log lambdas
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-Now let us plot the estimates (posterior means) of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
+Now let us plot the estimates (posterior means) along with 95\% credible intervals of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
 
 
 ```{r, fig.width=8, fig.height=8,eval=FALSE}
@@ -1277,10 +1286,13 @@ for(t in 1:(N)){
 }
 
 par(mfrow = c(2,1))
+
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=1, vol="sd")
+#add true sd
 lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2.25), plot_idx=2, vol="sd")
+#add true sd
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
