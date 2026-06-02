@@ -22,41 +22,41 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-With this package the user can estimate the steady-state BVAR(p) model
-by Mattias Villani (Villani, 2009). The goal is to use modern Bayesian
-solutions i.e. Stan to: i) estimate the model as specified in the
-original paper, ii) extend the model in many different ways. Back in the
-days, extensions of the model seemed to be limited to what Mattias
-Villani had time to derive.
+With this package, the user can estimate the steady-state BVAR(p) model
+of Mattias Villani (Villani, 2009). The goal is to use modern Bayesian
+tools (Stan) to: i) estimate the model as specified in the original
+paper, and ii) extend the model in many different ways. Back in the day,
+extensions of the model seemed to be limited by what Mattias Villani had
+time to derive.
 
-See for example Clark (2011): “*In a methodological sense, this paper
+See for example, Clark (2011): “*In a methodological sense, this paper
 extends the estimator of Villani (2009) to include stochastic
-volatility.*”, and later on: “*(Special thanks are due to Mattias
+volatility.*” Later on, he writes: “*(Special thanks are due to Mattias
 Villani for providing the formulas for posterior means and variances of*
 $\Pi$ *and* $\Psi$*, which generalize the constant-variance formulas of
 Villani 2009.)*”
 
-A bit more recent example of the model being limited to the mercy of
-Professor Villani, we can take a look at the [Technical
+For a more recent example of the model being at the mercy of Professor
+Villani, we can take a look at the [Technical
 Guide](https://github.com/european-central-bank/BEAR-toolbox/blob/master/tbx/doc/Technical%20guide.pdf)
 for the BEAR (Bayesian Estimation, Analysis and Regression) toolbox by
-the ECB. On page 122 (Dieppe, Legrand, and van Roye, 2018), they write:
+the ECB. On page 122, Dieppe, Legrand, and van Roye (2018) write:
 “*Villani (2009) only provides derivation in the case of the
 normal-diffuse prior distribution, so the incoming analysis will be
 restricted to this case.*”
 
-Times are different, and with the help of Stan, we can basically do
+Times are different now, and with the help of Stan, we can basically do
 whatever we can imagine. To showcase this, in the last section we build
-on the steady-state BVAR model of Clark (2011) \[which is an extension
-of the original model (Villani, 2009)\], by letting the log volatilities
-have correlated AR(1) specifications instead of uncorrelated driftless
-random walks. And this is done without asking Professor Villani for
-derivations. I just simply wrote the model formulas, put some priors on
-the parameters, and Stan did the rest!
+on the steady-state BVAR model of Clark (2011) \[which itself is an
+extension of the original model (Villani, 2009)\], by letting the log
+volatilities follow correlated AR(1) processes instead of uncorrelated
+driftless random walks. And this is done without asking Professor
+Villani for any derivations. I simply wrote down the model equations,
+put some priors on the parameters, and Stan did the rest!
 
 ## Installation
 
-First, you need to install Rstan:
+First, you need to install RStan:
 <https://github.com/stan-dev/rstan/wiki/Rstan-Getting-Started>
 
 Then you can install SteadyStateBVAR with:
@@ -74,11 +74,11 @@ y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u
 $$
 
 where $y_t$ is a $k$-dimensional vector of endogenous variables (time
-series) at time $t$, and $d_t$ is a $q$-dimensional vector of
-deterministic (exogenous) variables at time $t$, and the (reduced form)
-innovations are $u_t \sim N_k(0,\Sigma_u)$ with independence between
-time periods. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is $(k \times k)$,
-and $\Psi$ is $(k \times q)$. Now
+series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic
+(exogenous) variables at time $t$, and the (reduced-form) innovations
+are $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods.
+Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ matrix, and
+$\Psi$ is a $(k \times q)$ matrix. Now
 
 $$
 \textrm{E}(y_t)=\mu_t=\Psi d_t
@@ -86,11 +86,11 @@ $$
 
 is the unconditional mean, or the **steady state**, of the process.
 Since long-horizon forecasts from stationary VARs converge to the
-unconditional mean/steady state, it is naturally very important from a
-forecasting perspective to have precise inference on $\Psi$.
+unconditional mean (steady state), it is naturally very important from a
+forecasting perspective to obtain precise inference on $\Psi$.
 
 Note that the current version of this package only allows for $d_t$ to
-either just contain a constant, a constant and a dummy variable, or a
+contain either a constant, a constant and a dummy variable, or a
 constant and a time trend. We can stack the (transposed) $\Pi_i$
 matrices in the $(kp \times k)$ matrix $\beta$
 
@@ -110,19 +110,19 @@ y_t' =d_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t'
 $$
 
 where $w_t'=(y_{t-1}',\dots,y_{t-p}')$ is a $kp$-dimensional vector of
-lagged endogenous variables, and $q_t'=(d_{t-1}',\dots,d_{t-p}')$ is a
+lagged endogenous variables and $q_t'=(d_{t-1}',\dots,d_{t-p}')$ is a
 $qp$-dimensional vector of lagged deterministic (exogenous) variables,
 $I_p$ is the $(p \times p)$ identity matrix and $\otimes$ denotes the
 Kronecker product. This is how the likelihood is written in the Stan
-code. The goal is to estimate $\beta, \Psi$ and $\Sigma_u$, therefore
-priors are needed. First, prior independence between $\beta, \Psi$ and
+code. The goal is to estimate $\beta, \Psi$, and $\Sigma_u$, so priors
+are needed. First, prior independence between $\beta, \Psi$ and
 $\Sigma_u$ is assumed. Starting with $\beta$, we use the Minnesota prior
 
 $$
 \textrm{vec}(\beta) \sim \textrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]
 $$
 
-For the priors means (elements in $\theta_\beta$), they are set to
+The prior means (the elements of $\theta_\beta$) are set to
 
 $$
 \begin{aligned}
@@ -139,16 +139,16 @@ $$
 \end{aligned}
 $$
 
-here the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element
-$\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p,$. As such, the
+Here, the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element
+$\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p$. As such, the
 Minnesota prior sets all prior means for the elements in $\beta$ to $0$,
 except for the elements that relate to the first own lags of the
 variables, which are set to $\kappa$. If variable $i$ is in level
 (e.g. nominal interest rate), then $\kappa=\kappa^{level}$, and typical
 choices for $\kappa^{level}$ are $1$ or $0.9$. Evaluating the equations
-at their priors means, equation $i$ becomes a random walk if
+at their prior means, equation $i$ becomes a random walk if
 $\kappa^{level}=1$ and a persistent stationary AR(1) process if
-$\kappa^{levels}=0.9$. Since the steady state only exists if the process
+$\kappa^{level}=0.9$. Since the steady state only exists if the process
 is stationary, $0.9$ is recommended for the steady-state BVAR. If
 variable $i$ is in difference (e.g. output growth), then
 $\kappa=\kappa^{\Delta}$, and the most common choice for
@@ -158,8 +158,7 @@ differenced variable still shows some degree of persistence (can be
 examined with an ACF plot), a suitable value for $\kappa^{\Delta}$ can
 be (for example) $0.6$ instead of $0$. Moving on to the prior variances,
 $\Omega_\beta$ is a diagonal matrix containing the prior variances for
-the elements in $\beta$. They are specified such that for the the prior
-variance is given by
+the elements in $\beta$. They are specified as
 
 $$
 \textrm{Var}\left(\Pi_{\ell}^{(i,j)}\right)=
@@ -169,38 +168,39 @@ $$
 \end{cases}
 $$
 
-Here $\lambda_1$, $\lambda_2$ and $\lambda_3$ are scalar hyperparameters
-known as the overall tightness, the cross-equation tightness and the lag
-decay rate. Furthermore, $\sigma_i^2$ is the $(i,i)$:th element of
-$\Sigma_u$, which we do not know, and therefore replace with an
-estimate. In this package, it is replaced by the least squares residual
-variance from a univariate autoregression for variable $i$ with $p$ lags
-(including the constant and dummy/trend variable if applicable). Moving
-on to $\Psi$ the prior we use is
+Here $\lambda_1$, $\lambda_2$, and $\lambda_3$ are scalar
+hyperparameters known as the overall tightness, the cross-equation
+tightness and the lag decay rate. Furthermore, $\sigma_i^2$ is the
+$(i,i)$th element of $\Sigma_u$, which we do not know and therefore
+replace with an estimate. In this package, it is replaced by the least
+squares residual variance from a univariate autoregression for variable
+$i$ with $p$ lags (including the constant and dummy/trend variable if
+applicable). Moving on to $\Psi$, the prior we use is
 
 $$
 \textrm{vec}(\Psi) \sim \textrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
-This is really the core of the steady-state BVAR model. In $\theta_\Psi$
-we specify our prior beliefs of the location of the steady state, and in
-$\Omega_\Psi$, which we assume to be a diagonal matrix, we specify our
-degree of certainty in those prior beliefs. At last, the prior for
-$\Sigma_u$ is the usual noninformative Jeffreys prior
+This is really the core of the steady-state BVAR model. In
+$\theta_\Psi$, we specify our prior beliefs about the location of the
+steady state, and in $\Omega_\Psi$, which we assume to be a diagonal
+matrix, we specify our degree of certainty in those prior beliefs.
+Finally, the prior for $\Sigma_u$ is the usual noninformative Jeffreys
+prior
 
 $$
 p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}
 $$
 
-However if the user wants, an inverse Wishart prior can be used instead
+However, if the user wants, an inverse Wishart prior can be used instead
 
 $$
 \Sigma_u \sim \textrm{IW}(V_0,m_0)
 $$
 
-where $V_0$ is the scale matrix and $m_0\geq k+2$ are the degrees of
-freedom. An uninformative prior can be (and is in this package)
-specified by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where
+where $V_0$ is the scale matrix and $m_0\geq k+2$ is the number of
+degrees of freedom. An uninformative prior can be (and is in this
+package) specified by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where
 $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$)
 (including the constant and dummy/trend variable if applicable), and
 $m_0=k+2$.
@@ -209,24 +209,23 @@ Later on, we introduce stochastic volatility and let the covariance
 matrix of the innovations vary over time such that we have a
 time-varying covariance matrix $\Sigma_{u,t}$.
 
-After estimation, you can produce IRFs. The two available choices are i)
-Orthogonalized IRFs (Cholesky identification) or ii) Generalized IRFs.
-To produce unconditional forecasts with the steady-state BVAR, we simply
-follow step 4 of Algorithm 4 of Karlsson (2013). To produce conditional
-forecasts, we follow Algorithm 3.3.1 in Dieppe, Legrand, and van Roye
-(2018). Please note that for the moment, conditional forecasting is only
-possible for the homoskedastic steady-state BVAR.
+After estimation, you can produce IRFs. The two available choices are:
+i) orthogonalized IRFs (Cholesky identification) and ii) generalized
+IRFs. To produce unconditional forecasts with the steady-state BVAR, we
+simply follow step 4 of Algorithm 4 of Karlsson (2013). To produce
+conditional forecasts, we follow Algorithm 3.3.1 in Dieppe, Legrand, and
+van Roye (2018). Please note that, for the moment, conditional
+forecasting is only available for the homoskedastic steady-state BVAR.
 
 ## Example 1 (Villani, 2009)
 
-To estimate the model in Section 4.1 in Villani (2009), and then do
-impulse response analysis/forecast, simply run the code in the
-[Appendix](#appendix). Here I go step-by step and explain each step in
-quite great detail.
+To estimate the model in Section 4.1 of Villani (2009) and perform
+impulse response analysis and forecasting, simply run the code in the
+[Appendix](#appendix). Here I go step-by-step and explain each part in
+considerable detail.
 
-We are going to replicate the model in the empirical analysis in Section
-4.1 in Villani (2009). First let us load the library and also load the
-data
+We are going to replicate the empirical analysis from Section 4.1 of
+Villani (2009). First, let us load the package and the data.
 
 ``` r
 library(SteadyStateBVAR)
@@ -240,8 +239,8 @@ foreign GDP growth $(\Delta y_f)$, CPI inflation $(\pi_f)$ and the
 3-month interest rate $(i_f)$, the corresponding domestic variables
 ($\Delta y$, $\pi$ and $i$), and the level of the real exchange rate
 defined as $q=s+p_f-p$, where $p_f$ and $p$ are the foreign and domestic
-CPI levels (in logs) and $s$ is the (log of the) trade weighted nominal
-exchange rate. As such we have
+CPI levels (in logs) and $s$ is the (log of the) trade-weighted nominal
+exchange rate. As such, we have
 
 $$
 y_t=
@@ -257,8 +256,8 @@ q
 $$
 
 Also, we will leave out the last two observations, so the user can
-compare the forecasts produced here to the last forecasts seen in Figure
-1-3 in Villani (2009), to verify that this implementation works
+compare the forecasts produced here to the last forecasts seen in
+Figures 1-3 in Villani (2009) to verify that this implementation works
 correctly.
 
 ``` r
@@ -303,9 +302,10 @@ $$
 \end{cases}
 $$
 
-where $\psi_i$ is the $i$:th column of $\Psi$. Now to setup the model.
-Although it is not mentioned which lag length is used in Villani (2009)
-we assume it is $p=4$.
+where $\psi_i$ denotes the $i$th column of $\Psi$
+(i.e. $\Psi = \begin{bmatrix} \psi_1,\dots,\psi_q\end{bmatrix}$). We are
+now ready to set up the model. Although it is not mentioned which lag
+length is used in Villani (2009), we assume it is $p=4$.
 
 ``` r
 bvar_obj <- setup(bvar_obj,
@@ -315,12 +315,12 @@ bvar_obj <- setup(bvar_obj,
 ```
 
 Now let us specify the priors. We first consider $\beta$. We choose the
-same values for the hyperparameters as in Villani (2009), i.e. overall
-tightness $\lambda_1=0.2$, cross equation tightness $\lambda_2=0.5$ and
-lag decay rate $\lambda_3=1$. We then specify the prior means for the
-first own lags of the variables. For variables in growth rates, we set
-the prior mean to $0$, for variables in levels, we set the prior mean to
-$0.9$.
+same values for the hyperparameters as in Villani (2009), i.e. an
+overall tightness of $\lambda_1=0.2$, a cross-equation tightness of
+$\lambda_2=0.5$, and a lag decay rate of $\lambda_3=1$. We then specify
+the prior means for the first own lags of the variables. For variables
+in growth rates, we set the prior mean to $0$, for variables in levels,
+we set the prior mean to $0.9$.
 
 ``` r
 lambda_1 <- 0.2
@@ -348,14 +348,14 @@ growth rate is $100[ \ln (z_t) - \ln (z_{t-1})]$. The 95% prior
 probability intervals in Table I are specified in terms of annualized
 quarterly growth rates $400 [\ln (z_t) - \ln (z_{t-1})]$.
 
-The ‘ppi()’ function is useful here. Simply input the desired (95%)
-prior probability interval (normal distribution) on the annualized scale
-with ‘annualized_growthrate=TRUE’ and we get the corresponding prior
-mean and variance in terms of the original scale (quarter-on-quarter
-growth). Of course we could also just annualize our data before, and set
-‘annualized_growthrate=’FALSE’. So now we do this for all steady-state
-coefficients. Again, see Table I in Villani (2009) for the 95% prior
-probability intervals. The default argument for ‘ppi’ is
+The `ppi()` function is useful here. Simply input the desired 95% prior
+probability interval (normal distribution) on the annualized scale with
+`annualized_growthrate=TRUE`, and the function returns the corresponding
+prior mean and variance on the original scale (quarter-on-quarter
+growth). Of course, we could also just annualize our data beforehand,
+and set `annualized_growthrate=FALSE`. So now we do this for all
+steady-state coefficients. Again, see Table I in Villani (2009) for the
+95% prior probability intervals. The default argument for ‘ppi’ is
 ‘interval=0.95’, but if we wanted for example 68% prior probability
 intervals we could just set ‘interval=0.68’.
 
@@ -403,9 +403,9 @@ Omega_Psi <-
 ```
 
 Finally for $\Sigma_u$ we will use the noninformative Jeffreys prior
-$\left|\Sigma_u \right|^{-(k+1)/2}$, as done in Villani (2009). We just
-input everything to the priors function. Note here that the function
-automatically creates $\theta_\beta$ and $\Omega_\beta$.
+$\left|\Sigma_u \right|^{-(k+1)/2}$, as done in Villani (2009). We
+simply pass everything to the `priors()` function. Note here that the
+function automatically creates $\theta_\beta$ and $\Omega_\beta$.
 
 ``` r
 bvar_obj <- priors(bvar_obj,
@@ -418,14 +418,14 @@ bvar_obj <- priors(bvar_obj,
                    Jeffrey=TRUE)
 ```
 
-Like in Villani (2009), to incorporate that Sweden is a small economy
-and therefore not likely to affect the foreign economy, we restrict the
-upper right submatrix in each $\Pi_\ell$ for $\ell =1,\dots,k$ or
-equivalently restricting the bottom left $\Pi_\ell'$ for
-$\ell =1,\dots,k$, to the zero matrix. This technique is called “block
+As in Villani (2009), we incorporate the assumption that Sweden is a
+small economy and therefore unlikely to affect the foreign economy by
+restricting the upper-right submatrix of $\Pi_\ell$ for
+$\ell =1,\dots,p$ or equivalently restricting the bottom-left submatrix
+of $\Pi_\ell'$ to the zero matrix. This technique is called “block
 exogeneity” (Dieppe, Legrand, and van Roye, 2018). In essence we treat
 the foreign economy as exogenous to the domestic economy, although it is
-not really exogenous in the strict sense (Karlsson, 2013).
+not exogenous in the strict sense (Karlsson, 2013).
 
 ``` r
 p <- bvar_obj$setup$p
@@ -472,16 +472,16 @@ restriction_matrix
 ```
 
 We can look at the restriction matrix for $\beta$ to see which elements
-we restrict to zero. Since the priors means for these elements are zero,
+we restrict to zero. Since the prior means for these elements are zero,
 we do the restriction by setting the relevant prior variances in
-$\Omega_\beta$ to be very small. We just input our $(kp \times k)$
-restriction matrix to the ‘restrict_beta()’ function like below:
+$\Omega_\beta$ to be very small. We simply pass our $(kp \times k)$
+restriction matrix to the `restrict_beta()` function:
 
 ``` r
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 ```
 
-At last we need to supply our forecast horizon $H$, and also a matrix
+Now, we need to supply our forecast horizon $H$, and also a matrix
 containing the deterministic variables ($d_t$) for the future periods
 
 $$
@@ -491,8 +491,8 @@ d_{T+H}'
 \end{bmatrix}
 $$
 
-Since the determinstic variables are i) a constant and ii) a dummy for
-if $t \leq 1992Q4$, we simply set
+Since the deterministic variables are i) a constant and ii) a dummy
+indicating whether $t \leq 1992Q4$, we simply set
 
 $$
 d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix}
@@ -529,67 +529,17 @@ Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]
-#>  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.12  0.00
-#>  [2,] -0.02  0.32  0.25  0.12 -0.07  0.01  0.00
-#>  [3,]  0.00  0.04  0.92 -0.04  0.06  0.05  0.00
-#>  [4,]  0.00  0.00  0.00  0.23 -0.09 -0.10  0.00
-#>  [5,]  0.00  0.00  0.00  0.00  0.08  0.06  0.00
-#>  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00
-#>  [7,]  0.00  0.00  0.00  1.22  3.95  0.74  0.93
-#>  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.09  0.00
-#>  [9,]  0.01  0.02  0.04  0.00 -0.03 -0.15  0.00
-#> [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00
-#> [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00
-#> [12,]  0.00  0.00  0.00  0.01 -0.04 -0.05  0.00
-#> [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00
-#> [14,]  0.00  0.00  0.00  0.55 -0.37  0.30 -0.04
-#> [15,]  0.01 -0.01  0.00  0.02 -0.01  0.00  0.00
-#> [16,] -0.02  0.06 -0.01  0.00  0.08  0.02  0.00
-#> [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00
-#> [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00
-#> [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00
-#> [20,]  0.00  0.00  0.00  0.01  0.00  0.01  0.00
-#> [21,]  0.00  0.00  0.00 -0.14 -0.03 -0.58  0.00
-#> [22,]  0.03 -0.01  0.00 -0.01  0.03  0.02  0.00
-#> [23,]  0.00  0.16 -0.03  0.00  0.01  0.01  0.00
-#> [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00
-#> [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00
-#> [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00
-#> [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00
-#> [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.17 -0.01
-#> 
-#> Psi posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.58  0.08
-#> [2,] 0.50  0.46
-#> [3,] 4.94  2.02
-#> [4,] 0.58 -0.04
-#> [5,] 0.49  1.15
-#> [6,] 4.29  4.45
-#> [7,] 3.92 -0.10
-#> 
-#> Sigma posterior mean
-#>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
-#> [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00
-#> [2,] -0.01  0.09 0.05  0.01  0.13  0.04  0.00
-#> [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00
-#> [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00
-#> [5,] -0.01  0.13 0.18 -0.05  0.60  0.12  0.00
-#> [6,]  0.00  0.04 0.11 -0.01  0.12  1.56 -0.01
-#> [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00
 ```
 
-We can access the posterior means with ‘bvar_obj\$posterior_means’ if
+We can access the posterior means with `bvar_obj$posterior_means` if
 needed.
 
-Note that ‘bvar_obj\$fit\$stan’ is an object of class ‘stanfit’. So we
-can do the usual rstan inference on our fitted model. Lets look at some
+Note that `bvar_obj$fit$stan` is an object of class `stanfit`. So we can
+do the usual `rstan` inference on our fitted model. Let’s look at some
 examples for i) the first own lag of the domestic interest rate (for
-which we set the prior mean at 0.9) and ii) the post-crisis steady-state
+which we set the prior mean to 0.9) and ii) the post-crisis steady-state
 coefficient of inflation (multiply the steady-state coefficient by 4 to
-get on the annualized scale).
+obtain the annualized rate).
 
 ``` r
 stanfit <- bvar_obj$fit$stan
@@ -599,33 +549,26 @@ rstan::plot(stanfit,
             plotfun="hist")
 ```
 
-<img src="man/figures/README-unnamed-chunk-15-1.png" width="100%" />
-
-We can also look at the model forecasts directly with rstan. Remember
+We can also look at the model forecasts directly with `rstan`. Remember
 that we left out the last two observations/quarters, so let us look at
-our forecasts of the domestic interest rate, and compare with the actual
-true values
+our forecasts of the domestic interest rate and compare them with the
+actual values.
 
 ``` r
 (villani2009[103:104,6]) #true values
-#> [1] 1.478503 1.563795
 
 rstan::plot(stanfit,
             pars=c("y_pred[1,6]", "y_pred[2,6]"),
             show_density = TRUE,
             ci_level = 0.68,
             fill_color = "blue")
-#> ci_level: 0.68 (68% intervals)
-#> outer_level: 0.95 (95% intervals)
 ```
-
-<img src="man/figures/README-unnamed-chunk-16-1.png" width="100%" />
 
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
 historical data. We will choose a 68% prediction interval and the mean
 of the predictive distribution as the point forecast. For variables in
-quarter on quarter growth rates, we transform the historical data and
+quarter-on-quarter growth rates, we transform the historical data and
 predictions to yearly growth rates with ‘growth_rate_idx’ where we
 specify the index of the growth rate variables in $y_t$. Note that this
 is not annualization, but we are now computing
@@ -640,14 +583,12 @@ fcst <- forecast(bvar_obj,
                  plot_idx = c(4,5,6))
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-2.png" width="100%" /><img src="man/figures/README-unnamed-chunk-17-3.png" width="100%" />
-
 Now for some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
-impulse response function (GIRF). Similar to the forecasting, we can
-also choose between mean or median (default is median), and we can also
-transform the IRFs for the quarter on quarter growth rate variables to
-the annual/yearly scale.
+impulse response function (GIRF). Similar to forecasting, we can choose
+either the mean or the median (the default is the median), and we can
+also transform the IRFs for the quarter-on-quarter growth rate variables
+to the annual/yearly scale.
 
 ``` r
 par(mfrow=c(2,2))
@@ -658,9 +599,7 @@ irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="OIRF",ci=0.95,
 irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=5)
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
-
-Now if desired, the user can estimate the model with a Gibbs sampler
+Now, if desired, the user can estimate the model with a Gibbs sampler
 instead (see Algorithm 4 of Karlsson \[2013\]). Gibbs sampling is only
 implemented for the homoskedastic steady-state BVAR.
 
@@ -837,32 +776,6 @@ Lets check posterior means
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>        [,1]  [,2]  [,3]
-#>  [1,]  1.39  0.04  0.29
-#>  [2,] -0.12  1.22 -0.33
-#>  [3,] -0.01 -0.02  0.82
-#>  [4,] -0.28 -0.02 -0.11
-#>  [5,]  0.04 -0.22  0.17
-#>  [6,]  0.01  0.01 -0.05
-#>  [7,] -0.11  0.00  0.01
-#>  [8,]  0.04 -0.15  0.07
-#>  [9,]  0.00  0.03  0.14
-#> [10,]  0.00  0.01 -0.09
-#> [11,]  0.04  0.06  0.11
-#> [12,]  0.00  0.01 -0.01
-#> 
-#> Psi posterior mean
-#>      [,1]
-#> [1,] 2.00
-#> [2,] 4.29
-#> [3,] 3.21
-#> 
-#> Sigma posterior mean
-#>      [,1]  [,2]  [,3]
-#> [1,] 0.10  0.00  0.04
-#> [2,] 0.00  0.11 -0.10
-#> [3,] 0.04 -0.10  0.60
 ```
 
 Now lets forecast with a 68% CI and use the median of the predictive
@@ -876,15 +789,11 @@ fcst <- forecast(bvar_obj,
                  show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-29-1.png" width="100%" />
-
 We can take a look at the orthogonalized IRFs
 
 ``` r
 irf <- IRF(bvar_obj, H=24, type="median",method="OIRF",ci=0.95)
 ```
-
-<img src="man/figures/README-unnamed-chunk-30-1.png" width="100%" />
 
 ## Conditional forecasting
 
@@ -901,9 +810,9 @@ rate) rises a lot very quickly and unexpectedly, and then goes back down
 (this is just a toy example).
 
 First we set up our conditions/scenarios, i.e., which variables, which
-horizons, and which values the variables will take during those horizons.
-Our conditions are that $r_t$ will take a certain path at forecast
-horizons $h=1,\dots,H$.
+horizons, and which values the variables will take during those
+horizons. Our conditions are that $r_t$ will take a certain path at
+forecast horizons $h=1,\dots,H$.
 
 ``` r
 conditions <- data.frame(
@@ -932,8 +841,6 @@ are the unconditional forecasts.
 par(mfcol = c(3, 1))
 cond_fcst_plot <- conditional_forecast_plot(cond_fcst, bvar_obj)
 ```
-
-<img src="man/figures/README-unnamed-chunk-33-1.png" width="100%" />
 
 ## Stochastic volatility
 
@@ -1209,31 +1116,6 @@ Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.77 -0.20
-#> [2,] 0.16  0.72
-#> 
-#> Psi posterior mean
-#>      [,1] [,2]
-#> [1,] 2.08 5.99
-#> [2,] 2.97 8.98
-#> 
-#> A posterior mean
-#>      [,1] [,2]
-#> [1,] 1.00    0
-#> [2,] 0.25    1
-#> 
-#> Phi posterior mean
-#>       [,1]  [,2]
-#> [1,]  0.75 -0.15
-#> [2,] -0.15  0.65
-#> 
-#> gamma_0 posterior means
-#> [1] -0.11 -0.01
-#> 
-#> gamma_1 posterior means
-#> [1] 0.75 0.89
 ```
 
 Looks like it works reasonably well! Now we can turn to forecasting. We
@@ -1278,8 +1160,6 @@ par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-39-1.png" width="100%" />
-
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue, we plot the forecasts of the log volatilities along
@@ -1293,8 +1173,6 @@ lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-8,6), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
-
-<img src="man/figures/README-unnamed-chunk-40-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1317,8 +1195,6 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=2, vol="
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-41-1.png" width="100%" />
-
 For the stochastic volatility steady-state BVAR, we can of course also
 do impulse response analysis, almost like before. Now however, since our
 covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which
@@ -1331,8 +1207,6 @@ par(mfrow=c(1,2))
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
-
-<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-AR1) and
 without (SS-BVAR) stochastic volatility specification to see the
@@ -1377,26 +1251,8 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
-#> beta posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.80 -0.25
-#> [2,] 0.11  0.63
-#> 
-#> Psi posterior mean
-#>      [,1] [,2]
-#> [1,] 2.03 6.00
-#> [2,] 3.04 9.01
 #--- SS-BVAR-SV-AR1 ---
 summary(bvar_obj, pars = c("beta", "Psi"))
-#> beta posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.77 -0.20
-#> [2,] 0.16  0.72
-#> 
-#> Psi posterior mean
-#>      [,1] [,2]
-#> [1,] 2.08 5.99
-#> [2,] 2.97 8.98
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1463,11 +1319,9 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" />
-
 Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior
-means for $\Psi$ close to the true values of the DGP, as such we can
-see that both point forecasts (predictive means) converge closely to the
+means for $\Psi$ close to the true values of the DGP, as such we can see
+that both point forecasts (predictive means) converge closely to the
 true steady states. Also, before the convergence, the dynamics of the
 point forecasts are very similar. The key difference is in the
 prediction intervals. We can see that the SS-BVAR-SV has a wider
@@ -1650,29 +1504,11 @@ Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
-#> beta posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.72 -0.17
-#> [2,] 0.06  0.74
-#> 
-#> Psi posterior mean
-#>      [,1] [,2]
-#> [1,] 2.06 5.99
-#> [2,] 3.01 9.02
-#> 
-#> A posterior mean
-#>      [,1] [,2]
-#> [1,] 1.00    0
-#> [2,] 0.25    1
-#> 
-#> phi posterior means
-#>   phi_1 : 0.04 
-#>   phi_2 : 0.07
 ```
 
 Looks like it works reasonably well! With the respect to forecasting,
-the procedure is very similar to before. For each
-(post warmup) draw $j$, and for $h=1,\dots,H$, generate
+the procedure is very similar to before. For each (post warmup) draw
+$j$, and for $h=1,\dots,H$, generate
 
 $$
 \nu^{(j)}_{i,T+h}
@@ -1715,8 +1551,6 @@ fcst1 <- forecast(bvar_obj,
                   show_all = TRUE)
 ```
 
-<img src="man/figures/README-unnamed-chunk-51-1.png" width="100%" />
-
 We can also plot the estimates (posterior means) of the log volatilities
 ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent
 process. In blue we plot the forecasts of the log volatilities along
@@ -1730,8 +1564,6 @@ lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(-7,1), plot_idx=2, vol="log_lambda")
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
-
-<img src="man/figures/README-unnamed-chunk-52-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) of the volatilities,
 defined as reduced form residual/innovation ($u_t$) standard deviations,
@@ -1753,8 +1585,6 @@ stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2.25), plot_idx=2, vo
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
 ```
 
-<img src="man/figures/README-unnamed-chunk-53-1.png" width="100%" />
-
 We can again do some impulse response analysis.
 
 ``` r
@@ -1763,8 +1593,6 @@ par(mfrow=c(1,2))
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
-
-<img src="man/figures/README-unnamed-chunk-54-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-RW) and
 without (SS-BVAR) stochastic volatility RW specification to see the
@@ -1809,26 +1637,8 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
-#> beta posterior mean
-#>       [,1]  [,2]
-#> [1,]  0.72 -0.18
-#> [2,] -0.01  0.76
-#> 
-#> Psi posterior mean
-#>      [,1] [,2]
-#> [1,] 2.06 5.99
-#> [2,] 3.04 9.01
 #--- SS-BVAR-SV-RW ---
 summary(bvar_obj, pars = c("beta", "Psi"))
-#> beta posterior mean
-#>      [,1]  [,2]
-#> [1,] 0.72 -0.17
-#> [2,] 0.06  0.74
-#> 
-#> Psi posterior mean
-#>      [,1] [,2]
-#> [1,] 2.06 5.99
-#> [2,] 3.01 9.02
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1850,12 +1660,10 @@ segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", a
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
-<img src="man/figures/README-unnamed-chunk-57-1.png" width="100%" />
-
 Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for
-$\Psi$ close to the true values of the DGP, as such we can see that
-both point forecasts (predictive means) converge closely to the true
-steady states. Also, before the convergence, the dynamics of the point
+$\Psi$ close to the true values of the DGP, as such we can see that both
+point forecasts (predictive means) converge closely to the true steady
+states. Also, before the convergence, the dynamics of the point
 forecasts are very similar. The key difference is again in the
 prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and
 increasing) interval, even though both are 95% intervals. Since the log
@@ -1883,9 +1691,9 @@ Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
 In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic
 Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
-Koop, G. and Korobilis, D. (2010). Bayesian Multivariate Time Series Methods
-for Empirical Macroeconomics. *Foundations and Trends in Econometrics*.
-3(4), pp. 267-358. 
+Koop, G. and Korobilis, D. (2010). Bayesian Multivariate Time Series
+Methods for Empirical Macroeconomics. *Foundations and Trends in
+Econometrics*. 3(4), pp. 267-358.
 
 Villani, M. (2009). Steady-state priors for vector autoregressions.
 *Journal of Applied Econometrics*. 24(4), pp. 630-650.
