@@ -305,7 +305,7 @@ $$
 where $\psi_i$ denotes the $i$:th column of $\Psi$
 (i.e. $\Psi = \begin{bmatrix} \psi_1 & \dots &\psi_q\end{bmatrix}$). We
 are now ready to set up the model. Although it is not mentioned which
-lag length is used in Villani (2009), we assume it is $p=4$.
+lag length is used in Villani (2009), we assume $p=4$.
 
 ``` r
 bvar_obj <- setup(bvar_obj,
