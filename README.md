@@ -171,7 +171,7 @@ $$
 Here $\lambda_1$, $\lambda_2$, and $\lambda_3$ are scalar
 hyperparameters known as the overall tightness, the cross-equation
 tightness and the lag decay rate. Furthermore, $\sigma_i^2$ is the
-$(i,i)$th element of $\Sigma_u$, which we do not know and therefore
+$(i,i)$:th element of $\Sigma_u$, which we do not know and therefore
 replace with an estimate. In this package, it is replaced by the least
 squares residual variance from a univariate autoregression for variable
 $i$ with $p$ lags (including the constant and dummy/trend variable if
@@ -302,7 +302,7 @@ $$
 \end{cases}
 $$
 
-where $\psi_i$ denotes the $i$th column of $\Psi$
+where $\psi_i$ denotes the $i$:th column of $\Psi$
 (i.e. $\Psi = \begin{bmatrix} \psi_1,\dots,\psi_q\end{bmatrix}$). We are
 now ready to set up the model. Although it is not mentioned which lag
 length is used in Villani (2009), we assume it is $p=4$.
