@@ -206,7 +206,7 @@ $$
 \end{cases}
 $$
 
-where $\psi_i$ denotes the $i$:th column of $\Psi$ (i.e. $\Psi = \begin{bmatrix} \psi_1,\dots,\psi_q\end{bmatrix}$). We are now ready to set up the model. Although it is not mentioned which lag length is used in Villani (2009), we assume it is $p=4$.
+where $\psi_i$ denotes the $i$:th column of $\Psi$ (i.e. $\Psi = \begin{bmatrix} \psi_1 & \dots &\psi_q\end{bmatrix}$). We are now ready to set up the model. Although it is not mentioned which lag length is used in Villani (2009), we assume it is $p=4$.
 
 
 ```{r, fig.width=8, fig.height=8}
@@ -236,7 +236,7 @@ fol_pm=c(0,   #delta y_f
 
 Now moving on to $\Psi$ for the steady-state priors, we set them according to the 95% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $z$ which is on a quarterly frequency, the quarterly growth rate is $100[ \ln (z_t) - \ln (z_{t-1})]$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400 [\ln (z_t) - \ln (z_{t-1})]$.
 
-The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`. So now we do this for all steady-state coefficients. Again, see Table I in Villani (2009) for the 95% prior probability intervals. The default argument for 'ppi' is 'interval=0.95', but if we wanted for example 68\% prior probability intervals we could just set 'interval=0.68'.
+The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`. So now we do this for all steady-state coefficients. Again, see Table I in Villani (2009) for the 95% prior probability intervals. The default argument for `ppi()` is 'interval=0.95', but if we wanted for example 68\% prior probability intervals we could just set `interval=0.68`.
 
 ```{r, fig.width=8, fig.height=8}
 #psi_1 = Psi col 1
@@ -347,7 +347,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 4)
 ```
 
-Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
+Let us look at the posterior mean of $\beta$, $\Psi$, and $\Sigma_u$.
 
 ```{r, fig.width=8, fig.height=8,eval=FALSE}
 summary(bvar_obj)

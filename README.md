@@ -303,9 +303,9 @@ $$
 $$
 
 where $\psi_i$ denotes the $i$:th column of $\Psi$
-(i.e. $\Psi = \begin{bmatrix} \psi_1,\dots,\psi_q\end{bmatrix}$). We are
-now ready to set up the model. Although it is not mentioned which lag
-length is used in Villani (2009), we assume it is $p=4$.
+(i.e. $\Psi = \begin{bmatrix} \psi_1 & \dots &\psi_q\end{bmatrix}$). We
+are now ready to set up the model. Although it is not mentioned which
+lag length is used in Villani (2009), we assume it is $p=4$.
 
 ``` r
 bvar_obj <- setup(bvar_obj,
@@ -355,9 +355,9 @@ prior mean and variance on the original scale (quarter-on-quarter
 growth). Of course, we could also just annualize our data beforehand,
 and set `annualized_growthrate=FALSE`. So now we do this for all
 steady-state coefficients. Again, see Table I in Villani (2009) for the
-95% prior probability intervals. The default argument for ‘ppi’ is
+95% prior probability intervals. The default argument for `ppi()` is
 ‘interval=0.95’, but if we wanted for example 68% prior probability
-intervals we could just set ‘interval=0.68’.
+intervals we could just set `interval=0.68`.
 
 ``` r
 #psi_1 = Psi col 1
@@ -525,7 +525,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 4)
 ```
 
-Let us look at the posterior mean of $\beta$, $\Psi$ and $\Sigma_u$.
+Let us look at the posterior mean of $\beta$, $\Psi$, and $\Sigma_u$.
 
 ``` r
 summary(bvar_obj)
