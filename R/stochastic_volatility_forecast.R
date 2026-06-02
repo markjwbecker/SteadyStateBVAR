@@ -76,7 +76,7 @@ stochastic_volatility_forecast <- function(x, ci = 0.95, vol = "log_lambda",
     ts.plot(vol_mean,
             col  = "red", lwd = 2,
             main = if (vol == "sd") paste0("sd(u_", i, ")") else paste0("ln(lambda_", i, ")"),
-            ylim = ylim_i, xlim = xlim_i, ylab="NULL")
+            ylim = ylim_i, xlim = xlim_i, ylab=NULL)
     
     x_insample <- 1:N_est
     polygon(x   = c(x_insample, rev(x_insample)),
