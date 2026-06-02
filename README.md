@@ -3,15 +3,15 @@
   - [Installation](#installation)
   - [Introduction](#introduction)
   - [Example 1 (Villani, 2009)](#example-1-villani-2009)
-  - [Example 2 (Koop and Koribilis,
-    2010)](#example-2-koop-and-koribilis-2010)
+  - [Example 2 (Koop and Korobilis,
+    2010)](#example-2-koop-and-korobilis-2010)
   - [Conditional forecasting](#conditional-forecasting)
   - [Stochastic volatility](#stochastic-volatility)
-    - [Stochastic volatility: stationary AR(1) log volatilities
-      (Carriero, Clark and Marcellino,
-      2024)](#stochastic-volatility-stationary-ar1-log-volatilities-carriero-clark-and-marcellino-2024)
-    - [Stochastic volatility: Random Walk log volatilities (Clark,
-      2011)](#stochastic-volatility-random-walk-log-volatilities-clark-2011)
+    - [Stationary AR(1) log volatilities (Carriero, Clark and
+      Marcellino,
+      2024)](#stationary-ar1-log-volatilities-carriero-clark-and-marcellino-2024)
+    - [Random Walk log volatilities (Clark,
+      2011)](#random-walk-log-volatilities-clark-2011)
   - [References](#references)
   - [Appendix](#appendix)
 
@@ -76,9 +76,9 @@ $$
 where $y_t$ is a $k$-dimensional vector of endogenous variables (time
 series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic
 (exogenous) variables at time $t$, and the (reduced-form) innovations
-are $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods.
-Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ matrix, and
-$\Psi$ is a $(k \times q)$ matrix. Now
+are $u_t \sim \mathcal{N}_k(0,\Sigma_u)$ with independence between time
+periods. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$
+matrix, and $\Psi$ is a $(k \times q)$ matrix. Now
 
 $$
 \textrm{E}(y_t)=\mu_t=\Psi d_t
@@ -119,7 +119,7 @@ are needed. First, prior independence between $\beta, \Psi$ and
 $\Sigma_u$ is assumed. Starting with $\beta$, we use the Minnesota prior
 
 $$
-\textrm{vec}(\beta) \sim \textrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]
+\textrm{vec}(\beta) \sim \mathcal{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]
 $$
 
 The prior means (the elements of $\theta_\beta$) are set to
@@ -178,7 +178,7 @@ $i$ with $p$ lags (including the constant and dummy/trend variable if
 applicable). Moving on to $\Psi$, the prior we use is
 
 $$
-\textrm{vec}(\Psi) \sim \textrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
+\textrm{vec}(\Psi) \sim \mathcal{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
 This is really the core of the steady-state BVAR model. In
@@ -195,7 +195,7 @@ $$
 However, if the user wants, an inverse Wishart prior can be used instead
 
 $$
-\Sigma_u \sim \textrm{IW}(V_0,m_0)
+\Sigma_u \sim \mathcal{IW}(V_0,m_0)
 $$
 
 where $V_0$ is the scale matrix and $m_0\geq k+2$ is the number of
@@ -628,14 +628,15 @@ irf <- IRF(bvar_obj,
            estimation="gibbs")
 ```
 
-## Example 2 (Koop and Koribilis, 2010)
+## Example 2 (Koop and Korobilis, 2010)
 
-Now we will estimate the steady-state BVAR on a quarterly US data set
-(from Koop and Koribilis \[2010\]) on the inflation rate $\Delta \pi_t$
+In this section we estimate the steady-state BVAR on a quarterly US data
+set from Koop and Korobilis (2010) on the inflation rate $\Delta \pi_t$
 (the annual percentage change in a chain-weighted GDP price index), the
 unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate,
-all workers over age 16) and the interest rate $r_t$ (yield on the three
-month Treasury bill rate). The sample is 1953Q1-2006Q3 and we have
+all civilian workers aged 16 years or older) and the interest rate $r_t$
+(yield on the three-month Treasury bill rate). The sample is
+1953Q1-2006Q3 and we have
 
 $$
 y_t = 
@@ -660,15 +661,15 @@ Create the object
 bvar_obj <- bvar(data = yt)
 ```
 
-One could perhaps argue to have a dummy variable for the time around
-1970-1985, but this time we skip it and have only the constant as the
-deterministic variable
+One could perhaps argue for including a dummy variable for the period
+around 1970–1985, but we omit it and instead use only a constant as the
+deterministic variable.
 
 $$
 d_t = 1 \ \forall \ t
 $$
 
-We follow Koop and Koribilis (2010) and chose 4 lags.
+We follow Koop and Korobilis (2010) and choose 4 lags.
 
 ``` r
 bvar_obj <- setup(bvar_obj,
@@ -677,14 +678,14 @@ bvar_obj <- setup(bvar_obj,
                   dummy = NULL)
 ```
 
-This time we try out the hyperparameters from Gustafsson and Villani
-(2025), i.e. overall tightness is set to $\lambda_1 = 0.27$, cross
-equation tightness is set to $\lambda_2 = 0.43$ and the lag decay rate
-is $\lambda_3 = 0.76$. For the prior means on the first own lags, we set
+This time we use the hyperparameters from Gustafsson and Villani (2025),
+i.e. overall tightness is set to $\lambda_1 = 0.27$, cross-equation
+tightness is set to $\lambda_2 = 0.43$ and the lag decay rate to
+$\lambda_3 = 0.76$. For the prior means on the first own lags, we set
 them to $0.6$ for $\Delta \pi_t$ and $0.9$ for $u_t$ and $r_t$. Note
-here that the prior mean on first own lag of the inflation rate is set
-to $0.6$ instead of $0$ to reflect some degree of persistence in the
-series (even though it is a growth rate variable).
+that the prior mean on the first own lag of inflation is set to $0.6$
+instead of $0$ to reflect some degree of persistence in the series (even
+though it is a growth rate variable).
 
 ``` r
 lambda_1 <- 0.27
@@ -696,8 +697,9 @@ fol_pm=c(0.6, # delta pi
          0.9)  #R
 ```
 
-Now for the steady-state coefficients I use the “Longer run” values from
-the [‘Summary of Economic Projections, March 18,
+Now, for the steady-state coefficients we can cheat and use expert-based
+values from the future. We will use the “Longer run” values from the
+[‘Summary of Economic Projections, March 18,
 2026’](https://www.federalreserve.gov/monetarypolicy/files/fomcprojtabl20260318.pdf)
 contained in ‘*Table 1. Economic projections of Federal Reserve Board
 members and Federal Reserve Bank presidents, under their individual
@@ -709,16 +711,16 @@ includes all participants’ projections, from lowest to highest, for that
 variable in that year*’.
 
 For the unemployment rate, the long run range is $3.8-4.5$ and for the
-Federal funds rate the long run range is $2.6-3.9$. Note that we use the
+federal funds rate the long run range is $2.6-3.9$. Note that we use the
 three month Treasury bill rate here and not the federal funds rate, but
 it is common knowledge that they mirror each other very closely. For
 inflation, I put a strong prior at around 2%, since the Fed has an
 annual 2% PCE inflation goal. Note again that we do not use PCE
 inflation here (we use inflation in the GDP price index), but anyhow
-this is just a demonstration. Now lets set the intervals. Remember that
+this is just a demonstration. Now let’s set the intervals. Remember that
 we only have a constant now, so $q=1$ and therefore $\Psi$ only has one
-column $\psi_1=\Psi$. And since $d_t = 1 \ \forall \ t$ we have the case
-where $\Psi d_t = \mu_t$ simplifies to $\Psi = \mu$ and as such we can
+column $\psi_1=\Psi$. Since $d_t = 1 \ \forall \ t$, we have
+$\Psi d_t = \mu_t$ which simplifies to $\Psi = \mu$ and as such we can
 directly interpret $\Psi$ as the unconditional mean.
 
 ``` r
@@ -739,9 +741,9 @@ Omega_Psi <-
   )
 ```
 
-Lets put everything into the ‘priors function’. Now instead of Jeffreys
-prior for $\Sigma_u$, we can use the uninformative inverse Wishart prior
-by setting ‘Jeffrey=FALSE’.
+Let’s put everything into the `priors()` function. Now instead of
+Jeffreys prior for $\Sigma_u$, we can use the uninformative inverse
+Wishart prior by setting ‘Jeffrey=FALSE’.
 
 ``` r
 bvar_obj <- priors(bvar_obj,
@@ -771,14 +773,14 @@ bvar_obj <- fit(bvar_obj,
                 chains = 4)
 ```
 
-Lets check posterior means
+Let’s check posterior means
 
 ``` r
 summary(bvar_obj)
 ```
 
-Now lets forecast with a 68% CI and use the median of the predictive
-distribution as the point forecast
+Now let’s forecast with a 68% CI and use the median of the predictive
+distribution as the point forecast.
 
 ``` r
 par(mfrow=c(3,1))
@@ -788,7 +790,7 @@ fcst <- forecast(bvar_obj,
                  show_all = TRUE)
 ```
 
-We can take a look at the orthogonalized IRFs
+We can compute the orthogonalized IRFs
 
 ``` r
 irf <- IRF(bvar_obj, H=24, type="median",method="OIRF",ci=0.95)
@@ -796,28 +798,28 @@ irf <- IRF(bvar_obj, H=24, type="median",method="OIRF",ci=0.95)
 
 ## Conditional forecasting
 
-Here I will show how the user can perform conditional forecasting. I
+This section shows how to perform conditional forecasting. We will
 follow the implementation used in the BEAR toolbox (see Algorithm 3.3.1
-in Dieppe, Legrand, and van Roye (2018)\]. Note that for the structural
-shocks, we use Cholesky factorisation as the identification scheme.
+in Dieppe, Legrand, and van Roye \[2018\]). Note that for the structural
+shocks, identification is based on the Cholesky factorisation.
 
 We continue with the same data/model as in the previous section. Now
 suppose we are interested in the forecasts of inflation $\Delta \pi_t$
 and the unemployment rate $u_t$ conditional on a scenario where the
-three month Treasury bill rate $r_t$ (a proxy for the federal funds
-rate) rises a lot very quickly and unexpectedly, and then goes back down
-(this is just a toy example).
+three-month Treasury bill rate $r_t$ (a proxy for the federal funds
+rate) rises quickly and unexpectedly, and then goes back down (this is
+just a toy example).
 
 First we set up our conditions/scenarios, i.e., which variables, which
 horizons, and which values the variables will take during those
-horizons. Our conditions are that $r_t$ will take a certain path at
+horizons. Our conditions are that $r_t$ will follow a specified path at
 forecast horizons $h=1,\dots,H$.
 
 ``` r
 conditions <- data.frame(
               var     = rep(3,40),
               horizon = rep(1:40),
-              value   = c(5.5,6.5,12,10,8,
+              value   = c(5.5,6.5,7.5,8.5,8,
                           fcst$forecast[6:40,3])
               )
 ```
@@ -833,7 +835,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
 ```
 
 Now we plot the conditional forecasts. The scenario is the blue line
-without intervals in the third plot (since it is fixed). The red lines
+without intervals (since it is fixed) in the third plot. The red lines
 are the unconditional forecasts.
 
 ``` r
@@ -843,17 +845,17 @@ cond_fcst_plot <- conditional_forecast_plot(cond_fcst, bvar_obj)
 
 ## Stochastic volatility
 
-Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) to
-allow the innovations $u_t$ to have a time varying covariance matrix
-$\Sigma_{u,t}$. Here we further build on the model of Clark (2011), by
+Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) by
+allowing the innovations $u_t$ to have a time-varying covariance matrix
+$\Sigma_{u,t}$. Here we further build on the model of Clark (2011) by
 following the setup in section 1.1 (“*BVAR-SV Model*”) in Carriero,
 Clark and Marcellino (2024). That is, instead of letting the log
 volatilities follow uncorrelated driftless random walks, we specify them
-to follow correlated (stationary) AR(1) processes. Carriero, Clark and
+as correlated (stationary) AR(1) processes. Carriero, Clark and
 Marcellino (2024) present the stochastic volatility specification for a
-conventional BVAR, but here we use it for the steady-state BVAR. However
-you can with this package also estimate the model in Clark (2011) (see
-the second subsection of this chapter).
+conventional BVAR; here we extend it to the steady-state BVAR. However,
+the package also allows estimation of the Clark (2011) model (see the
+second subsection of this chapter).
 
 Our model is (on the surface) exactly the same as before
 
@@ -866,7 +868,7 @@ but now the innovations have the specification
 $$
 \begin{aligned}
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k)\end{aligned}
+\epsilon_t &\sim \mathcal{N}(0, \textrm{I}_k)\end{aligned}
 $$
 
 where $A$ is a lower triangular matrix with ones on the diagonal and
@@ -877,7 +879,7 @@ $$
 $$
 
 contains the time-varying variances (log volatilities) of conditionally
-Gaussian shocks. The log volatilities follow AR(1) procceses
+Gaussian shocks. The log volatilities follow AR(1) processes
 
 $$
 \ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k
@@ -900,21 +902,21 @@ i.e. each log volatility process is a driftless random walk. Continuing,
 the innovations to the log volatilities are
 
 $$
-\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \textrm{N}(0, \Phi)
+\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \mathcal{N}(0, \Phi)
 $$
 
-where $\Phi$ is *not* diagonal and as such we allow the innovations be
-correlated across variables. In the Clark (2011) model however, $\Phi$
-is diagonal with variances $\phi_i$ for $i=1,\dots,k$.
+where $\Phi$ is *not* diagonal and as such we allow the innovations to
+be correlated across variables. In the Clark (2011) model however,
+$\Phi$ is diagonal with variances $\phi_i$ for $i=1,\dots,k$.
 
-Under the foregoing specification \[In the Clark (2011) model as well\],
-the time varying covariance matrix is
+Under the foregoing specification (In the Clark \[2011\] model as well),
+the time-varying covariance matrix is
 
 $$
 \Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'
 $$
 
-### Stochastic volatility: stationary AR(1) log volatilities (Carriero, Clark and Marcellino, 2024)
+### Stationary AR(1) log volatilities (Carriero, Clark and Marcellino, 2024)
 
 Now we will simulate data from a steady-state BVAR with the stationary
 AR(1) log volatility specification, estimate the model and see if we can
@@ -928,10 +930,10 @@ $$
 \begin{aligned}
 y_t &= \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+u_t \\
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k) \\
+\epsilon_t &\sim \mathcal{N}(0, \textrm{I}_k) \\
 \Lambda_t &= \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
 \ln \lambda_{i,t} &= \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t} \ \ \ \ \ , i=1,\dots,k \\
-\nu_{t} &\sim \textrm{N}(0, \Phi)
+\nu_{t} &\sim \mathcal{N}(0, \Phi)
 \end{aligned}
 $$
 
@@ -1060,19 +1062,19 @@ AR(1) stochastic volatility specification
 
 $$
 \begin{aligned}
-a &\sim \textrm{N}(\theta_A, \Omega_A) \\
-\gamma_{0} &\sim \textrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
-\gamma_{1} &\sim \textrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
-\ln \lambda_{0} &\sim \textrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
-\Phi &\sim \textrm{IW}(V_0,m_0)
+a &\sim \mathcal{N}(\theta_A, \Omega_A) \\
+\gamma_{0} &\sim \mathcal{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
+\gamma_{1} &\sim \mathcal{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
+\ln \lambda_{0} &\sim \mathcal{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
+\Phi &\sim \mathcal{IW}(V_0,m_0)
 \end{aligned}                         
 $$
 
 Here $a$ is a $k(k-1)/2$ vector that collects the free parameters in $A$
-in row major order, and $\ln \lambda_0$ are the time $t=0$ values
-(initial conditions) of $\ln \lambda_{i,t}$. Now we cheat and use super
-good priors with prior means centered on the true values and low prior
-variances
+in row-major order, and $\ln \lambda_0$ are the time $t=0$ values
+(initial conditions) of $\ln \lambda_{i,t}$. Now we “cheat” and use
+highly informative priors centered on the true parameter values with low
+prior variances.
 
 ``` r
 k <- bvar_obj$setup$k
@@ -1126,7 +1128,7 @@ $$
 \nu^{(j)}_{T+h}
 $$
 
-from $\nu_{T+h} \sim \textrm{N}(0,\Phi^{(j)})$, then compute
+from $\nu_{T+h} \sim \mathcal{N}(0,\Phi^{(j)})$, then compute
 
 $$
 \ln \lambda^{(j)}_{i,T+h} = \gamma^{(j)}_{0,i} + \gamma^{(j)}_{1,i} \ln \lambda^{(j)}_{i,T+h-1} + \nu^{(j)}_{i,T+h}
@@ -1144,7 +1146,7 @@ $$
 \epsilon^{(j)}_{T+h}
 $$
 
-from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the
+from $\epsilon_{T+h} \sim \mathcal{N}(0, \textrm{I}_k)$. Now compute the
 shock to the VAR
 
 $$
@@ -1169,11 +1171,11 @@ par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-6,4), plot_idx=1)
 #add true log lambdas
-lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-8,6), plot_idx=2)
 #add true log lambdas
-lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 ```
 
 Now let us plot the estimates (posterior means) along with 95% credible
@@ -1193,11 +1195,11 @@ par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", ylim=c(0,4), plot_idx=1)
 #add true sd
-lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", ylim=c(0,8), plot_idx=2)
 #add true sd
-lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 ```
 
 For the stochastic volatility steady-state BVAR, we can of course also
@@ -1265,10 +1267,10 @@ Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 ``` r
 compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim, legend=NULL){
   
-  Y <- bvar_obj$data
+  Y <- x$data
   freq <- frequency(Y)
   T <- nrow(Y)
-  H <- bvar_obj$predict$H
+  H <- x$predict$H
   m <- ncol(Y)
   time_hist <- as.numeric(time(Y))
   time_fore <- seq(tail(time_hist, 1) + 1/freq, by = 1/freq, length.out = H)
@@ -1332,7 +1334,7 @@ point forecasts are very similar. The key difference is in the
 prediction intervals. We can see that the SS-BVAR-SV has a wider
 interval, even though both are 95% intervals.
 
-### Stochastic volatility: Random Walk log volatilities (Clark, 2011)
+### Random Walk log volatilities (Clark, 2011)
 
 Now we repeat the analysis with the Clark (2011) RW stochastic
 volatility specification.
@@ -1343,44 +1345,41 @@ $$
 \begin{aligned}
 y_t &= \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+u_t \\
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k) \\
+\epsilon_t &\sim \mathcal{N}(0, \textrm{I}_k) \\
 \Lambda_t &= \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
 \ln \lambda_{i,t} &=  \ln \lambda_{i,t-1} + \nu_{i,t} \\
-\nu_{i,t} &\sim \textrm{iid} \ \textrm{N}(0, \phi_i), \ i=1,\dots,k \\
+\nu_{i,t} &\overset{iid}{\sim} \ \mathcal{N}(0, \phi_i), \ i=1,\dots,k \\
 \end{aligned}
 $$
 
 We have $t=0,\dots,T=350$ observations where the last $50$ observations
 are left as hold-out data. The parameters are
 
-$$
-\begin{aligned}
-\Psi &= \begin{bmatrix} 2 & 6 \\
-                        3 & 9\end{bmatrix} \\
-\Pi_1 &= \begin{bmatrix} 0.80 & 0.15 \\
-                         -0.20 & 0.70 \end{bmatrix} \\
-A &= \begin{bmatrix} 1 & 0 \\
-                         0.25 & 1 \end{bmatrix} \\
-\phi &= \begin{pmatrix}0.04 \\
-0.08
-\end{pmatrix}
-\end{aligned}                         
-$$
+\$\$
+\$\$
 
-The initial observations $y_0$ are set to their steady states. Since the
-log volatilities are Random Walks now, their steady states do not exist,
-and as such we specify some arbitrary initial conditions $\lambda_0$
+The initial observations $y_0$ are set to their steady states
 
 $$
 \begin{aligned}
-\ln \lambda_{0} &=  \begin{pmatrix} -2 \\
--3
-\end{pmatrix}\\
+y_0 &= \Psi d_0 \\
 d_{t}' &=
 \begin{cases}
 \begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 75 \\
 \begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 75
 \end{cases} \\
+\end{aligned}
+$$
+
+Since the log volatilities are Random Walks now, their steady states do
+not exist, and as such we specify some arbitrary initial conditions
+$\lambda_0$
+
+$$
+\begin{aligned}
+\ln \lambda_{0} &=  \begin{pmatrix} -2 \\
+-3
+\end{pmatrix}
 \end{aligned}
 $$
 
@@ -1462,13 +1461,13 @@ specification
 
 $$
 \begin{aligned}
-a &\sim \textrm{N}(\theta_A, \Omega_A) \\
-\ln \lambda_{i,0} &\sim \textrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
-\phi_i &\sim \textrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})
+a &\sim \mathcal{N}(\theta_A, \Omega_A) \\
+\ln \lambda_{i,0} &\sim \mathcal{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
+\phi_i &\sim \mathcal{IG}(\alpha_{\phi_i},\beta_{\phi_i})
 \end{aligned}                         
 $$
 
-Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$
+Note here that the inverse gamma $\mathcal{IG}(\alpha, \beta)$
 distribution is the univariate version of the inverse Wishart
 distribution with $\alpha=m/2, \ \beta = V/2$.
 
@@ -1504,7 +1503,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 2)
 ```
 
-Let see if we managed to reasonably recover the true parameters.
+Let’s see if we managed to reasonably recover the true parameters.
 Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
@@ -1519,7 +1518,7 @@ $$
 \nu^{(j)}_{i,T+h}
 $$
 
-from $\nu_{i,T+h} \sim \textrm{N}(0,\phi^{(j)}_i)$, then compute
+from $\nu_{i,T+h} \sim \mathcal{N}(0,\phi^{(j)}_i)$, then compute
 
 $$
 \ln \lambda^{(j)}_{i,T+h} = \ln \lambda^{(j)}_{i,T+h-1} + \nu^{(j)}_{i,T+h}
@@ -1537,7 +1536,7 @@ $$
 \epsilon^{(j)}_{T+h}
 $$
 
-from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the
+from $\epsilon_{T+h} \sim \mathcal{N}(0, \textrm{I}_k)$. Now compute the
 shock to the VAR
 
 $$
@@ -1566,11 +1565,11 @@ par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-3,5), plot_idx=1)
 #add true log lambdas
-lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-7,1), plot_idx=2)
 #add true log lambdas
-lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 ```
 
 Now let us plot the estimates (posterior means) along with 95% credible
@@ -1590,11 +1589,11 @@ par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=1, vol="sd")
 #add true sd
-lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2.25), plot_idx=2, vol="sd")
 #add true sd
-lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.5), lwd = 4)
+lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 ```
 
 We can again do some impulse response analysis.
@@ -1660,15 +1659,15 @@ par(mfrow=c(2,1))
 compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-10,15),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 
-segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
-segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
+segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.7), lwd = 5)
+segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.7), lwd = 5)
 lines(301:351, c(tail(yt[,1],1),zt[302:351,1]), col="green", lty=1, lwd=2)
 
 compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-5,15),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 
-segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
-segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
+segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.7), lwd = 5)
+segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.7), lwd = 5)
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
 
@@ -1679,8 +1678,8 @@ states. Also, before the convergence, the dynamics of the point
 forecasts are very similar. The key difference is again in the
 prediction intervals. We can see that the SS-BVAR-SV-RW has a wider (and
 increasing) interval, even though both are 95% intervals. Since the log
-volatilities now follow random walks, it is not surprising to see that
-the intervals now increase in width over time.
+volatilities follow random walks, it is not surprising to see that the
+intervals now increase in width over time.
 
 ## References
 
