@@ -62,7 +62,7 @@ First, you need to install RStan:
 Then you can install SteadyStateBVAR with:
 
 ``` r
-remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never")
+remotes::install_github("markjwbecker/SteadyStateBVAR", force = TRUE, upgrade = "never", ref="dev")
 ```
 
 ## Introduction
@@ -76,9 +76,9 @@ $$
 where $y_t$ is a $k$-dimensional vector of endogenous variables (time
 series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic
 (exogenous) variables at time $t$, and the (reduced-form) innovations
-are $u_t \sim \mathrm{N}_k(0,\Sigma_u)$ with independence between time
-periods. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$
-matrix, and $\Psi$ is a $(k \times q)$ matrix. Now
+are $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods.
+Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ matrix, and
+$\Psi$ is a $(k \times q)$ matrix. Now
 
 $$
 \mathrm{E}(y_t)=\mu_t=\Psi d_t
@@ -1107,9 +1107,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 5000,
-                chains = 2)
+                iter = 1000,
+                warmup = 250,
+                chains = 1)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1117,6 +1117,31 @@ Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.77 -0.21
+#> [2,] 0.16  0.72
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.08 5.99
+#> [2,] 2.97 8.97
+#> 
+#> A posterior mean
+#>      [,1] [,2]
+#> [1,] 1.00    0
+#> [2,] 0.24    1
+#> 
+#> Phi posterior mean
+#>       [,1]  [,2]
+#> [1,]  0.76 -0.17
+#> [2,] -0.17  0.63
+#> 
+#> gamma_0 posterior means
+#> [1] -0.11 -0.01
+#> 
+#> gamma_1 posterior means
+#> [1] 0.75 0.89
 ```
 
 Looks like it works reasonably well! Now we can turn to forecasting. We
@@ -1161,6 +1186,8 @@ par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
 
+<img src="man/figures/README-unnamed-chunk-39-1.png" width="100%" />
+
 We can also plot the estimates (posterior means) along with 95% credible
 intervals of the log volatilities ($\ln \lambda_t$) in red. In grey, we
 plot the true unobserved/latent process. In blue, we plot the forecasts
@@ -1171,12 +1198,14 @@ par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", plot_idx=1)
 #add true log lambdas
-lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.85), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", plot_idx=2)
 #add true log lambdas
-lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.85), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-40-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) along with 95% credible
 intervals of the volatilities, defined as reduced form
@@ -1195,12 +1224,14 @@ par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", plot_idx=1)
 #add true sd
-lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
+lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.85), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", plot_idx=2)
 #add true sd
-lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
+lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.85), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-41-1.png" width="100%" />
 
 For the stochastic volatility steady-state BVAR, we can of course also
 do impulse response analysis, almost like before. Now however, since our
@@ -1214,6 +1245,8 @@ par(mfrow=c(1,2))
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
+
+<img src="man/figures/README-unnamed-chunk-42-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-AR1) and
 without (SS-BVAR) stochastic volatility specification to see the
@@ -1240,8 +1273,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 20000,
-                 warmup = 10000,
+                 iter = 2000,
+                 warmup = 1000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1258,8 +1291,26 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.80 -0.25
+#> [2,] 0.11  0.62
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.03 6.00
+#> [2,] 3.04 9.01
 #--- SS-BVAR-SV-AR1 ---
 summary(bvar_obj, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.77 -0.21
+#> [2,] 0.16  0.72
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.08 5.99
+#> [2,] 2.97 8.97
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1325,6 +1376,8 @@ segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", a
 segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.5), lwd = 5)
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
+
+<img src="man/figures/README-unnamed-chunk-45-1.png" width="100%" />
 
 Some things to note. Both the SS-BVAR and SS-BVAR-SV have posterior
 means for $\Psi$ close to the true values of the DGP, as such we can see
@@ -1508,9 +1561,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
-                warmup = 5000,
-                chains = 2)
+                iter = 1000,
+                warmup = 200,
+                chains = 1)
 ```
 
 Let’s see if we managed to reasonably recover the true parameters.
@@ -1518,6 +1571,24 @@ Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 
 ``` r
 summary(bvar_obj)
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.68 -0.17
+#> [2,] 0.03  0.74
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.05 5.99
+#> [2,] 3.01 9.02
+#> 
+#> A posterior mean
+#>      [,1] [,2]
+#> [1,] 1.00    0
+#> [2,] 0.25    1
+#> 
+#> phi posterior means
+#>   phi_1 : 0.08 
+#>   phi_2 : 0.06
 ```
 
 Looks like it works reasonably well! With the respect to forecasting,
@@ -1565,6 +1636,8 @@ fcst1 <- forecast(bvar_obj,
                   show_all = TRUE)
 ```
 
+<img src="man/figures/README-unnamed-chunk-51-1.png" width="100%" />
+
 We can also plot the estimates (posterior means) along with 95% credible
 intervals of the log volatilities ($\ln \lambda_t$) in red. In grey, we
 plot the true unobserved/latent process. In blue we plot the forecasts
@@ -1575,12 +1648,14 @@ par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", plot_idx=1)
 #add true log lambdas
-lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.85), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", plot_idx=2)
 #add true log lambdas
-lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
+lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.85), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-52-1.png" width="100%" />
 
 Now let us plot the estimates (posterior means) along with 95% credible
 intervals of the volatilities, defined as reduced form
@@ -1599,12 +1674,14 @@ par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, plot_idx=1, vol="sd")
 #add true sd
-lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
+lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.85), lwd = 4)
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, plot_idx=2, vol="sd")
 #add true sd
-lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
+lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.85), lwd = 4)
 ```
+
+<img src="man/figures/README-unnamed-chunk-53-1.png" width="100%" />
 
 We can again do some impulse response analysis.
 
@@ -1614,6 +1691,8 @@ par(mfrow=c(1,2))
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=255)
 ```
+
+<img src="man/figures/README-unnamed-chunk-54-1.png" width="100%" />
 
 Let us now compare the steady-state BVAR with (SS-BVAR-SV-RW) and
 without (SS-BVAR) stochastic volatility RW specification to see the
@@ -1640,8 +1719,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 20000,
-                 warmup = 10000,
+                 iter = 2000,
+                 warmup = 1000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1658,8 +1737,26 @@ Lets compare the results
 ``` r
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>       [,1]  [,2]
+#> [1,]  0.68 -0.17
+#> [2,] -0.06  0.76
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.06 5.99
+#> [2,] 3.04 9.01
 #--- SS-BVAR-SV-RW ---
 summary(bvar_obj, pars = c("beta", "Psi"))
+#> beta posterior mean
+#>      [,1]  [,2]
+#> [1,] 0.68 -0.17
+#> [2,] 0.03  0.74
+#> 
+#> Psi posterior mean
+#>      [,1] [,2]
+#> [1,] 2.05 5.99
+#> [2,] 3.01 9.02
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1669,17 +1766,19 @@ par(mfrow=c(2,1))
 compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-10,15),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 
-segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.7), lwd = 5)
-segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.7), lwd = 5)
+segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
+segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
 lines(301:351, c(tail(yt[,1],1),zt[302:351,1]), col="green", lty=1, lwd=2)
 
 compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-5,15),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 
-segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.7), lwd = 5)
-segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.7), lwd = 5)
+segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
+segments(x0 = 77, y0 = 3, x1 = 351, y1 = 3, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
 lines(301:351, c(tail(yt[,2],1),zt[302:351,2]), col="green", lty=1, lwd=2)
 ```
+
+<img src="man/figures/README-unnamed-chunk-57-1.png" width="100%" />
 
 Like before, the SS-BVAR and SS-BVAR-SV-RW have posterior means for
 $\Psi$ close to the true values of the DGP, as such we can see that both
