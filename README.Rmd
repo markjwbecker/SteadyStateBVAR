@@ -598,7 +598,7 @@ cond_fcst_plot <- conditional_forecast_plot(cond_fcst, bvar_obj)
 
 ## Stochastic volatility
 
-Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) by allowing the innovations $u_t$ to have a time-varying covariance matrix $\Sigma_{u,t}$. Here we further build on the model of Clark (2011) by following the setup in section 1.1 ("*BVAR-SV Model*") in Carriero, Clark and Marcellino (2024). That is, instead of letting the log volatilities follow uncorrelated driftless random walks, we specify them as correlated (stationary) AR(1) processes. Carriero, Clark and Marcellino (2024) present the stochastic volatility specification for a conventional BVAR; here we extend it to the steady-state BVAR. However, the package also allows estimation of the Clark (2011) model (see the second subsection of this chapter).
+Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) by allowing the innovations $u_t$ to have a time-varying covariance matrix $\Sigma_{u,t}$. Here we further build on the model of Clark (2011) by following the setup in Section 1.1 ("*BVAR-SV Model*") in Carriero, Clark and Marcellino (2024). That is, instead of letting the log volatilities follow uncorrelated driftless random walks, we specify them as correlated (stationary) AR(1) processes. Carriero, Clark and Marcellino (2024) present the stochastic volatility specification for a conventional BVAR; here we extend it to the steady-state BVAR. However, the package also allows estimation of the Clark (2011) model (see the second subsection of this chapter).
 
 Our model is (on the surface) exactly the same as before
 
@@ -1076,7 +1076,6 @@ A &= \begin{bmatrix} 1 & 0 \\
                          0.25 & 1 \end{bmatrix} \\
 \phi_1 &= 0.08 \\
 \phi_2 &= 0.06
-
 \end{aligned}                         
 $$
 

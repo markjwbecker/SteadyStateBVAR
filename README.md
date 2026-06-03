@@ -848,7 +848,7 @@ cond_fcst_plot <- conditional_forecast_plot(cond_fcst, bvar_obj)
 Clark (2011) extends the steady-state BVAR(p) model (Villani, 2009) by
 allowing the innovations $u_t$ to have a time-varying covariance matrix
 $\Sigma_{u,t}$. Here we further build on the model of Clark (2011) by
-following the setup in section 1.1 (“*BVAR-SV Model*”) in Carriero,
+following the setup in Section 1.1 (“*BVAR-SV Model*”) in Carriero,
 Clark and Marcellino (2024). That is, instead of letting the log
 volatilities follow uncorrelated driftless random walks, we specify them
 as correlated (stationary) AR(1) processes. Carriero, Clark and
@@ -1355,8 +1355,18 @@ $$
 Again, we have $t=0,\dots,T=350$ observations where the last $50$
 observations are left as hold-out data, and the parameters are
 
-\$\$
-\$\$
+$$
+\begin{aligned}
+\Psi &= \begin{bmatrix} 2 & 6 \\
+                        3 & 9\end{bmatrix} \\
+\Pi_1 &= \begin{bmatrix} 0.80 & 0.15 \\
+                         -0.20 & 0.70 \end{bmatrix} \\
+A &= \begin{bmatrix} 1 & 0 \\
+                         0.25 & 1 \end{bmatrix} \\
+\phi_1 &= 0.08 \\
+\phi_2 &= 0.06
+\end{aligned}                         
+$$
 
 The initial observations $y_0$ are set to their steady states
 
