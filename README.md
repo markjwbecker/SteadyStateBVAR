@@ -76,12 +76,12 @@ $$
 where $y_t$ is a $k$-dimensional vector of endogenous variables (time
 series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic
 (exogenous) variables at time $t$, and the (reduced-form) innovations
-are $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods.
-Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ matrix, and
-$\Psi$ is a $(k \times q)$ matrix. Now
+are $u_t \sim \mathrm{N}_k(0,\Sigma_u)$ with independence between time
+periods. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$
+matrix, and $\Psi$ is a $(k \times q)$ matrix. Now
 
 $$
-\textrm{E}(y_t)=\mu_t=\Psi d_t
+\mathrm{E}(y_t)=\mu_t=\Psi d_t
 $$
 
 is the unconditional mean, or the **steady state**, of the process.
@@ -119,22 +119,22 @@ are needed. First, prior independence between $\beta, \Psi$ and
 $\Sigma_u$ is assumed. Starting with $\beta$, we use the Minnesota prior
 
 $$
-\textrm{vec}(\beta) \sim \textrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]
+\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]
 $$
 
 The prior means (the elements of $\theta_\beta$) are set to
 
 $$
 \begin{aligned}
-\textrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&=
+\mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&=
 \begin{cases}
-\kappa & \text{if } \ell = 1 \ \textrm{and} \ i = j \\
-0 & \textrm{otherwise}
+\kappa & \text{if } \ell = 1 \ \mathrm{and} \ i = j \\
+0 & \mathrm{otherwise}
 \end{cases}\\
 \kappa&=
 \begin{cases}
-\kappa^{level} & \text{if } \textrm{variable} \ i \ \textrm{is in level} \\
-\kappa^{\Delta} & \text{if }\textrm{variable} \ i \ \textrm{is in difference}
+\kappa^{level} & \text{if } \mathrm{variable} \ i \ \mathrm{is in level} \\
+\kappa^{\Delta} & \text{if }\mathrm{variable} \ i \ \mathrm{is in difference}
 \end{cases}\\
 \end{aligned}
 $$
@@ -161,7 +161,7 @@ $\Omega_\beta$ is a diagonal matrix containing the prior variances for
 the elements in $\beta$. They are specified as
 
 $$
-\textrm{Var}\left(\Pi_{\ell}^{(i,j)}\right)=
+\mathrm{Var}\left(\Pi_{\ell}^{(i,j)}\right)=
 \begin{cases}
 \left(\frac{\lambda_1}{\ell^{\lambda_3}}\right)^2 & \text{if } i = j \\
 \left(\frac{\lambda_1 \lambda_2\sigma_i}{\ell^{\lambda_3}\sigma_j}\right)^2& \text{if } i \neq j
@@ -178,7 +178,7 @@ $i$ with $p$ lags (including the constant and dummy/trend variable if
 applicable). Moving on to $\Psi$, the prior we use is
 
 $$
-\textrm{vec}(\Psi) \sim \textrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
+\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
 This is really the core of the steady-state BVAR model. In
@@ -195,7 +195,7 @@ $$
 However, if the user wants, an inverse Wishart prior can be used instead
 
 $$
-\Sigma_u \sim \textrm{IW}(V_0,m_0)
+\Sigma_u \sim \mathrm{IW}(V_0,m_0)
 $$
 
 where $V_0$ is the scale matrix and $m_0\geq k+2$ is the number of
@@ -868,14 +868,14 @@ but now the innovations have the specification
 $$
 \begin{aligned}
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k)\end{aligned}
+\epsilon_t &\sim \mathrm{N}(0, \mathrm{I}_k)\end{aligned}
 $$
 
 where $A$ is a lower triangular matrix with ones on the diagonal and
 nonzero coefficients below the diagonal, and
 
 $$
-\Lambda_t = \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
+\Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
 $$
 
 contains the time-varying variances (log volatilities) of conditionally
@@ -902,7 +902,7 @@ i.e. each log volatility process is a driftless random walk. Continuing,
 the innovations to the log volatilities are
 
 $$
-\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \textrm{N}(0, \Phi)
+\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \mathrm{N}(0, \Phi)
 $$
 
 where $\Phi$ is *not* diagonal and as such we allow the innovations to
@@ -930,10 +930,10 @@ $$
 \begin{aligned}
 y_t &= \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+u_t \\
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k) \\
-\Lambda_t &= \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
+\epsilon_t &\sim \mathrm{N}(0, \mathrm{I}_k) \\
+\Lambda_t &= \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
 \ln \lambda_{i,t} &= \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t} \ \ \ \ \ , i=1,\dots,k \\
-\nu_{t} &\sim \textrm{N}(0, \Phi)
+\nu_{t} &\sim \mathrm{N}(0, \Phi)
 \end{aligned}
 $$
 
@@ -1062,11 +1062,11 @@ AR(1) stochastic volatility specification
 
 $$
 \begin{aligned}
-a &\sim \textrm{N}(\theta_A, \Omega_A) \\
-\gamma_{0} &\sim \textrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
-\gamma_{1} &\sim \textrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
-\ln \lambda_{0} &\sim \textrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
-\Phi &\sim \textrm{IW}(V_0,m_0)
+a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
+\gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
+\gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
+\ln \lambda_{0} &\sim \mathrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
+\Phi &\sim \mathrm{IW}(V_0,m_0)
 \end{aligned}                         
 $$
 
@@ -1128,7 +1128,7 @@ $$
 \nu^{(j)}_{T+h}
 $$
 
-from $\nu_{T+h} \sim \textrm{N}(0,\Phi^{(j)})$, then compute
+from $\nu_{T+h} \sim \mathrm{N}(0,\Phi^{(j)})$, then compute
 
 $$
 \ln \lambda^{(j)}_{i,T+h} = \gamma^{(j)}_{0,i} + \gamma^{(j)}_{1,i} \ln \lambda^{(j)}_{i,T+h-1} + \nu^{(j)}_{i,T+h}
@@ -1146,7 +1146,7 @@ $$
 \epsilon^{(j)}_{T+h}
 $$
 
-from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the
+from $\epsilon_{T+h} \sim \mathrm{N}(0, \mathrm{I}_k)$. Now compute the
 shock to the VAR
 
 $$
@@ -1169,11 +1169,11 @@ of the log volatilities along with a 95% prediction interval.
 ``` r
 par(mfrow = c(2,1))
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-6,4), plot_idx=1)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", plot_idx=1)
 #add true log lambdas
 lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-8,6), plot_idx=2)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", plot_idx=2)
 #add true log lambdas
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 ```
@@ -1193,11 +1193,11 @@ for(t in 1:(N)){
 
 par(mfrow = c(2,1))
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", ylim=c(0,4), plot_idx=1)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", plot_idx=1)
 #add true sd
 lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", ylim=c(0,8), plot_idx=2)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="sd", plot_idx=2)
 #add true sd
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 ```
@@ -1345,10 +1345,10 @@ $$
 \begin{aligned}
 y_t &= \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+u_t \\
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k) \\
-\Lambda_t &= \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
+\epsilon_t &\sim \mathrm{N}(0, \mathrm{I}_k) \\
+\Lambda_t &= \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
 \ln \lambda_{i,t} &=  \ln \lambda_{i,t-1} + \nu_{i,t} \\
-\nu_{i,t} &\overset{iid}{\sim} \ \textrm{N}(0, \phi_i), \ i=1,\dots,k \\
+\nu_{i,t} &\overset{iid}{\sim} \ \mathrm{N}(0, \phi_i), \ i=1,\dots,k \\
 \end{aligned}
 $$
 
@@ -1471,13 +1471,13 @@ specification
 
 $$
 \begin{aligned}
-a &\sim \textrm{N}(\theta_A, \Omega_A) \\
-\ln \lambda_{i,0} &\sim \textrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
-\phi_i &\sim \textrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})
+a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
+\ln \lambda_{i,0} &\sim \mathrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
+\phi_i &\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})
 \end{aligned}                         
 $$
 
-Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$
+Note here that the inverse gamma $\mathrm{IG}(\alpha, \beta)$
 distribution is the univariate version of the inverse Wishart
 distribution with $\alpha=m/2, \ \beta = V/2$.
 
@@ -1528,7 +1528,7 @@ $$
 \nu^{(j)}_{i,T+h}
 $$
 
-from $\nu_{i,T+h} \sim \textrm{N}(0,\phi^{(j)}_i)$, then compute
+from $\nu_{i,T+h} \sim \mathrm{N}(0,\phi^{(j)}_i)$, then compute
 
 $$
 \ln \lambda^{(j)}_{i,T+h} = \ln \lambda^{(j)}_{i,T+h-1} + \nu^{(j)}_{i,T+h}
@@ -1546,7 +1546,7 @@ $$
 \epsilon^{(j)}_{T+h}
 $$
 
-from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the
+from $\epsilon_{T+h} \sim \mathrm{N}(0, \mathrm{I}_k)$. Now compute the
 shock to the VAR
 
 $$
@@ -1573,11 +1573,11 @@ of the log volatilities along with a 95% prediction interval.
 ``` r
 par(mfrow = c(2,1))
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-3,5), plot_idx=1)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", plot_idx=1)
 #add true log lambdas
 lines(1:(N-1), log_lambda[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-7,1), plot_idx=2)
+stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", plot_idx=2)
 #add true log lambdas
 lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 ```
@@ -1597,11 +1597,11 @@ for(t in 1:(N)){
 
 par(mfrow = c(2,1))
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,8), plot_idx=1, vol="sd")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, plot_idx=1, vol="sd")
 #add true sd
 lines(1:(N-1), sigma[2:N,1], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
-stochastic_volatility_forecast(bvar_obj, ci=0.95, ylim=c(0,2.25), plot_idx=2, vol="sd")
+stochastic_volatility_forecast(bvar_obj, ci=0.95, plot_idx=2, vol="sd")
 #add true sd
 lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 ```
