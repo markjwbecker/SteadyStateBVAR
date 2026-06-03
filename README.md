@@ -1352,8 +1352,8 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \end{aligned}
 $$
 
-We have $t=0,\dots,T=350$ observations where the last $50$ observations
-are left as hold-out data. The parameters are
+Again, we have $t=0,\dots,T=350$ observations where the last $50$
+observations are left as hold-out data, and the parameters are
 
 \$\$
 \$\$
