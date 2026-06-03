@@ -49,7 +49,7 @@ y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u
 $$
 
 
-where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic (exogenous) variables at time $t$, and the (reduced-form) innovations are $u_t \sim \textrm{N}_k(0,\Sigma_u)$ with independence between time periods. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ matrix, and $\Psi$ is a $(k \times q)$ matrix. Now
+where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic (exogenous) variables at time $t$, and the (reduced-form) innovations are $u_t \sim N_k(0,\Sigma_u)$ with independence between time periods. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ matrix, and $\Psi$ is a $(k \times q)$ matrix. Now
 
 
 $$
@@ -698,7 +698,7 @@ A &= \begin{bmatrix} 1 & 0 \\
 $$
 
 
-The initial conditions ($\lambda_0$) and initial observations ($y_0$) are both set to their unconditional means (or as we like to call them: steady states).
+The initial conditions ($\ln \lambda_0$) and initial observations ($y_0$) are both set to their unconditional means (or as we like to call them: steady states).
 
 
 $$
@@ -822,8 +822,8 @@ SV_priors <- list(
   Omega_gamma_1      = diag(0.01, k),
   theta_log_lambda_0 = gamma_0/(1-gamma_1),
   Omega_log_lambda_0 = diag(0.01, k),
-  V_0                = (50 - k - 1) * Phi,
-  m_0                =  50
+  V_0                = (100 - k - 1) * Phi,
+  m_0                =  100
   )
 
 bvar_obj$SV <- TRUE
@@ -1074,7 +1074,8 @@ $$
                          -0.20 & 0.70 \end{bmatrix} \\
 A &= \begin{bmatrix} 1 & 0 \\
                          0.25 & 1 \end{bmatrix} \\
-\phi_1 &= 0.04, \ \phi_2 = 0.08
+\phi_1 &= 0.08 \\
+\phi_2 &= 0.06
 
 \end{aligned}                         
 $$
@@ -1093,7 +1094,7 @@ d_{t}' &=
 \end{aligned}
 $$
 
-Since the log volatilities are Random Walks now, their steady states do not exist, and as such we specify some arbitrary initial conditions $\lambda_0$
+Since the log volatilities are Random Walks now, their steady states do not exist, and as such we specify some arbitrary initial conditions $\ln \lambda_0$
 
 
 $$
@@ -1121,7 +1122,7 @@ Pi_1 <- matrix(c( 0.80, 0.15,
 A <- matrix(c(1.00, 0.00,
               0.25, 1.00), 2, 2, byrow = TRUE)
 
-phi <- c(0.04, 0.08)
+phi <- c(0.08, 0.06)
 
 log_lambda <- matrix(NA, N, 2)
 log_lambda[1,] <- c(-2,-3) #ln lambda_t=0
@@ -1200,8 +1201,8 @@ SV_priors <- list(
   Omega_A             = diag(0.01, n_free_params_A),
   mu_log_lambda_0     = log_lambda[1,],
   sigma2_log_lambda_0 = rep(0.01, k),
-  alpha_phi           =  c(25, 15),
-  beta_phi            = (c(25, 15) - 1) * phi
+  alpha_phi           =  c(100, 100),
+  beta_phi            = (c(100, 100) - 1) * phi
 )
 
 bvar_obj$SV <- TRUE
