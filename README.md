@@ -1107,9 +1107,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 250,
-                chains = 1)
+                iter = 2000,
+                warmup = 400,
+                chains = 2)
 ```
 
 Let see if we managed to reasonably recover the true parameters.
@@ -1119,13 +1119,13 @@ Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 summary(bvar_obj)
 #> beta posterior mean
 #>      [,1]  [,2]
-#> [1,] 0.77 -0.21
+#> [1,] 0.77 -0.20
 #> [2,] 0.16  0.72
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
 #> [1,] 2.08 5.99
-#> [2,] 2.97 8.97
+#> [2,] 2.97 8.98
 #> 
 #> A posterior mean
 #>      [,1] [,2]
@@ -1134,11 +1134,11 @@ summary(bvar_obj)
 #> 
 #> Phi posterior mean
 #>       [,1]  [,2]
-#> [1,]  0.76 -0.17
+#> [1,]  0.77 -0.17
 #> [2,] -0.17  0.63
 #> 
 #> gamma_0 posterior means
-#> [1] -0.11 -0.01
+#> [1] -0.12 -0.01
 #> 
 #> gamma_1 posterior means
 #> [1] 0.75 0.89
@@ -1294,7 +1294,7 @@ summary(bvar_obj2, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>      [,1]  [,2]
 #> [1,] 0.80 -0.25
-#> [2,] 0.11  0.62
+#> [2,] 0.11  0.63
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
@@ -1304,13 +1304,13 @@ summary(bvar_obj2, pars = c("beta", "Psi"))
 summary(bvar_obj, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>      [,1]  [,2]
-#> [1,] 0.77 -0.21
+#> [1,] 0.77 -0.20
 #> [2,] 0.16  0.72
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
 #> [1,] 2.08 5.99
-#> [2,] 2.97 8.97
+#> [2,] 2.97 8.98
 ```
 
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
@@ -1561,9 +1561,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 1000,
-                warmup = 200,
-                chains = 1)
+                iter = 2000,
+                warmup = 400,
+                chains = 2)
 ```
 
 Let’s see if we managed to reasonably recover the true parameters.
@@ -1763,14 +1763,14 @@ Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 ``` r
 par(mfrow=c(2,1))
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-10,15),
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-15,20),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 
 segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
 segments(x0 = 77, y0 = 2, x1 = 351, y1 = 2, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
 lines(301:351, c(tail(yt[,1],1),zt[302:351,1]), col="green", lty=1, lwd=2)
 
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-5,15),
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(2), xlim=c(0,351), ylim=c(-10,20),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 
 segments(x0 = 1, y0 = 12, x1 = 76, y1 = 12, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
