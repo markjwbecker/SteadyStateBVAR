@@ -1416,7 +1416,7 @@ $$
                          -0.20 & 0.70 \end{bmatrix} \\
 A &= \begin{bmatrix} 1 & 0 \\
                          0.25 & 1 \end{bmatrix} \\
-\phi_1 &= 0.08 \\
+\phi_1 &= 0.04 \\
 \phi_2 &= 0.06
 \end{aligned}                         
 $$
@@ -1461,7 +1461,7 @@ Pi_1 <- matrix(c( 0.80, 0.15,
 A <- matrix(c(1.00, 0.00,
               0.25, 1.00), 2, 2, byrow = TRUE)
 
-phi <- c(0.08, 0.06)
+phi <- c(0.04, 0.06)
 
 log_lambda <- matrix(NA, N, 2)
 log_lambda[1,] <- c(-2,-3) #ln lambda_t=0
@@ -1573,12 +1573,12 @@ Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 summary(bvar_obj)
 #> beta posterior mean
 #>      [,1]  [,2]
-#> [1,] 0.68 -0.17
-#> [2,] 0.03  0.74
+#> [1,] 0.72 -0.17
+#> [2,] 0.06  0.74
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.05 5.99
+#> [1,] 2.06 5.99
 #> [2,] 3.01 9.02
 #> 
 #> A posterior mean
@@ -1587,7 +1587,7 @@ summary(bvar_obj)
 #> [2,] 0.25    1
 #> 
 #> phi posterior means
-#>   phi_1 : 0.08 
+#>   phi_1 : 0.04 
 #>   phi_2 : 0.06
 ```
 
@@ -1738,24 +1738,24 @@ Lets compare the results
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #> beta posterior mean
-#>       [,1]  [,2]
-#> [1,]  0.68 -0.17
-#> [2,] -0.06  0.76
+#>      [,1]  [,2]
+#> [1,] 0.72 -0.18
+#> [2,] 0.00  0.76
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
 #> [1,] 2.06 5.99
-#> [2,] 3.04 9.01
+#> [2,] 3.03 9.01
 #--- SS-BVAR-SV-RW ---
 summary(bvar_obj, pars = c("beta", "Psi"))
 #> beta posterior mean
 #>      [,1]  [,2]
-#> [1,] 0.68 -0.17
-#> [2,] 0.03  0.74
+#> [1,] 0.72 -0.17
+#> [2,] 0.06  0.74
 #> 
 #> Psi posterior mean
 #>      [,1] [,2]
-#> [1,] 2.05 5.99
+#> [1,] 2.06 5.99
 #> [2,] 3.01 9.02
 ```
 
@@ -1763,7 +1763,7 @@ Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 ``` r
 par(mfrow=c(2,1))
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-15,20),
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-20,20),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 
 segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
