@@ -76,7 +76,7 @@ $$
 where $y_t$ is a $k$-dimensional vector of endogenous variables (time
 series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic
 (exogenous) variables at time $t$, and the (reduced-form) innovations
-are $u_t \sim \mathcal{N}_k(0,\Sigma_u)$ with independence between time
+are $u_t \sim \textrm{N}_k(0,\Sigma_u)$ with independence between time
 periods. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$
 matrix, and $\Psi$ is a $(k \times q)$ matrix. Now
 
@@ -119,7 +119,7 @@ are needed. First, prior independence between $\beta, \Psi$ and
 $\Sigma_u$ is assumed. Starting with $\beta$, we use the Minnesota prior
 
 $$
-\textrm{vec}(\beta) \sim \mathcal{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]
+\textrm{vec}(\beta) \sim \textrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]
 $$
 
 The prior means (the elements of $\theta_\beta$) are set to
@@ -178,7 +178,7 @@ $i$ with $p$ lags (including the constant and dummy/trend variable if
 applicable). Moving on to $\Psi$, the prior we use is
 
 $$
-\textrm{vec}(\Psi) \sim \mathcal{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
+\textrm{vec}(\Psi) \sim \textrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]
 $$
 
 This is really the core of the steady-state BVAR model. In
@@ -195,7 +195,7 @@ $$
 However, if the user wants, an inverse Wishart prior can be used instead
 
 $$
-\Sigma_u \sim \mathcal{IW}(V_0,m_0)
+\Sigma_u \sim \textrm{IW}(V_0,m_0)
 $$
 
 where $V_0$ is the scale matrix and $m_0\geq k+2$ is the number of
@@ -868,7 +868,7 @@ but now the innovations have the specification
 $$
 \begin{aligned}
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \mathcal{N}(0, \textrm{I}_k)\end{aligned}
+\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k)\end{aligned}
 $$
 
 where $A$ is a lower triangular matrix with ones on the diagonal and
@@ -902,7 +902,7 @@ i.e. each log volatility process is a driftless random walk. Continuing,
 the innovations to the log volatilities are
 
 $$
-\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \mathcal{N}(0, \Phi)
+\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \textrm{N}(0, \Phi)
 $$
 
 where $\Phi$ is *not* diagonal and as such we allow the innovations to
@@ -930,10 +930,10 @@ $$
 \begin{aligned}
 y_t &= \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+u_t \\
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \mathcal{N}(0, \textrm{I}_k) \\
+\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k) \\
 \Lambda_t &= \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
 \ln \lambda_{i,t} &= \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t} \ \ \ \ \ , i=1,\dots,k \\
-\nu_{t} &\sim \mathcal{N}(0, \Phi)
+\nu_{t} &\sim \textrm{N}(0, \Phi)
 \end{aligned}
 $$
 
@@ -1062,11 +1062,11 @@ AR(1) stochastic volatility specification
 
 $$
 \begin{aligned}
-a &\sim \mathcal{N}(\theta_A, \Omega_A) \\
-\gamma_{0} &\sim \mathcal{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
-\gamma_{1} &\sim \mathcal{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
-\ln \lambda_{0} &\sim \mathcal{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
-\Phi &\sim \mathcal{IW}(V_0,m_0)
+a &\sim \textrm{N}(\theta_A, \Omega_A) \\
+\gamma_{0} &\sim \textrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
+\gamma_{1} &\sim \textrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
+\ln \lambda_{0} &\sim \textrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
+\Phi &\sim \textrm{IW}(V_0,m_0)
 \end{aligned}                         
 $$
 
@@ -1128,7 +1128,7 @@ $$
 \nu^{(j)}_{T+h}
 $$
 
-from $\nu_{T+h} \sim \mathcal{N}(0,\Phi^{(j)})$, then compute
+from $\nu_{T+h} \sim \textrm{N}(0,\Phi^{(j)})$, then compute
 
 $$
 \ln \lambda^{(j)}_{i,T+h} = \gamma^{(j)}_{0,i} + \gamma^{(j)}_{1,i} \ln \lambda^{(j)}_{i,T+h-1} + \nu^{(j)}_{i,T+h}
@@ -1146,7 +1146,7 @@ $$
 \epsilon^{(j)}_{T+h}
 $$
 
-from $\epsilon_{T+h} \sim \mathcal{N}(0, \textrm{I}_k)$. Now compute the
+from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the
 shock to the VAR
 
 $$
@@ -1345,10 +1345,10 @@ $$
 \begin{aligned}
 y_t &= \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+u_t \\
 u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \mathcal{N}(0, \textrm{I}_k) \\
+\epsilon_t &\sim \textrm{N}(0, \textrm{I}_k) \\
 \Lambda_t &= \textrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t}) \\
 \ln \lambda_{i,t} &=  \ln \lambda_{i,t-1} + \nu_{i,t} \\
-\nu_{i,t} &\overset{iid}{\sim} \ \mathcal{N}(0, \phi_i), \ i=1,\dots,k \\
+\nu_{i,t} &\overset{iid}{\sim} \ \textrm{N}(0, \phi_i), \ i=1,\dots,k \\
 \end{aligned}
 $$
 
@@ -1461,13 +1461,13 @@ specification
 
 $$
 \begin{aligned}
-a &\sim \mathcal{N}(\theta_A, \Omega_A) \\
-\ln \lambda_{i,0} &\sim \mathcal{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
-\phi_i &\sim \mathcal{IG}(\alpha_{\phi_i},\beta_{\phi_i})
+a &\sim \textrm{N}(\theta_A, \Omega_A) \\
+\ln \lambda_{i,0} &\sim \textrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
+\phi_i &\sim \textrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})
 \end{aligned}                         
 $$
 
-Note here that the inverse gamma $\mathcal{IG}(\alpha, \beta)$
+Note here that the inverse gamma $\textrm{IG}(\alpha, \beta)$
 distribution is the univariate version of the inverse Wishart
 distribution with $\alpha=m/2, \ \beta = V/2$.
 
@@ -1518,7 +1518,7 @@ $$
 \nu^{(j)}_{i,T+h}
 $$
 
-from $\nu_{i,T+h} \sim \mathcal{N}(0,\phi^{(j)}_i)$, then compute
+from $\nu_{i,T+h} \sim \textrm{N}(0,\phi^{(j)}_i)$, then compute
 
 $$
 \ln \lambda^{(j)}_{i,T+h} = \ln \lambda^{(j)}_{i,T+h-1} + \nu^{(j)}_{i,T+h}
@@ -1536,7 +1536,7 @@ $$
 \epsilon^{(j)}_{T+h}
 $$
 
-from $\epsilon_{T+h} \sim \mathcal{N}(0, \textrm{I}_k)$. Now compute the
+from $\epsilon_{T+h} \sim \textrm{N}(0, \textrm{I}_k)$. Now compute the
 shock to the VAR
 
 $$
