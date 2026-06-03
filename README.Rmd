@@ -341,16 +341,16 @@ bvar_obj$predict$H <- 12
 
 Now we can fit the model.
 
-```{r, fig.width=8, fig.height=8, results='hide',eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 2000,
                 chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$, and $\Sigma_u$.
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 summary(bvar_obj)
 ```
 
@@ -358,7 +358,7 @@ We can access the posterior means with `bvar_obj$posterior_means` if needed.
 
 Note that `bvar_obj$fit$stan` is an object of class `stanfit`. So we can do the usual `rstan` inference on our fitted model. Let's look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean to 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to obtain the annualized rate).
 
-```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -368,7 +368,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with `rstan`. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate and compare them with the actual values.
 
-```{r, fig.width=10, fig.height=8,eval=FALSE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 (villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -381,7 +381,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r, fig.width=10, fig.height=8,eval=FALSE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
                  fcst_type = "mean",
@@ -391,7 +391,7 @@ fcst <- forecast(bvar_obj,
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to forecasting, we can choose either the mean or the median (the default is the median), and we can also transform the IRFs for the quarter-on-quarter growth rate variables to the annual/yearly scale.
 
-```{r, fig.width=8, fig.height=6,eval=FALSE}
+```{r, fig.width=8, fig.height=6,eval=TRUE}
 par(mfrow=c(2,2))
 
 irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=4)
@@ -532,22 +532,22 @@ bvar_obj$predict$d_pred <- matrix(rep(1, 40))
 
 Then estimate the model.
 
-```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 2000,
                 chains = 4)
 ```
 
 Let's check posterior means
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 summary(bvar_obj)
 ```
 
 Now let's forecast with a 68\% CI and use the median of the predictive distribution as the point forecast.
 
-```{r, fig.width=10, fig.height=10,eval=FALSE}
+```{r, fig.width=10, fig.height=10,eval=TRUE}
 par(mfrow=c(3,1))
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
@@ -557,7 +557,7 @@ fcst <- forecast(bvar_obj,
 
 We can compute the orthogonalized IRFs
 
-```{r, fig.width=10, fig.height=10,eval=FALSE}
+```{r, fig.width=10, fig.height=10,eval=TRUE}
 irf <- IRF(bvar_obj, H=24, type="median",method="OIRF",ci=0.95)
 ```
 
@@ -569,7 +569,7 @@ We continue with the same data/model as in the previous section. Now suppose we 
 
 First we set up our conditions/scenarios, i.e., which variables, which horizons, and which values the variables will take during those horizons. Our conditions are that $r_t$ will follow a specified path at forecast horizons $h=1,\dots,H$.
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 conditions <- data.frame(
               var     = rep(3,40),
               horizon = rep(1:40),
@@ -580,7 +580,7 @@ conditions <- data.frame(
 
 We then do the conditional forecasting. We again select a 68\% CI and the median of the predictive distribution as the point forecast.
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   ci=0.68,
@@ -589,7 +589,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
 
 Now we plot the conditional forecasts. The scenario is the blue line without intervals (since it is fixed) in the third plot. The red lines are the unconditional forecasts.
 
-```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfcol = c(3, 1))
 cond_fcst_plot <- conditional_forecast_plot(cond_fcst, bvar_obj)
 ```
@@ -832,19 +832,19 @@ bvar_obj$SV_priors <- SV_priors
 
 Like usual we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods. Then we can fit the model
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 5000,
                 chains = 2)
 ```
 
 Let see if we managed to reasonably recover the true parameters. Remember here that since $p=1$ we have $\beta'=\Pi_1$.
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 summary(bvar_obj)
 ```
 
@@ -882,7 +882,7 @@ $$
 At last calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the usual way [see step 4 of Algorithm 4 in Karlsson (2013)].
 
 
-```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), show_all = TRUE)
 ```
@@ -890,7 +890,7 @@ fcst1 <- forecast(bvar_obj, ci = 0.95, fcst_type = "mean", plot_idx = c(1,2), sh
 We can also plot the estimates (posterior means) along with 95\% credible intervals of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue, we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-6,4), plot_idx=1)
@@ -905,7 +905,7 @@ lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd 
 Now let us plot the estimates (posterior means) along with 95\% credible intervals of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process and in blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 sigma <- matrix(NA,N,2)
 for(t in 1:(N)){
   sigma[t,] <- sqrt(diag(Sigma_u[,,t])) #true sigmas from the DGP above
@@ -924,7 +924,7 @@ lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
 For the stochastic volatility steady-state BVAR, we can of course also do impulse response analysis, almost like before. Now however, since our covariance matrix is time-varying $\Sigma_{u,t}$, we must choose which time point $t$ to use. The default setting is the most recent time point.
 
-```{r, fig.width=10, fig.height=6,eval=FALSE}
+```{r, fig.width=10, fig.height=6,eval=TRUE}
 par(mfrow=c(1,2))
 
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
@@ -954,7 +954,7 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 30000,
+                 iter = 20000,
                  warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
@@ -969,7 +969,7 @@ fcst2 <- forecast(bvar_obj2,
 
 Lets compare the results
 
-```{r, fig.width=8, fig.height=16,eval=FALSE}
+```{r, fig.width=8, fig.height=16,eval=TRUE}
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #--- SS-BVAR-SV-AR1 ---
@@ -979,7 +979,7 @@ summary(bvar_obj, pars = c("beta", "Psi"))
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 
-```{r, fig.width=12, fig.height=12, eval=FALSE}
+```{r, fig.width=12, fig.height=12, eval=TRUE}
 compare_fcst <- function(x, fcst1, fcst2, plot_idx=NULL, xlim, ylim, legend=NULL){
   
   Y <- x$data
@@ -1210,19 +1210,19 @@ bvar_obj$SV_priors <- SV_priors
 
 Like usual, we need to supply our forecast horizon $H$, and also the deterministic variables for the future periods, and only then we can fit the model
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
+                iter = 10000,
+                warmup = 5000,
                 chains = 2)
 ```
 
 Let's see if we managed to reasonably recover the true parameters. Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
 
-```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=12, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 summary(bvar_obj)
 ```
 
@@ -1259,7 +1259,7 @@ $$
 At last calculate the forecast $\tilde{y}^{(j)}_{T+h}$ as per the usual way [see step 4 of Algorithm 4 in Karlsson (2013)].
 
 
-```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfrow=c(2,1))
 fcst1 <- forecast(bvar_obj,
                   ci = 0.95,
@@ -1271,7 +1271,7 @@ fcst1 <- forecast(bvar_obj,
 We can also plot the estimates (posterior means) along with 95\% credible intervals of the log volatilities ($\ln \lambda_t$) in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the log volatilities along with a 95\% prediction interval.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow = c(2,1))
 
 stochastic_volatility_forecast(bvar_obj, ci=0.95, vol="log_lambda", ylim=c(-3,5), plot_idx=1)
@@ -1287,7 +1287,7 @@ lines(1:(N-1), log_lambda[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd 
 Now let us plot the estimates (posterior means) along with 95\% credible intervals of the volatilities, defined as reduced form residual/innovation ($u_t$) standard deviations, i.e. the diagonal elements of $\Sigma_{u,t}^{0.5}$, in red. In grey, we plot the true unobserved/latent process. In blue we plot the forecasts of the standard deviations along with a 95\% prediction interval.
 
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 sigma <- matrix(NA,N,2)
 for(t in 1:(N)){
   sigma[t,] <- sqrt(diag(Sigma_u[,,t])) #true sigmas from the DGP above
@@ -1306,7 +1306,7 @@ lines(1:(N-1), sigma[2:N,2], col = adjustcolor("grey", alpha.f = 0.7), lwd = 4)
 
 We can again do some impulse response analysis.
 
-```{r, fig.width=10, fig.height=6,eval=FALSE}
+```{r, fig.width=10, fig.height=6,eval=TRUE}
 par(mfrow=c(1,2))
 
 irf <- IRF(bvar_obj, H=20, response=1, shock=2, method="OIRF", ci=0.68, type="median", t=20)
@@ -1337,7 +1337,7 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 30000,
+                 iter = 20000,
                  warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
@@ -1352,7 +1352,7 @@ fcst2 <- forecast(bvar_obj2,
 
 Lets compare the results
 
-```{r, fig.width=8, fig.height=16,eval=FALSE}
+```{r, fig.width=8, fig.height=16,eval=TRUE}
 #--- SS-BVAR ---
 summary(bvar_obj2, pars = c("beta", "Psi"))
 #--- SS-BVAR-SV-RW ---
@@ -1362,7 +1362,7 @@ summary(bvar_obj, pars = c("beta", "Psi"))
 Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 
-```{r, fig.width=12, fig.height=12,eval=FALSE}
+```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow=c(2,1))
 compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-10,15),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
