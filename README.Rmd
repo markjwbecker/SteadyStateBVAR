@@ -342,16 +342,16 @@ bvar_obj$predict$H <- 12
 
 Now we can fit the model.
 
-```{r, fig.width=8, fig.height=8, results='hide',eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
+                iter = 15000,
                 warmup = 2000,
                 chains = 4)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$, and $\Sigma_u$.
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 summary(bvar_obj)
 ```
 
@@ -359,7 +359,7 @@ We can access the posterior means with `bvar_obj$posterior_means` if needed.
 
 Note that `bvar_obj$fit$stan` is an object of class `stanfit`. So we can do the usual `rstan` inference on our fitted model. Let's look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean to 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to obtain the annualized rate).
 
-```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -369,7 +369,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with `rstan`. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate and compare them with the actual values.
 
-```{r, fig.width=10, fig.height=8,eval=FALSE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 (villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -382,7 +382,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r, fig.width=10, fig.height=8,eval=FALSE}
+```{r, fig.width=10, fig.height=8,eval=TRUE}
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
                  fcst_type = "mean",
@@ -392,7 +392,7 @@ fcst <- forecast(bvar_obj,
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to forecasting, we can choose either the mean or the median (the default is the median), and we can also transform the IRFs for the quarter-on-quarter growth rate variables to the annual/yearly scale.
 
-```{r, fig.width=8, fig.height=6,eval=FALSE}
+```{r, fig.width=8, fig.height=6,eval=TRUE}
 par(mfrow=c(2,2))
 
 irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=4)
@@ -403,7 +403,7 @@ irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,
 
 Now, if desired, the user can estimate the model with a Gibbs sampler instead (see Algorithm 4 of Karlsson [2013]). Gibbs sampling is only implemented for the homoskedastic steady-state BVAR.
 
-```{r, fig.width=8, fig.height=8, eval=FALSE}
+```{r, fig.width=8, fig.height=8, eval = FALSE}
 bvar_obj <- fit(bvar_obj,
                 iter = 20000,
                 warmup = 10000,
@@ -533,22 +533,22 @@ bvar_obj$predict$d_pred <- matrix(rep(1, 40))
 
 Then estimate the model.
 
-```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=FALSE}
+```{r, fig.width=8, fig.height=8, message=FALSE, warning=FALSE, results='hide',eval=TRUE}
 bvar_obj <- fit(bvar_obj,
-                iter = 10000,
+                iter = 15000,
                 warmup = 2000,
                 chains = 4)
 ```
 
 Let's check posterior means
 
-```{r, fig.width=8, fig.height=8,eval=FALSE}
+```{r, fig.width=8, fig.height=8,eval=TRUE}
 summary(bvar_obj)
 ```
 
 Now let's forecast with a 68\% CI and use the median of the predictive distribution as the point forecast.
 
-```{r, fig.width=10, fig.height=10,eval=FALSE}
+```{r, fig.width=10, fig.height=10,eval=TRUE}
 par(mfrow=c(3,1))
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
@@ -558,7 +558,7 @@ fcst <- forecast(bvar_obj,
 
 We can compute the orthogonalized IRFs
 
-```{r, fig.width=10, fig.height=10,eval=FALSE}
+```{r, fig.width=10, fig.height=10,eval=TRUE}
 irf <- IRF(bvar_obj, H=24, type="median",method="OIRF",ci=0.95)
 ```
 
@@ -570,7 +570,7 @@ We continue with the same data/model as in the previous section. Now suppose we 
 
 First we set up our conditions/scenarios, i.e., which variables, which horizons, and which values the variables will take during those horizons. Our conditions are that $r_t$ will follow a specified path at forecast horizons $h=1,\dots,H$.
 
-```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, results='hide', warning=FALSE, message=FALSE,eval=TRUE}
 conditions <- data.frame(
               var     = rep(3,40),
               horizon = rep(1:40),
@@ -581,7 +581,7 @@ conditions <- data.frame(
 
 We then do the conditional forecasting. We again select a 68\% CI and the median of the predictive distribution as the point forecast.
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE,eval=TRUE}
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   ci=0.68,
@@ -590,7 +590,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
 
 Now we plot the conditional forecasts. The scenario is the blue line without intervals (since it is fixed) in the third plot. The red lines are the unconditional forecasts.
 
-```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=FALSE}
+```{r, fig.width=10, fig.height=10, warning=FALSE, message=FALSE,eval=TRUE}
 par(mfcol = c(3, 1))
 cond_fcst_plot <- conditional_forecast_plot(cond_fcst, bvar_obj)
 ```
@@ -838,9 +838,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 400,
-                chains = 2)
+                iter = 15000,
+                warmup = 5000,
+                chains = 4)
 ```
 
 Let see if we managed to reasonably recover the true parameters. Remember here that since $p=1$ we have $\beta'=\Pi_1$.
@@ -955,8 +955,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 2000,
-                 warmup = 1000,
+                 iter = 50000,
+                 warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1216,9 +1216,9 @@ bvar_obj$predict$H <- 50
 bvar_obj$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 400,
-                chains = 2)
+                iter = 15000,
+                warmup = 5000,
+                chains = 4)
 ```
 
 Let's see if we managed to reasonably recover the true parameters. Remember again, that since $p=1$ we have $\beta'=\Pi_1$.
@@ -1338,8 +1338,8 @@ bvar_obj2$predict$H <- 50
 bvar_obj2$predict$d_pred <- cbind(rep(1, 50), 0)
 
 bvar_obj2 <- fit(bvar_obj2,
-                 iter = 2000,
-                 warmup = 1000,
+                 iter = 50000,
+                 warmup = 10000,
                  chains = 1,
                  estimation="gibbs")
 
@@ -1365,7 +1365,7 @@ Similar results for $\beta$ and $\Psi$. So now lets plot the forecasts.
 
 ```{r, fig.width=12, fig.height=12,eval=TRUE}
 par(mfrow=c(2,1))
-compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-20,20),
+compare_fcst(bvar_obj, fcst1, fcst2, plot_idx=c(1), xlim=c(0,351), ylim=c(-5,15),
              legend=c("SS-BVAR-SV-RW", "SS-BVAR", "true steady state", "hold-out data"))
 
 segments(x0 = 1, y0 = 8, x1 = 76, y1 = 8, lty = 1, col = adjustcolor("grey", alpha.f = 0.85), lwd = 5)
