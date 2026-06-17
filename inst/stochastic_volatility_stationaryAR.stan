@@ -62,7 +62,7 @@ parameters {
   matrix[k, q] Psi; //Psi * d_t = steady state
   matrix[N, k] log_lambda; //log volatilities
   vector[k] gamma_0; //log volatility intercept
-  vector<lower=0, upper=1>[k] gamma_1; //log volatility slope
+  vector<lower=-1, upper=1>[k] gamma_1; //log volatility slope
   cov_matrix[k] Phi; //log volatility innovation covariance matrix
   vector[k*(k-1)/2] a; //free parameters in A
 }
