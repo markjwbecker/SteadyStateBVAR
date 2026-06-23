@@ -1,95 +1,103 @@
-conditional_forecast <- function(bvar_obj,
-                                 conditions,
-                                 ci=0.95,
+#' Conditional forecasts from a fitted BVAR model
+#'
+#' Computes and plots conditional forecasts from a fitted \code{bvar} object.
+#' Conditions are imposed on specific variables at specific horizons using the
+#' method of Waggoner and Zha (1999). Both conditional and unconditional
+#' forecasts are plotted for comparison.
+#'
+#' @param bvar_obj A \code{bvar} object that has been passed through
+#'   \code{\link{fit}}.
+#' @param conditions A data frame with three columns: \code{var} (integer index
+#'   of the conditioned variable), \code{horizon} (integer forecast horizon at
+#'   which the condition is imposed), and \code{value} (numeric value the
+#'   variable is conditioned on).
+#' @param ci Numeric. The credible interval width. Default \code{0.95}.
+#' @param fcst_type Character. Whether to use \code{"mean"} or \code{"median"}
+#'   as the point forecast. Default \code{"mean"}.
+#' @param growth_rate_idx Integer vector. Indices of variables to convert to
+#'   annual growth rates. If \code{NULL} (default), all variables are plotted
+#'   in levels.
+#' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
+#'   (default), all variables are plotted.
+#'
+#' @return A list with three matrices: \code{forecast}, \code{lower}, and
+#'   \code{upper}, each of dimension \code{H x k}, as well as \code{cond_draws},
+#'   an array of all posterior conditional forecast draws.
+#' @export
+#'
+#' @references
+#' Waggoner, D. F. and Zha, T. (1999). Conditional forecasts in dynamic
+#' multivariate models. \emph{Review of Economics and Statistics}, 81(4),
+#' 639-651.
+#'
+#' @examples
+#' \dontrun{
+#' # Condition on variable 1 being 2.0 at horizon 4
+#' conditions <- data.frame(var = 1, horizon = 4, value = 2.0)
+#' model <- bvar(data = my_data)
+#' model <- setup(model, p = 2, deterministic = "constant")
+#' model <- priors(model)
+#' model <- fit(model)
+#' conditional_forecast(model, conditions = conditions)
+#' }
+conditional_forecast <- function(bvar_obj, conditions, ci = 0.95,
                                  fcst_type = c("mean", "median"),
-                                 estimation = c("stan", "gibbs")){
-  fcst_fun <- match.arg(fcst_type)
-  estim    <- match.arg(estimation)
-  ################################################################################
+                                 growth_rate_idx = NULL, plot_idx = NULL) {
+  
+  fcst_fun  <- match.arg(fcst_type)
+  posterior <- rstan::extract(bvar_obj$fit$stan)
+  n_draws   <- dim(posterior$beta)[1]
+  
   p      <- bvar_obj$setup$p
   k      <- bvar_obj$setup$k
   Y      <- bvar_obj$setup$Y
   X      <- bvar_obj$setup$X
   N      <- bvar_obj$setup$N
   d_pred <- bvar_obj$predict$d_pred
-  ################################################################################
-  # Step 1: define post-warmup draws ("It-Bu"),
-  #         forecast horizon h
-  #         and the v conditions to be imposed on the series
+  H      <- bvar_obj$predict$H
+  alpha  <- 1 - ci
+  s      <- k * H
   
-  #post warmup draws
-  if (estim == "stan") {
-    posterior <- rstan::extract(bvar_obj$fit$stan)
-    n_draws   <- dim(posterior$beta)[1]
-  } else {
-    n_draws   <- dim(bvar_obj$fit$gibbs$beta_draws)[3]
-  }
-  #forecast horizon
-  H       <- bvar_obj$predict$H
-  #v conditions
-  #these are in 'conditions' argument
-  ################################################################################
-  cond_forecast_array        <- array(NA, dim = c(H, k, n_draws))
-  s                          <- k * H
+  cond_forecast_array <- array(NA, dim = c(H, k, n_draws))
   
   for (n in 1:n_draws) {
     
-    # Step 2: at iteration n, recycle Gibbs draws
-    
-    if (estim == "stan") {
-      beta_n    <- posterior$beta[n,,]
-      Sigma_n   <- posterior$Sigma_u[n,,]
-      Psi_n     <- posterior$Psi[n,,]
-      D_n       <- t(chol(Sigma_n))
-    } else {
-      beta_n    <- bvar_obj$fit$gibbs$beta_draws[,,n]
-      Sigma_n   <- bvar_obj$fit$gibbs$Sigma_u_draws[,,n]
-      Psi_n     <- bvar_obj$fit$gibbs$Psi_draws[,,n]
-      D_n       <- t(chol(Sigma_n))
-    }
-    
-    # Step 3: at iteration n, compute the unconditional forecasts excl. shocks
+    beta_n  <- posterior$beta[n, , ]
+    Sigma_n <- posterior$Sigma_u[n, , ]
+    Psi_n   <- posterior$Psi[n, , ]
+    D_n     <- t(chol(Sigma_n))
     
     Pi_n <- vector("list", p)
     for (i in 1:p) {
-      rows_idx <- ((i-1)*k + 1):(i*k)
+      rows_idx <- ((i - 1) * k + 1):(i * k)
       Pi_n[[i]] <- t(beta_n[rows_idx, ])
     }
     
-    Y_pred_mat <- matrix(NA, nrow=H, ncol=k)
-    
+    Y_pred_mat <- matrix(NA, nrow = H, ncol = k)
     for (h in 1:H) {
       ytilde_t <- d_pred[h, ] %*% t(Psi_n)
       if (h > 1) {
-        for (i in 1:min(h-1, p)) {
-          term     <- (Y_pred_mat[h-i, ] - d_pred[h-i, ] %*% t(Psi_n)) %*% t(Pi_n[[i]])
+        for (i in 1:min(h - 1, p)) {
+          term     <- (Y_pred_mat[h - i, ] - d_pred[h - i, ] %*% t(Psi_n)) %*% t(Pi_n[[i]])
           ytilde_t <- ytilde_t + term
         }
       }
       if (h <= p) {
         for (i in h:p) {
-          term     <- (Y[N+h-i, ] - X[N+h-i, ] %*% t(Psi_n)) %*% t(Pi_n[[i]])
+          term     <- (Y[N + h - i, ] - X[N + h - i, ] %*% t(Psi_n)) %*% t(Pi_n[[i]])
           ytilde_t <- ytilde_t + term
         }
       }
       Y_pred_mat[h, ] <- ytilde_t
     }
-    # Step 4: compute impulse response matrices Phi and Phi_tilde
-    #         NB! my notation: Phi = BEAR notation: Psi
-    #         Since we use Psi already for steady-state parameter matrix
     
-    Pi_n <- t(beta_n)
-    
-    Phi_n <- MTS::VARpsi(Pi_n, lag=H)$psi #my notation: Phi = MTS notation:psi
-    
-    n_Phi <- ncol(Phi_n) / k
-    
+    Pi_n        <- t(beta_n)
+    Phi_n       <- MTS::VARpsi(Pi_n, lag = H)$psi
+    n_Phi       <- ncol(Phi_n) / k
     Phi_n_tilde <- lapply(1:n_Phi, function(i) {
-      cols <- ((i-1)*k + 1):(i*k)
+      cols <- ((i - 1) * k + 1):(i * k)
       Phi_n[, cols] %*% D_n
     })
-    
-    # Step 5: build R (v x s) and r (v x 1)
     
     v <- nrow(conditions)
     R <- matrix(0, v, s)
@@ -99,54 +107,123 @@ conditional_forecast <- function(bvar_obj,
       i     <- conditions$var[row_idx]
       h     <- conditions$horizon[row_idx]
       value <- conditions$value[row_idx]
-      
-      row <- c()
+      row   <- c()
       for (j in 1:h) {
-        row <- c(row, Phi_n_tilde[[h-j+1]][i, ])
+        row <- c(row, Phi_n_tilde[[h - j + 1]][i, ])
       }
       R[row_idx, 1:length(row)] <- row
       r[row_idx] <- value - Y_pred_mat[h, i]
     }
     
-    # Step 6: draw constrained shocks
     svd_R  <- svd(R, nu = v, nv = s)
     U      <- svd_R$u
     D      <- diag(svd_R$d)
-    V_1     <- svd_R$v[, 1:v]
-    V_2     <- svd_R$v[, (v+1):s]
-    
+    V_1    <- svd_R$v[, 1:v]
+    V_2    <- svd_R$v[, (v + 1):s]
     lambda <- rnorm(s - v)
+    eta    <- V_1 %*% solve(D) %*% t(U) %*% r + V_2 %*% lambda
     
-    eta    <- V_1%*%solve(D)%*%t(U)%*%r + V_2%*%lambda
-    
-    # Step 7: calculate the conditional forecasts
-    #         with the unconditional forecast values
-    #         and the constrained shocks
-    
-    eta_mat <- matrix(eta, nrow = k, ncol = H)
+    eta_mat    <- matrix(eta, nrow = k, ncol = H)
     Y_cond_mat <- matrix(NA, nrow = H, ncol = k)
-    
     for (h in 1:H) {
       sum_shocks <- matrix(0, nrow = k, ncol = 1)
       for (j in 1:h) {
-        Psi_tilde_h_minus_j <- Phi_n_tilde[[h - j + 1]]
-        eta_t_plus_j <- eta_mat[, j]
-        sum_shocks <- sum_shocks + Psi_tilde_h_minus_j %*% eta_t_plus_j
+        sum_shocks <- sum_shocks + Phi_n_tilde[[h - j + 1]] %*% eta_mat[, j]
       }
-      y_tilde_t_plus_h <- Y_pred_mat[h, ]
-      Y_cond_mat[h, ] <- y_tilde_t_plus_h + sum_shocks
+      Y_cond_mat[h, ] <- Y_pred_mat[h, ] + sum_shocks
     }
-    cond_forecast_array[,,n] <- Y_cond_mat
-    # Step 8: Repeat the above for all n draws
+    cond_forecast_array[, , n] <- Y_cond_mat
   }
   
-  ################################### END ########################################
+  cond_point <- apply(cond_forecast_array, c(1, 2), fcst_fun)
+  cond_lower <- apply(cond_forecast_array, c(1, 2), quantile, probs = alpha / 2)
+  cond_upper <- apply(cond_forecast_array, c(1, 2), quantile, probs = 1 - alpha / 2)
   
-  alpha <- 1 - ci
+  # --- plotting ---
+  y_pred_uncond   <- posterior$y_pred
+  y_pred_m_uncond <- apply(y_pred_uncond, c(2, 3), fcst_fun)
+  
+  data_Y    <- bvar_obj$data
+  freq      <- frequency(data_Y)
+  m         <- ncol(data_Y)
+  if (is.null(plot_idx)) plot_idx <- 1:m
+  
+  time_hist <- as.numeric(time(data_Y))
+  time_fore <- seq(tail(time_hist, 1) + 1 / freq, by = 1 / freq, length.out = H)
+  
+  forecast_ret <- matrix(NA, H, m)
+  lower_ret    <- matrix(NA, H, m)
+  upper_ret    <- matrix(NA, H, m)
+  colnames(forecast_ret) <- colnames(data_Y)
+  colnames(lower_ret)    <- colnames(data_Y)
+  colnames(upper_ret)    <- colnames(data_Y)
+  
+  for (i in plot_idx) {
+    smply      <- data_Y[, i]
+    fcst_m     <- cond_point[, i]
+    fcst_lower <- cond_lower[, i]
+    fcst_upper <- cond_upper[, i]
+    uncond_m   <- y_pred_m_uncond[, i]
+    
+    if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
+      annual_hist <- rep(NA, length(smply))
+      for (t in freq:length(smply)) {
+        annual_hist[t] <- sum(smply[(t - (freq - 1)):t])
+      }
+      annual_hist        <- ts(annual_hist, start = start(data_Y), frequency = freq)
+      last_obs           <- tail(smply, (freq - 1))
+      all_fcst           <- c(last_obs, fcst_m)
+      all_fcst_uncond    <- c(last_obs, uncond_m)
+      annual_fcst        <- rep(NA, H)
+      annual_fcst_uncond <- rep(NA, H)
+      for (t_h in 1:H) {
+        annual_fcst[t_h]        <- sum(all_fcst[t_h:(t_h + (freq - 1))])
+        annual_fcst_uncond[t_h] <- sum(all_fcst_uncond[t_h:(t_h + (freq - 1))])
+      }
+      all_lower    <- c(last_obs, fcst_lower)
+      all_upper    <- c(last_obs, fcst_upper)
+      annual_lower <- rep(NA, H)
+      annual_upper <- rep(NA, H)
+      for (t_h in 1:H) {
+        annual_lower[t_h] <- sum(all_lower[t_h:(t_h + (freq - 1))])
+        annual_upper[t_h] <- sum(all_upper[t_h:(t_h + (freq - 1))])
+      }
+      forecast_ret[, i] <- annual_fcst
+      lower_ret[, i]    <- annual_lower
+      upper_ret[, i]    <- annual_upper
+      time_full   <- c(tail(time_hist, 1), time_fore)
+      m_full      <- c(tail(annual_hist, 1), annual_fcst)
+      lower_full  <- c(tail(annual_hist, 1), annual_lower)
+      upper_full  <- c(tail(annual_hist, 1), annual_upper)
+      uncond_full <- c(tail(annual_hist, 1), annual_fcst_uncond)
+      plot.ts(annual_hist, main = paste(colnames(data_Y)[i], "(annual)"),
+              xlab = "Time", ylab = NULL, col = "black", lwd = 2,
+              xlim = c(head(time_hist, 1), tail(time_fore, 1)),
+              ylim = range(upper_full, lower_full, annual_hist, uncond_full, na.rm = TRUE))
+    } else {
+      forecast_ret[, i] <- fcst_m
+      lower_ret[, i]    <- fcst_lower
+      upper_ret[, i]    <- fcst_upper
+      time_full   <- c(tail(time_hist, 1), time_fore)
+      m_full      <- c(tail(smply, 1), fcst_m)
+      lower_full  <- c(tail(smply, 1), fcst_lower)
+      upper_full  <- c(tail(smply, 1), fcst_upper)
+      uncond_full <- c(tail(smply, 1), uncond_m)
+      plot.ts(smply, main = colnames(data_Y)[i], xlab = "Time", ylab = NULL,
+              col = "black", lwd = 2,
+              xlim = c(head(time_hist, 1), tail(time_fore, 1)),
+              ylim = range(upper_full, lower_full, smply, uncond_full))
+    }
+    polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
+            col = rgb(0, 0, 1, 0.2), border = NA)
+    lines(time_full, m_full,      col = "blue", lwd = 2)
+    lines(time_full, uncond_full, col = "red",  lwd = 1, lty = 1)
+  }
+  
   return(list(
-    cond_draws = cond_forecast_array,
-    cond_point  = apply(cond_forecast_array, c(1,2), fcst_fun),
-    cond_lower = apply(cond_forecast_array, c(1,2), quantile, probs = alpha/2),
-    cond_upper = apply(cond_forecast_array, c(1,2), quantile, probs = 1 - alpha/2)
+    forecast   = forecast_ret,
+    lower      = lower_ret,
+    upper      = upper_ret,
+    cond_draws = cond_forecast_array
   ))
 }

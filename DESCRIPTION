@@ -1,22 +1,19 @@
 Package: SteadyStateBVAR
-Type: Package
-Title: A package for estimating the Steady-State BVAR(p) model with Stan
+Title: Steady State Bayesian Vector Autoregression
 Version: 0.1.0
-Authors@R: 
-    person(
-      given = "Mark",
-      family = "Becker",
-      email = "mark.jw.becker@gmail.com",
-      role = c("aut", "cre")
-    )
-Description: This package uses Stan to estimate the Steady-State BVAR(p) model, by Mattias Villani.
-License: MIT
+Authors@R:
+    person("Mark", "Becker", , "mark.jw.becker@gmail.com", role = c("aut", "cre"))
+Description: Estimation of Bayesian Vector Autoregression (BVAR) models
+    with steady-state priors using Stan. Supports homoscedastic models
+    and stochastic volatility specifications with Random Walk or AR(1)
+    processes.
+License: MIT + file LICENSE
 Encoding: UTF-8
-LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
 Depends:
-    R (>= 3.5.0),
-    rstan,
-    MASS,
-    LaplacesDemon,
-    MTS
-RoxygenNote: 7.3.2
+    R (>= 3.5.0)
+Imports:
+    MTS,
+    parallel,
+    rstan

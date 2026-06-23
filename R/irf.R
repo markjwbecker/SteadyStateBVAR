@@ -1,21 +1,54 @@
-IRF <- function(x, H = 16, response = NULL, shock = NULL, type = c("median", "mean"), method=c("OIRF", "GIRF"), ci=0.95, estimation=c("stan","gibbs"), t=NULL, growth_rate_idx = NULL) {
+#' Impulse Response Functions for a BVAR model
+#'
+#' Computes and plots impulse response functions (IRFs) from a fitted
+#' \code{bvar} object. Supports both orthogonalised (OIRF) and generalised
+#' (GIRF) impulse responses, with optional conversion to annual growth rates.
+#'
+#' @param x A \code{bvar} object that has been passed through \code{\link{fit}}.
+#' @param H Integer. The forecast horizon for the IRF. Default \code{16}.
+#' @param response Integer. Index of the response variable to plot. If
+#'   \code{NULL} (default), all responses are plotted.
+#' @param shock Integer. Index of the shock variable to plot. If \code{NULL}
+#'   (default), all shocks are plotted.
+#' @param type Character. Whether to use \code{"median"} or \code{"mean"} as
+#'   the point estimate. Default \code{"median"}.
+#' @param method Character. The IRF method: \code{"OIRF"} for orthogonalised
+#'   or \code{"GIRF"} for generalised impulse responses. Default \code{"OIRF"}.
+#' @param ci Numeric. The credible interval width. Default \code{0.95}.
+#' @param t Integer. Time index for the covariance matrix when using stochastic
+#'   volatility models. If \code{NULL} (default), the last time period is used.
+#' @param growth_rate_idx Integer vector. Indices of variables to convert to
+#'   annual growth rates. If \code{NULL} (default), no conversion is applied.
+#'
+#' @return A list with three arrays: the point estimate IRF, \code{lower}, and
+#'   \code{upper} credible bounds, each of dimension \code{k x k x (H+1)}.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' model <- bvar(data = my_data)
+#' model <- setup(model, p = 2, deterministic = "constant")
+#' model <- priors(model)
+#' model <- fit(model)
+#' irf <- IRF(model, H = 16, method = "OIRF")
+#' }
+IRF <- function(x, H = 16, response = NULL, shock = NULL,
+                type = c("median", "mean"), method = c("OIRF", "GIRF"),
+                ci = 0.95, t = NULL, growth_rate_idx = NULL) {
   
-  method     <- match.arg(method)
-  estimation <- match.arg(estimation)
-  type <- match.arg(type)
-  freq <- frequency(x$data)
+  method <- match.arg(method)
+  type   <- match.arg(type)
+  freq   <- frequency(x$data)
   
-  compute_OIRF <- function(A, Sigma, e, N){
-    k <- nrow(Sigma)
-    OIRF_matrix <- matrix(NA, k*k, N+1)
-    count <- 1
-    P <- t(chol(Sigma))
-    
-    for(j in 1:k){
-      for(i in 1:k){
-        for(n in 0:N){
-          OIRF <- A[[n+1]] %*% P %*% e[[j]]   
-          OIRF_matrix[count, n+1] <- OIRF[i]
+  compute_OIRF <- function(A, Sigma, e, N) {
+    k            <- nrow(Sigma)
+    OIRF_matrix  <- matrix(NA, k * k, N + 1)
+    count        <- 1
+    P            <- t(chol(Sigma))
+    for (j in 1:k) {
+      for (i in 1:k) {
+        for (n in 0:N) {
+          OIRF_matrix[count, n + 1] <- (A[[n + 1]] %*% P %*% e[[j]])[i]
         }
         count <- count + 1
       }
@@ -23,16 +56,14 @@ IRF <- function(x, H = 16, response = NULL, shock = NULL, type = c("median", "me
     return(OIRF_matrix)
   }
   
-  compute_GIRF <- function(A, Sigma, e, N){
-    k <- nrow(Sigma)
-    GIRF_matrix <- matrix(NA, k*k, N+1)
-    count <- 1
-    
-    for (j in 1:k){
-      for (i in 1:k){
-        for (n in 0:N){
-          GIRF <- Sigma[j,j]^(-1/2) * A[[n+1]] %*% Sigma %*% e[[j]]
-          GIRF_matrix[count, n+1] <- GIRF[i]
+  compute_GIRF <- function(A, Sigma, e, N) {
+    k           <- nrow(Sigma)
+    GIRF_matrix <- matrix(NA, k * k, N + 1)
+    count       <- 1
+    for (j in 1:k) {
+      for (i in 1:k) {
+        for (n in 0:N) {
+          GIRF_matrix[count, n + 1] <- (Sigma[j, j]^(-1/2) * A[[n + 1]] %*% Sigma %*% e[[j]])[i]
         }
         count <- count + 1
       }
@@ -40,93 +71,64 @@ IRF <- function(x, H = 16, response = NULL, shock = NULL, type = c("median", "me
     return(GIRF_matrix)
   }
   
-  k <- x$setup$k
-  p <- x$setup$p
+  k         <- x$setup$k
+  p         <- x$setup$p
+  var_names <- if (is.null(colnames(x$data))) paste0("y_", 1:k) else colnames(x$data)
   
-  var_names <- colnames(x$data)
+  stan_draws <- rstan::extract(x$fit$stan)
+  N_draws    <- dim(stan_draws$beta)[1]
   
-  if (is.null(var_names)) {
-    var_names <- paste0("y_", 1:k)
-  }
-  
-  if (estimation == "stan"){
-    stan_draws <- rstan::extract(x$fit$stan)
-    N_draws <- dim(stan_draws$beta)[1]
-  } else {
-    gibbs_draws <- x$fit$gibbs
-    N_draws <- dim(gibbs_draws$beta_draws)[3]
-  }
-  
-  irf_array <- array(NA, dim = c(N_draws, k, k, H+1))
+  irf_array <- array(NA, dim = c(N_draws, k, k, H + 1))
   
   e <- vector("list", k)
   for (nE in 1:k) {
-    tmp = rep(0, k)
-    tmp[nE] = 1
-    e[[nE]] <- tmp
+    tmp      <- rep(0, k)
+    tmp[nE]  <- 1
+    e[[nE]]  <- tmp
   }
   
   for (draw in 1:N_draws) {
-    if (estimation == "gibbs") {
-      Phi <- t(gibbs_draws$beta_draws[,,draw])
-      Sigma <- gibbs_draws$Sigma_u_draws[,,draw]
+    Phi <- t(stan_draws$beta[draw, , ])
+    if (!is.null(x$SV)) {
+      if (is.null(t)) t <- dim(stan_draws$Sigma_u)[2]
+      Sigma <- stan_draws$Sigma_u[draw, t, , ]
     } else {
-      Phi <- t(stan_draws$beta[draw,,])
-      if (!is.null(x$SV)) {
-        if (is.null(t)) t = dim(stan_draws$Sigma_u)[2]
-        Sigma <- stan_draws$Sigma_u[draw,t,,]
-      } else {
-        Sigma <- stan_draws$Sigma_u[draw,,]
-      }
+      Sigma <- stan_draws$Sigma_u[draw, , ]
     }
     
-    N <- H
-    Psi <- MTS::VARpsi(Phi, lag=N)$psi
-    kk <- ncol(Psi)/nrow(Psi)
-    
-    A <- vector("list", length=kk)
+    Psi  <- MTS::VARpsi(Phi, lag = H)$psi
+    kk   <- ncol(Psi) / nrow(Psi)
+    A    <- vector("list", length = kk)
     for (nA in 1:kk) {
-      col_idx <- ((nA - 1) * nrow(Psi) + 1):(nA * nrow(Psi))
-      A[[nA]] <- Psi[, col_idx]
+      col_idx  <- ((nA - 1) * nrow(Psi) + 1):(nA * nrow(Psi))
+      A[[nA]]  <- Psi[, col_idx]
     }
     
-    if (method == "OIRF") {
-      tmp_IRF <- compute_OIRF(A,Sigma,e,N)
-    } else {
-      tmp_IRF <- compute_GIRF(A,Sigma,e,N)
-    }
+    tmp_IRF <- if (method == "OIRF") compute_OIRF(A, Sigma, e, H) else compute_GIRF(A, Sigma, e, H)
     
-    for (j in 1:k){
-      for (i in 1:k){
-        row_idx <- (j-1)*k + i
-        irf_array[draw, i, j, ] <- tmp_IRF[row_idx, ]
+    for (j in 1:k) {
+      for (i in 1:k) {
+        irf_array[draw, i, j, ] <- tmp_IRF[(j - 1) * k + i, ]
       }
     }
   }
   
-  alpha <- 1 - ci
-  if (type == "median") {
-    m_irf <- apply(irf_array, c(2,3,4), median)
-  } else {
-    m_irf <- apply(irf_array, c(2,3,4), mean)
-  }
-  lower_irf  <- apply(irf_array, c(2,3,4), quantile, probs = alpha/2)
-  upper_irf  <- apply(irf_array, c(2,3,4), quantile, probs = 1 - alpha/2)
+  alpha     <- 1 - ci
+  m_irf     <- apply(irf_array, c(2, 3, 4), type)
+  lower_irf <- apply(irf_array, c(2, 3, 4), quantile, probs = alpha / 2)
+  upper_irf <- apply(irf_array, c(2, 3, 4), quantile, probs = 1 - alpha / 2)
   
   if (!is.null(growth_rate_idx)) {
-    
     transform_irf <- function(irf_mat, freq) {
-      k  <- dim(irf_mat)[1]
-      k2 <- dim(irf_mat)[2]
-      H1 <- dim(irf_mat)[3]
-      irf_yoy <- array(NA, dim = dim(irf_mat))
-      for (i in 1:k) {
-        for (j in 1:k2) {
+      dims     <- dim(irf_mat)
+      irf_yoy  <- array(NA, dim = dims)
+      for (i in 1:dims[1]) {
+        for (j in 1:dims[2]) {
           if (i %in% growth_rate_idx) {
-            irf <- irf_mat[i, j, ]
-            all_irf <- c(rep(0, freq - 1), irf)
-            tmp <- numeric(H1)
-            for (h in 1:H1) {
+            irf      <- irf_mat[i, j, ]
+            all_irf  <- c(rep(0, freq - 1), irf)
+            tmp      <- numeric(dims[3])
+            for (h in 1:dims[3]) {
               tmp[h] <- sum(all_irf[h:(h + freq - 1)])
             }
             irf_yoy[i, j, ] <- tmp
@@ -137,64 +139,42 @@ IRF <- function(x, H = 16, response = NULL, shock = NULL, type = c("median", "me
       }
       return(irf_yoy)
     }
-    
     m_irf     <- transform_irf(m_irf, freq)
     lower_irf <- transform_irf(lower_irf, freq)
     upper_irf <- transform_irf(upper_irf, freq)
   }
   
-  horizon <- 0:H
-  
-  if (type == "median") {
-    type_label <- "Median"
-  } else {
-    type_label <- "Mean"
-  }
+  horizon    <- 0:H
+  type_label <- if (type == "median") "Median" else "Mean"
   
   plot_single <- function(i, j) {
-    max_abs <- max(abs(c(
-      lower_irf[i, j, ],
-      upper_irf[i, j, ],
-      m_irf[i, j, ]
-    )))
+    max_abs    <- max(abs(c(lower_irf[i, j, ], upper_irf[i, j, ], m_irf[i, j, ])))
     ylim_range <- c(-max_abs, max_abs)
-    
-    if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
-      ylab_label <- paste0("Response: ", var_names[i], " (annual)")
+    ylab_label <- if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
+      paste0("Response: ", var_names[i], " (annual)")
     } else {
-      ylab_label <- paste0("Response: ", var_names[i])
+      paste0("Response: ", var_names[i])
     }
     
-    plot(NA, xlim = c(0, H), ylim = ylim_range, type="n",
-         xlab="Horizon", ylab=ylab_label, font.lab=2)
-    
+    plot(NA, xlim = c(0, H), ylim = ylim_range, type = "n",
+         xlab = "Horizon", ylab = ylab_label, font.lab = 2)
     polygon(c(horizon, rev(horizon)),
             c(upper_irf[i, j, ], rev(lower_irf[i, j, ])),
-            col=rgb(0,0,1,0.2), border=NA)
+            col = rgb(0, 0, 1, 0.2), border = NA)
+    lines(horizon, m_irf[i, j, ], col = "blue", lwd = 2)
+    abline(h = 0, col = "black", lty = 1)
     
-    lines(horizon, m_irf[i, j, ], col="blue", lwd=2)
-    abline(h=0, col="black", lty=1)
-    
-    if (!is.null(x$SV)) {
-      title(main = paste0(
-        "Posterior ", type_label, " ", method, " (", round(ci*100), "% CI)\nt=", t, "\n",
-        "Shock: ", var_names[j]
-      ))
+    main_title <- if (!is.null(x$SV)) {
+      paste0("Posterior ", type_label, " ", method, " (", round(ci * 100), "% CI)\nt=", t, "\nShock: ", var_names[j])
     } else {
-      title(main = paste0(
-        "Posterior ", type_label, " ", method, " (", round(ci*100), "% CI)\n",
-        "\nShock: ", var_names[j]
-      ))
+      paste0("Posterior ", type_label, " ", method, " (", round(ci * 100), "% CI)\n\nShock: ", var_names[j])
     }
+    title(main = main_title)
   }
   
   if (is.null(response) || is.null(shock)) {
     par(mfrow = c(k, k))
-    for (j in 1:k) {
-      for (i in 1:k) {
-        plot_single(i, j)
-      }
-    }
+    for (j in 1:k) for (i in 1:k) plot_single(i, j)
     par(mfrow = c(1, 1))
   } else {
     plot_single(response, shock)

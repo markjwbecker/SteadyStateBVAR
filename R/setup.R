@@ -1,6 +1,32 @@
+#' Set up a BVAR model
+#'
+#' A generic function for setting up a BVAR model. Computes OLS estimates and
+#' prepares all matrices needed for prior specification and estimation.
+#'
+#' @param x A \code{bvar} object created by \code{\link{bvar}}.
+#' @param ... Further arguments passed to methods.
+#'
+#' @return The \code{bvar} object with a \code{setup} list appended.
+#' @export
 setup <- function(x, ...) UseMethod("setup")
 
-setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL) {
+#' @rdname setup
+#'
+#' @param p Integer. The lag order of the VAR.
+#' @param deterministic Character. The deterministic component to include.
+#'   One of \code{"constant"} (default), \code{"constant_and_dummy"}, or
+#'   \code{"constant_and_trend"}.
+#' @param dummy Optional numeric vector or matrix of dummy variables. Only
+#'   used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' model <- bvar(data = my_data)
+#' model <- setup(model, p = 2, deterministic = "constant")
+#' }
+setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL, ...) {
   
   yt <- x$data
   N = nrow(yt)-p

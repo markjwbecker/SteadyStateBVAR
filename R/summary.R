@@ -1,13 +1,31 @@
-summary.bvar <- function(x, pars = NULL) {
-  
-  has_stan  <- !is.null(x$fit$stan)
-  has_gibbs <- !is.null(x$fit$gibbs)
-  
-  if (!has_stan && !has_gibbs)
-    stop("No estimation results found in bvar_object$fit.")
+#' Summarise a fitted BVAR model
+#'
+#' Computes posterior means of the model parameters from a fitted \code{bvar}
+#' object. The parameters returned depend on the model specification:
+#' standard homoscedastic models return \code{beta}, \code{Psi}, and
+#' \code{Sigma}; stochastic volatility models additionally return volatility
+#' parameters.
+#'
+#' @param object A \code{bvar} object that has been passed through \code{\link{fit}}.
+#' @param pars Character vector of parameter names to include. If \code{NULL}
+#'   (default), all parameters are returned.
+#' @param ... Further arguments passed to or from other methods.
+#'
+#' @return An object of class \code{summary.bvar}.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' model <- bvar(data = my_data)
+#' model <- setup(model, p = 2, deterministic = "constant")
+#' model <- priors(model)
+#' model <- fit(model)
+#' summary(model)
+#' }
+summary.bvar <- function(object, pars = NULL, ...) {
   
   to_mat <- function(arr) {
-    m <- apply(arr, c(2,3), mean)
+    m <- apply(arr, c(2, 3), mean)
     matrix(m, nrow = nrow(m), ncol = ncol(m))
   }
   
@@ -18,18 +36,16 @@ summary.bvar <- function(x, pars = NULL) {
     lst[names(lst) %in% pars]
   }
   
-  if (has_stan && is.null(x$SV)) {
-    posterior <- rstan::extract(x$fit$stan)
+  if (is.null(object$SV)) {
+    posterior <- rstan::extract(object$fit$stan)
     summaries$results <- keep_param(list(
-      method = "Stan",
       beta  = round(to_mat(posterior$beta), 2),
       Psi   = round(to_mat(posterior$Psi), 2),
       Sigma = round(to_mat(posterior$Sigma_u), 2)
     ))
-  } else if (has_stan && x$SV && x$SV_type == "AR") {
-    posterior <- rstan::extract(x$fit$stan)
+  } else if (object$SV && object$SV_type == "AR") {
+    posterior <- rstan::extract(object$fit$stan)
     summaries$results <- keep_param(list(
-      method  = "Stan",
       beta    = round(to_mat(posterior$beta), 2),
       Psi     = round(to_mat(posterior$Psi), 2),
       A       = round(to_mat(posterior$A), 2),
@@ -37,40 +53,32 @@ summary.bvar <- function(x, pars = NULL) {
       gamma_1 = round(apply(posterior$gamma_1, 2, mean), 2),
       Phi     = round(to_mat(posterior$Phi), 2)
     ))
-  } else if (has_stan && x$SV && x$SV_type == "RW") {
-    posterior <- rstan::extract(x$fit$stan)
+  } else if (object$SV && object$SV_type == "RW") {
+    posterior <- rstan::extract(object$fit$stan)
     summaries$results <- keep_param(list(
-      method = "Stan",
-      beta   = round(to_mat(posterior$beta), 2),
-      Psi    = round(to_mat(posterior$Psi), 2),
-      A      = round(to_mat(posterior$A), 2),
-      phi    = setNames(
+      beta = round(to_mat(posterior$beta), 2),
+      Psi  = round(to_mat(posterior$Psi), 2),
+      A    = round(to_mat(posterior$A), 2),
+      phi  = setNames(
         round(apply(posterior$phi, 2, mean), 2),
         paste0("phi_", 1:ncol(posterior$phi))
       )
     ))
   }
   
-  if (has_gibbs) {
-    fit <- x$fit$gibbs
-    summaries$results <- keep_param(list(
-      method = "Gibbs",
-      beta  = round(fit$beta_posterior_mean, 2),
-      Psi   = round(fit$Psi_posterior_mean, 2),
-      Sigma = round(fit$Sigma_u_posterior_mean, 2)
-    ))
-  }
-  
-  out <- list(summaries = summaries, SV = x$SV, SV_type = x$SV_type)
+  out <- list(summaries = summaries, SV = object$SV, SV_type = object$SV_type)
   class(out) <- "summary.bvar"
   return(out)
 }
 
-print.summary.bvar <- function(x) {
+#' @rdname summary.bvar
+#' @param x A \code{summary.bvar} object returned by \code{summary.bvar}.
+#' @export
+print.summary.bvar <- function(x, ...) {
   
   s <- x$summaries$results
   
-  for (param_name in setdiff(names(s), c("method", "phi", "gamma_0", "gamma_1"))) {
+  for (param_name in setdiff(names(s), c("phi", "gamma_0", "gamma_1"))) {
     cat(param_name, "posterior mean\n")
     print(s[[param_name]])
     cat("\n")
