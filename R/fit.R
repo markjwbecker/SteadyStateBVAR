@@ -1,8 +1,8 @@
 #' Estimate a BVAR model using Stan
 #'
 #' Runs Stan to estimate the BVAR model using the data, setup, and priors
-#' stored in the \code{bvar} object. Supports the standard homoscedastic steady state BVAR, but also stochastic
-#' volatility specifications, either Random Walk or AR(1).
+#' stored in the \code{bvar} object. Supports the standard homoscedastic steady state BVAR,
+#' as well as stochastic volatility specifications (Random Walk or AR(1)).
 #'
 #' @param x A \code{bvar} object that has been passed through \code{\link{setup}}
 #'   and \code{\link{priors}}.
@@ -10,9 +10,15 @@
 #' @param warmup Integer. Number of warmup (burn-in) iterations per chain.
 #'   Default \code{2500}.
 #' @param chains Integer. Number of MCMC chains to run. Default \code{2}.
+#' @param cores Integer. Number of CPU cores to use for Stan sampling.
+#'   Default is \code{min(chains, parallel::detectCores())}.
+#' @param auto_write Logical. Whether to enable rstan auto-write behavior.
+#'   Passed to \code{rstan::rstan_options(auto_write = ...)}.
+#'   Default is \code{TRUE}.
 #'
-#' @return The \code{bvar} object with \code{fit$stan} and \code{posterior_means}
-#'   appended.
+#' @return The \code{bvar} object with \code{fit$stan} and
+#'   \code{posterior_means} appended.
+#'
 #' @export
 #'
 #' @examples
@@ -22,7 +28,12 @@
 #' model <- priors(model)
 #' model <- fit(model, iter = 5000, warmup = 2500, chains = 2)
 #' }
-fit <- function(x, iter = 5000, warmup = 2500, chains = 2) {
+fit <- function(x,
+                iter = 5000,
+                warmup = 2500,
+                chains = 2,
+                cores = min(chains, parallel::detectCores()),
+                auto_write = TRUE) {
   
   Jeffrey <- x$priors$Jeffrey
   
@@ -40,51 +51,72 @@ fit <- function(x, iter = 5000, warmup = 2500, chains = 2) {
   
   if (isTRUE(x$SV)) {
     if (x$SV_type == "RW") {
-      stan_file <- system.file("stochastic_volatility_RW.stan", package = "SteadyStateBVAR")
+      stan_file <- system.file(
+        "stochastic_volatility_RW.stan",
+        package = "SteadyStateBVAR"
+      )
     } else if (x$SV_type == "AR") {
-      stan_file <- system.file("stochastic_volatility_stationaryAR.stan", package = "SteadyStateBVAR")
+      stan_file <- system.file(
+        "stochastic_volatility_stationaryAR.stan",
+        package = "SteadyStateBVAR"
+      )
     } else {
       stop("Please specify a valid x$SV_type: either 'RW' or 'AR'.")
     }
+    
     stan_data <- c(x$SV_priors, stan_data)
+    
     k <- x$setup$k
     if (k == 2) {
       stan_data$theta_A <- as.array(x$SV_priors$theta_A[1])
     }
   }
   
-  rstan::rstan_options(auto_write = TRUE)
-  options(mc.cores = parallel::detectCores())
+  if (!nzchar(stan_file)) {
+    stop("Stan model file not found in installed package.")
+  }
+  
+  # --- Respect R landscape (temporary change + restore) ---
+  old_mc_cores <- getOption("mc.cores")
+  options(mc.cores = cores)
+  on.exit(options(mc.cores = old_mc_cores), add = TRUE)
+  
+  if (isTRUE(auto_write)) {
+    rstan::rstan_options(auto_write = TRUE)
+  }
   
   x$fit$stan <- rstan::stan(
-    file    = stan_file,
-    data    = stan_data,
-    iter    = iter,
-    warmup  = warmup,
-    chains  = chains,
+    file   = stan_file,
+    data   = stan_data,
+    iter   = iter,
+    warmup = warmup,
+    chains = chains,
     verbose = FALSE
   )
   
   posterior <- rstan::extract(x$fit$stan)
   
   if (!isTRUE(x$SV)) {
-    x$posterior_means$beta    <- apply(posterior$beta,    c(2, 3), mean)
-    x$posterior_means$Psi     <- apply(posterior$Psi,     c(2, 3), mean)
+    
+    x$posterior_means$beta    <- apply(posterior$beta, c(2, 3), mean)
+    x$posterior_means$Psi     <- apply(posterior$Psi, c(2, 3), mean)
     x$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3), mean)
     
   } else if (isTRUE(x$SV) && x$SV_type == "AR") {
-    x$posterior_means$beta    <- apply(posterior$beta,    c(2, 3), mean)
-    x$posterior_means$Psi     <- apply(posterior$Psi,     c(2, 3), mean)
-    x$posterior_means$A       <- apply(posterior$A,       c(2, 3), mean)
+    
+    x$posterior_means$beta    <- apply(posterior$beta, c(2, 3), mean)
+    x$posterior_means$Psi     <- apply(posterior$Psi, c(2, 3), mean)
+    x$posterior_means$A       <- apply(posterior$A, c(2, 3), mean)
     x$posterior_means$gamma_0 <- apply(posterior$gamma_0, 2, mean)
     x$posterior_means$gamma_1 <- apply(posterior$gamma_1, 2, mean)
-    x$posterior_means$Phi     <- apply(posterior$Phi,     c(2, 3), mean)
+    x$posterior_means$Phi     <- apply(posterior$Phi, c(2, 3), mean)
     
   } else if (isTRUE(x$SV) && x$SV_type == "RW") {
+    
     x$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
-    x$posterior_means$Psi  <- apply(posterior$Psi,  c(2, 3), mean)
-    x$posterior_means$A    <- apply(posterior$A,    c(2, 3), mean)
-    x$posterior_means$phi  <- apply(posterior$phi,  2, mean)
+    x$posterior_means$Psi  <- apply(posterior$Psi, c(2, 3), mean)
+    x$posterior_means$A    <- apply(posterior$A, c(2, 3), mean)
+    x$posterior_means$phi  <- apply(posterior$phi, 2, mean)
   }
   
   return(x)
