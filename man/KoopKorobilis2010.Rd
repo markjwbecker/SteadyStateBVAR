@@ -13,7 +13,7 @@ series methods for empirical macroeconomics. \emph{Foundations and
 Trends in Econometrics}, 3(4), 267-358.
 }
 \usage{
-data(KoopKorobilis2010)
+KoopKorobilis2010
 }
 \description{
 A macroeconomic dataset used in Koop and Korobilis (2010) for estimating

@@ -4,7 +4,14 @@
 \alias{fit}
 \title{Estimate a BVAR model using Stan}
 \usage{
-fit(x, iter = 5000, warmup = 2500, chains = 2)
+fit(
+  x,
+  iter = 5000,
+  warmup = 2500,
+  chains = 2,
+  cores = min(chains, parallel::detectCores()),
+  auto_write = TRUE
+)
 }
 \arguments{
 \item{x}{A \code{bvar} object that has been passed through \code{\link{setup}}
@@ -16,15 +23,22 @@ and \code{\link{priors}}.}
 Default \code{2500}.}
 
 \item{chains}{Integer. Number of MCMC chains to run. Default \code{2}.}
+
+\item{cores}{Integer. Number of CPU cores to use for Stan sampling.
+Default is \code{min(chains, parallel::detectCores())}.}
+
+\item{auto_write}{Logical. Whether to enable rstan auto-write behavior.
+Passed to \code{rstan::rstan_options(auto_write = ...)}.
+Default is \code{TRUE}.}
 }
 \value{
-The \code{bvar} object with \code{fit$stan} and \code{posterior_means}
-appended.
+The \code{bvar} object with \code{fit$stan} and
+\code{posterior_means} appended.
 }
 \description{
 Runs Stan to estimate the BVAR model using the data, setup, and priors
-stored in the \code{bvar} object. Supports the standard homoscedastic steady state BVAR, but also stochastic
-volatility specifications, either Random Walk or AR(1).
+stored in the \code{bvar} object. Supports the standard homoscedastic steady state BVAR,
+as well as stochastic volatility specifications (Random Walk or AR(1)).
 }
 \examples{
 \dontrun{

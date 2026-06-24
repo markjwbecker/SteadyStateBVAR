@@ -1,19 +1,21 @@
 Package: SteadyStateBVAR
-Title: Steady State Bayesian Vector Autoregression
-Version: 0.1.0
+Title: Estimation of the steady-state Bayesian Vector Autoregression model using Hamiltonian Monte Carlo
+Version: 1.0.0
 Authors@R:
     person("Mark", "Becker", , "mark.jw.becker@gmail.com", role = c("aut", "cre"))
-Description: Estimation of Bayesian Vector Autoregression (BVAR) models
-    with steady-state priors using Stan. Supports homoscedastic models
-    and stochastic volatility specifications with Random Walk or AR(1)
-    processes.
-License: MIT + file LICENSE
+Description: Estimation of Bayesian Vector Autoregression ('BVAR') models
+    with steady-state priors using 'Stan'.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0
 Depends:
     R (>= 3.5.0)
 Imports:
-    MTS,
-    parallel,
-    rstan
+    MTS (>= 1.2.1),
+    rstan (>= 2.32.7)
+LazyData: true
+URL: https://github.com/markjwbecker/SteadyStateBVAR
+License: MIT + file LICENSE
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
