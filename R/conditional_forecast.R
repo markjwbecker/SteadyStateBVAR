@@ -44,6 +44,10 @@ conditional_forecast <- function(bvar_obj, conditions, ci = 0.95,
                                  fcst_type = c("mean", "median"),
                                  growth_rate_idx = NULL, plot_idx = NULL) {
   
+  if (isTRUE(bvar_obj$priors$SV)) {
+    stop("conditional_forecast is only supported for the homoscedastic steady-state BVAR (SV = FALSE).")
+  }
+  
   fcst_fun  <- match.arg(fcst_type)
   posterior <- rstan::extract(bvar_obj$fit$stan)
   n_draws   <- dim(posterior$beta)[1]
@@ -218,6 +222,11 @@ conditional_forecast <- function(bvar_obj, conditions, ci = 0.95,
             col = rgb(0, 0, 1, 0.2), border = NA)
     lines(time_full, m_full,      col = "blue", lwd = 2)
     lines(time_full, uncond_full, col = "red",  lwd = 1, lty = 1)
+    legend("bottomleft",
+           legend = c("Conditional forecast", "Unconditional forecast"),
+           col    = c("blue", "red"),
+           lwd    = 2,
+           bty    = "n")
   }
   
   return(list(

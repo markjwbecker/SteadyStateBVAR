@@ -4,19 +4,11 @@
 \alias{bvar}
 \title{Create a BVAR model object}
 \usage{
-bvar(data = NULL, setup = NULL, priors = NULL, fit = NULL, predict = list())
+bvar(data)
 }
 \arguments{
-\item{data}{A numeric matrix of time series data where each column is a
+\item{data}{A numeric matrix or time series of data where each column is a
 variable and each row is a time period.}
-
-\item{setup}{Output from \code{\link{setup}}. Default \code{NULL}.}
-
-\item{priors}{Output from \code{\link{priors}}. Default \code{NULL}.}
-
-\item{fit}{Output from \code{\link{fit}}. Default \code{NULL}.}
-
-\item{predict}{A list of prediction results. Default empty list.}
 }
 \value{
 An object of class \code{bvar}.
@@ -24,11 +16,11 @@ An object of class \code{bvar}.
 \description{
 Initialises a Bayesian Vector Autoregression (BVAR) model object. This is
 the starting point for all models in \code{SteadyStateBVAR}. After creation,
-pass the object to \code{\link{setup}}, \code{\link{priors}}, and
-\code{\link{fit}} sequentially to build and estimate the model.
+pass the object sequentially to \code{\link{setup}}, \code{\link{priors}},
+and \code{\link{fit}} to build and estimate the model.
 }
 \examples{
-\dontrun{
-model <- bvar(data = my_data)
-}
+yt <- matrix(rnorm(40, 0, 1), 20, 2)
+
+bvar_obj <- bvar(data = yt)
 }

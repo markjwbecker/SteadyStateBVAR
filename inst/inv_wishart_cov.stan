@@ -27,8 +27,8 @@ functions {
 }
 
 data {
-  int<lower=2> N; //number of observations
   int<lower=1> p; //lag order
+  int<lower=p+1> N; //number of observations
   int<lower=2> k; //number of endogenous variables
   int<lower=1> q; //number of deterministic variables
   matrix[N, k] Y; //endogenous variables (y_t)
@@ -39,9 +39,9 @@ data {
   matrix[k*p*k, k*p*k] Omega_beta; //vec_beta prior covariance matrix
   vector[k*q] theta_Psi; //vec_Psi prior mean
   matrix[k*q, k*q] Omega_Psi; //vec_Psi prior covariance matrix
-  int<lower=0> m_0; // df
+  int<lower=k+2> m_0; // df
   matrix[k, k] V_0; // prior scale matrix
-  int<lower=0> H; // Forecast horizon
+  int<lower=1> H; // Forecast horizon
   matrix[H, q] d_pred; //future exogenous/deterministic variables
 }
 

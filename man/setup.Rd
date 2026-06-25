@@ -37,8 +37,9 @@ A generic function for setting up a BVAR model. Computes OLS estimates and
 prepares all matrices needed for prior specification and estimation.
 }
 \examples{
-\dontrun{
-model <- bvar(data = my_data)
-model <- setup(model, p = 2, deterministic = "constant")
-}
+yt <- matrix(rnorm(40, 0, 1), 20, 2)
+
+bvar_obj <- bvar(data = yt)
+
+bvar_obj <- setup(bvar_obj, p = 1)
 }

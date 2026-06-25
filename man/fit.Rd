@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit.R
 \name{fit}
 \alias{fit}
-\title{Estimate a BVAR model using Stan}
+\title{Estimate a Bayesian VAR model using Stan}
 \usage{
 fit(
   x,
@@ -14,37 +14,53 @@ fit(
 )
 }
 \arguments{
-\item{x}{A \code{bvar} object that has been passed through \code{\link{setup}}
-and \code{\link{priors}}.}
+\item{x}{A \code{bvar} object that has been passed through \code{\link{setup}} and
+\code{\link{priors}}.}
 
 \item{iter}{Integer. Total number of MCMC iterations per chain. Default \code{5000}.}
 
-\item{warmup}{Integer. Number of warmup (burn-in) iterations per chain.
-Default \code{2500}.}
+\item{warmup}{Integer. Number of warmup (burn-in) iterations per chain. Default \code{2500}.}
 
-\item{chains}{Integer. Number of MCMC chains to run. Default \code{2}.}
+\item{chains}{Integer. Number of MCMC chains. Default \code{2}.}
 
-\item{cores}{Integer. Number of CPU cores to use for Stan sampling.
-Default is \code{min(chains, parallel::detectCores())}.}
+\item{cores}{Integer. Number of CPU cores used for sampling.}
 
-\item{auto_write}{Logical. Whether to enable rstan auto-write behavior.
-Passed to \code{rstan::rstan_options(auto_write = ...)}.
-Default is \code{TRUE}.}
+\item{auto_write}{Logical. Whether to enable \code{rstan} auto-write behavior.}
 }
 \value{
-The \code{bvar} object with \code{fit$stan} and
-\code{posterior_means} appended.
+A \code{bvar} object containing:
+\item{fit$stan}{Stan fit object}
+\item{posterior_means}{Posterior means of key parameters}
 }
 \description{
-Runs Stan to estimate the BVAR model using the data, setup, and priors
-stored in the \code{bvar} object. Supports the standard homoscedastic steady state BVAR,
-as well as stochastic volatility specifications (Random Walk or AR(1)).
+Runs Stan to estimate the BVAR model using data, setup, and priors stored
+in a \code{bvar} object. Supports standard homoscedastic steady-state BVAR
+as well as stochastic volatility specifications (RW or AR(1)).
+}
+\details{
+Forecast inputs must be provided in \code{x$predict$H} and
+\code{x$predict$d_pred} before calling \code{fit()}.
 }
 \examples{
 \dontrun{
-model <- bvar(data = my_data)
-model <- setup(model, p = 2, deterministic = "constant")
-model <- priors(model)
-model <- fit(model, iter = 5000, warmup = 2500, chains = 2)
+yt <- matrix(rnorm(40, 0, 1), 20, 2)
+
+bvar_obj <- bvar(data = yt)
+
+bvar_obj <- setup(bvar_obj, p=1)
+
+bvar_obj <- priors(bvar_obj,
+                   theta_Psi = rep(0, 2),
+                   Omega_Psi = diag(0.1, 2, 2))
+
+bvar_obj$predict$H <- 1
+bvar_obj$predict$d_pred <- matrix(1)
+
+bvar_obj <- fit(bvar_obj,
+                iter = 200,
+                warmup = 50,
+                chains = 1,
+                cores = 1,
+                auto_write = FALSE)
 }
 }

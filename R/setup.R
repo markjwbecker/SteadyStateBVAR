@@ -22,17 +22,44 @@ setup <- function(x, ...) UseMethod("setup")
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' model <- bvar(data = my_data)
-#' model <- setup(model, p = 2, deterministic = "constant")
-#' }
+#' yt <- matrix(rnorm(40, 0, 1), 20, 2)
+#' 
+#' bvar_obj <- bvar(data = yt)
+#' 
+#' bvar_obj <- setup(bvar_obj, p = 1)
 setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL, ...) {
   
+  if (!inherits(x, "bvar")) {
+    stop("x must be a 'bvar' object")
+  }
+  
+  if (is.null(x$data)) {
+    stop("x must have data. Create bvar object with bvar(data = ...)")
+  }
+  
+  if (!is.numeric(p) || p <= 0 || p != floor(p)) {
+    stop("p must be a positive integer")
+  }
+  
   yt <- x$data
-  N = nrow(yt)-p
-  k = ncol(yt)
+  
+  if (p >= nrow(yt)) {
+    stop("p must be less than the number of observations")
+  }
   
   deterministic <- match.arg(deterministic)
+  
+  if (deterministic == "constant_and_dummy" && is.null(dummy)) {
+    stop("dummy must be provided when deterministic = 'constant_and_dummy'")
+  }
+  
+  if (!is.null(dummy) && length(dummy) != nrow(yt)) {
+    stop("dummy must have length equal to number of observations")
+  }
+  
+  # Rest of function...
+  N = nrow(yt) - p
+  k = ncol(yt)
   
   if (deterministic == "constant") {
     dt <- cbind(rep(1, nrow(yt)))
@@ -48,30 +75,34 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "
   
   Y <- yt[-c(1:p), ]
   W <- embed(yt, dimension = p+1)[, -(1:k)]
-  X <- dt[-c(1:p), ,drop=F]
+  X <- dt[-c(1:p), , drop=F]
   Q <- embed(dt, dimension = p+1)[, -(1:q), drop=F]
   
-  Z <- cbind(W,X)
-  beta_hat = solve(crossprod(Z),crossprod(Z,Y))
-  U = Y-Z%*%beta_hat
-  Sigma_u_OLS <- crossprod(U)/(N-k*p-q)
+  Z <- cbind(W, X)
+  beta_hat = solve(crossprod(Z), crossprod(Z, Y))
+  U = Y - Z %*% beta_hat
+  Sigma_u_OLS <- crossprod(U) / (N - k*p - q)
   
   if (q == 1) {
-    C_hat <- beta_hat[(k*p+1):(k*p+q),]
+    C_hat <- beta_hat[(k*p+1):(k*p+q), ]
   } else {
-    C_hat <- t(beta_hat[(k*p+1):(k*p+q),])
+    C_hat <- t(beta_hat[(k*p+1):(k*p+q), ])
   }
+  
   A <- vector("list", p)
   for (i in 1:p) {
     rows_idx <- ((i - 1) * k + 1):(i * k)
     A[[i]] <- matrix(t(beta_hat[rows_idx, ]), nrow = k, ncol = k)
   }
+  
   A_L <- diag(k)
   for (i in 1:p) {
     A_L <- A_L - A[[i]]
   }
+  
   Psi_OLS <- solve(A_L, C_hat)
-  beta_OLS = beta_hat[1:(k*p),]
+  beta_OLS = beta_hat[1:(k*p), ]
+  
   x$setup <- list(N=N,
                   k=k,
                   p=p,

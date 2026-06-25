@@ -21,9 +21,21 @@
 #' @export
 #'
 #' @examples
-#' # A researcher believes inflation is between 1% and 3% with 95% probability
+#' # steady-state annualized inflation is between 1% and 3% with 95% probability
 #' ppi(l = 1, u = 3, interval = 0.95)
 ppi <- function(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4) {
+  
+  if (l >= u) {
+    stop("lower bound must be less than upper bound")
+  }
+  
+  if (interval <= 0 || interval >= 1) {
+    stop("interval must be between 0 and 1")
+  }
+  
+  if (annualized_growthrate && freq <= 0) {
+    stop("freq must be positive")
+  }
   
   alpha <- 1 - interval
   z     <- qnorm(1 - alpha / 2)

@@ -33,6 +33,6 @@ implied normal prior parameters. Useful for specifying informative priors
 on the steady-state (Psi) parameters in an intuitive way.
 }
 \examples{
-# A researcher believes inflation is between 1\% and 3\% with 95\% probability
+# steady-state annualized inflation is between 1\% and 3\% with 95\% probability
 ppi(l = 1, u = 3, interval = 0.95)
 }

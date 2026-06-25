@@ -24,14 +24,20 @@ This enforces restrictions through the prior rather than hard-coding them
 in the likelihood, which is compatible with the Stan estimation.
 }
 \examples{
-\dontrun{
-model <- bvar(data = my_data)
-model <- setup(model, p = 2, deterministic = "constant")
-model <- priors(model)
+yt <- matrix(rnorm(40, 0, 1), 20, 2)
 
-# Restrict the second lag of variable 1 on variable 2 to zero
-R <- matrix(1, nrow = k * p, ncol = k)
-R[2, 1] <- 0
-model <- restrict_beta(model, restriction_matrix = R)
-}
+bvar_obj <- bvar(data = yt)
+
+bvar_obj <- setup(bvar_obj, p=1)
+
+bvar_obj <- priors(bvar_obj,
+                   theta_Psi = rep(0, 2),
+                   Omega_Psi = diag(0.1, 2, 2))
+                   
+p <- bvar_obj$setup$p
+k <- bvar_obj$setup$k
+restriction_matrix <- matrix(1, k*p, k)
+restriction_matrix[1, 1] <- 0
+
+bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 }

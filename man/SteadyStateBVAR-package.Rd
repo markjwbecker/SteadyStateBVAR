@@ -4,7 +4,7 @@
 \name{SteadyStateBVAR-package}
 \alias{SteadyStateBVAR}
 \alias{SteadyStateBVAR-package}
-\title{SteadyStateBVAR: Estimation of the steady-state Bayesian Vector Autoregression model}
+\title{SteadyStateBVAR: Estimation of the steady-state Bayesian Vector Autoregression model using Hamiltonian Monte Carlo}
 \description{
 Estimation of Bayesian Vector Autoregression ('BVAR') models with steady-state priors using 'Stan'.
 }

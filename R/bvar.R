@@ -2,31 +2,31 @@
 #'
 #' Initialises a Bayesian Vector Autoregression (BVAR) model object. This is
 #' the starting point for all models in \code{SteadyStateBVAR}. After creation,
-#' pass the object to \code{\link{setup}}, \code{\link{priors}}, and
-#' \code{\link{fit}} sequentially to build and estimate the model.
+#' pass the object sequentially to \code{\link{setup}}, \code{\link{priors}}, 
+#' and \code{\link{fit}} to build and estimate the model.
 #'
-#' @param data A numeric matrix of time series data where each column is a
+#' @param data A numeric matrix or time series of data where each column is a
 #'   variable and each row is a time period.
-#' @param setup Output from \code{\link{setup}}. Default \code{NULL}.
-#' @param priors Output from \code{\link{priors}}. Default \code{NULL}.
-#' @param fit Output from \code{\link{fit}}. Default \code{NULL}.
-#' @param predict A list of prediction results. Default empty list.
 #'
 #' @return An object of class \code{bvar}.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' model <- bvar(data = my_data)
-#' }
-bvar <- function(data = NULL, setup = NULL, priors = NULL, fit = NULL, predict = list()) {
+#' yt <- matrix(rnorm(40, 0, 1), 20, 2)
+#' 
+#' bvar_obj <- bvar(data = yt)
+bvar <- function(data) {
+  
+  if (!is.matrix(data) && !is.ts(data)) {
+    stop("data must be a matrix or time series object")
+  }
   
   obj <- list(
     data    = data,
-    setup   = setup,
-    priors  = priors,
-    fit     = fit,
-    predict = predict
+    setup   = NULL,
+    priors  = NULL,
+    fit     = NULL,
+    predict = list()
   )
   
   class(obj) <- "bvar"

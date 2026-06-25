@@ -1,86 +1,64 @@
-test_that("restrict_beta validates dimensions", {
-  # Create a minimal bvar object with setup info
-  model <- bvar()
-  model$setup <- list(k = 2, p = 2)
-  model$priors <- list(Omega_beta = diag(8))
-  
-  # Correct dimensions: k*p x k = 4 x 2
-  R_correct <- matrix(1, nrow = 4, ncol = 2)
-  result <- restrict_beta(model, R_correct)
-  expect_s3_class(result, "bvar")
-})
-
-test_that("restrict_beta rejects wrong dimensions", {
-  model <- bvar()
-  model$setup <- list(k = 2, p = 2)
-  model$priors <- list(Omega_beta = diag(8))
-  
-  # Wrong dimensions
-  R_wrong <- matrix(1, nrow = 3, ncol = 2)
-  expect_error(restrict_beta(model, R_wrong), 
-               "restriction_matrix must have dimension")
-})
-
 test_that("restrict_beta stores restriction matrix", {
-  model <- bvar()
-  model$setup <- list(k = 2, p = 2)
-  model$priors <- list(Omega_beta = diag(8))
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data)
+  model <- setup(model, p = 2)
+  model <- priors(model)
   
-  R <- matrix(c(1, 1, 0, 1, 1, 1, 1, 1), nrow = 4, ncol = 2)
+  k <- model$setup$k
+  p <- model$setup$p
+  R <- matrix(1, nrow = k * p, ncol = k)
+  R[2, 1] <- 0
+  
   result <- restrict_beta(model, R)
+  
   expect_equal(result$setup$restriction_matrix, R)
 })
 
-test_that("restrict_beta updates Omega_beta diagonal", {
-  model <- bvar()
-  model$setup <- list(k = 2, p = 2)
-  omega_orig <- diag(rep(1, 8))
-  model$priors <- list(Omega_beta = omega_orig)
+test_that("restrict_beta updates Omega_beta for zero restrictions", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data)
+  model <- setup(model, p = 2)
+  model <- priors(model)
   
-  R <- matrix(1, nrow = 4, ncol = 2)
-  R[1, 1] <- 0  # Restrict first element
+  k <- model$setup$k
+  p <- model$setup$p
+  R <- matrix(1, nrow = k * p, ncol = k)
+  R[2, 1] <- 0
   
+  zero_idx <- which(c(R) == 0)
   result <- restrict_beta(model, R)
   
-  # Check that restricted element is very small
-  expect_lt(diag(result$priors$Omega_beta)[1], 0.0001)
-  # Check other elements unchanged
-  expect_equal(diag(result$priors$Omega_beta)[2], 1)
+  expect_equal(diag(result$priors$Omega_beta)[zero_idx], 1e-7)
 })
 
-test_that("restrict_beta handles missing Omega_beta", {
-  model <- bvar()
-  model$setup <- list(k = 2, p = 2)
-  model$priors <- list()  # No Omega_beta
+test_that("restrict_beta checks matrix dimensions", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data)
+  model <- setup(model, p = 2)
+  model <- priors(model)
   
-  R <- matrix(1, nrow = 4, ncol = 2)
-  expect_warning(restrict_beta(model, R), 
-                 "Omega_beta not found")
+  k <- model$setup$k
+  p <- model$setup$p
+  R_bad <- matrix(1, nrow = k * p - 1, ncol = k)
+  
+  expect_error(
+    restrict_beta(model, R_bad),
+    "restriction_matrix must have dimension"
+  )
 })
 
-test_that("restrict_beta multiple restrictions", {
-  model <- bvar()
-  model$setup <- list(k = 2, p = 2)
-  model$priors <- list(Omega_beta = diag(8))
+test_that("restrict_beta warns if Omega_beta is missing", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data)
+  model <- setup(model, p = 2)
+  model$priors <- list()
   
-  R <- matrix(1, nrow = 4, ncol = 2)
-  R[c(1, 3), 1] <- 0  # Restrict multiple elements
+  k <- model$setup$k
+  p <- model$setup$p
+  R <- matrix(1, nrow = k * p, ncol = k)
   
-  result <- restrict_beta(model, R)
-  
-  # Check both restricted elements are small
-  expect_lt(diag(result$priors$Omega_beta)[1], 0.0001)
-  expect_lt(diag(result$priors$Omega_beta)[3], 0.0001)
-})
-
-test_that("restrict_beta returns bvar object", {
-  model <- bvar()
-  model$setup <- list(k = 2, p = 2)
-  model$priors <- list(Omega_beta = diag(8))
-  
-  R <- matrix(1, nrow = 4, ncol = 2)
-  result <- restrict_beta(model, R)
-  
-  expect_s3_class(result, "bvar")
-  expect_type(result, "list")
+  expect_warning(
+    restrict_beta(model, R),
+    "Omega_beta not found"
+  )
 })

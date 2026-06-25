@@ -27,8 +27,8 @@ functions {
 }
 
 data {
-  int<lower=2> N; //number of observations
   int<lower=1> p; //lag order
+  int<lower=p+1> N; //number of observations
   int<lower=2> k; //number of endogenous variables
   int<lower=1> q; //number of deterministic variables
   matrix[N, k] Y; //endogenous variables (y_t)

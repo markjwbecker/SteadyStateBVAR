@@ -33,7 +33,24 @@ posterior standard deviations.}
 (default), limits are set automatically.}
 }
 \value{
-Invisibly returns \code{NULL}. Called for its plotting side effect.
+A list with two components:
+\describe{
+\item{\code{estimated}}{List containing posterior summaries for the
+estimation sample:
+\itemize{
+\item \code{mean}: Matrix of posterior means (T × k)
+\item \code{lower}: Matrix of lower credible bounds (T × k)
+\item \code{upper}: Matrix of upper credible bounds (T × k)
+}}
+
+\item{\code{predicted}}{List containing posterior summaries for the
+forecast horizon:
+\itemize{
+\item \code{mean}: Matrix of predictive means ((T+H) × k)
+\item \code{lower}: Matrix of predictive lower credible bounds
+\item \code{upper}: Matrix of predictive upper credible bounds
+}}
+}
 }
 \description{
 Plots the posterior distribution of stochastic volatility over the
@@ -41,6 +58,10 @@ estimation sample and the forecast horizon for a fitted \code{bvar} object
 with a stochastic volatility specification. Supports plotting either
 log-volatility (\code{log_lambda}) or posterior standard deviations
 (\code{sd}).
+}
+\details{
+The function also returns posterior summaries for both the in-sample
+estimates and out-of-sample forecasts.
 }
 \examples{
 \dontrun{
@@ -50,6 +71,8 @@ model <- priors(model)
 model$SV <- TRUE
 model$SV_type <- "RW"
 model <- fit(model)
-stochastic_volatility_forecast(model, ci = 0.95, vol = "log_lambda")
+
+res <- stochastic_volatility_forecast(model, ci = 0.95)
+str(res)
 }
 }
