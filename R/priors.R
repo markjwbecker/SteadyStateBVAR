@@ -56,7 +56,6 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' yt <- matrix(rnorm(40, 0, 1), 20, 2)
 #'
 #' bvar_obj <- bvar(data = yt)
@@ -66,7 +65,6 @@
 #' bvar_obj <- priors(bvar_obj,
 #'                    theta_Psi = rep(0, 2),
 #'                    Omega_Psi = diag(0.1, 2, 2))
-#'}
 priors<- function(x,
                   lambda_1=0.2,
                   lambda_2=0.5,

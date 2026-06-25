@@ -87,7 +87,6 @@ The function performs the following checks:
 }
 
 \examples{
-\dontrun{
 yt <- matrix(rnorm(40, 0, 1), 20, 2)
 
 bvar_obj <- bvar(data = yt)
@@ -97,5 +96,4 @@ bvar_obj <- setup(bvar_obj, p=1)
 bvar_obj <- priors(bvar_obj,
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2))
-}
 }

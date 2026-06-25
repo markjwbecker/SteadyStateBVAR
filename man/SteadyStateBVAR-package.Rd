@@ -12,6 +12,7 @@ Estimation of Bayesian Vector Autoregression ('BVAR') models with steady-state p
 Useful links:
 \itemize{
   \item \url{https://github.com/markjwbecker/SteadyStateBVAR}
+  \item \url{https://markjwbecker.github.io/SteadyStateBVAR/}
 }
 
 }
