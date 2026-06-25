@@ -9,6 +9,8 @@ Useful links:
 
 - <https://github.com/markjwbecker/SteadyStateBVAR>
 
+- <https://markjwbecker.github.io/SteadyStateBVAR/>
+
 ## Author
 
 **Maintainer**: Mark Becker <mark.jw.becker@gmail.com>
