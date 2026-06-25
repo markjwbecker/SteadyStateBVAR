@@ -9,3 +9,4 @@
 ^\.github$
 ^vignettes/figure$
 ^codecov\.yml$
+^docs$
