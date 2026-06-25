@@ -360,8 +360,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.00071 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 7.1 seconds.
+#> Chain 1: Gradient evaluation took 0.001043 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 10.43 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -378,9 +378,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 1900 / 2000 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 133.15 seconds (Warm-up)
-#> Chain 1:                123.76 seconds (Sampling)
-#> Chain 1:                256.91 seconds (Total)
+#> Chain 1:  Elapsed Time: 131.483 seconds (Warm-up)
+#> Chain 1:                92.804 seconds (Sampling)
+#> Chain 1:                224.287 seconds (Total)
 #> Chain 1:
 ```
 
@@ -391,32 +391,32 @@ Let us look at the posterior mean of $\beta$, $\Psi$, and $\Sigma_u$.
 summary(bvar_obj)
 #> beta posterior mean
 #>       [,1] [,2] [,3]  [,4]  [,5]  [,6] [,7]
-#> [1,]  0.16 0.04 0.01  0.12  0.02 -0.10 0.00
-#> [2,] -0.11 0.45 0.16  0.13  0.00 -0.02 0.00
+#> [1,]  0.17 0.04 0.01  0.12  0.02 -0.10 0.00
+#> [2,] -0.11 0.44 0.16  0.13  0.00 -0.02 0.00
 #> [3,] -0.03 0.05 0.93 -0.04  0.12  0.15 0.00
-#> [4,]  0.00 0.00 0.00  0.20 -0.11 -0.09 0.00
+#> [4,]  0.00 0.00 0.00  0.20 -0.10 -0.09 0.00
 #> [5,]  0.00 0.00 0.00 -0.02  0.01  0.04 0.00
 #> [6,]  0.00 0.00 0.00  0.00  0.02  0.81 0.00
-#> [7,]  0.00 0.00 0.00  1.77  3.41  0.97 0.91
+#> [7,]  0.00 0.00 0.00  1.76  3.45  0.90 0.91
 #> 
 #> Psi posterior mean
 #>      [,1]  [,2]
 #> [1,] 0.57  0.07
 #> [2,] 0.51  0.48
-#> [3,] 4.93  2.01
+#> [3,] 4.94  2.02
 #> [4,] 0.58 -0.04
 #> [5,] 0.49  1.13
 #> [6,] 4.29  4.45
-#> [7,] 3.91 -0.11
+#> [7,] 3.92 -0.11
 #> 
 #> Sigma posterior mean
 #>       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]
 #> [1,]  0.17 -0.03 0.02  0.10 -0.01  0.01  0.00
 #> [2,] -0.03  0.12 0.04 -0.01  0.15  0.04  0.00
-#> [3,]  0.02  0.04 0.51  0.02  0.16  0.11  0.00
-#> [4,]  0.10 -0.01 0.02  0.24 -0.06  0.00  0.00
-#> [5,] -0.01  0.15 0.16 -0.06  0.68  0.13 -0.01
-#> [6,]  0.01  0.04 0.11  0.00  0.13  1.61 -0.01
+#> [3,]  0.02  0.04 0.51  0.02  0.17  0.10  0.00
+#> [4,]  0.10 -0.01 0.02  0.24 -0.06  0.01  0.00
+#> [5,] -0.01  0.15 0.17 -0.06  0.68  0.13 -0.01
+#> [6,]  0.01  0.04 0.10  0.01  0.13  1.61 -0.01
 #> [7,]  0.00  0.00 0.00  0.00 -0.01 -0.01  0.00
 ```
 

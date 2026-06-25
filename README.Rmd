@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # SteadyStateBVAR
 
 <!-- badges: start -->
+[![Codecov test coverage](https://codecov.io/gh/markjwbecker/steady_state_bvar/graph/badge.svg)](https://app.codecov.io/gh/markjwbecker/steady_state_bvar)
 <!-- badges: end -->
 
 The goal of SteadyStateBVAR is to ...
