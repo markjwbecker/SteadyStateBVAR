@@ -28,5 +28,3 @@
 - [`summary(`*`<bvar>`*`)`](https://markjwbecker.github.io/SteadyStateBVAR/reference/summary.bvar.md)
   [`print(`*`<summary.bvar>`*`)`](https://markjwbecker.github.io/SteadyStateBVAR/reference/summary.bvar.md)
   : Summarise a fitted BVAR model
-- [`Villani2009`](https://markjwbecker.github.io/SteadyStateBVAR/reference/villani2009.md)
-  : Villani 2009 data
