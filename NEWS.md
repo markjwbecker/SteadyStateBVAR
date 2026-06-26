@@ -1,3 +1,4 @@
-# SteadyStateBVAR (development version)
+# SteadyStateBVAR 0.0.0.9000
 
-* Initial CRAN submission.
+* Initial development version.
+* Preparing first CRAN submission.

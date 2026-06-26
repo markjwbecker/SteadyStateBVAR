@@ -1,8 +1,8 @@
 ---
-title: "SteadyStateBVAR: theoretical overview and getting started"
+title: "Homoscedastic steady-state BVAR (Villani, 2009)"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{SteadyStateBVAR: theoretical overview and getting started}
+  %\VignetteIndexEntry{Homoscedastic steady-state BVAR (Villani, 2009)}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -13,8 +13,6 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-
-# Homoscedastic steady-state BVAR (Villani, 2009)
 
 Here we estimate the original (homoscedastic - i.e. constant innovation covariance matrix $\Sigma_{u}$) steady-state BVAR model from Section 4.1 of Villani (2009).
 
@@ -42,7 +40,7 @@ $$
 
 Also, we will leave out the last two observations, so the user can compare the forecasts produced here to the last forecasts seen in Figures 1-3 in Villani (2009) to verify that this implementation works correctly.
 
-```{r}
+```{r Swedish macro data}
 yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 plot.ts(yt)
 ```
@@ -86,7 +84,7 @@ where $\psi_i$ denotes the $i$:th column of $\Psi$. We are now ready to set up t
 
 ```{r}
 bvar_obj <- setup(bvar_obj,
-                  p=1,
+                  p=4,
                   deterministic = "constant_and_dummy",
                   dummy = dum_var)
 ```
@@ -218,8 +216,8 @@ Now we can fit the model.
 ```{r}
 bvar_obj <- fit(bvar_obj,
                 iter = 2000,
-                warmup = 500,
-                chains = 1)
+                warmup = 1000,
+                chains = 2)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$, and $\Sigma_u$.
@@ -232,7 +230,7 @@ We can access the posterior means with `bvar_obj$posterior_means` if needed.
 
 Note that `bvar_obj$fit$stan` is an object of class `stanfit`. So we can do the usual `rstan` inference on our fitted model. Let's look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean to 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to obtain the annualized rate).
 
-```{r}
+```{r posterior histograms}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -242,7 +240,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with `rstan`. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate and compare them with the actual values.
 
-```{r}
+```{r prediction density plots}
 (Villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -255,7 +253,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r}
+```{r forecasts}
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
                  fcst_type = "mean",
@@ -265,25 +263,25 @@ fcst <- forecast(bvar_obj,
 
 We can also perform conditional forecasting. We will follow the implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe, Legrand, and van Roye [2018]). Note that for the structural shocks, identification is based on the Cholesky factorisation.
 
-Now suppose we are interested in the forecasts of the domestic GDP growth $\Delta y$ conditional on a scenario where the three-month domestic interest rate $i$ rises quickly and unexpectedly to 3\%, and then stays there.
+Now suppose we are interested in the forecasts of the domestic GDP growth $\Delta y$ conditional on a scenario for the three-month domestic interest rate $i$.
 
-First we set up our conditions/scenarios, i.e., which variables, which horizons, and which values the variables will take during those horizons. Our conditions are that $i$ will follow our specified path at forecast horizons $h=1,\dots,H$.
+First we set up our conditions/scenarios, i.e., which variables, which horizons, and which values the variables will take during those horizons. Our conditions are that $i$ will follow our specified path (toy example) at forecast horizons $h=1,\dots,H=12$.
 
 ```{r}
 conditions <- data.frame(
               var     = rep(6,12),
               horizon = rep(1:12),
-              value   = rep(3,12)
+              value   = seq(2, 8, length.out = 12)
               )
 ```
 
-We then do the conditional forecasting. We again select a 68\% CI and the median of the predictive distribution as the point forecast.
+We then do the conditional forecasting. We again select a 68\% CI and the mean of the predictive distribution as the point forecast.
 
-```{r}
+```{r conditional forecasts}
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   ci=0.68,
-                                  fcst_type = "median",
+                                  fcst_type = "mean",
                                   plot_idx = c(4,6),
                                   growth_rate_idx = c(4))
 ```
@@ -291,7 +289,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to forecasting, we can choose either the mean or the median (the default is the median), and we can also transform the IRFs for the quarter-on-quarter growth rate variables to the annual/yearly scale.
 
-```{r}
+```{r impulse responses}
 par(mfrow=c(2,2))
 
 irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=4)
@@ -302,12 +300,5 @@ irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,
 
 
 ## References
-
-Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector Autoregressions
-with Stochastic Volatility. *Journal of Business \& Economic Statistics*. 29(3), pp. 327–341.
-
-Dieppe, A., Legrand, R., and van Roye, B. (2018). *The Bayesian Estimation, Analysis and Regression (BEAR) Toolbox Technical guide*. European Central Bank.
-
-Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression. In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
 Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*. 24(4), pp. 630-650. 
