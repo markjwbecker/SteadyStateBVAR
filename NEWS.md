@@ -1,3 +1,3 @@
-# SteadyStateBVAR 1.0.0
+# SteadyStateBVAR (development version)
 
 * Initial CRAN submission.
