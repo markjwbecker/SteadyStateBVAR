@@ -7,6 +7,7 @@
 
 [![Codecov test
 coverage](https://codecov.io/gh/markjwbecker/steady_state_bvar/graph/badge.svg)](https://app.codecov.io/gh/markjwbecker/steady_state_bvar)
+[![R-CMD-check](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The goal of SteadyStateBVAR is to …
