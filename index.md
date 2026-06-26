@@ -1,26 +1,13 @@
 # SteadyStateBVAR
 
-The goal of SteadyStateBVAR is to …
-
-## Installation
-
-You can install the development version of SteadyStateBVAR from
-[GitHub](https://github.com/) with:
-
-``` r
-
-# install.packages("pak")
-pak::pak("markjwbecker/SteadyStateBVAR")
-```
-
-## Introduction
-
 With this package, the user can estimate the steady-state BVAR(p) model
-of Mattias Villani (Villani, 2009). The goal is to use modern Bayesian
-tools (Stan) to: i) estimate the model as specified in the original
-paper, and ii) extend the model in many different ways. Back in the day,
-extensions of the model seemed to be limited by what Mattias Villani had
-time to derive.
+of Mattias Villani (Villani, 2009). After estimation, the user can
+produce forecasts (unconditional and conditional) and impulse response
+functions (orthogonalized and generalized). The goal is to use modern
+Bayesian tools (Stan) to: i) estimate the model as specified in the
+original paper, and ii) extend the model in different ways. Back in the
+day, extensions of the model seemed to be limited by what Mattias
+Villani had time to derive.
 
 See for example, Clark (2011): “*In a methodological sense, this paper
 extends the estimator of Villani (2009) to include stochastic
@@ -47,7 +34,18 @@ driftless random walks. And this is done without asking Professor
 Villani for any derivations. I simply wrote down the model equations,
 put some priors on the parameters, and Stan did the rest!
 
-# Introduction
+## Installation
+
+You can install the development version of SteadyStateBVAR from
+[GitHub](https://github.com/) with:
+
+``` r
+
+# install.packages("pak")
+pak::pak("markjwbecker/SteadyStateBVAR")
+```
+
+## Introduction
 
 The steady-state BVAR($`p`$) model (Villani, 2009) is
 
@@ -188,8 +186,151 @@ degrees of freedom. An uninformative prior can be (and is in this
 package) specified by setting $`V_0=(m_0-k-1)\hat{\Sigma}_u`$ where
 $`\hat{\Sigma}_u`$ is the least squares estimate from the VAR($`p`$)
 (including the constant and dummy/trend variable if applicable), and
-$`m_0=k+2`$.
+$`m_0=k+2`$. This package also allows for stochastic volatility (Random
+Walk or AR1 specifications), where we let the covariance matrix of the
+innovations vary over time such that we have a time-varying covariance
+matrix $`\Sigma_{u,t}`$ (more details on this found in the respective
+vignettes).
 
-This package also allows for stochastic volatility, where we let the
-covariance matrix of the innovations vary over time such that we have a
-time-varying covariance matrix $`\Sigma_{u,t}`$ (See other vignettes).
+To estimate the model in Section 4.1 of Villani (2009) and perform
+impulse response analysis and forecasting, simply run the following
+code:
+
+``` r
+
+library(SteadyStateBVAR)
+data("Villani2009")
+yt <- Villani2009
+yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
+
+bvar_obj <- bvar(data = yt)
+
+bp <- which(time(yt) == 1992.75)
+dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+
+bvar_obj <- setup(bvar_obj,
+                  p=4,
+                  deterministic = "constant_and_dummy",
+                  dummy = dum_var)
+
+lambda_1 <- 0.2
+lambda_2 <- 0.5
+lambda_3 <- 1.0
+
+#fol_pm = first own lag prior means
+fol_pm=c(0,   #delta y_f
+         0,   #pi_f
+         0.9, #i_f
+         0,   #delta y
+         0,   #pi
+         0.9, #i
+         0.9  #q
+         )
+
+#psi_1 = Psi col 1
+#psi_2 = Psi col 2
+
+# default is 95% prior probability ('interval=0.95')
+theta_Psi <- 
+  c(
+  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
+  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: pi_f
+  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i_f
+  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
+  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
+  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
+  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$mean,  #psi_1: q
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y_f
+  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_2: pi_f
+  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i_f
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
+  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
+  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i
+  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$mean   #psi_2: q
+  )
+
+Omega_Psi <- 
+  diag(
+  c(
+  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$var,    #psi_1: delta y_f
+  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: pi_f
+  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$var,   #psi_1: i_f
+  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: delta y
+  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$var,    #psi_1: pi
+  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$var,   #psi_1: i
+  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$var,   #psi_1: q
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y_f
+  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_2: pi_f
+  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$var,   #psi_2: i_f
+  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y
+  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,    #psi_2: pi
+  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$var,   #psi_2: i
+  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$var    #psi_2: q
+  )
+  )
+
+bvar_obj <- priors(bvar_obj,
+                   lambda_1,
+                   lambda_2,
+                   lambda_3,
+                   fol_pm,
+                   theta_Psi,
+                   Omega_Psi,
+                   Jeffrey=TRUE)
+
+p <- bvar_obj$setup$p
+k <- bvar_obj$setup$k
+kf <- 3 #foreign variables
+
+restriction_matrix <- matrix(1, k*p, k)
+
+for(i in 1:p){
+  rows <- ((i-1)*k + kf + 1) : (i*k)
+  cols <- 1:kf
+  restriction_matrix[rows, cols] <- 0
+}
+#block exogeneity for foreign variables
+bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
+
+bvar_obj$predict$H <- 12
+bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
+
+bvar_obj <- fit(bvar_obj,
+                iter = 20000,
+                warmup = 10000,
+                chains = 4)
+
+summary(bvar_obj)
+
+fcst <- forecast(bvar_obj,
+                 ci = 0.95,
+                 fcst_type = "mean",
+                 growth_rate_idx = c(4,5), #annual inflation/real GDP growth instead of QoQ
+                 plot_idx = c(4,5,6))
+
+irf <- IRF(bvar_obj,
+           H=20,
+           response=5,#inflation
+           shock=6, #interest rate
+           type="median",
+           method="OIRF",
+           ci=0.68,
+           growth_rate_idx=5) #annual inflation instead of QoQ
+```
+
+## References
+
+Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector
+Autoregressions with Stochastic Volatility. *Journal of Business &
+Economic Statistics*. 29(3), pp. 327–341.
+
+Dieppe, A., Legrand, R., and van Roye, B. (2018). *The Bayesian
+Estimation, Analysis and Regression (BEAR) Toolbox Technical guide*.
+European Central Bank.
+
+Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
+In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic
+Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
+
+Villani, M. (2009). Steady-state priors for vector autoregressions.
+*Journal of Applied Econometrics*. 24(4), pp. 630-650.

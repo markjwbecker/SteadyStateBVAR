@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>SteadyStateBVAR: theoretical overview and getting started • SteadyStateBVAR</title>
+<title>Homoscedastic steady-state BVAR (Villani, 2009) • SteadyStateBVAR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="SteadyStateBVAR: theoretical overview and getting started">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Homoscedastic steady-state BVAR (Villani, 2009)">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">SteadyStateBVAR</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">SteadyStateBVAR: theoretical overview and getting started</a></li>
+<li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -56,7 +56,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>SteadyStateBVAR: theoretical overview and getting started</h1>
+      <h1>Homoscedastic steady-state BVAR (Villani, 2009)</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/markjwbecker/SteadyStateBVAR/blob/main/vignettes/Homoscedastic-steady-state-BVAR.Rmd" class="external-link"><code>vignettes/Homoscedastic-steady-state-BVAR.Rmd</code></a></small>
@@ -65,9 +65,6 @@
 
     
     
-<div class="section level2">
-<h2 id="homoscedastic-steady-state-bvar-villani-2009">Homoscedastic steady-state BVAR (Villani, 2009)<a class="anchor" aria-label="anchor" href="#homoscedastic-steady-state-bvar-villani-2009"></a>
-</h2>
 <p>Here we estimate the original (homoscedastic - i.e. constant
 innovation covariance matrix
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi mathvariant="normal">Σ</mi><mi>u</mi></msub><annotation encoding="application/x-tex">\Sigma_{u}</annotation></semantics></math>)
@@ -120,7 +117,7 @@ correctly.</p>
 <code class="sourceCode R"><span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">102</span>, <span class="op">]</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/start.html" class="external-link">start</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span>, frequency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">plot.ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="figure/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2"><div class="figcaption">plot of chunk unnamed-chunk-2</div>
+<img src="figure/Swedish%20macro%20data-1.png" alt="plot of chunk Swedish macro data"><div class="figcaption">plot of chunk Swedish macro data</div>
 </div>
 <p>Also, let us create the bvar object which we will use throughout
 here.</p>
@@ -166,7 +163,7 @@ lag length is used in Villani (2009), we assume
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">p=4</annotation></semantics></math>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup.html">setup</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
-<span>                  p<span class="op">=</span><span class="fl">1</span>,</span>
+<span>                  p<span class="op">=</span><span class="fl">4</span>,</span>
 <span>                  deterministic <span class="op">=</span> <span class="st">"constant_and_dummy"</span>,</span>
 <span>                  dummy <span class="op">=</span> <span class="va">dum_var</span><span class="op">)</span></span></code></pre></div>
 <p>Now let us specify the priors. We first consider
@@ -308,14 +305,35 @@ strict sense (Karlsson, 2013).</p>
 <span>  <span class="va">restriction_matrix</span><span class="op">[</span><span class="va">rows</span>, <span class="va">cols</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="op">}</span></span>
 <span><span class="va">restriction_matrix</span></span>
-<span><span class="co">#&gt;      [,1] [,2] [,3] [,4] [,5] [,6] [,7]</span></span>
-<span><span class="co">#&gt; [1,]    1    1    1    1    1    1    1</span></span>
-<span><span class="co">#&gt; [2,]    1    1    1    1    1    1    1</span></span>
-<span><span class="co">#&gt; [3,]    1    1    1    1    1    1    1</span></span>
-<span><span class="co">#&gt; [4,]    0    0    0    1    1    1    1</span></span>
-<span><span class="co">#&gt; [5,]    0    0    0    1    1    1    1</span></span>
-<span><span class="co">#&gt; [6,]    0    0    0    1    1    1    1</span></span>
-<span><span class="co">#&gt; [7,]    0    0    0    1    1    1    1</span></span></code></pre></div>
+<span><span class="co">#&gt;       [,1] [,2] [,3] [,4] [,5] [,6] [,7]</span></span>
+<span><span class="co">#&gt;  [1,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt;  [2,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt;  [3,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt;  [4,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt;  [5,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt;  [6,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt;  [7,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt;  [8,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt;  [9,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt; [10,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt; [11,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [12,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [13,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [14,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [15,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt; [16,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt; [17,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt; [18,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [19,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [20,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [21,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [22,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt; [23,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt; [24,]    1    1    1    1    1    1    1</span></span>
+<span><span class="co">#&gt; [25,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [26,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [27,]    0    0    0    1    1    1    1</span></span>
+<span><span class="co">#&gt; [28,]    0    0    0    1    1    1    1</span></span></code></pre></div>
 <p>We can look at the restriction matrix for
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
 to see which elements we restrict to zero. Since the prior means for
@@ -365,33 +383,8 @@ d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 &amp; 0 \end{pmatrix}
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                iter <span class="op">=</span> <span class="fl">2000</span>,</span>
-<span>                warmup <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>                chains <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).</span></span>
-<span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Gradient evaluation took 0.000883 seconds</span></span>
-<span><span class="co">#&gt; Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 8.83 seconds.</span></span>
-<span><span class="co">#&gt; Chain 1: Adjust your expectations accordingly!</span></span>
-<span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  200 / 2000 [ 10%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  400 / 2000 [ 20%]  (Warmup)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  501 / 2000 [ 25%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  700 / 2000 [ 35%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration:  900 / 2000 [ 45%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1100 / 2000 [ 55%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1300 / 2000 [ 65%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1500 / 2000 [ 75%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1700 / 2000 [ 85%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 1900 / 2000 [ 95%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1: </span></span>
-<span><span class="co">#&gt; Chain 1:  Elapsed Time: 79.244 seconds (Warm-up)</span></span>
-<span><span class="co">#&gt; Chain 1:                103.069 seconds (Sampling)</span></span>
-<span><span class="co">#&gt; Chain 1:                182.313 seconds (Total)</span></span>
-<span><span class="co">#&gt; Chain 1:</span></span></code></pre></div>
+<span>                warmup <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>                chains <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>Let us look at the posterior mean of
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi mathvariant="normal">Ψ</mi><annotation encoding="application/x-tex">\Psi</annotation></semantics></math>,
@@ -400,34 +393,55 @@ and
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bvar_obj</span><span class="op">)</span></span>
 <span><span class="co">#&gt; beta posterior mean</span></span>
-<span><span class="co">#&gt;       [,1] [,2] [,3]  [,4]  [,5]  [,6] [,7]</span></span>
-<span><span class="co">#&gt; [1,]  0.16 0.04 0.02  0.12  0.01 -0.11 0.00</span></span>
-<span><span class="co">#&gt; [2,] -0.11 0.44 0.16  0.13 -0.01 -0.01 0.00</span></span>
-<span><span class="co">#&gt; [3,] -0.03 0.05 0.93 -0.04  0.12  0.14 0.00</span></span>
-<span><span class="co">#&gt; [4,]  0.00 0.00 0.00  0.20 -0.10 -0.08 0.00</span></span>
-<span><span class="co">#&gt; [5,]  0.00 0.00 0.00 -0.02  0.01  0.04 0.00</span></span>
-<span><span class="co">#&gt; [6,]  0.00 0.00 0.00  0.00  0.02  0.81 0.00</span></span>
-<span><span class="co">#&gt; [7,]  0.00 0.00 0.00  1.78  3.45  0.85 0.91</span></span>
+<span><span class="co">#&gt;        [,1]  [,2]  [,3]  [,4]  [,5]  [,6]  [,7]</span></span>
+<span><span class="co">#&gt;  [1,]  0.18  0.03 -0.01  0.12  0.07 -0.11  0.00</span></span>
+<span><span class="co">#&gt;  [2,] -0.02  0.31  0.25  0.12 -0.08  0.02  0.00</span></span>
+<span><span class="co">#&gt;  [3,] -0.01  0.04  0.92 -0.04  0.06  0.04  0.00</span></span>
+<span><span class="co">#&gt;  [4,]  0.00  0.00  0.00  0.23 -0.08 -0.11  0.00</span></span>
+<span><span class="co">#&gt;  [5,]  0.00  0.00  0.00  0.01  0.08  0.06  0.00</span></span>
+<span><span class="co">#&gt;  [6,]  0.00  0.00  0.00  0.00  0.02  0.76  0.00</span></span>
+<span><span class="co">#&gt;  [7,]  0.00  0.00  0.00  1.22  3.95  0.80  0.94</span></span>
+<span><span class="co">#&gt;  [8,]  0.03 -0.01  0.09  0.02 -0.02  0.10  0.00</span></span>
+<span><span class="co">#&gt;  [9,]  0.01  0.02  0.04  0.00 -0.02 -0.14  0.00</span></span>
+<span><span class="co">#&gt; [10,] -0.02 -0.01 -0.01  0.00  0.04  0.07  0.00</span></span>
+<span><span class="co">#&gt; [11,]  0.00  0.00  0.00  0.11 -0.01  0.15  0.00</span></span>
+<span><span class="co">#&gt; [12,]  0.00  0.00  0.00  0.01 -0.05 -0.05  0.00</span></span>
+<span><span class="co">#&gt; [13,]  0.00  0.00  0.00 -0.01  0.01  0.04  0.00</span></span>
+<span><span class="co">#&gt; [14,]  0.00  0.00  0.00  0.55 -0.37  0.20 -0.04</span></span>
+<span><span class="co">#&gt; [15,]  0.01 -0.01  0.00  0.02 -0.02  0.00  0.00</span></span>
+<span><span class="co">#&gt; [16,] -0.02  0.06 -0.01  0.00  0.08  0.03  0.00</span></span>
+<span><span class="co">#&gt; [17,]  0.00  0.00  0.02  0.00  0.00  0.03  0.00</span></span>
+<span><span class="co">#&gt; [18,]  0.00  0.00  0.00  0.06  0.01 -0.02  0.00</span></span>
+<span><span class="co">#&gt; [19,]  0.00  0.00  0.00  0.00  0.02 -0.02  0.00</span></span>
+<span><span class="co">#&gt; [20,]  0.00  0.00  0.00  0.01  0.00  0.00  0.00</span></span>
+<span><span class="co">#&gt; [21,]  0.00  0.00  0.00 -0.14 -0.02 -0.55  0.00</span></span>
+<span><span class="co">#&gt; [22,]  0.03 -0.01  0.00  0.00  0.02  0.02  0.00</span></span>
+<span><span class="co">#&gt; [23,]  0.00  0.16 -0.03  0.00  0.01  0.02  0.00</span></span>
+<span><span class="co">#&gt; [24,]  0.00  0.00 -0.02  0.00  0.00  0.03  0.00</span></span>
+<span><span class="co">#&gt; [25,]  0.00  0.00  0.00 -0.08  0.01  0.03  0.00</span></span>
+<span><span class="co">#&gt; [26,]  0.00  0.00  0.00  0.00  0.06 -0.01  0.00</span></span>
+<span><span class="co">#&gt; [27,]  0.00  0.00  0.00  0.00 -0.01  0.00  0.00</span></span>
+<span><span class="co">#&gt; [28,]  0.00  0.00  0.00 -0.15 -0.07 -0.18 -0.01</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Psi posterior mean</span></span>
 <span><span class="co">#&gt;      [,1]  [,2]</span></span>
-<span><span class="co">#&gt; [1,] 0.57  0.08</span></span>
-<span><span class="co">#&gt; [2,] 0.51  0.48</span></span>
-<span><span class="co">#&gt; [3,] 4.94  2.02</span></span>
-<span><span class="co">#&gt; [4,] 0.58 -0.03</span></span>
-<span><span class="co">#&gt; [5,] 0.49  1.13</span></span>
-<span><span class="co">#&gt; [6,] 4.29  4.44</span></span>
-<span><span class="co">#&gt; [7,] 3.92 -0.11</span></span>
+<span><span class="co">#&gt; [1,] 0.58  0.08</span></span>
+<span><span class="co">#&gt; [2,] 0.50  0.46</span></span>
+<span><span class="co">#&gt; [3,] 4.95  2.02</span></span>
+<span><span class="co">#&gt; [4,] 0.58 -0.04</span></span>
+<span><span class="co">#&gt; [5,] 0.49  1.15</span></span>
+<span><span class="co">#&gt; [6,] 4.29  4.45</span></span>
+<span><span class="co">#&gt; [7,] 3.92 -0.10</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sigma posterior mean</span></span>
 <span><span class="co">#&gt;       [,1]  [,2] [,3]  [,4]  [,5]  [,6]  [,7]</span></span>
-<span><span class="co">#&gt; [1,]  0.17 -0.03 0.02  0.10 -0.01  0.01  0.00</span></span>
-<span><span class="co">#&gt; [2,] -0.03  0.12 0.04 -0.01  0.15  0.04  0.00</span></span>
-<span><span class="co">#&gt; [3,]  0.02  0.04 0.51  0.02  0.16  0.10  0.00</span></span>
-<span><span class="co">#&gt; [4,]  0.10 -0.01 0.02  0.24 -0.06  0.00  0.00</span></span>
-<span><span class="co">#&gt; [5,] -0.01  0.15 0.16 -0.06  0.68  0.13 -0.01</span></span>
-<span><span class="co">#&gt; [6,]  0.01  0.04 0.10  0.00  0.13  1.61 -0.01</span></span>
-<span><span class="co">#&gt; [7,]  0.00  0.00 0.00  0.00 -0.01 -0.01  0.00</span></span></code></pre></div>
+<span><span class="co">#&gt; [1,]  0.15 -0.01 0.01  0.07 -0.01  0.00  0.00</span></span>
+<span><span class="co">#&gt; [2,] -0.01  0.09 0.05  0.01  0.12  0.04  0.00</span></span>
+<span><span class="co">#&gt; [3,]  0.01  0.05 0.52  0.01  0.18  0.11  0.00</span></span>
+<span><span class="co">#&gt; [4,]  0.07  0.01 0.01  0.19 -0.05 -0.01  0.00</span></span>
+<span><span class="co">#&gt; [5,] -0.01  0.12 0.18 -0.05  0.60  0.11  0.00</span></span>
+<span><span class="co">#&gt; [6,]  0.00  0.04 0.11 -0.01  0.11  1.56 -0.01</span></span>
+<span><span class="co">#&gt; [7,]  0.00  0.00 0.00  0.00  0.00 -0.01  0.00</span></span></code></pre></div>
 <p>We can access the posterior means with
 <code>bvar_obj$posterior_means</code> if needed.</p>
 <p>Note that <code>bvar_obj$fit$stan</code> is an object of class
@@ -445,7 +459,7 @@ annualized rate).</p>
 <span>            plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre></div>
 <div class="float">
-<img src="figure/unnamed-chunk-14-1.png" alt="plot of chunk unnamed-chunk-14"><div class="figcaption">plot of chunk unnamed-chunk-14</div>
+<img src="figure/posterior%20histograms-1.png" alt="plot of chunk posterior histograms"><div class="figcaption">plot of chunk posterior histograms</div>
 </div>
 <p>We can also look at the model forecasts directly with
 <code>rstan</code>. Remember that we left out the last two
@@ -463,7 +477,7 @@ interest rate and compare them with the actual values.</p>
 <span><span class="co">#&gt; ci_level: 0.68 (68% intervals)</span></span>
 <span><span class="co">#&gt; outer_level: 0.95 (95% intervals)</span></span></code></pre></div>
 <div class="float">
-<img src="figure/unnamed-chunk-15-1.png" alt="plot of chunk unnamed-chunk-15"><div class="figcaption">plot of chunk unnamed-chunk-15</div>
+<img src="figure/prediction%20density%20plots-1.png" alt="plot of chunk prediction density plots"><div class="figcaption">plot of chunk prediction density plots</div>
 </div>
 <p>So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
@@ -482,7 +496,7 @@ i.e. the annual growth rate, by summing up to fourth differences.</p>
 <span>                 fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                 growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span>,</span>
 <span>                 plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-16-1.png" alt="plot of chunk unnamed-chunk-16"><img src="figure/unnamed-chunk-16-2.png" alt="plot of chunk unnamed-chunk-16"><img src="figure/unnamed-chunk-16-3.png" alt="plot of chunk unnamed-chunk-16"></p>
+<p><img src="figure/forecasts-1.png" alt="plot of chunk forecasts"><img src="figure/forecasts-2.png" alt="plot of chunk forecasts"><img src="figure/forecasts-3.png" alt="plot of chunk forecasts"></p>
 <p>We can also perform conditional forecasting. We will follow the
 implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe,
 Legrand, and van Roye [2018]). Note that for the structural shocks,
@@ -490,31 +504,30 @@ identification is based on the Cholesky factorisation.</p>
 <p>Now suppose we are interested in the forecasts of the domestic GDP
 growth
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">\Delta y</annotation></semantics></math>
-conditional on a scenario where the three-month domestic interest rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-rises quickly and unexpectedly to 3%, and then stays there.</p>
+conditional on a scenario for the three-month domestic interest rate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>.</p>
 <p>First we set up our conditions/scenarios, i.e., which variables,
 which horizons, and which values the variables will take during those
 horizons. Our conditions are that
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-will follow our specified path at forecast horizons
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>H</mi></mrow><annotation encoding="application/x-tex">h=1,\dots,H</annotation></semantics></math>.</p>
+will follow our specified path (toy example) at forecast horizons
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>H</mi><mo>=</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">h=1,\dots,H=12</annotation></semantics></math>.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>              var     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">12</span><span class="op">)</span>,</span>
 <span>              horizon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span>,</span>
-<span>              value   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">12</span><span class="op">)</span></span>
+<span>              value   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">8</span>, length.out <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></span>
 <span>              <span class="op">)</span></span></code></pre></div>
 <p>We then do the conditional forecasting. We again select a 68% CI and
-the median of the predictive distribution as the point forecast.</p>
+the mean of the predictive distribution as the point forecast.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cond_fcst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/conditional_forecast.html">conditional_forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                                  <span class="va">conditions</span>,</span>
 <span>                                  ci<span class="op">=</span><span class="fl">0.68</span>,</span>
-<span>                                  fcst_type <span class="op">=</span> <span class="st">"median"</span>,</span>
+<span>                                  fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                                  plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>,</span>
 <span>                                  growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-18-1.png" alt="plot of chunk unnamed-chunk-18"><img src="figure/unnamed-chunk-18-2.png" alt="plot of chunk unnamed-chunk-18"></p>
+<p><img src="figure/conditional%20forecasts-1.png" alt="plot of chunk conditional forecasts"><img src="figure/conditional%20forecasts-2.png" alt="plot of chunk conditional forecasts"></p>
 <p>Now for some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
 impulse response function (GIRF). Similar to forecasting, we can choose
@@ -529,26 +542,15 @@ to the annual/yearly scale.</p>
 <span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">5</span>,shock<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"OIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">5</span>,shock<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"GIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <div class="float">
-<img src="figure/unnamed-chunk-19-1.png" alt="plot of chunk unnamed-chunk-19"><div class="figcaption">plot of chunk unnamed-chunk-19</div>
+<img src="figure/impulse%20responses-1.png" alt="plot of chunk impulse responses"><div class="figcaption">plot of chunk impulse responses</div>
 </div>
-<div class="section level3">
-<h3 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h3>
-<p>Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector
-Autoregressions with Stochastic Volatility. <em>Journal of Business
-&amp; Economic Statistics</em>. 29(3), pp. 327–341.</p>
-<p>Dieppe, A., Legrand, R., and van Roye, B. (2018). <em>The Bayesian
-Estimation, Analysis and Regression (BEAR) Toolbox Technical guide</em>.
-European Central Bank.</p>
-<p>Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
-In: Elliott, G. and Timmerman, A. (eds) <em>Handbook of Economic
-Forecasting</em>. Elsevier B.V. Vol 2, Part B., pp. 791-897.</p>
+<div class="section level2">
+<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <p>Villani, M. (2009). Steady-state priors for vector autoregressions.
 <em>Journal of Applied Econometrics</em>. 24(4), pp. 630-650.</p>
 </div>
-</div>
-  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
-    </nav></aside>
+  </main>
 </div>
 
 
