@@ -1,6 +1,6 @@
 Package: SteadyStateBVAR
 Title: Estimation of the steady-state Bayesian Vector Autoregression model using Hamiltonian Monte Carlo
-Version: 1.0.0
+Version: 0.0.0.9000
 Authors@R:
     person("Mark", "Becker", , "mark.jw.becker@gmail.com", role = c("aut", "cre"))
 Description: Estimation of Bayesian Vector Autoregression ('BVAR') models
