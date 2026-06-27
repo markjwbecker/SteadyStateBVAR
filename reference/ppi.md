@@ -1,10 +1,10 @@
 # Prior Probability Interval for a Normal Distribution
 
-Converts a symmetric prior probability interval into the corresponding
-mean and variance of a normal distribution. Given a lower and upper
-bound that define a prior probability interval, this function recovers
-the implied normal prior parameters. Useful for specifying informative
-priors on the steady-state (Psi) parameters in an intuitive way.
+Calculates the mean and variance of a normal prior probability interval.
+Given a lower and upper bound of a (1-alpha) prior probability interval
+this function recovers the implied normal prior parameters. Useful for
+specifying informative priors on the steady-state (Psi) parameters in an
+intuitive way.
 
 ## Usage
 
@@ -25,7 +25,7 @@ ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4)
 - interval:
 
   Numeric. The prior probability mass within the interval. Default
-  `0.95`.
+  `0.95`, i.e. 95%.
 
 - annualized_growthrate:
 
@@ -45,7 +45,6 @@ of the implied normal distribution.
 ## Examples
 
 ``` r
-# steady-state annualized inflation is between 1% and 3% with 95% probability
 ppi(l = 1, u = 3, interval = 0.95)
 #> $mean
 #> [1] 2

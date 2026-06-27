@@ -1,20 +1,16 @@
-# Set up a BVAR model
+# Set up a steady-state BVAR model
 
-A generic function for setting up a BVAR model. Computes OLS estimates
-and prepares all matrices needed for prior specification and estimation.
+Prepares the matrices needed for prior specification and estimation.
+Also computes OLS estimates.
 
 ## Usage
 
 ``` r
-setup(x, ...)
-
-# S3 method for class 'bvar'
 setup(
   x,
   p,
   deterministic = c("constant", "constant_and_dummy", "constant_and_trend"),
-  dummy = NULL,
-  ...
+  dummy = NULL
 )
 ```
 
@@ -22,12 +18,8 @@ setup(
 
 - x:
 
-  A `bvar` object created by
+  A steady-state `bvar` object created by
   [`bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md).
-
-- ...:
-
-  Further arguments passed to methods.
 
 - p:
 
@@ -40,19 +32,18 @@ setup(
 
 - dummy:
 
-  Optional numeric vector or matrix of dummy variables. Only used when
+  Numeric vector of a dummy variable. Only used when
   `deterministic = "constant_and_dummy"`. Default `NULL`.
 
 ## Value
 
-The `bvar` object with a `setup` list appended.
+The `bvar` object with a `setup` list containing the matrices required
+for prior specification and estimation, and also the OLS estimates.
 
 ## Examples
 
 ``` r
 yt <- matrix(rnorm(40, 0, 1), 20, 2)
-
 bvar_obj <- bvar(data = yt)
-
 bvar_obj <- setup(bvar_obj, p = 1)
 ```

@@ -1,11 +1,12 @@
-# Specify priors for a Bayesian VAR model with optional stochastic volatility
+# Specify priors for a steady-state BVAR model
 
-Defines Minnesota-style priors for VAR coefficients and priors for
-steady-state parameters. Optionally enables a stochastic volatility
-specification (random walk or AR(1)) which augments the prior object
-with additional SV-related inputs used by the Stan model. A Jeffrey's
-prior can be used for the error covariance matrix or, alternatively, an
-inverse-Wishart prior.
+The Minnesota prior is used for the autoregressive parameters, and is
+determined by the overall tightness, cross-equation tightness, and the
+lag decay rate. For the steady-state parameters, a normal prior is used.
+For the covariance matrix of the innovations, the user can choose
+between Jeffreys prior or an uninformative inverse-Wishart prior.
+Optionally enables a stochastic volatility specification for the
+covariance matrix of the innovations (random walk or AR(1)).
 
 ## Usage
 
@@ -29,43 +30,42 @@ priors(
 
 - x:
 
-  A `bvar` object that has been passed through
+  A steady-state `bvar` object that has been passed through
   [`setup`](https://markjwbecker.github.io/SteadyStateBVAR/reference/setup.md).
 
 - lambda_1:
 
-  Numeric. Overall tightness of the Minnesota prior controlling overall
-  shrinkage. Default `0.2`.
+  Numeric. Overall tightness of the Minnesota prior. Default `0.2`.
 
 - lambda_2:
 
-  Numeric. Cross-variable shrinkage parameter controlling shrinkage of
-  other variables' lags relative to own lags. Default `0.5`.
+  Numeric. Cross-equation tightness of the Minnesota prior. Default
+  `0.5`.
 
 - lambda_3:
 
-  Numeric. Lag decay parameter controlling how prior variance decreases
-  with lag length. Default `1`.
+  Numeric. Lag decay rate of the Minnesota prior. Default `1`.
 
 - first_own_lag_prior_mean:
 
-  Numeric vector of length `k`. Prior means for first own lag of each
-  variable. If `NULL`, defaults to a zero vector.
+  Numeric vector of length `k`. Prior means for the first own lags of
+  each variable. If `NULL`, defaults to a zero vector.
 
 - theta_Psi:
 
-  Numeric vector. Prior mean for steady-state parameters. If `NULL`,
-  defaults to a zero vector of length `k*q`.
+  Numeric vector. Prior mean vector for steady-state parameters. If
+  `NULL`, defaults to OLS estimate.
 
 - Omega_Psi:
 
-  Numeric matrix. Prior covariance for steady-state parameters. If
-  `NULL`, defaults to a diagonal matrix with variance 100.
+  Numeric matrix. Prior covariance matrix for steady-state parameters.
+  If `NULL`, defaults to a diagonal matrix with variances 1000.
 
 - Jeffrey:
 
-  Logical. If `TRUE`, uses a Jeffrey's prior for the error covariance
-  matrix. If `FALSE`, uses an inverse-Wishart prior.
+  Logical. If `TRUE`, uses a Jeffreys prior for the innovation
+  covariance matrix. If `FALSE`, uses an uninformative inverse-Wishart
+  prior.
 
 - SV:
 
@@ -75,12 +75,12 @@ priors(
 - SV_type:
 
   Character. Type of stochastic volatility model. Must be either `"RW"`
-  or `"AR"`. Required if `SV = TRUE`.
+  or `"AR1"`. Required if `SV = TRUE`.
 
 - SV_priors:
 
-  List. User-supplied stochastic volatility prior objects passed
-  directly to Stan. Required when `SV = TRUE`.
+  List. User-supplied stochastic volatility priors. Required when
+  `SV = TRUE`.
 
 ## Value
 
@@ -88,39 +88,40 @@ The `bvar` object with an appended `priors` list containing:
 
 - theta_beta:
 
-  Prior mean for VAR coefficients
+  Prior mean for vec(beta)
 
 - Omega_beta:
 
-  Prior covariance for VAR coefficients
+  Prior covariance matrix for vec(beta)
 
 - theta_Psi:
 
-  Prior mean for steady-state parameters
+  Prior mean for vec(Psi), i.e. the steady-state parameters
 
 - Omega_Psi:
 
-  Prior covariance for steady-state parameters
+  Prior covariance matrix for vec(Psi), i.e. the steady-state parameters
 
 - Jeffrey:
 
-  Indicator for Jeffrey's prior usage
+  Indicator for Jeffreys prior usage
 
 - Sigma_AR:
 
-  Residual variance estimates from univariate AR fits
+  Residual variance estimates from univariate AR fits, which are used by
+  the Minnesota prior
 
 - m_0:
 
-  Inverse-Wishart degrees of freedom (if `Jeffrey = FALSE`)
+  Inverse-Wishart prior degrees of freedom (if `Jeffrey = FALSE`)
 
 - V_0:
 
-  Inverse-Wishart scale matrix (if `Jeffrey = FALSE`)
+  Inverse-Wishart prior scale matrix (if `Jeffrey = FALSE`)
 
 - SV:
 
-  Logical indicator for stochastic volatility model
+  Logical indicator for stochastic volatility specification
 
 - SV_type:
 
@@ -129,25 +130,6 @@ The `bvar` object with an appended `priors` list containing:
 - SV_priors:
 
   User-supplied SV prior list (if `SV = TRUE`)
-
-## Validation
-
-The function performs the following checks:
-
-- Ensures `x` is a valid `bvar` object
-
-- Ensures `setup` exists and contains required elements
-
-- Ensures lambda parameters are strictly positive
-
-- Ensures `first_own_lag_prior_mean` has length `k` (if provided)
-
-- Ensures `theta_Psi` and `Omega_Psi` dimensions match (if both
-  provided)
-
-- Ensures valid `SV_type` when `SV = TRUE`
-
-- Ensures `SV_priors` is provided when `SV = TRUE`
 
 ## Examples
 
