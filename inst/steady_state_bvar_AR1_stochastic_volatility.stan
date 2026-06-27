@@ -41,11 +41,15 @@ data {
   matrix[k*q, k*q] Omega_Psi; //vec_Psi prior covariance matrix
   vector[k*(k-1)/2] theta_A; //a prior mean
   matrix[k*(k-1)/2, k*(k-1)/2] Omega_A; //a prior covariance matrix
-  vector[k] mu_log_lambda_0;        // log lambda initial condition prior means
-  vector<lower=0>[k] sigma2_log_lambda_0; // log lambda initial condition prior variances
-  vector<lower=0>[k] alpha_phi;     // phi prior shapes
-  vector<lower=0>[k] beta_phi;      // phi prior scales
-  int<lower=0> H; // Forecast horizon
+  vector[k] theta_gamma_0; //gamma_0 prior mean
+  matrix[k, k] Omega_gamma_0; //gamma_0 prior covariance matrix
+  vector[k] theta_gamma_1; //gamma_1 prior mean
+  matrix[k, k] Omega_gamma_1; //gamma_1 prior covariance matrix
+  vector[k] theta_log_lambda_0; //log lambda initial condition prior mean
+  matrix[k, k] Omega_log_lambda_0; //log lambda initial condition prior covariance matrix
+  int<lower=k> m_0; //Phi prior degrees of freedom
+  matrix[k,k] V_0; //Phi prior scale matrix
+  int<lower=1> H; // Forecast horizon
   matrix[H, q] d_pred; //future deterministic variables
 }
 
@@ -57,7 +61,9 @@ parameters {
   matrix[k*p, k] beta; //beta' = (Pi_1,...,Pi_p)
   matrix[k, q] Psi; //Psi * d_t = steady state
   matrix[N, k] log_lambda; //log volatilities
-  vector<lower=0>[k] phi; //log volatility innovation variances
+  vector[k] gamma_0; //log volatility intercept
+  vector<lower=-1, upper=1>[k] gamma_1; //log volatility slope
+  cov_matrix[k] Phi; //log volatility innovation covariance matrix
   vector[k*(k-1)/2] a; //free parameters in A
 }
 
@@ -86,15 +92,14 @@ transformed parameters {
 }
 
 model {
-  
-  for (i in 1:k) {
-  log_lambda[1, i] ~ normal(mu_log_lambda_0[i], sqrt(sigma2_log_lambda_0[i]));
-  }
+  log_lambda[1] ~ multi_normal(theta_log_lambda_0, Omega_log_lambda_0);
 
   for (t in 2:N) {
+    vector[k] nu_t;
     for (i in 1:k) {
-      log_lambda[t, i] ~ normal(log_lambda[t-1, i], sqrt(phi[i]));
+      nu_t[i] = log_lambda[t, i] - gamma_0[i] - gamma_1[i] * log_lambda[t-1, i];
     }
+    nu_t ~ multi_normal(rep_vector(0, k), Phi);
   }
 
   for(t in 1:N){
@@ -103,11 +108,11 @@ model {
   }
 
   to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
-  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
-  a  ~ multi_normal(theta_A, Omega_A);
-  for (i in 1:k) {
-  phi[i] ~ inv_gamma(alpha_phi[i], beta_phi[i]);
-}
+  to_vector(Psi)  ~ multi_normal(theta_Psi, Omega_Psi);
+  a               ~ multi_normal(theta_A, Omega_A);
+  gamma_0         ~ multi_normal(theta_gamma_0, Omega_gamma_0);
+  gamma_1         ~ multi_normal(theta_gamma_1, Omega_gamma_1);
+  Phi             ~ inv_wishart(m_0, V_0);
 }
 
 generated quantities {
@@ -120,15 +125,18 @@ generated quantities {
   matrix[H,k] y_pred;
   matrix[H,k] log_lambda_pred;
   matrix[k,k] Sigma_u_pred[H];
-
+  vector[k] nu;
+  
+  nu = multi_normal_rng(rep_vector(0,k), Phi);
   
   for (i in 1:k) {
-    log_lambda_pred[1,i] = normal_rng(log_lambda[N,i], sqrt(phi[i]));
+    log_lambda_pred[1,i] = (gamma_0[i] + gamma_1[i] * log_lambda[N, i] + nu[i]);
     }
   
   for (h in 2:H) {
+    nu = multi_normal_rng(rep_vector(0,k), Phi);
     for (i in 1:k) {
-      log_lambda_pred[h,i] = normal_rng(log_lambda_pred[h-1,i], sqrt(phi[i]));
+      log_lambda_pred[h,i] = (gamma_0[i] + gamma_1[i] * log_lambda_pred[h-1, i] + nu[i]);
       }
     }
 

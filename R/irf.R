@@ -89,7 +89,7 @@ IRF <- function(x, H = 16, response = NULL, shock = NULL,
   
   for (draw in 1:N_draws) {
     Phi <- t(stan_draws$beta[draw, , ])
-    if (!is.null(x$SV)) {
+    if (length(dim(stan_draws$Sigma_u))==4) {
       if (is.null(t)) t <- dim(stan_draws$Sigma_u)[2]
       Sigma <- stan_draws$Sigma_u[draw, t, , ]
     } else {
@@ -164,7 +164,7 @@ IRF <- function(x, H = 16, response = NULL, shock = NULL,
     lines(horizon, m_irf[i, j, ], col = "blue", lwd = 2)
     abline(h = 0, col = "black", lty = 1)
     
-    main_title <- if (!is.null(x$SV)) {
+    main_title <- if (isTRUE(x$priors$SV)) {
       paste0("Posterior ", type_label, " ", method, " (", round(ci * 100), "% CI)\nt=", t, "\nShock: ", var_names[j])
     } else {
       paste0("Posterior ", type_label, " ", method, " (", round(ci * 100), "% CI)\n\nShock: ", var_names[j])

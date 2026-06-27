@@ -1,44 +1,54 @@
 #' Plot stochastic volatility estimates and forecasts
 #'
-#' Plots the posterior distribution of stochastic volatility over the
-#' estimation sample and the forecast horizon for a fitted \code{bvar} object
-#' with a stochastic volatility specification. Supports plotting either
-#' log-volatility (\code{log_lambda}) or posterior standard deviations
-#' (\code{sd}).
+#' Produces time series plots of posterior stochastic volatility estimates
+#' over the estimation sample together with predictive paths over the forecast
+#' horizon for a fitted \code{bvar} object.
 #'
-#' The function also returns posterior summaries for both the in-sample
-#' estimates and out-of-sample forecasts.
+#' The function supports two volatility representations:
+#' \itemize{
+#'   \item \code{"log_lambda"}: log-volatility states
+#'   \item \code{"sd"}: implied posterior standard deviations
+#' }
 #'
-#' @param x A \code{bvar} object that has been passed through \code{\link{fit}}
-#'   with a stochastic volatility specification.
-#' @param ci Numeric. The credible interval width. Default \code{0.95}.
-#' @param vol Character. The volatility measure to plot. Either
-#'   \code{"log_lambda"} (default) for log-volatility or \code{"sd"} for
-#'   posterior standard deviations.
-#' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
-#'   (default), all variables are plotted.
-#' @param xlim Numeric vector of length 2. x-axis limits. If \code{NULL}
-#'   (default), limits are set automatically.
-#' @param ylim Numeric vector of length 2. y-axis limits. If \code{NULL}
-#'   (default), limits are set automatically.
+#' For each selected variable, the function plots:
+#' \itemize{
+#'   \item posterior mean path (in-sample)
+#'   \item credible bands (in-sample)
+#'   \item predictive mean path (out-of-sample)
+#'   \item predictive credible bands (out-of-sample)
+#' }
 #'
-#' @return A list with two components:
+#' In addition, posterior summary matrices for both estimation and forecast
+#' periods are returned invisibly.
+#'
+#' @param x A \code{bvar} object estimated via \code{\link{fit}} with
+#'   stochastic volatility enabled.
+#' @param ci Numeric. Credible interval level. Default is \code{0.95}.
+#' @param vol Character. Volatility representation:
+#'   \code{"log_lambda"} (default) or \code{"sd"}.
+#' @param plot_idx Integer vector. Variables to plot. If \code{NULL},
+#'   all variables are used.
+#' @param xlim Numeric vector of length 2. Optional x-axis limits.
+#' @param ylim Numeric vector of length 2. Optional y-axis limits.
+#'
+#' @return An invisible list containing:
 #' \describe{
-#'   \item{\code{estimated}}{List containing posterior summaries for the
-#'   estimation sample:
-#'   \itemize{
-#'     \item \code{mean}: Matrix of posterior means (T × k)
-#'     \item \code{lower}: Matrix of lower credible bounds (T × k)
-#'     \item \code{upper}: Matrix of upper credible bounds (T × k)
-#'   }}
-#'
-#'   \item{\code{predicted}}{List containing posterior summaries for the
-#'   forecast horizon:
-#'   \itemize{
-#'     \item \code{mean}: Matrix of predictive means ((T+H) × k)
-#'     \item \code{lower}: Matrix of predictive lower credible bounds
-#'     \item \code{upper}: Matrix of predictive upper credible bounds
-#'   }}
+#'   \item{estimated}{
+#'     List with posterior summaries for the estimation sample:
+#'     \itemize{
+#'       \item \code{mean}: T × k matrix of posterior means
+#'       \item \code{lower}: T × k matrix of lower credible bounds
+#'       \item \code{upper}: T × k matrix of upper credible bounds
+#'     }
+#'   }
+#'   \item{predicted}{
+#'     List with posterior summaries for the forecast horizon:
+#'     \itemize{
+#'       \item \code{mean}: (T+H) × k matrix of predictive means
+#'       \item \code{lower}: (T+H) × k matrix of lower credible bounds
+#'       \item \code{upper}: (T+H) × k matrix of upper credible bounds
+#'     }
+#'   }
 #' }
 #'
 #' @export
@@ -52,10 +62,10 @@
 #' model$SV_type <- "RW"
 #' model <- fit(model)
 #'
-#' res <- stochastic_volatility_forecast(model, ci = 0.95)
+#' res <- stochastic_volatility_plot(model, ci = 0.95)
 #' str(res)
 #' }
-stochastic_volatility_forecast <- function(x, ci = 0.95, vol = "log_lambda",
+stochastic_volatility_plot <- function(x, ci = 0.95, vol = "log_lambda",
                                            plot_idx = NULL, xlim = NULL, ylim = NULL) {
   
   draws           <- rstan::extract(x$fit$stan)
@@ -180,7 +190,7 @@ stochastic_volatility_forecast <- function(x, ci = 0.95, vol = "log_lambda",
     
     lines(x_fore, vol_pred[x_fore], col = "blue", lwd = 2)
     
-    legend("bottomleft",
+    legend("topleft",
            legend = c("Estimated volatility", "Predicted volatility"),
            col    = c("red", "blue"),
            lwd    = 2,
@@ -188,7 +198,7 @@ stochastic_volatility_forecast <- function(x, ci = 0.95, vol = "log_lambda",
   }
   
   # ---- return structured output ----
-  return(list(
+  invisible(list(
     estimated = list(
       mean  = est_mean,
       lower = est_lower,

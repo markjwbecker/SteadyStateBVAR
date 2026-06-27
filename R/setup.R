@@ -1,17 +1,9 @@
-#' Set up a BVAR model
+#' Set up a steady-state BVAR model
 #'
-#' A generic function for setting up a BVAR model. Computes OLS estimates and
-#' prepares all matrices needed for prior specification and estimation.
+#' Prepares all matrices needed for prior specification and estimation. 
+#' Also computes OLS estimates.
 #'
 #' @param x A \code{bvar} object created by \code{\link{bvar}}.
-#' @param ... Further arguments passed to methods.
-#'
-#' @return The \code{bvar} object with a \code{setup} list appended.
-#' @export
-setup <- function(x, ...) UseMethod("setup")
-
-#' @rdname setup
-#'
 #' @param p Integer. The lag order of the VAR.
 #' @param deterministic Character. The deterministic component to include.
 #'   One of \code{"constant"} (default), \code{"constant_and_dummy"}, or
@@ -19,15 +11,14 @@ setup <- function(x, ...) UseMethod("setup")
 #' @param dummy Optional numeric vector or matrix of dummy variables. Only
 #'   used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.
 #'
+#' @return The \code{bvar} object with a \code{setup} list appended.
 #' @export
 #'
 #' @examples
 #' yt <- matrix(rnorm(40, 0, 1), 20, 2)
-#' 
 #' bvar_obj <- bvar(data = yt)
-#' 
 #' bvar_obj <- setup(bvar_obj, p = 1)
-setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL, ...) {
+setup <- function(x, p, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL) {
   
   if (!inherits(x, "bvar")) {
     stop("x must be a 'bvar' object")
@@ -57,7 +48,6 @@ setup.bvar <- function(x, p, deterministic=c("constant", "constant_and_dummy", "
     stop("dummy must have length equal to number of observations")
   }
   
-  # Rest of function...
   N = nrow(yt) - p
   k = ncol(yt)
   

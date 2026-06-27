@@ -1,7 +1,3 @@
-test_that("setup requires bvar object with data", {
-  expect_error(setup(list()), "no applicable method")
-})
-
 test_that("setup with constant deterministic", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)

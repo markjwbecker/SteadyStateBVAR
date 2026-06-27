@@ -2,7 +2,7 @@
 % Please edit documentation in R/fit.R
 \name{fit}
 \alias{fit}
-\title{Estimate a Bayesian VAR model using Stan}
+\title{Estimate a steady-state BVAR model using Stan}
 \usage{
 fit(
   x,
@@ -14,23 +14,34 @@ fit(
 )
 }
 \arguments{
-\item{x}{A \code{bvar} object that has been passed through \code{\link{setup}} and
-\code{\link{priors}}.}
+\item{x}{A \code{bvar} object that has been passed through \code{\link{setup}}
+and \code{\link{priors}}.}
 
 \item{iter}{Integer. Total number of MCMC iterations per chain. Default \code{5000}.}
 
-\item{warmup}{Integer. Number of warmup (burn-in) iterations per chain. Default \code{2500}.}
+\item{warmup}{Integer. Number of warmup (burn-in) iterations per chain.
+Default \code{2500}.}
 
 \item{chains}{Integer. Number of MCMC chains. Default \code{2}.}
 
-\item{cores}{Integer. Number of CPU cores used for sampling.}
+\item{cores}{Integer. Number of CPU cores used for sampling. Default is the
+minimum of \code{chains} and available cores.}
 
-\item{auto_write}{Logical. Whether to enable \code{rstan} auto-write behavior.}
+\item{auto_write}{Logical. Whether to enable \code{rstan} auto-write behavior.
+Default \code{TRUE}.}
 }
 \value{
-A \code{bvar} object containing:
-\item{fit$stan}{Stan fit object}
-\item{posterior_means}{Posterior means of key parameters}
+A \code{bvar} object with the following components added:
+\item{fit$stan}{Stan fit object containing full posterior samples}
+\item{posterior_means}{List of posterior means for all parameters:
+\itemize{
+\item \code{beta} - VAR coefficients (k×k matrix)
+\item \code{Psi} - Steady-state parameters (k×q matrix)
+\item \code{Sigma_u} - Error covariance (k×k for homoscedastic,
+time×k×k for stochastic volatility)
+\item For stochastic volatility: \code{A}, \code{phi}, \code{gamma_0},
+\code{gamma_1}, \code{Phi} as applicable
+}}
 }
 \description{
 Runs Stan to estimate the BVAR model using data, setup, and priors stored
@@ -40,19 +51,24 @@ as well as stochastic volatility specifications (RW or AR(1)).
 \details{
 Forecast inputs must be provided in \code{x$predict$H} and
 \code{x$predict$d_pred} before calling \code{fit()}.
+
+The function automatically selects the appropriate Stan model file based on
+the prior specification:
+\itemize{
+\item Homoscedastic with Jeffrey's prior: \code{diffuse_cov.stan}
+\item Homoscedastic with inverse-Wishart: \code{inv_wishart_cov.stan}
+\item Stochastic volatility (RW): \code{stochastic_volatility_RW.stan}
+\item Stochastic volatility (AR): \code{stochastic_volatility_stationaryAR.stan}
+}
 }
 \examples{
 \dontrun{
 yt <- matrix(rnorm(40, 0, 1), 20, 2)
-
 bvar_obj <- bvar(data = yt)
-
-bvar_obj <- setup(bvar_obj, p=1)
-
+bvar_obj <- setup(bvar_obj, p = 1)
 bvar_obj <- priors(bvar_obj,
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2))
-
 bvar_obj$predict$H <- 1
 bvar_obj$predict$d_pred <- matrix(1)
 
@@ -62,5 +78,7 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1,
                 cores = 1,
                 auto_write = FALSE)
+
+summary(bvar_obj)
 }
 }

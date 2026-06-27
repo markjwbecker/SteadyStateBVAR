@@ -2,23 +2,17 @@
 % Please edit documentation in R/setup.R
 \name{setup}
 \alias{setup}
-\alias{setup.bvar}
-\title{Set up a BVAR model}
+\title{Set up a steady-state BVAR model}
 \usage{
-setup(x, ...)
-
-\method{setup}{bvar}(
+setup(
   x,
   p,
   deterministic = c("constant", "constant_and_dummy", "constant_and_trend"),
-  dummy = NULL,
-  ...
+  dummy = NULL
 )
 }
 \arguments{
 \item{x}{A \code{bvar} object created by \code{\link{bvar}}.}
-
-\item{...}{Further arguments passed to methods.}
 
 \item{p}{Integer. The lag order of the VAR.}
 
@@ -33,13 +27,11 @@ used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.}
 The \code{bvar} object with a \code{setup} list appended.
 }
 \description{
-A generic function for setting up a BVAR model. Computes OLS estimates and
-prepares all matrices needed for prior specification and estimation.
+Prepares all matrices needed for prior specification and estimation.
+Also computes OLS estimates.
 }
 \examples{
 yt <- matrix(rnorm(40, 0, 1), 20, 2)
-
 bvar_obj <- bvar(data = yt)
-
 bvar_obj <- setup(bvar_obj, p = 1)
 }

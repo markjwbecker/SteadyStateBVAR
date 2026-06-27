@@ -1,48 +1,71 @@
-#' Estimate a Bayesian VAR model using Stan
+#' Estimate a steady-state BVAR model using Stan
 #'
-#' Runs Stan to estimate the BVAR model using data, setup, and priors stored
-#' in a \code{bvar} object. Supports standard homoscedastic steady-state BVAR
-#' as well as stochastic volatility specifications (RW or AR(1)).
+#' Runs Stan to estimate a Bayesian VAR with steady-state formulation using
+#' data, setup, and priors stored in a \code{bvar} object. Supports both
+#' homoscedastic specifications and stochastic volatility models (RW or AR(1)).
 #'
-#' Forecast inputs must be provided in \code{x$predict$H} and
-#' \code{x$predict$d_pred} before calling \code{fit()}.
+#' Forecast inputs must be supplied in \code{x$predict$H} and
+#' \code{x$predict$d_pred} prior to calling \code{fit()}.
 #'
-#' @param x A \code{bvar} object that has been passed through \code{\link{setup}} and
-#'   \code{\link{priors}}.
-#' @param iter Integer. Total number of MCMC iterations per chain. Default \code{5000}.
-#' @param warmup Integer. Number of warmup (burn-in) iterations per chain. Default \code{2500}.
-#' @param chains Integer. Number of MCMC chains. Default \code{2}.
+#' @param x A \code{bvar} object that has been passed through
+#'   \code{\link{setup}} and \code{\link{priors}}.
+#' @param iter Integer. Total number of MCMC iterations per chain.
+#'   Default is \code{5000}.
+#' @param warmup Integer. Number of warmup (burn-in) iterations per chain.
+#'   Default is \code{2500}.
+#' @param chains Integer. Number of MCMC chains. Default is \code{2}.
 #' @param cores Integer. Number of CPU cores used for sampling.
-#' @param auto_write Logical. Whether to enable \code{rstan} auto-write behavior.
+#'   Default is \code{min(chains, available cores)}.
+#' @param auto_write Logical. Whether to enable \code{rstan} auto-write.
+#'   Default is \code{TRUE}.
 #'
-#' @return A \code{bvar} object containing:
-#'   \item{fit$stan}{Stan fit object}
-#'   \item{posterior_means}{Posterior means of key parameters}
+#' @return A \code{bvar} object with:
+#' \itemize{
+#'   \item \code{fit$stan}: Stan fit object containing posterior draws
+#'   \item \code{posterior_means}: List of posterior mean estimates:
+#'     \itemize{
+#'       \item \code{beta}: k×k VAR coefficient matrix
+#'       \item \code{Psi}: k×q steady-state parameter matrix
+#'       \item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
+#'         T×k×k for stochastic volatility)
+#'       \item RW SV: \code{A}, \code{phi}
+#'       \item AR SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
+#'     }
+#' }
+#'
+#' @details
+#' The function selects the appropriate Stan model based on prior settings:
+#' \itemize{
+#'   \item Homoscedastic + Jeffreys prior:
+#'     \code{steady_state_bvar_homoscedastic_jeffreys_prior.stan}
+#'   \item Homoscedastic + inverse-Wishart prior:
+#'     \code{steady_state_bvar_homoscedastic_inverse_wishart_prior.stan}
+#'   \item Stochastic volatility (RW):
+#'     \code{steady_state_bvar_RW_stochastic_volatility.stan}
+#'   \item Stochastic volatility (AR(1)):
+#'     \code{steady_state_bvar_AR1_stochastic_volatility.stan}
+#' }
+#'
+#' For stochastic volatility models, SV-specific priors in
+#' \code{priors$SV_priors} are merged into the Stan data list.
 #'
 #' @export
-#'
 #' @examples
 #' \dontrun{
-#' yt <- matrix(rnorm(40, 0, 1), 20, 2)
-#'
+#' yt <- matrix(rnorm(40), 20, 2)
 #' bvar_obj <- bvar(data = yt)
-#'
-#' bvar_obj <- setup(bvar_obj, p=1)
-#'
+#' bvar_obj <- setup(bvar_obj, p = 1)
 #' bvar_obj <- priors(bvar_obj,
 #'                    theta_Psi = rep(0, 2),
 #'                    Omega_Psi = diag(0.1, 2, 2))
-#'
 #' bvar_obj$predict$H <- 1
 #' bvar_obj$predict$d_pred <- matrix(1)
 #'
-#' bvar_obj <- fit(bvar_obj,
-#'                 iter = 200,
-#'                 warmup = 50,
-#'                 chains = 1,
-#'                 cores = 1,
-#'                 auto_write = FALSE)
-#'}
+#' bvar_obj <- fit(bvar_obj, iter = 200, warmup = 50,
+#'                 chains = 1, cores = 1, auto_write = FALSE)
+#'
+#' summary(bvar_obj)
+#' }
 fit <- function(x,
                 iter = 5000,
                 warmup = 2500,
@@ -92,9 +115,9 @@ fit <- function(x,
   )
   
   stan_file <- if (isFALSE(priors$Jeffrey)) {
-    system.file("inv_wishart_cov.stan", package = "SteadyStateBVAR")
+    system.file("steady_state_bvar_homoscedastic_inverse_wishart_prior.stan", package = "SteadyStateBVAR")
   } else {
-    system.file("diffuse_cov.stan", package = "SteadyStateBVAR")
+    system.file("steady_state_bvar_homoscedastic_jeffreys_prior.stan", package = "SteadyStateBVAR")
   }
   
   if (isTRUE(SV)) {
@@ -103,12 +126,12 @@ fit <- function(x,
     
     if (SV_type == "RW") {
       stan_file <- system.file(
-        "stochastic_volatility_RW.stan",
+        "steady_state_bvar_RW_stochastic_volatility.stan",
         package = "SteadyStateBVAR"
       )
     } else if (SV_type == "AR") {
       stan_file <- system.file(
-        "stochastic_volatility_stationaryAR.stan",
+        "steady_state_bvar_AR1_stochastic_volatility.stan",
         package = "SteadyStateBVAR"
       )
     } else {
@@ -161,6 +184,7 @@ fit <- function(x,
     x$posterior_means$gamma_0 <- apply(posterior$gamma_0, 2, mean)
     x$posterior_means$gamma_1 <- apply(posterior$gamma_1, 2, mean)
     x$posterior_means$Phi <- apply(posterior$Phi, c(2, 3), mean)
+    x$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3, 4), mean)
     
   } else if (SV_type == "RW") {
     
@@ -168,6 +192,7 @@ fit <- function(x,
     x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
     x$posterior_means$A <- apply(posterior$A, c(2, 3), mean)
     x$posterior_means$phi <- apply(posterior$phi, 2, mean)
+    x$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3, 4), mean)
   }
   
   return(x)

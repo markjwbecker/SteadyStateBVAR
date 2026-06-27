@@ -2,55 +2,49 @@
 % Please edit documentation in R/summary.R
 \name{summary.bvar}
 \alias{summary.bvar}
-\alias{print.summary.bvar}
-\title{Summarise a fitted BVAR model}
+\title{Summarise a fitted steady-state BVAR model}
 \usage{
-\method{summary}{bvar}(object, pars = NULL, ...)
-
-\method{print}{summary.bvar}(x, ...)
+\method{summary}{bvar}(object, pars = NULL, stat = "mean", t = NULL, ...)
 }
 \arguments{
-\item{object}{A \code{bvar} object that has been passed through \code{\link{fit}}.}
+\item{object}{A \code{bvar} object that has been passed through
+\code{\link{fit}}.}
 
-\item{pars}{Character vector of parameter names to include. If \code{NULL}
-(default), all parameters are returned.}
+\item{pars}{Character vector of parameter names to include. If
+\code{NULL} (default), all available parameters are displayed.}
 
-\item{...}{Further arguments passed to or from other methods.}
+\item{stat}{Character. Which posterior statistic to display. One of
+\code{"mean"} (default) or \code{"median"}.}
 
-\item{x}{A \code{summary.bvar} object returned by \code{summary.bvar}.}
+\item{t}{Integer. Time period to display for Sigma_u in stochastic
+volatility models. If \code{NULL} (default), uses the latest time period.}
+
+\item{...}{Further arguments (currently unused).}
 }
 \value{
-An object of class \code{summary.bvar}.
+Returns the input object invisibly.
 }
 \description{
-Computes posterior means of the model parameters from a fitted \code{bvar}
-object. The parameters returned depend on the model specification:
-standard homoscedastic models return \code{beta}, \code{Psi}, and
-\code{Sigma}; stochastic volatility models additionally return volatility
-parameters.
+Computes and displays posterior summaries from a fitted \code{bvar}
+object. The parameters included depend on the model specification.
+For stochastic volatility models, displays time-varying covariance matrices.
 }
 \examples{
 \dontrun{
 yt <- matrix(rnorm(40, 0, 1), 20, 2)
-
 bvar_obj <- bvar(data = yt)
-
-bvar_obj <- setup(bvar_obj, p=1)
-
-bvar_obj <- priors(bvar_obj,
-                   theta_Psi = rep(0, 2),
-                   Omega_Psi = diag(0.1, 2, 2))
-
+bvar_obj <- setup(bvar_obj, p = 1)
+bvar_obj <- priors(
+  bvar_obj,
+  theta_Psi = rep(0, 2),
+  Omega_Psi = diag(0.1, 2, 2)
+)
 bvar_obj$predict$H <- 1
 bvar_obj$predict$d_pred <- matrix(1)
+bvar_obj <- fit(bvar_obj, iter = 200, warmup = 50, chains = 1)
 
-bvar_obj <- fit(bvar_obj,
-                iter = 200,
-                warmup = 50,
-                chains = 1,
-                cores = 1,
-                auto_write = FALSE)
-                
 summary(bvar_obj)
+summary(bvar_obj, stat = "median")
+summary(bvar_obj, t = 1)
 }
 }
