@@ -2,7 +2,7 @@
 #'
 #' Runs Stan to estimate a Bayesian VAR with steady-state formulation using
 #' data, setup, and priors stored in a \code{bvar} object. Supports both
-#' homoscedastic specifications and stochastic volatility models (RW or AR(1)).
+#' homoscedastic specifications and stochastic volatility models (RW or AR1).
 #'
 #' Forecast inputs must be supplied in \code{x$predict$H} and
 #' \code{x$predict$d_pred} prior to calling \code{fit()}.
@@ -28,8 +28,8 @@
 #'       \item \code{Psi}: k×q steady-state parameter matrix
 #'       \item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
 #'         T×k×k for stochastic volatility)
-#'       \item RW SV: \code{A}, \code{phi}
-#'       \item AR SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
+#'       \item RW  SV: \code{A}, \code{phi}
+#'       \item AR1 SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
 #'     }
 #' }
 #'
@@ -129,13 +129,13 @@ fit <- function(x,
         "steady_state_bvar_RW_stochastic_volatility.stan",
         package = "SteadyStateBVAR"
       )
-    } else if (SV_type == "AR") {
+    } else if (SV_type == "AR1") {
       stan_file <- system.file(
         "steady_state_bvar_AR1_stochastic_volatility.stan",
         package = "SteadyStateBVAR"
       )
     } else {
-      stop("SV_type must be 'RW' or 'AR'")
+      stop("SV_type must be 'RW' or 'AR1'")
     }
     
     stan_data <- c(priors$SV_priors, stan_data)
@@ -176,7 +176,7 @@ fit <- function(x,
     x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
     x$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3), mean)
     
-  } else if (SV_type == "AR") {
+  } else if (SV_type == "AR1") {
     
     x$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
     x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)

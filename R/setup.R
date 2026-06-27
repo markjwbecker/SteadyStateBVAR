@@ -1,17 +1,18 @@
 #' Set up a steady-state BVAR model
 #'
-#' Prepares all matrices needed for prior specification and estimation. 
+#' Prepares the matrices needed for prior specification and estimation. 
 #' Also computes OLS estimates.
 #'
-#' @param x A \code{bvar} object created by \code{\link{bvar}}.
+#' @param x A steady-state \code{bvar} object created by \code{\link{bvar}}.
 #' @param p Integer. The lag order of the VAR.
 #' @param deterministic Character. The deterministic component to include.
 #'   One of \code{"constant"} (default), \code{"constant_and_dummy"}, or
 #'   \code{"constant_and_trend"}.
-#' @param dummy Optional numeric vector or matrix of dummy variables. Only
+#' @param dummy Numeric vector of a dummy variable. Only
 #'   used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.
 #'
-#' @return The \code{bvar} object with a \code{setup} list appended.
+#' @return The \code{bvar} object with a \code{setup} list containing the
+#' matrices required for prior specification and estimation, and also the OLS estimates.
 #' @export
 #'
 #' @examples
@@ -47,6 +48,11 @@ setup <- function(x, p, deterministic=c("constant", "constant_and_dummy", "const
   if (!is.null(dummy) && length(dummy) != nrow(yt)) {
     stop("dummy must have length equal to number of observations")
   }
+  
+  if (!is.null(dummy) && !is.vector(dummy)) {
+    stop("dummy must be a vector")
+  }
+  
   
   N = nrow(yt) - p
   k = ncol(yt)
@@ -93,6 +99,8 @@ setup <- function(x, p, deterministic=c("constant", "constant_and_dummy", "const
   Psi_OLS <- solve(A_L, C_hat)
   beta_OLS = beta_hat[1:(k*p), ]
   
+  n_free_params_A <- k*(k-1)/2
+  
   x$setup <- list(N=N,
                   k=k,
                   p=p,
@@ -106,6 +114,7 @@ setup <- function(x, p, deterministic=c("constant", "constant_and_dummy", "const
                   Sigma_u_OLS=Sigma_u_OLS,
                   Psi_OLS=Psi_OLS,
                   dt=dt,
-                  D=X)
+                  D=X,
+                  n_free_params_A=n_free_params_A)
   return(x)
 }

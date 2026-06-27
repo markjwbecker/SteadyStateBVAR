@@ -172,11 +172,14 @@ degrees of freedom. An uninformative prior can be (and is in this
 package) specified by setting $V_0=(m_0-k-1)\hat{\Sigma}_u$ where
 $\hat{\Sigma}_u$ is the least squares estimate from the VAR($p$)
 (including the constant and dummy/trend variable if applicable), and
-$m_0=k+2$. This package also allows for stochastic volatility (Random
-Walk or AR1 specifications), where we let the covariance matrix of the
-innovations vary over time such that we have a time-varying covariance
-matrix $\Sigma_{u,t}$ (more details on this found in the respective
-vignettes).
+$m_0=k+2$.
+
+This package also allows for stochastic volatility (Random Walk or AR1
+specifications), where we let the covariance matrix of the innovations
+vary over time such that we have a time-varying covariance matrix
+$\Sigma_{u,t}$ (more details on this found in the respective vignettes).
+
+\##Example
 
 To estimate the model in Section 4.1 of Villani (2009) and perform
 impulse response analysis and forecasting, simply run the following

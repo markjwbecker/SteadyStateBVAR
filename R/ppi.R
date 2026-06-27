@@ -1,15 +1,15 @@
 #' Prior Probability Interval for a Normal Distribution
 #'
-#' Converts a symmetric prior probability interval into the corresponding
-#' mean and variance of a normal distribution. Given a lower and upper bound
-#' that define a prior probability interval, this function recovers the
-#' implied normal prior parameters. Useful for specifying informative priors
+#' Calculates the mean and variance of a normal prior probability interval.
+#' Given a lower and upper bound of a (1-alpha) prior probability interval
+#' this function recovers the implied normal prior parameters.
+#' Useful for specifying informative priors
 #' on the steady-state (Psi) parameters in an intuitive way.
 #'
 #' @param l Numeric. The lower bound of the prior probability interval.
 #' @param u Numeric. The upper bound of the prior probability interval.
 #' @param interval Numeric. The prior probability mass within the interval.
-#'   Default \code{0.95}.
+#'   Default \code{0.95}, i.e. 95%.
 #' @param annualized_growthrate Logical. If \code{TRUE}, converts the interval
 #'   from annualized to per-period units by dividing by \code{freq}. Default
 #'   \code{FALSE}.
@@ -21,7 +21,6 @@
 #' @export
 #'
 #' @examples
-#' # steady-state annualized inflation is between 1% and 3% with 95% probability
 #' ppi(l = 1, u = 3, interval = 0.95)
 ppi <- function(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4) {
   

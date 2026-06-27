@@ -14,56 +14,65 @@ fit(
 )
 }
 \arguments{
-\item{x}{A \code{bvar} object that has been passed through \code{\link{setup}}
-and \code{\link{priors}}.}
+\item{x}{A \code{bvar} object that has been passed through
+\code{\link{setup}} and \code{\link{priors}}.}
 
-\item{iter}{Integer. Total number of MCMC iterations per chain. Default \code{5000}.}
+\item{iter}{Integer. Total number of MCMC iterations per chain.
+Default is \code{5000}.}
 
 \item{warmup}{Integer. Number of warmup (burn-in) iterations per chain.
-Default \code{2500}.}
+Default is \code{2500}.}
 
-\item{chains}{Integer. Number of MCMC chains. Default \code{2}.}
+\item{chains}{Integer. Number of MCMC chains. Default is \code{2}.}
 
-\item{cores}{Integer. Number of CPU cores used for sampling. Default is the
-minimum of \code{chains} and available cores.}
+\item{cores}{Integer. Number of CPU cores used for sampling.
+Default is \code{min(chains, available cores)}.}
 
-\item{auto_write}{Logical. Whether to enable \code{rstan} auto-write behavior.
-Default \code{TRUE}.}
+\item{auto_write}{Logical. Whether to enable \code{rstan} auto-write.
+Default is \code{TRUE}.}
 }
 \value{
-A \code{bvar} object with the following components added:
-\item{fit$stan}{Stan fit object containing full posterior samples}
-\item{posterior_means}{List of posterior means for all parameters:
+A \code{bvar} object with:
 \itemize{
-\item \code{beta} - VAR coefficients (k×k matrix)
-\item \code{Psi} - Steady-state parameters (k×q matrix)
-\item \code{Sigma_u} - Error covariance (k×k for homoscedastic,
-time×k×k for stochastic volatility)
-\item For stochastic volatility: \code{A}, \code{phi}, \code{gamma_0},
-\code{gamma_1}, \code{Phi} as applicable
-}}
+\item \code{fit$stan}: Stan fit object containing posterior draws
+\item \code{posterior_means}: List of posterior mean estimates:
+\itemize{
+\item \code{beta}: k×k VAR coefficient matrix
+\item \code{Psi}: k×q steady-state parameter matrix
+\item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
+T×k×k for stochastic volatility)
+\item RW  SV: \code{A}, \code{phi}
+\item AR1 SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
+}
+}
 }
 \description{
-Runs Stan to estimate the BVAR model using data, setup, and priors stored
-in a \code{bvar} object. Supports standard homoscedastic steady-state BVAR
-as well as stochastic volatility specifications (RW or AR(1)).
+Runs Stan to estimate a Bayesian VAR with steady-state formulation using
+data, setup, and priors stored in a \code{bvar} object. Supports both
+homoscedastic specifications and stochastic volatility models (RW or AR1).
 }
 \details{
-Forecast inputs must be provided in \code{x$predict$H} and
-\code{x$predict$d_pred} before calling \code{fit()}.
+Forecast inputs must be supplied in \code{x$predict$H} and
+\code{x$predict$d_pred} prior to calling \code{fit()}.
 
-The function automatically selects the appropriate Stan model file based on
-the prior specification:
+The function selects the appropriate Stan model based on prior settings:
 \itemize{
-\item Homoscedastic with Jeffrey's prior: \code{diffuse_cov.stan}
-\item Homoscedastic with inverse-Wishart: \code{inv_wishart_cov.stan}
-\item Stochastic volatility (RW): \code{stochastic_volatility_RW.stan}
-\item Stochastic volatility (AR): \code{stochastic_volatility_stationaryAR.stan}
+\item Homoscedastic + Jeffreys prior:
+\code{steady_state_bvar_homoscedastic_jeffreys_prior.stan}
+\item Homoscedastic + inverse-Wishart prior:
+\code{steady_state_bvar_homoscedastic_inverse_wishart_prior.stan}
+\item Stochastic volatility (RW):
+\code{steady_state_bvar_RW_stochastic_volatility.stan}
+\item Stochastic volatility (AR(1)):
+\code{steady_state_bvar_AR1_stochastic_volatility.stan}
 }
+
+For stochastic volatility models, SV-specific priors in
+\code{priors$SV_priors} are merged into the Stan data list.
 }
 \examples{
 \dontrun{
-yt <- matrix(rnorm(40, 0, 1), 20, 2)
+yt <- matrix(rnorm(40), 20, 2)
 bvar_obj <- bvar(data = yt)
 bvar_obj <- setup(bvar_obj, p = 1)
 bvar_obj <- priors(bvar_obj,
@@ -72,12 +81,8 @@ bvar_obj <- priors(bvar_obj,
 bvar_obj$predict$H <- 1
 bvar_obj$predict$d_pred <- matrix(1)
 
-bvar_obj <- fit(bvar_obj,
-                iter = 200,
-                warmup = 50,
-                chains = 1,
-                cores = 1,
-                auto_write = FALSE)
+bvar_obj <- fit(bvar_obj, iter = 200, warmup = 50,
+                chains = 1, cores = 1, auto_write = FALSE)
 
 summary(bvar_obj)
 }

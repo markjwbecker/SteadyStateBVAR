@@ -12,7 +12,7 @@ setup(
 )
 }
 \arguments{
-\item{x}{A \code{bvar} object created by \code{\link{bvar}}.}
+\item{x}{A steady-state \code{bvar} object created by \code{\link{bvar}}.}
 
 \item{p}{Integer. The lag order of the VAR.}
 
@@ -20,14 +20,15 @@ setup(
 One of \code{"constant"} (default), \code{"constant_and_dummy"}, or
 \code{"constant_and_trend"}.}
 
-\item{dummy}{Optional numeric vector or matrix of dummy variables. Only
+\item{dummy}{Numeric vector of a dummy variable. Only
 used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.}
 }
 \value{
-The \code{bvar} object with a \code{setup} list appended.
+The \code{bvar} object with a \code{setup} list containing the
+matrices required for prior specification and estimation, and also the OLS estimates.
 }
 \description{
-Prepares all matrices needed for prior specification and estimation.
+Prepares the matrices needed for prior specification and estimation.
 Also computes OLS estimates.
 }
 \examples{

@@ -2,7 +2,7 @@
 #'
 #' Computes and prints posterior summaries from a fitted \code{bvar} object.
 #' The printed output depends on whether the model is homoscedastic or includes
-#' stochastic volatility (RW or AR specification).
+#' stochastic volatility (RW or AR1 specification).
 #'
 #' Parameters are printed in structured blocks. Matrix-valued parameters are
 #' displayed as matrices, while vector-valued stochastic volatility parameters
@@ -28,8 +28,8 @@
 #' extensions. For SV models, additional parameters may be displayed depending
 #' on specification:
 #' \itemize{
-#'   \item RW SV: \code{phi}
-#'   \item AR SV: \code{gamma_0}, \code{gamma_1}, \code{Phi}
+#'   \item RW  SV: \code{phi}
+#'   \item AR1 SV: \code{gamma_0}, \code{gamma_1}, \code{Phi}
 #' }
 #'
 #' Output is printed in blocks with manual formatting for readability.
@@ -129,7 +129,7 @@ summary.bvar <- function(object, pars = NULL, stat = "mean", t = NULL, ...) {
     results$phi <- round(phi, 2)
   }
   
-  # ---------------- AR SV ----------------
+  # ---------------- AR1 SV ----------------
   if (!is.null(posterior$gamma_0)) {
     gamma_0 <- apply(posterior$gamma_0, 2, if (stat == "mean") mean else median)
     names(gamma_0) <- var_names
@@ -208,7 +208,7 @@ summary.bvar <- function(object, pars = NULL, stat = "mean", t = NULL, ...) {
       print(obj)
       
       # -------------------------
-      # gamma_0 (AR SV)
+      # gamma_0 (AR1 SV)
       # -------------------------
     } else if (param_name == "gamma_0") {
       
@@ -216,7 +216,7 @@ summary.bvar <- function(object, pars = NULL, stat = "mean", t = NULL, ...) {
       print(obj)
       
       # -------------------------
-      # gamma_1 (AR SV)
+      # gamma_1 (AR1 SV)
       # -------------------------
     } else if (param_name == "gamma_1") {
       
@@ -224,7 +224,7 @@ summary.bvar <- function(object, pars = NULL, stat = "mean", t = NULL, ...) {
       print(obj)
       
       # -------------------------
-      # Phi (AR SV)
+      # Phi (AR1 SV)
       # -------------------------
     } else if (param_name == "Phi") {
       

@@ -100,8 +100,8 @@ test_that("SV requires SV_priors", {
   model <- setup(model, p = 2, deterministic = "constant")
   
   expect_error(
-    priors(model, SV = TRUE, SV_type = "AR"),
-    "requires SV_priors"
+    priors(model, SV = TRUE, SV_type = "AR1"),
+    "SV_priors is required"
   )
 })
 
@@ -112,7 +112,7 @@ test_that("SV attaches correctly", {
   
   sv <- list(test = 1)
   
-  result <- priors(model, SV = TRUE, SV_type = "AR", SV_priors = sv)
+  result <- priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv)
   
   expect_equal(result$priors$SV_priors, sv)
   expect_true(result$priors$SV)

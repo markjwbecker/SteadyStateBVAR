@@ -13,38 +13,37 @@
 \item{pars}{Character vector of parameter names to include. If
 \code{NULL} (default), all available parameters are displayed.}
 
-\item{stat}{Character. Which posterior statistic to display. One of
+\item{stat}{Character. Posterior summary statistic to display:
 \code{"mean"} (default) or \code{"median"}.}
 
-\item{t}{Integer. Time period to display for Sigma_u in stochastic
-volatility models. If \code{NULL} (default), uses the latest time period.}
+\item{t}{Integer. Time index for stochastic volatility covariance matrices.
+If \code{NULL}, the latest available period is used.}
 
-\item{...}{Further arguments (currently unused).}
+\item{...}{Additional arguments (currently unused).}
 }
 \value{
 Returns the input object invisibly.
 }
 \description{
-Computes and displays posterior summaries from a fitted \code{bvar}
-object. The parameters included depend on the model specification.
-For stochastic volatility models, displays time-varying covariance matrices.
+Computes and prints posterior summaries from a fitted \code{bvar} object.
+The printed output depends on whether the model is homoscedastic or includes
+stochastic volatility (RW or AR1 specification).
 }
-\examples{
-\dontrun{
-yt <- matrix(rnorm(40, 0, 1), 20, 2)
-bvar_obj <- bvar(data = yt)
-bvar_obj <- setup(bvar_obj, p = 1)
-bvar_obj <- priors(
-  bvar_obj,
-  theta_Psi = rep(0, 2),
-  Omega_Psi = diag(0.1, 2, 2)
-)
-bvar_obj$predict$H <- 1
-bvar_obj$predict$d_pred <- matrix(1)
-bvar_obj <- fit(bvar_obj, iter = 200, warmup = 50, chains = 1)
+\details{
+Parameters are printed in structured blocks. Matrix-valued parameters are
+displayed as matrices, while vector-valued stochastic volatility parameters
+(e.g. \code{phi}, \code{gamma_0}, \code{gamma_1}) are printed as named vectors.
 
-summary(bvar_obj)
-summary(bvar_obj, stat = "median")
-summary(bvar_obj, t = 1)
+For stochastic volatility models, time-varying covariance matrices
+\code{Sigma_u,t} can be extracted at a specified time index.
+
+The function supports both standard VAR models and stochastic volatility
+extensions. For SV models, additional parameters may be displayed depending
+on specification:
+\itemize{
+\item RW  SV: \code{phi}
+\item AR1 SV: \code{gamma_0}, \code{gamma_1}, \code{Phi}
 }
+
+Output is printed in blocks with manual formatting for readability.
 }

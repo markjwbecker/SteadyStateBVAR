@@ -2,7 +2,7 @@
 % Please edit documentation in R/priors.R
 \name{priors}
 \alias{priors}
-\title{Specify priors for a Bayesian VAR model with optional stochastic volatility}
+\title{Specify priors for a steady-state BVAR model}
 \usage{
 priors(
   x,
@@ -19,73 +19,57 @@ priors(
 )
 }
 \arguments{
-\item{x}{A \code{bvar} object that has been passed through \code{\link{setup}}.}
+\item{x}{A steady-state \code{bvar} object that has been passed through \code{\link{setup}}.}
 
-\item{lambda_1}{Numeric. Overall tightness of the Minnesota prior controlling overall shrinkage.
+\item{lambda_1}{Numeric. Overall tightness of the Minnesota prior.
 Default \code{0.2}.}
 
-\item{lambda_2}{Numeric. Cross-variable shrinkage parameter controlling shrinkage of other variables'
-lags relative to own lags. Default \code{0.5}.}
+\item{lambda_2}{Numeric. Cross-equation tightness of the Minnesota prior. Default \code{0.5}.}
 
-\item{lambda_3}{Numeric. Lag decay parameter controlling how prior variance decreases with lag length.
-Default \code{1}.}
+\item{lambda_3}{Numeric. Lag decay rate of the Minnesota prior. Default \code{1}.}
 
-\item{first_own_lag_prior_mean}{Numeric vector of length \code{k}. Prior means for first own lag
+\item{first_own_lag_prior_mean}{Numeric vector of length \code{k}. Prior means for the first own lags
 of each variable. If \code{NULL}, defaults to a zero vector.}
 
-\item{theta_Psi}{Numeric vector. Prior mean for steady-state parameters. If \code{NULL},
-defaults to a zero vector of length \code{k*q}.}
+\item{theta_Psi}{Numeric vector. Prior mean vector for steady-state parameters. If \code{NULL},
+defaults to OLS estimate.}
 
-\item{Omega_Psi}{Numeric matrix. Prior covariance for steady-state parameters. If \code{NULL},
-defaults to a diagonal matrix with variance 100.}
+\item{Omega_Psi}{Numeric matrix. Prior covariance matrix for steady-state parameters. If \code{NULL},
+defaults to a diagonal matrix with variances 1000.}
 
-\item{Jeffrey}{Logical. If \code{TRUE}, uses a Jeffrey's prior for the error covariance matrix.
-If \code{FALSE}, uses an inverse-Wishart prior.}
+\item{Jeffrey}{Logical. If \code{TRUE}, uses a Jeffreys prior for the innovation covariance matrix.
+If \code{FALSE}, uses an uninformative inverse-Wishart prior.}
 
 \item{SV}{Logical. If \code{TRUE}, enables stochastic volatility specification.
 Default \code{FALSE}.}
 
-\item{SV_type}{Character. Type of stochastic volatility model. Must be either \code{"RW"} or \code{"AR"}.
+\item{SV_type}{Character. Type of stochastic volatility model. Must be either \code{"RW"} or \code{"AR1"}.
 Required if \code{SV = TRUE}.}
 
-\item{SV_priors}{List. User-supplied stochastic volatility prior objects passed directly to Stan.
+\item{SV_priors}{List. User-supplied stochastic volatility priors.
 Required when \code{SV = TRUE}.}
 }
 \value{
 The \code{bvar} object with an appended \code{priors} list containing:
-\item{theta_beta}{Prior mean for VAR coefficients}
-\item{Omega_beta}{Prior covariance for VAR coefficients}
-\item{theta_Psi}{Prior mean for steady-state parameters}
-\item{Omega_Psi}{Prior covariance for steady-state parameters}
-\item{Jeffrey}{Indicator for Jeffrey's prior usage}
-\item{Sigma_AR}{Residual variance estimates from univariate AR fits}
-\item{m_0}{Inverse-Wishart degrees of freedom (if \code{Jeffrey = FALSE})}
-\item{V_0}{Inverse-Wishart scale matrix (if \code{Jeffrey = FALSE})}
-\item{SV}{Logical indicator for stochastic volatility model}
+\item{theta_beta}{Prior mean for vec(beta)}
+\item{Omega_beta}{Prior covariance matrix for vec(beta)}
+\item{theta_Psi}{Prior mean for vec(Psi), i.e. the steady-state parameters}
+\item{Omega_Psi}{Prior covariance matrix for vec(Psi), i.e. the steady-state parameters}
+\item{Jeffrey}{Indicator for Jeffreys prior usage}
+\item{Sigma_AR}{Residual variance estimates from univariate AR fits, which are used by the Minnesota prior}
+\item{m_0}{Inverse-Wishart prior degrees of freedom (if \code{Jeffrey = FALSE})}
+\item{V_0}{Inverse-Wishart prior scale matrix (if \code{Jeffrey = FALSE})}
+\item{SV}{Logical indicator for stochastic volatility specification}
 \item{SV_type}{Stochastic volatility specification type}
 \item{SV_priors}{User-supplied SV prior list (if \code{SV = TRUE})}
 }
 \description{
-Defines Minnesota-style priors for VAR coefficients and priors for steady-state parameters.
-Optionally enables a stochastic volatility specification (random walk or AR(1)) which
-augments the prior object with additional SV-related inputs used by the Stan model.
-A Jeffrey's prior can be used for the error covariance matrix or, alternatively, an
-inverse-Wishart prior.
+The Minnesota prior is used for the autoregressive parameters, and is determined by
+the overall tightness, cross-equation tightness, and the lag decay rate.
+For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
+the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
+Optionally enables a stochastic volatility specification for the covariance matrix of the innovations (random walk or AR(1)).
 }
-\section{Validation}{
-
-The function performs the following checks:
-\itemize{
-\item Ensures \code{x} is a valid \code{bvar} object
-\item Ensures \code{setup} exists and contains required elements
-\item Ensures lambda parameters are strictly positive
-\item Ensures \code{first_own_lag_prior_mean} has length \code{k} (if provided)
-\item Ensures \code{theta_Psi} and \code{Omega_Psi} dimensions match (if both provided)
-\item Ensures valid \code{SV_type} when \code{SV = TRUE}
-\item Ensures \code{SV_priors} is provided when \code{SV = TRUE}
-}
-}
-
 \examples{
 yt <- matrix(rnorm(40, 0, 1), 20, 2)
 
