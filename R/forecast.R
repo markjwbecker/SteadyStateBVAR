@@ -2,34 +2,58 @@
 #'
 #' Computes and plots forecasts from a fitted \code{bvar} object. Posterior
 #' predictive draws from Stan are used to construct point forecasts and
-#' credible intervals. Optionally converts level forecasts to annual growth
+#' prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 #' rates for selected variables.
 #'
-#' @param x A \code{bvar} object that has been passed through \code{\link{fit}}.
-#' @param ci Numeric. The credible interval width. Default \code{0.95}.
+#' @param x A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.
+#' @param ci Numeric. The prediction interval width. Default \code{0.95}, i.e. 95% prediction interval.
 #' @param fcst_type Character. Whether to use \code{"mean"} or \code{"median"}
 #'   as the point forecast. Default \code{"mean"}.
 #' @param growth_rate_idx Integer vector. Indices of variables to convert to
-#'   annual growth rates. If \code{NULL} (default), all variables are plotted
-#'   in levels.
+#'   annual growth rates. Default is \code{NULL}.
 #' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
 #'   (default), all variables are plotted.
 #' @param show_all Logical. If \code{FALSE} (default), only the last two years
 #'   of history are shown alongside the forecast. If \code{TRUE}, the full
 #'   history is shown.
 #'
-#' @return A list with three matrices: \code{forecast}, \code{lower}, and
+#' @return Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
 #'   \code{upper}, each of dimension \code{H x k} where \code{H} is the
 #'   forecast horizon and \code{k} is the number of variables.
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' model <- bvar(data = my_data)
-#' model <- setup(model, p = 2, deterministic = "constant")
-#' model <- priors(model)
-#' model <- fit(model)
-#' fcst <- forecast(model, ci = 0.95, fcst_type = "mean")
+#' #homoscedastic with Jeffreys prior
+#' yt <- matrix(rnorm(50), 25, 2)
+#'
+#' bvar_obj <- bvar(data = yt)
+#'
+#' bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
+#'
+#' bvar_obj <- priors(bvar_obj,
+#'                    lambda_1 = 0.2,
+#'                    lambda_2 = 0.5,
+#'                    lambda_3 = 1,
+#'                    first_own_lag_prior_mean = rep(1,2),
+#'                    theta_Psi = rep(0, 2),
+#'                    Omega_Psi = diag(0.1, 2, 2),
+#'                    Jeffrey = TRUE,
+#'                    SV = FALSE,
+#'                    SV_type = NULL,
+#'                    SV_priors = NULL)
+#'                    
+#' bvar_obj <- fit(bvar_obj,
+#'                 H = 8,
+#'                 d_pred = matrix(rep(1,8)),
+#'                 iter = 200,
+#'                 warmup = 50,
+#'                 chains = 1,
+#'                 cores = 1,
+#'                 verbose = FALSE,
+#'                 auto_write = FALSE)
+#'
+#' forecast(bvar_obj, ci = 0.90, show_all = TRUE)
 #' }
 forecast <- function(x, ci = 0.95, fcst_type = c("mean", "median"),
                      growth_rate_idx = NULL, plot_idx = NULL, show_all = FALSE) {
@@ -169,5 +193,5 @@ forecast <- function(x, ci = 0.95, fcst_type = c("mean", "median"),
     }
   }
   
-  return(list(forecast = forecast_ret, lower = lower_ret, upper = upper_ret))
+  invisible(list(forecast = forecast_ret, lower = lower_ret, upper = upper_ret))
 }

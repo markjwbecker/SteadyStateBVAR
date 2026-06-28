@@ -41,7 +41,7 @@
 #'   \item AR1 stochastic volatility:
 #'     \code{steady_state_bvar_AR1_stochastic_volatility.stan}
 #' }
-#' The function estimates the following parameters:
+#' The function estimates the following parameters (see \link{bvar} for details):
 #' \itemize{
 #'       \item \code{beta}: kp×k VAR coefficient matrix
 #'       \item \code{Psi}: k×q steady-state parameter matrix
@@ -72,7 +72,7 @@
 #'
 #' bvar_obj <- bvar(data = yt)
 #'
-#' bvar_obj <- setup(bvar_obj, p=1)
+#' bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
 #'
 #' bvar_obj <- priors(bvar_obj,
 #'                    lambda_1 = 0.2,
@@ -101,7 +101,7 @@
 #'
 #' bvar_obj <- bvar(data = yt)
 #'
-#' bvar_obj <- setup(bvar_obj, p=1)
+#' bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
 #' 
 #' k <- bvar_obj$setup$k
 #' n_free_params_A <- bvar_obj$setup$n_free_params_A
@@ -141,7 +141,7 @@
 #'
 #' bvar_obj <- bvar(data = yt)
 #'
-#' bvar_obj <- setup(bvar_obj, p=1)
+#' bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
 #' 
 #' k <- bvar_obj$setup$k
 #' n_free_params_A <- bvar_obj$setup$n_free_params_A

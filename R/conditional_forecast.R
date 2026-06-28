@@ -1,44 +1,74 @@
 #' Conditional forecasts from a fitted BVAR model
 #'
-#' Computes and plots conditional forecasts from a fitted \code{bvar} object.
+#' Computes and plots conditional forecasts from a fitted steady-state \code{bvar} object.
 #' Conditions are imposed on specific variables at specific horizons using the
-#' method of Waggoner and Zha (1999). Both conditional and unconditional
+#' method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
 #' forecasts are plotted for comparison.
 #'
 #' @param bvar_obj A \code{bvar} object that has been passed through
 #'   \code{\link{fit}}.
 #' @param conditions A data frame with three columns: \code{var} (integer index
 #'   of the conditioned variable), \code{horizon} (integer forecast horizon at
-#'   which the condition is imposed), and \code{value} (numeric value the
-#'   variable is conditioned on).
-#' @param ci Numeric. The credible interval width. Default \code{0.95}.
+#'   which the condition is imposed), and \code{value} (numeric, the imposed
+#'   condition). Note that \code{var} and \code{horizon} must be integers, as
+#'   they are used for indexing.
+#' @param ci Numeric. The prediction interval width. Default \code{0.95}.
 #' @param fcst_type Character. Whether to use \code{"mean"} or \code{"median"}
 #'   as the point forecast. Default \code{"mean"}.
-#' @param growth_rate_idx Integer vector. Indices of variables to convert to
-#'   annual growth rates. If \code{NULL} (default), all variables are plotted
-#'   in levels.
+#' @param growth_rate_idx Integer vector. Indices of variables to convert to annual growth rates.
+#'  Default is \code{NULL}.
 #' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
 #'   (default), all variables are plotted.
 #'
-#' @return A list with three matrices: \code{forecast}, \code{lower}, and
+#' @return Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
 #'   \code{upper}, each of dimension \code{H x k}, as well as \code{cond_draws},
 #'   an array of all posterior conditional forecast draws.
 #' @export
 #'
 #' @references
-#' Waggoner, D. F. and Zha, T. (1999). Conditional forecasts in dynamic
-#' multivariate models. \emph{Review of Economics and Statistics}, 81(4),
-#' 639-651.
+#' Dieppe, A., Legrand, R., and van Roye, B. (2018).
+#' \emph{The Bayesian Estimation, Analysis and Regression (BEAR) Toolbox Technical guide}.
+#' European Central Bank.
 #'
 #' @examples
 #' \dontrun{
-#' # Condition on variable 1 being 2.0 at horizon 4
-#' conditions <- data.frame(var = 1, horizon = 4, value = 2.0)
-#' model <- bvar(data = my_data)
-#' model <- setup(model, p = 2, deterministic = "constant")
-#' model <- priors(model)
-#' model <- fit(model)
-#' conditional_forecast(model, conditions = conditions)
+#' #homoscedastic with Jeffreys prior
+#' yt <- matrix(rnorm(50), 25, 2)
+#'
+#' bvar_obj <- bvar(data = yt)
+#'
+#' bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
+#'
+#' bvar_obj <- priors(bvar_obj,
+#'                    lambda_1 = 0.2,
+#'                    lambda_2 = 0.5,
+#'                    lambda_3 = 1,
+#'                    first_own_lag_prior_mean = rep(1,2),
+#'                    theta_Psi = rep(0, 2),
+#'                    Omega_Psi = diag(0.1, 2, 2),
+#'                    Jeffrey = TRUE,
+#'                    SV = FALSE,
+#'                    SV_type = NULL,
+#'                    SV_priors = NULL)
+#'                    
+#' bvar_obj <- fit(bvar_obj,
+#'                 H = 8,
+#'                 d_pred = matrix(rep(1,8)),
+#'                 iter = 200,
+#'                 warmup = 50,
+#'                 chains = 1,
+#'                 cores = 1,
+#'                 verbose = FALSE,
+#'                 auto_write = FALSE)
+#'                 
+#' conditions <- data.frame(var = rep(2,8),
+#'                          horizon = rep(1:8),
+#'                          value   = rep(1,8))
+#'                          
+#' cond_fcst <- conditional_forecast(bvar_obj,
+#'                                   conditions,
+#'                                   ci=0.68,
+#'                                   fcst_type = "mean")
 #' }
 conditional_forecast <- function(bvar_obj, conditions, ci = 0.95,
                                  fcst_type = c("mean", "median"),
@@ -143,7 +173,6 @@ conditional_forecast <- function(bvar_obj, conditions, ci = 0.95,
   cond_lower <- apply(cond_forecast_array, c(1, 2), quantile, probs = alpha / 2)
   cond_upper <- apply(cond_forecast_array, c(1, 2), quantile, probs = 1 - alpha / 2)
   
-  # --- plotting ---
   y_pred_uncond   <- posterior$y_pred
   y_pred_m_uncond <- apply(y_pred_uncond, c(2, 3), fcst_fun)
   
@@ -229,7 +258,7 @@ conditional_forecast <- function(bvar_obj, conditions, ci = 0.95,
            bty    = "n")
   }
   
-  return(list(
+  invisible(list(
     forecast   = forecast_ret,
     lower      = lower_ret,
     upper      = upper_ret,
