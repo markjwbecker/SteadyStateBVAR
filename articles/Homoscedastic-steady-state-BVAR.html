@@ -6,7 +6,13 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Homoscedastic steady-state BVAR (Villani, 2009) • SteadyStateBVAR</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -66,9 +72,8 @@
     
     
 <p>Here we estimate the original (homoscedastic - i.e. constant
-innovation covariance matrix
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi mathvariant="normal">Σ</mi><mi>u</mi></msub><annotation encoding="application/x-tex">\Sigma_{u}</annotation></semantics></math>)
-steady-state BVAR model from Section 4.1 of Villani (2009).</p>
+innovation covariance matrix <span class="math inline">\(\Sigma_{u}\)</span>) steady-state BVAR model from
+Section 4.1 of Villani (2009).</p>
 <p>First, let us attach the package and load the data.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/markjwbecker/SteadyStateBVAR" class="external-link">SteadyStateBVAR</a></span><span class="op">)</span></span>
@@ -76,28 +81,16 @@ steady-state BVAR model from Section 4.1 of Villani (2009).</p>
 <span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="va">Villani2009</span></span></code></pre></div>
 <p>The data set contains quarterly data for Sweden over the time period
 1980Q1–2005Q4. The seven variables are: trade-weighted measures of
-foreign GDP growth
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi mathvariant="normal">Δ</mi><msub><mi>y</mi><mi>f</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\Delta y_f)</annotation></semantics></math>,
-CPI inflation
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>π</mi><mi>f</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(\pi_f)</annotation></semantics></math>
-and the 3-month interest rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>i</mi><mi>f</mi></msub><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(i_f)</annotation></semantics></math>,
-the corresponding domestic variables
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">\Delta y</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>π</mi><annotation encoding="application/x-tex">\pi</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>),
-and the level of the real exchange rate defined as
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mi>s</mi><mo>+</mo><msub><mi>p</mi><mi>f</mi></msub><mo>−</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">q=s+p_f-p</annotation></semantics></math>,
-where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>p</mi><mi>f</mi></msub><annotation encoding="application/x-tex">p_f</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>p</mi><annotation encoding="application/x-tex">p</annotation></semantics></math>
-are the foreign and domestic CPI levels (in logs) and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>s</mi><annotation encoding="application/x-tex">s</annotation></semantics></math>
-is the (log of the) trade-weighted nominal exchange rate. As such, we
-have</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mi>t</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mi mathvariant="normal">Δ</mi><msub><mi>y</mi><mi>f</mi></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>π</mi><mi>f</mi></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msub><mi>i</mi><mi>f</mi></msub></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi mathvariant="normal">Δ</mi><mi>y</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>π</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>i</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>q</mi></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+foreign GDP growth <span class="math inline">\((\Delta y_f)\)</span>,
+CPI inflation <span class="math inline">\((\pi_f)\)</span> and the
+3-month interest rate <span class="math inline">\((i_f)\)</span>, the
+corresponding domestic variables (<span class="math inline">\(\Delta
+y\)</span>, <span class="math inline">\(\pi\)</span> and <span class="math inline">\(i\)</span>), and the level of the real exchange
+rate defined as <span class="math inline">\(q=s+p_f-p\)</span>, where
+<span class="math inline">\(p_f\)</span> and <span class="math inline">\(p\)</span> are the foreign and domestic CPI levels
+(in logs) and <span class="math inline">\(s\)</span> is the (log of the)
+trade-weighted nominal exchange rate. As such, we have</p>
+<p><span class="math display">\[
 y_t=
 \begin{pmatrix}
 \Delta y_f \\
@@ -108,7 +101,7 @@ i_f \\
 i \\
 q
 \end{pmatrix}
-</annotation></semantics></math></p>
+\]</span></p>
 <p>Also, we will leave out the last two observations, so the user can
 compare the forecasts produced here to the last forecasts seen in
 Figures 1-3 in Villani (2009) to verify that this implementation works
@@ -125,61 +118,44 @@ here.</p>
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">yt</span><span class="op">)</span></span></code></pre></div>
 <p>To model the Swedish financial crisis at the beginning of the 90s and
 the subsequent shift in monetary policy to inflation targeting and
-flexible exchange rate,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>t</mi></msub><annotation encoding="application/x-tex">d_t</annotation></semantics></math>
-(deterministic variables at time
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>t</mi><annotation encoding="application/x-tex">t</annotation></semantics></math>)
+flexible exchange rate, <span class="math inline">\(d_t\)</span>
+(deterministic variables at time <span class="math inline">\(t\)</span>)
 includes a constant term and a dummy for the pre-crisis period, i.e.</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>d</mi><mi>t</mi><mo>′</mo></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>t</mi><mo>≤</mo><mn>1992</mn><mi>Q</mi><mn>4</mn></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>t</mi><mo>&gt;</mo><mn>1992</mn><mi>Q</mi><mn>4</mn></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">\[
 d_{t}' =
 \begin{cases}
 \begin{pmatrix}1 &amp; 1\end{pmatrix} &amp; \text{if } t \le 1992Q4 \\
 \begin{pmatrix}1 &amp; 0\end{pmatrix} &amp; \text{if } t &gt; 1992Q4
 \end{cases}
-</annotation></semantics></math></p>
+\]</span></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">time</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1992.75</span><span class="op">)</span></span>
 <span><span class="va">dum_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">bp</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span><span class="op">-</span><span class="va">bp</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>To formulate a prior on
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi mathvariant="normal">Ψ</mi><annotation encoding="application/x-tex">\Psi</annotation></semantics></math>,
-note that the specification of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>t</mi></msub><annotation encoding="application/x-tex">d_t</annotation></semantics></math>
+<p>To formulate a prior on <span class="math inline">\(\Psi\)</span>,
+note that the specification of <span class="math inline">\(d_t\)</span>
 implies the following parametrization of the steady state:</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>μ</mi><mi>t</mi></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">{</mo><mtable><mtr><mtd columnalign="left" style="text-align: left"><msub><mi>ψ</mi><mn>1</mn></msub><mo>+</mo><msub><mi>ψ</mi><mn>2</mn></msub></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>t</mi><mo>≤</mo><mn>1992</mn><mi>Q</mi><mn>4</mn></mtd></mtr><mtr><mtd columnalign="left" style="text-align: left"><msub><mi>ψ</mi><mn>1</mn></msub></mtd><mtd columnalign="left" style="text-align: left"><mrow><mtext mathvariant="normal">if </mtext><mspace width="0.333em"></mspace></mrow><mi>t</mi><mo>&gt;</mo><mn>1992</mn><mi>Q</mi><mn>4</mn></mtd></mtr></mtable></mrow></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">\[
 \mu_t =
 \begin{cases}
 \psi_1 + \psi_2 &amp; \text{if } t \le 1992Q4 \\
 \psi_1 &amp; \text{if } t &gt; 1992Q4
 \end{cases}
-</annotation></semantics></math></p>
-<p>where
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>ψ</mi><mi>i</mi></msub><annotation encoding="application/x-tex">\psi_i</annotation></semantics></math>
-denotes the
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>:th
-column of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi mathvariant="normal">Ψ</mi><annotation encoding="application/x-tex">\Psi</annotation></semantics></math>.
-We are now ready to set up the model. Although it is not mentioned which
-lag length is used in Villani (2009), we assume
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mn>4</mn></mrow><annotation encoding="application/x-tex">p=4</annotation></semantics></math>.</p>
+\]</span></p>
+<p>where <span class="math inline">\(\psi_i\)</span> denotes the <span class="math inline">\(i\)</span>:th column of <span class="math inline">\(\Psi\)</span>. We are now ready to set up the
+model. Although it is not mentioned which lag length is used in Villani
+(2009), we assume <span class="math inline">\(p=4\)</span>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup.html">setup</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                  p<span class="op">=</span><span class="fl">4</span>,</span>
 <span>                  deterministic <span class="op">=</span> <span class="st">"constant_and_dummy"</span>,</span>
 <span>                  dummy <span class="op">=</span> <span class="va">dum_var</span><span class="op">)</span></span></code></pre></div>
-<p>Now let us specify the priors. We first consider
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>.
-We choose the same values for the hyperparameters as in Villani (2009),
-i.e. an overall tightness of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>1</mn></msub><mo>=</mo><mn>0.2</mn></mrow><annotation encoding="application/x-tex">\lambda_1=0.2</annotation></semantics></math>,
-a cross-equation tightness of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>2</mn></msub><mo>=</mo><mn>0.5</mn></mrow><annotation encoding="application/x-tex">\lambda_2=0.5</annotation></semantics></math>,
-and a lag decay rate of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>3</mn></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\lambda_3=1</annotation></semantics></math>.
-We then specify the prior means for the first own lags of the variables.
-For variables in growth rates, we set the prior mean to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>,
-for variables in levels, we set the prior mean to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0.9</mn><annotation encoding="application/x-tex">0.9</annotation></semantics></math>.</p>
+<p>Now let us specify the priors. We first consider <span class="math inline">\(\beta\)</span>. We choose the same values for the
+hyperparameters as in Villani (2009), i.e. an overall tightness of <span class="math inline">\(\lambda_1=0.2\)</span>, a cross-equation tightness
+of <span class="math inline">\(\lambda_2=0.5\)</span>, and a lag decay
+rate of <span class="math inline">\(\lambda_3=1\)</span>. We then
+specify the prior means for the first own lags of the variables. For
+variables in growth rates, we set the prior mean to <span class="math inline">\(0\)</span>, for variables in levels, we set the
+prior mean to <span class="math inline">\(0.9\)</span>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lambda_1</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
 <span><span class="va">lambda_2</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
@@ -194,20 +170,16 @@ for variables in levels, we set the prior mean to
 <span>         <span class="fl">0.9</span>, <span class="co">#i</span></span>
 <span>         <span class="fl">0.9</span>  <span class="co">#q</span></span>
 <span>         <span class="op">)</span></span></code></pre></div>
-<p>Now moving on to
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi mathvariant="normal">Ψ</mi><annotation encoding="application/x-tex">\Psi</annotation></semantics></math>
-for the steady-state priors, we set them according to the 95% prior
-probability intervals (normal distribution) in Table I in Villani
-(2009). We first note that for our data here, the growth rate variables
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><msub><mi>y</mi><mi>f</mi></msub><mo>,</mo><msub><mi>π</mi><mi>f</mi></msub><mo>,</mo><mi mathvariant="normal">Δ</mi><mi>y</mi><mo>,</mo><mi>π</mi></mrow><annotation encoding="application/x-tex">\Delta y_f, \pi_f, \Delta y, \pi</annotation></semantics></math>)
-are specified in terms of quarterly rates of change/quarter-on-quarter
-growth, i.e. for a variable
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
-which is on a quarterly frequency, the quarterly growth rate is
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>100</mn><mo stretchy="false" form="prefix">[</mo><mrow><mi mathvariant="normal">ln</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>z</mi><mi>t</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mrow><mi mathvariant="normal">ln</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>z</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">100[ \ln (z_t) - \ln (z_{t-1})]</annotation></semantics></math>.
-The 95% prior probability intervals in Table I are specified in terms of
-annualized quarterly growth rates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>400</mn><mo stretchy="false" form="prefix">[</mo><mrow><mi mathvariant="normal">ln</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>z</mi><mi>t</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mrow><mi mathvariant="normal">ln</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>z</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">400 [\ln (z_t) - \ln (z_{t-1})]</annotation></semantics></math>.</p>
+<p>Now moving on to <span class="math inline">\(\Psi\)</span> for the
+steady-state priors, we set them according to the 95% prior probability
+intervals (normal distribution) in Table I in Villani (2009). We first
+note that for our data here, the growth rate variables (<span class="math inline">\(\Delta y_f, \pi_f, \Delta y, \pi\)</span>) are
+specified in terms of quarterly rates of change/quarter-on-quarter
+growth, i.e. for a variable <span class="math inline">\(z\)</span> which
+is on a quarterly frequency, the quarterly growth rate is <span class="math inline">\(100[ \ln (z_t) - \ln (z_{t-1})]\)</span>. The 95%
+prior probability intervals in Table I are specified in terms of
+annualized quarterly growth rates <span class="math inline">\(400 [\ln
+(z_t) - \ln (z_{t-1})]\)</span>.</p>
 <p>The <code><a href="../reference/ppi.html">ppi()</a></code> function is useful here. Simply input the
 desired 95% prior probability interval (normal distribution) on the
 annualized scale with <code>annualized_growthrate=TRUE</code>, and the
@@ -261,16 +233,12 @@ prior probability intervals we could just set
 <span>  <span class="fu"><a href="../reference/ppi.html">ppi</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.50</span>,  <span class="fl">0.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>    <span class="co">#psi_2: q</span></span>
 <span>  <span class="op">)</span></span>
 <span>  <span class="op">)</span></span></code></pre></div>
-<p>Finally for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi mathvariant="normal">Σ</mi><mi>u</mi></msub><annotation encoding="application/x-tex">\Sigma_u</annotation></semantics></math>
-we will use the noninformative Jeffreys prior
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="true" form="prefix">|</mo><msub><mi mathvariant="normal">Σ</mi><mi>u</mi></msub><mo stretchy="true" form="postfix">|</mo></mrow><mrow><mi>−</mi><mo stretchy="false" form="prefix">(</mo><mi>k</mi><mo>+</mo><mn>1</mn><mo stretchy="false" form="postfix">)</mo><mi>/</mi><mn>2</mn></mrow></msup><annotation encoding="application/x-tex">\left|\Sigma_u \right|^{-(k+1)/2}</annotation></semantics></math>,
-as done in Villani (2009). We simply pass everything to the
+<p>Finally for <span class="math inline">\(\Sigma_u\)</span> we will use
+the noninformative Jeffreys prior <span class="math inline">\(\left|\Sigma_u \right|^{-(k+1)/2}\)</span>, as
+done in Villani (2009). We simply pass everything to the
 <code><a href="../reference/priors.html">priors()</a></code> function. Note here that the function
-automatically creates
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>θ</mi><mi>β</mi></msub><annotation encoding="application/x-tex">\theta_\beta</annotation></semantics></math>
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi mathvariant="normal">Ω</mi><mi>β</mi></msub><annotation encoding="application/x-tex">\Omega_\beta</annotation></semantics></math>.</p>
+automatically creates <span class="math inline">\(\theta_\beta\)</span>
+and <span class="math inline">\(\Omega_\beta\)</span>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/priors.html">priors</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                   <span class="va">lambda_1</span>,</span>
@@ -282,16 +250,12 @@ and
 <span>                   Jeffrey<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>As in Villani (2009), we incorporate the assumption that Sweden is a
 small economy and therefore unlikely to affect the foreign economy by
-restricting the upper-right submatrix of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi mathvariant="normal">Π</mi><mi>ℓ</mi></msub><annotation encoding="application/x-tex">\Pi_\ell</annotation></semantics></math>
-for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ℓ</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>p</mi></mrow><annotation encoding="application/x-tex">\ell =1,\dots,p</annotation></semantics></math>
-or equivalently restricting the bottom-left submatrix of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msubsup><mi mathvariant="normal">Π</mi><mi>ℓ</mi><mo>′</mo></msubsup><annotation encoding="application/x-tex">\Pi_\ell'</annotation></semantics></math>
-to the zero matrix. This technique is called “block exogeneity” (Dieppe,
-Legrand, and van Roye, 2018). In essence we treat the foreign economy as
-exogenous to the domestic economy, although it is not exogenous in the
-strict sense (Karlsson, 2013).</p>
+restricting the upper-right submatrix of <span class="math inline">\(\Pi_\ell\)</span> for <span class="math inline">\(\ell =1,\dots,p\)</span> or equivalently
+restricting the bottom-left submatrix of <span class="math inline">\(\Pi_\ell'\)</span> to the zero matrix. This
+technique is called “block exogeneity” (Dieppe, Legrand, and van Roye,
+2018). In essence we treat the foreign economy as exogenous to the
+domestic economy, although it is not exogenous in the strict sense
+(Karlsson, 2013).</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">p</span></span>
 <span><span class="va">k</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">k</span></span>
@@ -334,35 +298,28 @@ strict sense (Karlsson, 2013).</p>
 <span><span class="co">#&gt; [26,]    0    0    0    1    1    1    1</span></span>
 <span><span class="co">#&gt; [27,]    0    0    0    1    1    1    1</span></span>
 <span><span class="co">#&gt; [28,]    0    0    0    1    1    1    1</span></span></code></pre></div>
-<p>We can look at the restriction matrix for
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>
-to see which elements we restrict to zero. Since the prior means for
-these elements are zero, we do the restriction by setting the relevant
-prior variances in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi mathvariant="normal">Ω</mi><mi>β</mi></msub><annotation encoding="application/x-tex">\Omega_\beta</annotation></semantics></math>
-to be very small. We simply pass our
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mi>k</mi><mi>p</mi><mo>×</mo><mi>k</mi><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(kp \times k)</annotation></semantics></math>
-restriction matrix to the <code><a href="../reference/restrict_beta.html">restrict_beta()</a></code> function:</p>
+<p>We can look at the restriction matrix for <span class="math inline">\(\beta\)</span> to see which elements we restrict
+to zero. Since the prior means for these elements are zero, we do the
+restriction by setting the relevant prior variances in <span class="math inline">\(\Omega_\beta\)</span> to be very small. We simply
+pass our <span class="math inline">\((kp \times k)\)</span> restriction
+matrix to the <code><a href="../reference/restrict_beta.html">restrict_beta()</a></code> function:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/restrict_beta.html">restrict_beta</a></span><span class="op">(</span><span class="va">bvar_obj</span>, <span class="va">restriction_matrix</span><span class="op">)</span></span></code></pre></div>
-<p>Now, we need to supply our forecast horizon
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>H</mi><annotation encoding="application/x-tex">H</annotation></semantics></math>,
-and also a matrix containing the deterministic variables
-(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>d</mi><mi>t</mi></msub><annotation encoding="application/x-tex">d_t</annotation></semantics></math>)
-for the future periods</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>d</mi><mtext mathvariant="normal">pred</mtext></msub><mo>=</mo><mrow><mo stretchy="true" form="prefix">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><msubsup><mi>d</mi><mrow><mi>T</mi><mo>+</mo><mn>1</mn></mrow><mo>′</mo></msubsup></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>⋮</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><msubsup><mi>d</mi><mrow><mi>T</mi><mo>+</mo><mi>H</mi></mrow><mo>′</mo></msubsup></mtd></mtr></mtable><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p>Now, we need to supply our forecast horizon <span class="math inline">\(H\)</span>, and also a matrix containing the
+deterministic variables (<span class="math inline">\(d_t\)</span>) for
+the future periods</p>
+<p><span class="math display">\[
 d_{\text{pred}}=\begin{bmatrix}d_{T+1}' \\
 \vdots\\
 d_{T+H}'
 \end{bmatrix}
-</annotation></semantics></math></p>
+\]</span></p>
 <p>Since the deterministic variables are i) a constant and ii) a dummy
-indicating whether
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>≤</mo><mn>1992</mn><mi>Q</mi><mn>4</mn></mrow><annotation encoding="application/x-tex">t \leq 1992Q4</annotation></semantics></math>,
+indicating whether <span class="math inline">\(t \leq 1992Q4\)</span>,
 we simply set</p>
-<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msubsup><mi>d</mi><mrow><mi>T</mi><mo>+</mo><mn>1</mn></mrow><mo>′</mo></msubsup><mo>=</mo><mi>…</mi><mo>=</mo><msubsup><mi>d</mi><mrow><mi>T</mi><mo>+</mo><mi>H</mi></mrow><mo>′</mo></msubsup><mo>=</mo><mrow><mo stretchy="true" form="prefix">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">)</mo></mrow></mrow><annotation encoding="application/x-tex">
+<p><span class="math display">\[
 d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 &amp; 0 \end{pmatrix}
-</annotation></semantics></math></p>
+\]</span></p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span><span class="op">$</span><span class="va">predict</span><span class="op">$</span><span class="va">H</span> <span class="op">&lt;-</span> <span class="fl">12</span></span>
 <span><span class="op">(</span><span class="va">bvar_obj</span><span class="op">$</span><span class="va">predict</span><span class="op">$</span><span class="va">d_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">12</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span>
@@ -385,11 +342,7 @@ d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 &amp; 0 \end{pmatrix}
 <span>                iter <span class="op">=</span> <span class="fl">2000</span>,</span>
 <span>                warmup <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>                chains <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
-<p>Let us look at the posterior mean of
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>β</mi><annotation encoding="application/x-tex">\beta</annotation></semantics></math>,
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi mathvariant="normal">Ψ</mi><annotation encoding="application/x-tex">\Psi</annotation></semantics></math>,
-and
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi mathvariant="normal">Σ</mi><mi>u</mi></msub><annotation encoding="application/x-tex">\Sigma_u</annotation></semantics></math>.</p>
+<p>Let us look at the posterior mean of <span class="math inline">\(\beta\)</span>, <span class="math inline">\(\Psi\)</span>, and <span class="math inline">\(\Sigma_u\)</span>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bvar_obj</span><span class="op">)</span></span>
 <span><span class="co">#&gt; beta posterior mean</span></span>
@@ -485,11 +438,10 @@ historical data. We will choose a 68% prediction interval and the mean
 of the predictive distribution as the point forecast. For variables in
 quarter-on-quarter growth rates, we transform the historical data and
 predictions to yearly growth rates with ‘growth_rate_idx’ where we
-specify the index of the growth rate variables in
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>y</mi><mi>t</mi></msub><annotation encoding="application/x-tex">y_t</annotation></semantics></math>.
-Note that this is not annualization, but we are now computing
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>100</mn><mo stretchy="false" form="prefix">[</mo><mrow><mi mathvariant="normal">ln</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>z</mi><mi>t</mi></msub><mo stretchy="false" form="postfix">)</mo><mo>−</mo><mrow><mi mathvariant="normal">ln</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">(</mo><msub><mi>z</mi><mrow><mi>t</mi><mo>−</mo><mn>4</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="postfix">]</mo></mrow><annotation encoding="application/x-tex">100 [ \ln (z_t) - \ln (z_{t-4})]</annotation></semantics></math>,
-i.e. the annual growth rate, by summing up to fourth differences.</p>
+specify the index of the growth rate variables in <span class="math inline">\(y_t\)</span>. Note that this is not annualization,
+but we are now computing <span class="math inline">\(100 [ \ln (z_t) -
+\ln (z_{t-4})]\)</span>, i.e. the annual growth rate, by summing up to
+fourth differences.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fcst</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                 ci <span class="op">=</span> <span class="fl">0.68</span>,</span>
@@ -502,16 +454,12 @@ implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe,
 Legrand, and van Roye [2018]). Note that for the structural shocks,
 identification is based on the Cholesky factorisation.</p>
 <p>Now suppose we are interested in the forecasts of the domestic GDP
-growth
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">\Delta y</annotation></semantics></math>
-conditional on a scenario for the three-month domestic interest rate
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>.</p>
+growth <span class="math inline">\(\Delta y\)</span> conditional on a
+scenario for the three-month domestic interest rate <span class="math inline">\(i\)</span>.</p>
 <p>First we set up our conditions/scenarios, i.e., which variables,
 which horizons, and which values the variables will take during those
-horizons. Our conditions are that
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>i</mi><annotation encoding="application/x-tex">i</annotation></semantics></math>
-will follow our specified path (toy example) at forecast horizons
-<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>=</mo><mn>1</mn><mo>,</mo><mi>…</mi><mo>,</mo><mi>H</mi><mo>=</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">h=1,\dots,H=12</annotation></semantics></math>.</p>
+horizons. Our conditions are that <span class="math inline">\(i\)</span>
+will follow our specified path (toy example) at forecast horizons <span class="math inline">\(h=1,\dots,H=12\)</span>.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
 <span>              var     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">12</span><span class="op">)</span>,</span>

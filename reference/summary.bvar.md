@@ -1,8 +1,9 @@
 # Summarise a fitted steady-state BVAR model
 
-Computes and prints posterior summaries from a fitted `bvar` object. The
-printed output depends on whether the model is homoscedastic or includes
-stochastic volatility (RW or AR1 specification).
+Computes and prints posterior summaries from a fitted steady-state
+`bvar` object. The printed output depends on whether the model is
+homoscedastic or includes stochastic volatility (RW or AR1
+specification).
 
 ## Usage
 
@@ -15,7 +16,7 @@ summary(object, pars = NULL, stat = "mean", t = NULL, ...)
 
 - object:
 
-  A `bvar` object that has been passed through
+  A steady-state `bvar` object that has been passed through
   [`fit`](https://markjwbecker.github.io/SteadyStateBVAR/reference/fit.md).
 
 - pars:
@@ -30,8 +31,8 @@ summary(object, pars = NULL, stat = "mean", t = NULL, ...)
 
 - t:
 
-  Integer. Time index for stochastic volatility covariance matrices. If
-  `NULL`, the latest available period is used.
+  Integer. Time index for the innovation covariance matrix if stochastic
+  volatility was estimated. If `NULL`, the latest available `t` is used.
 
 - ...:
 
@@ -43,25 +44,34 @@ Returns the input object invisibly.
 
 ## Details
 
-Parameters are printed in structured blocks. Matrix-valued parameters
-are displayed as matrices, while vector-valued stochastic volatility
-parameters (e.g. `phi`, `gamma_0`, `gamma_1`) are printed as named
-vectors.
+The function summarises the following estimated parameters:
 
-For stochastic volatility models, time-varying covariance matrices
-`Sigma_u,t` can be extracted at a specified time index.
+- `beta`: kp×k VAR coefficient matrix
 
-The function supports both standard VAR models and stochastic volatility
-extensions. For SV models, additional parameters may be displayed
-depending on specification:
+- `Psi`: k×q steady-state parameter matrix
 
-- RW SV: `phi`
+- `Sigma_u`: innovation covariance matrix (k×k for homoscedastic, T×k×k
+  for stochastic volatility)
 
-- AR1 SV: `gamma_0`, `gamma_1`, `Phi`
+- If Random Walk stochastic volatility:
 
-lik
+  - `A`: k×k lower triangular matrix with ones on the diagonal that
+    describes the contemporaneous interaction of the endogenous
+    variables
 
-Output is printed in blocks with manual formatting for readability.
+  - `phi`: k-dimensional vector of log volatility innovation variances
+
+- If AR1 stochastic volatility:
+
+  - `A`: k×k lower triangular matrix with ones on the diagonal that
+    describes the contemporaneous interaction of the endogenous
+    variables
+
+  - `gamma_0`: k-dimensional vector of log volatility intercepts
+
+  - `gamma_1`: k-dimensional vector of log volatility slopes
+
+  - `Phi`: k×k log volatility innovation covariance matrix
 
 ## Examples
 
@@ -69,15 +79,20 @@ Output is printed in blocks with manual formatting for readability.
 if (FALSE) { # \dontrun{
 yt <- matrix(rnorm(50), 25, 2)
 bvar_obj <- bvar(data = yt)
-bvar_obj <- setup(bvar_obj, p = 1)
+bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
 bvar_obj <- priors(bvar_obj,
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2))
-bvar_obj$predict$H <- 1
-bvar_obj$predict$d_pred <- matrix(1)
 
-bvar_obj <- fit(bvar_obj, iter = 200, warmup = 50,
-                chains = 1, cores = 1, auto_write = FALSE)
+bvar_obj <- fit(bvar_obj,
+                H = 1,
+                d_pred = matrix(1),
+                iter = 200,
+                warmup = 50,
+                chains = 1,
+                cores = 1,
+                verbose = FALSE,
+                auto_write = FALSE)
 
 summary(bvar_obj)
 } # }

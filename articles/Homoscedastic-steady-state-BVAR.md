@@ -1,7 +1,7 @@
 # Homoscedastic steady-state BVAR (Villani, 2009)
 
 Here we estimate the original (homoscedastic - i.e. constant innovation
-covariance matrix $`\Sigma_{u}`$) steady-state BVAR model from Section
+covariance matrix \\\Sigma\_{u}\\) steady-state BVAR model from Section
 4.1 of Villani (2009).
 
 First, let us attach the package and load the data.
@@ -15,25 +15,15 @@ yt <- Villani2009
 
 The data set contains quarterly data for Sweden over the time period
 1980Q1–2005Q4. The seven variables are: trade-weighted measures of
-foreign GDP growth $`(\Delta y_f)`$, CPI inflation $`(\pi_f)`$ and the
-3-month interest rate $`(i_f)`$, the corresponding domestic variables
-($`\Delta y`$, $`\pi`$ and $`i`$), and the level of the real exchange
-rate defined as $`q=s+p_f-p`$, where $`p_f`$ and $`p`$ are the foreign
-and domestic CPI levels (in logs) and $`s`$ is the (log of the)
+foreign GDP growth \\(\Delta y_f)\\, CPI inflation \\(\pi_f)\\ and the
+3-month interest rate \\(i_f)\\, the corresponding domestic variables
+(\\\Delta y\\, \\\pi\\ and \\i\\), and the level of the real exchange
+rate defined as \\q=s+p_f-p\\, where \\p_f\\ and \\p\\ are the foreign
+and domestic CPI levels (in logs) and \\s\\ is the (log of the)
 trade-weighted nominal exchange rate. As such, we have
 
-``` math
-y_t=
-\begin{pmatrix}
-\Delta y_f \\
-\pi_f \\
-i_f \\
-\Delta y \\
-\pi \\
-i \\
-q
-\end{pmatrix}
-```
+\\ y_t= \begin{pmatrix} \Delta y_f \\ \pi_f \\ i_f \\ \Delta y \\ \pi \\
+i \\ q \end{pmatrix} \\
 
 Also, we will leave out the last two observations, so the user can
 compare the forecasts produced here to the last forecasts seen in
@@ -59,16 +49,12 @@ bvar_obj <- bvar(data = yt)
 
 To model the Swedish financial crisis at the beginning of the 90s and
 the subsequent shift in monetary policy to inflation targeting and
-flexible exchange rate, $`d_t`$ (deterministic variables at time $`t`$)
+flexible exchange rate, \\d_t\\ (deterministic variables at time \\t\\)
 includes a constant term and a dummy for the pre-crisis period, i.e.
 
-``` math
-d_{t}' =
-\begin{cases}
-\begin{pmatrix}1 & 1\end{pmatrix} & \text{if } t \le 1992Q4 \\
-\begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t > 1992Q4
-\end{cases}
-```
+\\ d\_{t}' = \begin{cases} \begin{pmatrix}1 & 1\end{pmatrix} & \text{if
+} t \le 1992Q4 \\ \begin{pmatrix}1 & 0\end{pmatrix} & \text{if } t \>
+1992Q4 \end{cases} \\
 
 ``` r
 
@@ -76,20 +62,15 @@ bp <- which(time(yt) == 1992.75)
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
 ```
 
-To formulate a prior on $`\Psi`$, note that the specification of $`d_t`$
+To formulate a prior on \\\Psi\\, note that the specification of \\d_t\\
 implies the following parametrization of the steady state:
 
-``` math
-\mu_t =
-\begin{cases}
-\psi_1 + \psi_2 & \text{if } t \le 1992Q4 \\
-\psi_1 & \text{if } t > 1992Q4
-\end{cases}
-```
+\\ \mu_t = \begin{cases} \psi_1 + \psi_2 & \text{if } t \le 1992Q4 \\
+\psi_1 & \text{if } t \> 1992Q4 \end{cases} \\
 
-where $`\psi_i`$ denotes the $`i`$:th column of $`\Psi`$. We are now
+where \\\psi_i\\ denotes the \\i\\:th column of \\\Psi\\. We are now
 ready to set up the model. Although it is not mentioned which lag length
-is used in Villani (2009), we assume $`p=4`$.
+is used in Villani (2009), we assume \\p=4\\.
 
 ``` r
 
@@ -99,13 +80,13 @@ bvar_obj <- setup(bvar_obj,
                   dummy = dum_var)
 ```
 
-Now let us specify the priors. We first consider $`\beta`$. We choose
+Now let us specify the priors. We first consider \\\beta\\. We choose
 the same values for the hyperparameters as in Villani (2009), i.e. an
-overall tightness of $`\lambda_1=0.2`$, a cross-equation tightness of
-$`\lambda_2=0.5`$, and a lag decay rate of $`\lambda_3=1`$. We then
+overall tightness of \\\lambda_1=0.2\\, a cross-equation tightness of
+\\\lambda_2=0.5\\, and a lag decay rate of \\\lambda_3=1\\. We then
 specify the prior means for the first own lags of the variables. For
-variables in growth rates, we set the prior mean to $`0`$, for variables
-in levels, we set the prior mean to $`0.9`$.
+variables in growth rates, we set the prior mean to \\0\\, for variables
+in levels, we set the prior mean to \\0.9\\.
 
 ``` r
 
@@ -124,15 +105,16 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $`\Psi`$ for the steady-state priors, we set them
+Now moving on to \\\Psi\\ for the steady-state priors, we set them
 according to the 95% prior probability intervals (normal distribution)
 in Table I in Villani (2009). We first note that for our data here, the
-growth rate variables ($`\Delta y_f, \pi_f, \Delta y, \pi`$) are
+growth rate variables (\\\Delta y_f, \pi_f, \Delta y, \pi\\) are
 specified in terms of quarterly rates of change/quarter-on-quarter
-growth, i.e. for a variable $`z`$ which is on a quarterly frequency, the
-quarterly growth rate is $`100[ \ln (z_t) - \ln (z_{t-1})]`$. The 95%
+growth, i.e. for a variable \\z\\ which is on a quarterly frequency, the
+quarterly growth rate is \\100\[ \ln (z_t) - \ln (z\_{t-1})\]\\. The 95%
 prior probability intervals in Table I are specified in terms of
-annualized quarterly growth rates $`400 [\ln (z_t) - \ln (z_{t-1})]`$.
+annualized quarterly growth rates \\400 \[\ln (z_t) - \ln
+(z\_{t-1})\]\\.
 
 The
 [`ppi()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/ppi.md)
@@ -192,12 +174,12 @@ Omega_Psi <-
   )
 ```
 
-Finally for $`\Sigma_u`$ we will use the noninformative Jeffreys prior
-$`\left|\Sigma_u \right|^{-(k+1)/2}`$, as done in Villani (2009). We
+Finally for \\\Sigma_u\\ we will use the noninformative Jeffreys prior
+\\\left\|\Sigma_u \right\|^{-(k+1)/2}\\, as done in Villani (2009). We
 simply pass everything to the
 [`priors()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md)
 function. Note here that the function automatically creates
-$`\theta_\beta`$ and $`\Omega_\beta`$.
+\\\theta\_\beta\\ and \\\Omega\_\beta\\.
 
 ``` r
 
@@ -213,12 +195,12 @@ bvar_obj <- priors(bvar_obj,
 
 As in Villani (2009), we incorporate the assumption that Sweden is a
 small economy and therefore unlikely to affect the foreign economy by
-restricting the upper-right submatrix of $`\Pi_\ell`$ for
-$`\ell =1,\dots,p`$ or equivalently restricting the bottom-left
-submatrix of $`\Pi_\ell'`$ to the zero matrix. This technique is called
-“block exogeneity” (Dieppe, Legrand, and van Roye, 2018). In essence we
-treat the foreign economy as exogenous to the domestic economy, although
-it is not exogenous in the strict sense (Karlsson, 2013).
+restricting the upper-right submatrix of \\\Pi\_\ell\\ for \\\ell
+=1,\dots,p\\ or equivalently restricting the bottom-left submatrix of
+\\\Pi\_\ell'\\ to the zero matrix. This technique is called “block
+exogeneity” (Dieppe, Legrand, and van Roye, 2018). In essence we treat
+the foreign economy as exogenous to the domestic economy, although it is
+not exogenous in the strict sense (Karlsson, 2013).
 
 ``` r
 
@@ -265,11 +247,11 @@ restriction_matrix
 #> [28,]    0    0    0    1    1    1    1
 ```
 
-We can look at the restriction matrix for $`\beta`$ to see which
+We can look at the restriction matrix for \\\beta\\ to see which
 elements we restrict to zero. Since the prior means for these elements
 are zero, we do the restriction by setting the relevant prior variances
-in $`\Omega_\beta`$ to be very small. We simply pass our
-$`(kp \times k)`$ restriction matrix to the
+in \\\Omega\_\beta\\ to be very small. We simply pass our \\(kp \times
+k)\\ restriction matrix to the
 [`restrict_beta()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/restrict_beta.md)
 function:
 
@@ -278,22 +260,16 @@ function:
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 ```
 
-Now, we need to supply our forecast horizon $`H`$, and also a matrix
-containing the deterministic variables ($`d_t`$) for the future periods
+Now, we need to supply our forecast horizon \\H\\, and also a matrix
+containing the deterministic variables (\\d_t\\) for the future periods
 
-``` math
-d_{\text{pred}}=\begin{bmatrix}d_{T+1}' \\
-\vdots\\
-d_{T+H}'
-\end{bmatrix}
-```
+\\ d\_{\text{pred}}=\begin{bmatrix}d\_{T+1}' \\ \vdots\\ d\_{T+H}'
+\end{bmatrix} \\
 
 Since the deterministic variables are i) a constant and ii) a dummy
-indicating whether $`t \leq 1992Q4`$, we simply set
+indicating whether \\t \leq 1992Q4\\, we simply set
 
-``` math
-d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix}
-```
+\\ d\_{T+1}'=\ldots=d\_{T+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix} \\
 
 ``` r
 
@@ -324,8 +300,8 @@ bvar_obj <- fit(bvar_obj,
                 chains = 2)
 ```
 
-Let us look at the posterior mean of $`\beta`$, $`\Psi`$, and
-$`\Sigma_u`$.
+Let us look at the posterior mean of \\\beta\\, \\\Psi\\, and
+\\\Sigma_u\\.
 
 ``` r
 
@@ -437,10 +413,10 @@ historical data. We will choose a 68% prediction interval and the mean
 of the predictive distribution as the point forecast. For variables in
 quarter-on-quarter growth rates, we transform the historical data and
 predictions to yearly growth rates with ‘growth_rate_idx’ where we
-specify the index of the growth rate variables in $`y_t`$. Note that
-this is not annualization, but we are now computing
-$`100 [ \ln (z_t) - \ln (z_{t-4})]`$, i.e. the annual growth rate, by
-summing up to fourth differences.
+specify the index of the growth rate variables in \\y_t\\. Note that
+this is not annualization, but we are now computing \\100 \[ \ln (z_t) -
+\ln (z\_{t-4})\]\\, i.e. the annual growth rate, by summing up to fourth
+differences.
 
 ``` r
 
@@ -461,13 +437,13 @@ Legrand, and van Roye \[2018\]). Note that for the structural shocks,
 identification is based on the Cholesky factorisation.
 
 Now suppose we are interested in the forecasts of the domestic GDP
-growth $`\Delta y`$ conditional on a scenario for the three-month
-domestic interest rate $`i`$.
+growth \\\Delta y\\ conditional on a scenario for the three-month
+domestic interest rate \\i\\.
 
 First we set up our conditions/scenarios, i.e., which variables, which
 horizons, and which values the variables will take during those
-horizons. Our conditions are that $`i`$ will follow our specified path
-(toy example) at forecast horizons $`h=1,\dots,H=12`$.
+horizons. Our conditions are that \\i\\ will follow our specified path
+(toy example) at forecast horizons \\h=1,\dots,H=12\\.
 
 ``` r
 

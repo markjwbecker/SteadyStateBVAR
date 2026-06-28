@@ -25,8 +25,8 @@ restrict_beta(x, restriction_matrix)
 
 ## Value
 
-The `bvar` object with the restriction matrix stored in `setup` and
-`Omega_beta` updated accordingly.
+The steady-state `bvar` object with the restriction matrix stored in
+`setup` and `Omega_beta` updated accordingly.
 
 ## Examples
 

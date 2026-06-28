@@ -1,8 +1,8 @@
 # Prior Probability Interval for a Normal Distribution
 
 Calculates the mean and variance of a normal prior probability interval.
-Given a lower and upper bound of a (1-alpha) prior probability interval
-this function recovers the implied normal prior parameters. Useful for
+Given a lower and upper bound of a prior probability interval this
+function recovers the implied normal prior parameters. Useful for
 specifying informative priors on the steady-state parameters (elements
 of Psi).
 
@@ -53,7 +53,7 @@ ppi(l = 1.7, u = 2.3, interval = 0.95)
 #> $var
 #> [1] 0.0234286
 #> 
-ppi(l = 1.7, u = 2.3, interval = 0.95, annualized_growthrate = TRUE)
+ppi(l = 1.7, u = 2.3, interval = 0.95, annualized_growthrate = TRUE, freq = 4)
 #> $mean
 #> [1] 0.5
 #> 
