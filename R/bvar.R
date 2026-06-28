@@ -53,6 +53,10 @@
 #' volatilities are allowed to be correlated across variables. For the \code{RW} case, \eqn{\Phi} is diagonal
 #' with variances \eqn{\phi_i} for \eqn{i=1,\dots,k}.
 #' 
+#' Note that under both stochastic volatility specifications, the time-varying covariance matrix is
+#' 
+#' \deqn{\Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'.}
+#' 
 #' For details on the homoscedastic steady-state BVAR model, see Villani (2009).
 #' For the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
 #' For details regarding AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).

@@ -25,7 +25,7 @@ used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.}
 }
 \value{
 The steady-state \code{bvar} object with a \code{setup} list containing the
-matrices required for prior specification and estimation, and also the OLS estimates.
+required components for prior specification and estimation, and also the OLS estimates.
 }
 \description{
 Prepares the matrices needed for prior specification and estimation.

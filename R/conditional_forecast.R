@@ -3,7 +3,8 @@
 #' Computes and plots conditional forecasts from a fitted steady-state \code{bvar} object.
 #' Conditions are imposed on specific variables at specific horizons using the
 #' method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
-#' forecasts are plotted for comparison.
+#' forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
+#' is only enabled for the homoscedastic steady-state BVAR, i.e. when \code{SV=FALSE} in \code{priors()}.
 #'
 #' @param bvar_obj A \code{bvar} object that has been passed through
 #'   \code{\link{fit}}.

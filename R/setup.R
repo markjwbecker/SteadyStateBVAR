@@ -12,7 +12,7 @@
 #'   used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.
 #'
 #' @return The steady-state \code{bvar} object with a \code{setup} list containing the
-#' matrices required for prior specification and estimation, and also the OLS estimates.
+#' required components for prior specification and estimation, and also the OLS estimates.
 #' @export
 #'
 #' @examples
@@ -103,6 +103,23 @@ setup <- function(x, p = 1, deterministic=c("constant", "constant_and_dummy", "c
   
   n_free_params_A <- k*(k-1)/2
   
+  Sigma_AR <- diag(0, k)
+  
+  for (i in 1:k){
+    
+    y <- yt[,i]
+    
+    Y_AR <- y[-c(1:p)]
+    W_AR <- embed(y, dimension = p+1)[, -1]
+    X_AR <- dt[-c(1:p), ,drop=FALSE]
+    
+    Z_AR <- cbind(W_AR,X_AR)
+    beta_hat_AR = solve(crossprod(Z_AR,Z_AR),crossprod(Z_AR,Y_AR))
+    U_AR = Y_AR-Z_AR%*%beta_hat_AR
+    sigma2 <- crossprod(U_AR,U_AR)/(nrow(Z_AR)-ncol(Z_AR))
+    Sigma_AR[i,i] <- sigma2
+  }
+  
   x$setup <- list(N=N,
                   k=k,
                   p=p,
@@ -117,6 +134,7 @@ setup <- function(x, p = 1, deterministic=c("constant", "constant_and_dummy", "c
                   Psi_OLS=Psi_OLS,
                   dt=dt,
                   D=X,
-                  n_free_params_A=n_free_params_A)
+                  n_free_params_A=n_free_params_A,
+                  Sigma_AR = Sigma_AR)
   return(x)
 }

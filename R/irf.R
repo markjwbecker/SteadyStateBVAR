@@ -114,9 +114,9 @@ IRF <- function(x, H = 16, response = NULL, shock = NULL,
   
   for (draw in 1:N_draws) {
     Phi <- t(stan_draws$beta[draw, , ])
-    if (length(dim(stan_draws$Sigma_u))==4) {
-      if (is.null(t)) t <- dim(stan_draws$Sigma_u)[2]
-      Sigma <- stan_draws$Sigma_u[draw, t, , ]
+    if (length(dim(stan_draws$Sigma_u)) == 4) {
+      t_use <- if (is.null(t)) dim(stan_draws$Sigma_u)[2] else t - x$setup$p
+      Sigma  <- stan_draws$Sigma_u[draw, t_use, , ]
     } else {
       Sigma <- stan_draws$Sigma_u[draw, , ]
     }

@@ -205,19 +205,16 @@ $$
 d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix}
 $$
 
-
-```{r}
-bvar_obj$predict$H <- 12
-(bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0))
-```
-
-Now we can fit the model.
+We can now fit the model
 
 ```{r}
 bvar_obj <- fit(bvar_obj,
-                iter = 2000,
-                warmup = 1000,
-                chains = 2)
+                H = 12,
+                d_pred = cbind(rep(1, 12), 0),
+                iter = 500,
+                warmup = 100,
+                chains = 1,
+                cores = 1)
 ```
 
 Let us look at the posterior mean of $\beta$, $\Psi$, and $\Sigma_u$.
@@ -226,7 +223,7 @@ Let us look at the posterior mean of $\beta$, $\Psi$, and $\Sigma_u$.
 summary(bvar_obj)
 ```
 
-We can access the posterior means with `bvar_obj$posterior_means` if needed. 
+We can access the posterior means or medians with `bvar_obj$fit$posterior_means`/`bvar_obj$fit$posterior_medians` if needed. 
 
 Note that `bvar_obj$fit$stan` is an object of class `stanfit`. So we can do the usual `rstan` inference on our fitted model. Let's look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean to 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to obtain the annualized rate).
 

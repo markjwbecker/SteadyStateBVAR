@@ -327,25 +327,10 @@ priors<- function(x,
   
   priors <- list()
   
-  Sigma_AR <- diag(0, k)
-  
-  for (i in 1:k){
-    
-    y <- yt[,i]
-    
-    Y <- y[-c(1:p)]
-    W <- embed(y, dimension = p+1)[, -1]
-    X <- dt[-c(1:p), ,drop=F]
-    
-    Z <- cbind(W,X)
-    beta_hat = solve(crossprod(Z,Z),crossprod(Z,Y))
-    U = Y-Z%*%beta_hat
-    sigma2 <- crossprod(U,U)/(nrow(Z)-ncol(Z))
-    Sigma_AR[i,i] <- sigma2
-  }
+  Sigma_AR <- x$setup$Sigma_AR
+  sigma <- sqrt(diag(Sigma_AR))
   
   V <- lapply(1:p, function(x) matrix(0, k, k))
-  sigma <- sqrt(diag(Sigma_AR))
   
   for (l in 1:p) {
     for (i in 1:k) {

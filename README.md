@@ -184,7 +184,7 @@ $m_0=k+2$.
 This package also allows for stochastic volatility (Random Walk or AR1
 specifications), where we let the covariance matrix of the innovations
 vary over time such that we have a time-varying covariance matrix
-$\Sigma_{u,t}$ (more details on this found in the respective vignettes).
+$\Sigma_{u,t}$ (more details found in `?bvar`).
 
 ## Example
 
@@ -288,13 +288,13 @@ for(i in 1:p){
 #block exogeneity for foreign variables
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
-bvar_obj$predict$H <- 12
-bvar_obj$predict$d_pred <- cbind(rep(1, 12), 0)
-
 bvar_obj <- fit(bvar_obj,
-                iter = 20000,
-                warmup = 10000,
-                chains = 4)
+                H = 12,
+                d_pred = cbind(rep(1, 12), 0),
+                iter = 500,
+                warmup = 100,
+                chains = 1,
+                cores = 1)
 
 summary(bvar_obj)
 
@@ -316,7 +316,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
                     ci=0.68,
                     fcst_type = "mean",
                     plot_idx = c(4,6),
-                    growth_rate_idx = c(4)))
+                    growth_rate_idx = c(4))
 
 irf <- IRF(bvar_obj,
            H=20,
