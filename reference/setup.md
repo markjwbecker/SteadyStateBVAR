@@ -8,7 +8,7 @@ Also computes OLS estimates.
 ``` r
 setup(
   x,
-  p,
+  p = 1,
   deterministic = c("constant", "constant_and_dummy", "constant_and_trend"),
   dummy = NULL
 )
@@ -23,7 +23,7 @@ setup(
 
 - p:
 
-  Integer. The lag order of the VAR.
+  Integer. The lag order of the VAR. Default `1`.
 
 - deterministic:
 
@@ -37,8 +37,9 @@ setup(
 
 ## Value
 
-The `bvar` object with a `setup` list containing the matrices required
-for prior specification and estimation, and also the OLS estimates.
+The steady-state `bvar` object with a `setup` list containing the
+matrices required for prior specification and estimation, and also the
+OLS estimates.
 
 ## Examples
 
@@ -47,5 +48,5 @@ yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)
 
-bvar_obj <- setup(bvar_obj, p = 1)
+bvar_obj <- setup(bvar_obj)
 ```
