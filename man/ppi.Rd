@@ -27,12 +27,12 @@ mean and variance of the implied normal distribution.
 }
 \description{
 Calculates the mean and variance of a normal prior probability interval.
-Given a lower and upper bound of a (1-alpha) prior probability interval
+Given a lower and upper bound of a prior probability interval
 this function recovers the implied normal prior parameters.
 Useful for specifying informative priors
 on the steady-state parameters (elements of Psi).
 }
 \examples{
 ppi(l = 1.7, u = 2.3, interval = 0.95)
-ppi(l = 1.7, u = 2.3, interval = 0.95, annualized_growthrate = TRUE)
+ppi(l = 1.7, u = 2.3, interval = 0.95, annualized_growthrate = TRUE, freq = 4)
 }

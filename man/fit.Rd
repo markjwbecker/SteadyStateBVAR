@@ -8,11 +8,12 @@ fit(
   x,
   H = 1,
   d_pred = NULL,
-  iter = 5000,
-  warmup = 2500,
-  chains = 2,
-  cores = NULL,
-  auto_write = NULL
+  iter = 2000,
+  warmup = floor(iter/2),
+  chains = 1,
+  cores = getOption("mc.cores", 1L),
+  verbose = FALSE,
+  auto_write = FALSE
 )
 }
 \arguments{
@@ -22,81 +23,92 @@ fit(
 \item{H}{Positive Integer. Forecast horizon.
 Default is \code{1}.}
 
-\item{d_pred}{Matrix of size H x q. Future values of the deterministic variables d_t.}
+\item{d_pred}{Matrix of size H x q. Future values of the deterministic variables d_t. Default is \code{NULL}, must be provided by the user.}
 
-\item{iter}{Integer. Total number of MCMC iterations per chain. Default is 5000.}
+\item{iter}{Integer. Total number of MCMC iterations per chain. Default is \code{2000}.}
 
 \item{warmup}{Integer. Number of warmup (burn-in) iterations per chain.
-Default is \code{2500}.}
+Default is \code{floor(iter/2)}.}
 
-\item{chains}{Integer. Number of MCMC chains. Default is \code{2}.}
+\item{chains}{Integer. Number of MCMC chains. Default is \code{1}.}
 
 \item{cores}{Positive integer specifying the number of CPU cores used for
-sampling. Must be specified by the user.}
+sampling. Default is \code{getOption("mc.cores", 1L)}, i.e. the \code{mc.cores}
+option (if it has been set), otherwise defaults to \code{1} core.}
+
+\item{verbose}{Logical indicating whether to print intermediate output from Stan on the console,
+defaults to \code{FALSE}.}
 
 \item{auto_write}{Logical indicating whether Stan models should be
-automatically written to the disk cache via \code{rstan}. Must be specified
-by the user.}
+automatically written to the disk cache via \code{rstan}. Default is \code{FALSE}.}
 }
 \value{
 A fitted steady-state \code{bvar} object with:
 \itemize{
-\item \code{fit$stan}: Stan fit object containing posterior draws
-\item \code{fit$posterior_means}: List of posterior mean estimates:
-\itemize{
-\item \code{beta}: k×k VAR coefficient matrix
-\item \code{Psi}: k×q steady-state parameter matrix
-\item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
-T×k×k for stochastic volatility)
-\item RW SV: \code{A}, \code{phi}
-\item AR1 SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
-}
-\item \code{fit$posterior_medians}: List of posterior median estimates:
-\itemize{
-\item \code{beta}: k×k VAR coefficient matrix
-\item \code{Psi}: k×q steady-state parameter matrix
-\item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
-T×k×k for stochastic volatility)
-\item RW SV: \code{A}, \code{phi}
-\item AR1 SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
-}
+\item \code{fit$stan}: An object of class \code{stanfit}
+\item \code{fit$posterior_means}: List of posterior mean estimates
+\item \code{fit$posterior_medians}: List of posterior median estimates
 }
 }
 \description{
-Estimates the steady-state BVAR using the  No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
+Estimates the steady-state BVAR model using the  No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
 Uses the data, setup, and priors stored in the steady-state \code{bvar} object. Supports both
 homoscedastic and stochastic volatility (RW or AR1) specifications.
 }
 \details{
 The function selects the appropriate Stan model based on prior settings:
 \itemize{
-\item Homoscedastic + Jeffreys prior:
+\item Homoscedastic with Jeffreys prior:
 \code{steady_state_bvar_homoscedastic_jeffreys_prior.stan}
-\item Homoscedastic + inverse-Wishart prior:
+\item Homoscedastic with uninformative inverse-Wishart prior:
 \code{steady_state_bvar_homoscedastic_inverse_wishart_prior.stan}
-\item Stochastic volatility (RW):
+\item Random Walk stochastic volatility:
 \code{steady_state_bvar_RW_stochastic_volatility.stan}
-\item Stochastic volatility (AR(1)):
+\item AR1 stochastic volatility:
 \code{steady_state_bvar_AR1_stochastic_volatility.stan}
 }
-
-For stochastic volatility models, SV-specific priors in
-\code{priors$SV_priors} are merged into the Stan data list.
+The function estimates the following parameters:
+\itemize{
+\item \code{beta}: kp×k VAR coefficient matrix
+\item \code{Psi}: k×q steady-state parameter matrix
+\item \code{Sigma_u}: innovation covariance matrix (k×k for homoscedastic,
+T×k×k for stochastic volatility)
+\item If Random Walk stochastic volatility:
+\itemize{
+\item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
+the contemporaneous interaction of the endogenous variables
+\item \code{phi}: k-dimensional vector of log volatility innovation variances
+}
+\item If AR1 stochastic volatility:
+\itemize{
+\item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
+the contemporaneous interaction of the endogenous variables
+\item \code{gamma_0}: k-dimensional vector of log volatility intercepts
+\item \code{gamma_1}: k-dimensional vector of log volatility slopes
+\item \code{Phi}: k×k log volatility innovation covariance matrix
+}
+}
 }
 \examples{
 \dontrun{
 yt <- matrix(rnorm(50), 25, 2)
+
 bvar_obj <- bvar(data = yt)
-bvar_obj <- setup(bvar_obj, p = 1)
+
+bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
+
 bvar_obj <- priors(bvar_obj,
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2))
-bvar_obj$predict$H <- 1
-bvar_obj$predict$d_pred <- matrix(1)
 
-bvar_obj <- fit(bvar_obj, iter = 200, warmup = 50,
-                chains = 1, cores = 1, auto_write = FALSE)
-
-summary(bvar_obj)
+bvar_obj <- fit(bvar_obj,
+                H = 8,
+                d_pred = matrix(rep(1,8)),
+                iter = 200,
+                warmup = 50,
+                chains = 1,
+                cores = 1,
+                verbose = FALSE,
+                auto_write = FALSE)
 }
 }

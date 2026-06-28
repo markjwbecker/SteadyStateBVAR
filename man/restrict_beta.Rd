@@ -14,7 +14,7 @@ entries of \code{0} indicate coefficients to be restricted to zero and
 entries of \code{1} indicate unrestricted coefficients.}
 }
 \value{
-The \code{bvar} object with the restriction matrix stored in
+The steady-state \code{bvar} object with the restriction matrix stored in
 \code{setup} and \code{Omega_beta} updated accordingly.
 }
 \description{

@@ -105,15 +105,301 @@ test_that("SV requires SV_priors", {
   )
 })
 
-test_that("SV attaches correctly", {
+test_that("RW SV_priors validates required names", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
   model <- setup(model, p = 2, deterministic = "constant")
   
-  sv <- list(test = 1)
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A = rep(0, n_free),
+    Omega_A = diag(n_free)
+    # missing: mu_log_lambda_0, sigma2_log_lambda_0, alpha_phi, beta_phi
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
+    "SV_priors is missing elements"
+  )
+})
+
+test_that("RW SV_priors validates theta_A length", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A             = rep(0, n_free + 1), # wrong length
+    Omega_A             = diag(n_free),
+    mu_log_lambda_0     = rep(0, k),
+    sigma2_log_lambda_0 = rep(1, k),
+    alpha_phi           = rep(1, k),
+    beta_phi            = rep(1, k)
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
+    "theta_A must be a vector of length"
+  )
+})
+
+test_that("RW SV_priors validates Omega_A dimensions", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A             = rep(0, n_free),
+    Omega_A             = diag(n_free + 1), # wrong dimensions
+    mu_log_lambda_0     = rep(0, k),
+    sigma2_log_lambda_0 = rep(1, k),
+    alpha_phi           = rep(1, k),
+    beta_phi            = rep(1, k)
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
+    "Omega_A must be a"
+  )
+})
+
+test_that("RW SV_priors validates sigma2_log_lambda_0 positivity", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A             = rep(0, n_free),
+    Omega_A             = diag(n_free),
+    mu_log_lambda_0     = rep(0, k),
+    sigma2_log_lambda_0 = rep(-1, k), # must be positive
+    alpha_phi           = rep(1, k),
+    beta_phi            = rep(1, k)
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
+    "sigma2_log_lambda_0 must be strictly positive"
+  )
+})
+
+test_that("RW SV_priors validates alpha_phi positivity", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A             = rep(0, n_free),
+    Omega_A             = diag(n_free),
+    mu_log_lambda_0     = rep(0, k),
+    sigma2_log_lambda_0 = rep(1, k),
+    alpha_phi           = rep(-1, k), # must be positive
+    beta_phi            = rep(1, k)
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
+    "alpha_phi must be strictly positive"
+  )
+})
+
+test_that("RW SV_priors validates beta_phi positivity", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A             = rep(0, n_free),
+    Omega_A             = diag(n_free),
+    mu_log_lambda_0     = rep(0, k),
+    sigma2_log_lambda_0 = rep(1, k),
+    alpha_phi           = rep(1, k),
+    beta_phi            = rep(-1, k) # must be positive
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
+    "beta_phi must be strictly positive"
+  )
+})
+
+test_that("RW SV attaches correctly with valid priors", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A             = rep(0, n_free),
+    Omega_A             = diag(n_free),
+    mu_log_lambda_0     = rep(0, k),
+    sigma2_log_lambda_0 = rep(1, k),
+    alpha_phi           = rep(5, k),
+    beta_phi            = rep(0.4, k)
+  )
+  
+  result <- priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv)
+  
+  expect_true(result$priors$SV)
+  expect_equal(result$priors$SV_type, "RW")
+  expect_equal(result$priors$SV_priors, sv)
+})
+
+test_that("AR1 SV_priors validates required names", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A = rep(0, n_free),
+    Omega_A = diag(n_free)
+    # missing remaining AR1 elements
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv),
+    "SV_priors is missing elements"
+  )
+})
+
+test_that("AR1 SV_priors validates Omega_gamma_0 dimensions", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A            = rep(0, n_free),
+    Omega_A            = diag(n_free),
+    theta_gamma_0      = rep(0, k),
+    Omega_gamma_0      = diag(k + 1), # wrong dimensions
+    theta_gamma_1      = rep(0, k),
+    Omega_gamma_1      = diag(k),
+    theta_log_lambda_0 = rep(0, k),
+    Omega_log_lambda_0 = diag(k),
+    m_0                = k + 2,
+    V_0                = diag(k)
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv),
+    "Omega_gamma_0 must be a"
+  )
+})
+
+test_that("AR1 SV_priors validates m_0 >= k", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A            = rep(0, n_free),
+    Omega_A            = diag(n_free),
+    theta_gamma_0      = rep(0, k),
+    Omega_gamma_0      = diag(k),
+    theta_gamma_1      = rep(0, k),
+    Omega_gamma_1      = diag(k),
+    theta_log_lambda_0 = rep(0, k),
+    Omega_log_lambda_0 = diag(k),
+    m_0                = k - 1, # too small
+    V_0                = diag(k)
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv),
+    "m_0 must be a scalar integer >= k"
+  )
+})
+
+test_that("AR1 SV_priors validates V_0 dimensions", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A            = rep(0, n_free),
+    Omega_A            = diag(n_free),
+    theta_gamma_0      = rep(0, k),
+    Omega_gamma_0      = diag(k),
+    theta_gamma_1      = rep(0, k),
+    Omega_gamma_1      = diag(k),
+    theta_log_lambda_0 = rep(0, k),
+    Omega_log_lambda_0 = diag(k),
+    m_0                = k + 2,
+    V_0                = diag(k + 1) # wrong dimensions
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv),
+    "V_0 must be a"
+  )
+})
+
+test_that("AR1 SV attaches correctly with valid priors", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A            = rep(0, n_free),
+    Omega_A            = diag(n_free),
+    theta_gamma_0      = rep(0, k),
+    Omega_gamma_0      = diag(k),
+    theta_gamma_1      = rep(0.9, k),
+    Omega_gamma_1      = diag(k),
+    theta_log_lambda_0 = rep(0, k),
+    Omega_log_lambda_0 = diag(k),
+    m_0                = k + 2,
+    V_0                = diag(k)
+  )
   
   result <- priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv)
   
-  expect_equal(result$priors$SV_priors, sv)
   expect_true(result$priors$SV)
+  expect_equal(result$priors$SV_type, "AR1")
+  expect_equal(result$priors$SV_priors, sv)
+})
+
+test_that("SV_type must be RW or AR1", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- setup(model, p = 2, deterministic = "constant")
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "invalid", SV_priors = list()),
+    "SV_type needs to be RW or AR1"
+  )
 })

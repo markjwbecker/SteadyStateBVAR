@@ -1,53 +1,64 @@
 #' Summarise a fitted steady-state BVAR model
 #'
-#' Computes and prints posterior summaries from a fitted \code{bvar} object.
+#' Computes and prints posterior summaries from a fitted steady-state \code{bvar} object.
 #' The printed output depends on whether the model is homoscedastic or includes
 #' stochastic volatility (RW or AR1 specification).
 #'
-#' Parameters are printed in structured blocks. Matrix-valued parameters are
-#' displayed as matrices, while vector-valued stochastic volatility parameters
-#' (e.g. \code{phi}, \code{gamma_0}, \code{gamma_1}) are printed as named vectors.
-#'
-#' For stochastic volatility models, time-varying covariance matrices
-#' \code{Sigma_u,t} can be extracted at a specified time index.
-#'
-#' @param object A \code{bvar} object that has been passed through
+#' @param object A steady-state \code{bvar} object that has been passed through
 #'   \code{\link{fit}}.
 #' @param pars Character vector of parameter names to include. If
 #'   \code{NULL} (default), all available parameters are displayed.
 #' @param stat Character. Posterior summary statistic to display:
 #'   \code{"mean"} (default) or \code{"median"}.
-#' @param t Integer. Time index for stochastic volatility covariance matrices.
-#'   If \code{NULL}, the latest available period is used.
+#' @param t Integer. Time index for the innovation covariance matrix if stochastic volatility was estimated.
+#'   If \code{NULL}, the latest available \code{t} is used.
 #' @param ... Additional arguments (currently unused).
 #'
 #' @return Returns the input object invisibly.
 #'
 #' @details
-#' The function supports both standard VAR models and stochastic volatility
-#' extensions. For SV models, additional parameters may be displayed depending
-#' on specification:
+#' The function summarises the following estimated parameters:
 #' \itemize{
-#'   \item RW  SV: \code{phi}
-#'   \item AR1 SV: \code{gamma_0}, \code{gamma_1}, \code{Phi}
-#' }lik
+#'   \item \code{beta}: kp×k VAR coefficient matrix
+#'   \item \code{Psi}: k×q steady-state parameter matrix
+#'   \item \code{Sigma_u}: innovation covariance matrix (k×k for homoscedastic,
+#'     T×k×k for stochastic volatility)
+#'   \item If Random Walk stochastic volatility:
+#'    \itemize{
+#'    \item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
+#'     the contemporaneous interaction of the endogenous variables
+#'    \item \code{phi}: k-dimensional vector of log volatility innovation variances
+#'    }
+#'   \item If AR1 stochastic volatility:
+#'    \itemize{
+#'    \item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
+#'     the contemporaneous interaction of the endogenous variables
+#'     \item \code{gamma_0}: k-dimensional vector of log volatility intercepts
+#'     \item \code{gamma_1}: k-dimensional vector of log volatility slopes
+#'     \item \code{Phi}: k×k log volatility innovation covariance matrix
+#'    }
+#' }
 #'
-#' Output is printed in blocks with manual formatting for readability.
 #' @method summary bvar
 #' @export
 #' @examples
 #' \dontrun{
 #' yt <- matrix(rnorm(50), 25, 2)
 #' bvar_obj <- bvar(data = yt)
-#' bvar_obj <- setup(bvar_obj, p = 1)
+#' bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
 #' bvar_obj <- priors(bvar_obj,
 #'                    theta_Psi = rep(0, 2),
 #'                    Omega_Psi = diag(0.1, 2, 2))
-#' bvar_obj$predict$H <- 1
-#' bvar_obj$predict$d_pred <- matrix(1)
 #'
-#' bvar_obj <- fit(bvar_obj, iter = 200, warmup = 50,
-#'                 chains = 1, cores = 1, auto_write = FALSE)
+#' bvar_obj <- fit(bvar_obj,
+#'                 H = 1,
+#'                 d_pred = matrix(1),
+#'                 iter = 200,
+#'                 warmup = 50,
+#'                 chains = 1,
+#'                 cores = 1,
+#'                 verbose = FALSE,
+#'                 auto_write = FALSE)
 #'
 #' summary(bvar_obj)
 #' }

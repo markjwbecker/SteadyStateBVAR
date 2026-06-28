@@ -8,81 +8,103 @@ stochastic_volatility_plot(
   x,
   ci = 0.95,
   vol = "log_lambda",
+  stat = "mean",
   plot_idx = NULL,
   xlim = NULL,
   ylim = NULL
 )
 }
 \arguments{
-\item{x}{A \code{bvar} object estimated via \code{\link{fit}} with
-stochastic volatility enabled.}
+\item{x}{A steady-state \code{bvar} object that has been passed through
+\code{\link{fit}} with stochastic volatility enabled.}
 
-\item{ci}{Numeric. Credible interval level. Default is \code{0.95}.}
+\item{ci}{Numeric. Interval level. Default is \code{0.95}.}
 
-\item{vol}{Character. Volatility representation:
-\code{"log_lambda"} (default) or \code{"sd"}.}
+\item{vol}{Character. Volatility representation: \code{"log_lambda"}
+(default) or \code{"sd"}.}
 
-\item{plot_idx}{Integer vector. Variables to plot. If \code{NULL},
-all variables are used.}
+\item{stat}{Character. Posterior summary statistic to use as point estimate:
+\code{"mean"} (default) or \code{"median"}.}
+
+\item{plot_idx}{Integer vector. Indices of variables to plot. If \code{NULL}
+(default), all variables are plotted.}
 
 \item{xlim}{Numeric vector of length 2. Optional x-axis limits.}
 
 \item{ylim}{Numeric vector of length 2. Optional y-axis limits.}
 }
 \value{
-An invisible list containing:
-\describe{
-\item{estimated}{
-List with posterior summaries for the estimation sample:
+An invisible list with:
 \itemize{
-\item \code{mean}: T × k matrix of posterior means
-\item \code{lower}: T × k matrix of lower credible bounds
-\item \code{upper}: T × k matrix of upper credible bounds
-}
-}
-\item{predicted}{
-List with posterior summaries for the forecast horizon:
+\item \code{estimated}: List of posterior summaries for the estimation sample:
 \itemize{
-\item \code{mean}: (T+H) × k matrix of predictive means
-\item \code{lower}: (T+H) × k matrix of lower credible bounds
-\item \code{upper}: (T+H) × k matrix of upper credible bounds
+\item \code{point}: \eqn{T \times k} matrix of posterior point estimates
+(mean or median depending on \code{stat})
+\item \code{lower}: \eqn{T \times k} matrix of lower credible bounds
+\item \code{upper}: \eqn{T \times k} matrix of upper credible bounds
 }
+\item \code{predicted}: List of posterior summaries for the forecast horizon:
+\itemize{
+\item \code{point}: \eqn{(T+H) \times k} matrix of predictive point estimates
+(mean or median depending on \code{stat})
+\item \code{lower}: \eqn{(T+H) \times k} matrix of lower bound of prediction interval
+\item \code{upper}: \eqn{(T+H) \times k} matrix of upper bound of prediction interval
 }
 }
 }
 \description{
 Produces time series plots of posterior stochastic volatility estimates
 over the estimation sample together with predictive paths over the forecast
-horizon for a fitted \code{bvar} object.
+horizon for a fitted steady-state \code{bvar} object with stochastic volatility.
 }
 \details{
 The function supports two volatility representations:
 \itemize{
 \item \code{"log_lambda"}: log-volatility states
-\item \code{"sd"}: implied posterior standard deviations
+\item \code{"sd"}: implied standard deviations
 }
 
-For each selected variable, the function plots:
-\itemize{
-\item posterior mean path (in-sample)
-\item credible bands (in-sample)
-\item predictive mean path (out-of-sample)
-\item predictive credible bands (out-of-sample)
-}
-
-In addition, posterior summary matrices for both estimation and forecast
-periods are returned invisibly.
+For each selected variable, the function plots the posterior point estimate
+path and credible bands over the estimation sample, and the predictive point
+estimate path and prediction intervals over the forecast horizon.
 }
 \examples{
 \dontrun{
-model <- bvar(data = my_data)
-model <- setup(model, p = 2, deterministic = "constant")
-model <- priors(model)
-model$SV <- TRUE
-model$SV_type <- "RW"
-model <- fit(model)
+yt <- matrix(rnorm(50), 25, 2)
 
-res <- stochastic_volatility_plot(model, ci = 0.95)
-str(res)
+bvar_obj <- bvar(data = yt)
+
+bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
+
+k <- bvar_obj$setup$k
+n_free_params_A <- bvar_obj$setup$n_free_params_A
+
+SV_priors <- list(
+theta_A             =  rep(0, n_free_params_A),
+Omega_A             =  diag(1000, n_free_params_A),
+mu_log_lambda_0     =  rep(0, k),
+sigma2_log_lambda_0 =  rep(1000, k),
+alpha_phi           =  rep(5, k),
+beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
+)
+
+bvar_obj <- priors(bvar_obj,
+                   theta_Psi = rep(0, 2),
+                   Omega_Psi = diag(0.1, 2, 2),
+                   SV = TRUE,
+                   SV_type = "RW",
+                   SV_priors = SV_priors)
+
+bvar_obj <- fit(bvar_obj,
+                H = 8,
+                d_pred = matrix(rep(1, 8)),
+                iter = 200,
+                warmup = 50,
+                chains = 1,
+                cores = 1,
+                verbose = FALSE,
+                auto_write = FALSE)
+
+res <- stochastic_volatility_plot(bvar_obj, ci = 0.95)
 }
 }
