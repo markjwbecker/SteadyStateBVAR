@@ -3,11 +3,11 @@
 Given a lower and upper bound of a (1-alpha) prior probability interval
 this function recovers the implied normal prior parameters.
 Useful for specifying informative priors
-on the steady-state (Psi) parameters in an intuitive way."><meta property="og:description" content="Calculates the mean and variance of a normal prior probability interval.
+on the steady-state parameters (elements of Psi)."><meta property="og:description" content="Calculates the mean and variance of a normal prior probability interval.
 Given a lower and upper bound of a (1-alpha) prior probability interval
 this function recovers the implied normal prior parameters.
 Useful for specifying informative priors
-on the steady-state (Psi) parameters in an intuitive way."></head><body>
+on the steady-state parameters (elements of Psi)."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -50,7 +50,7 @@ on the steady-state (Psi) parameters in an intuitive way."></head><body>
 Given a lower and upper bound of a (1-alpha) prior probability interval
 this function recovers the implied normal prior parameters.
 Useful for specifying informative priors
-on the steady-state (Psi) parameters in an intuitive way.</p>
+on the steady-state parameters (elements of Psi).</p>
     </div>
 
     <div class="section level2">
@@ -76,8 +76,8 @@ Default <code>0.95</code>, i.e. 95%.</p></dd>
 
 
 <dt id="arg-annualized-growthrate">annualized_growthrate<a class="anchor" aria-label="anchor" href="#arg-annualized-growthrate"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, converts the interval
-from annualized to per-period units by dividing by <code>freq</code>. Default
+<dd><p>Logical. If <code>TRUE</code>, converts the implied mean and variance
+from the annualized scale to the quarterly/monthly etc. scale by dividing by <code>freq</code>. Default
 <code>FALSE</code>.</p></dd>
 
 
@@ -94,12 +94,19 @@ mean and variance of the implied normal distribution.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">ppi</span><span class="op">(</span>l <span class="op">=</span> <span class="fl">1</span>, u <span class="op">=</span> <span class="fl">3</span>, interval <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">ppi</span><span class="op">(</span>l <span class="op">=</span> <span class="fl">1.7</span>, u <span class="op">=</span> <span class="fl">2.3</span>, interval <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $mean</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $var</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.2603178</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.0234286</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span><span class="fu">ppi</span><span class="op">(</span>l <span class="op">=</span> <span class="fl">1.7</span>, u <span class="op">=</span> <span class="fl">2.3</span>, interval <span class="op">=</span> <span class="fl">0.95</span>, annualized_growthrate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $mean</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $var</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0.001464287</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>

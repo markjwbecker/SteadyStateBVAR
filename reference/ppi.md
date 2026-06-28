@@ -3,8 +3,8 @@
 Calculates the mean and variance of a normal prior probability interval.
 Given a lower and upper bound of a (1-alpha) prior probability interval
 this function recovers the implied normal prior parameters. Useful for
-specifying informative priors on the steady-state (Psi) parameters in an
-intuitive way.
+specifying informative priors on the steady-state parameters (elements
+of Psi).
 
 ## Usage
 
@@ -29,8 +29,9 @@ ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4)
 
 - annualized_growthrate:
 
-  Logical. If `TRUE`, converts the interval from annualized to
-  per-period units by dividing by `freq`. Default `FALSE`.
+  Logical. If `TRUE`, converts the implied mean and variance from the
+  annualized scale to the quarterly/monthly etc. scale by dividing by
+  `freq`. Default `FALSE`.
 
 - freq:
 
@@ -45,11 +46,18 @@ of the implied normal distribution.
 ## Examples
 
 ``` r
-ppi(l = 1, u = 3, interval = 0.95)
+ppi(l = 1.7, u = 2.3, interval = 0.95)
 #> $mean
 #> [1] 2
 #> 
 #> $var
-#> [1] 0.2603178
+#> [1] 0.0234286
+#> 
+ppi(l = 1.7, u = 2.3, interval = 0.95, annualized_growthrate = TRUE)
+#> $mean
+#> [1] 0.5
+#> 
+#> $var
+#> [1] 0.001464287
 #> 
 ```

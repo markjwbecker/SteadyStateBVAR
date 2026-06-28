@@ -1,6 +1,7 @@
-# Villani 2009 data
+# Villani (2009) data
 
-Swedish macroeconomic data
+Swedish macroeconomic data (1980Q1–2005Q4) from Section 4.1 in Villani
+(2009)
 
 ## Usage
 
@@ -12,21 +13,39 @@ Villani2009
 
 ### `Villani2009`
 
-A data frame with 123 rows and 7 columns:
+A multivariate time series object with 104 rows and 7 columns:
 
-- country:
+- delta y_f:
 
-  Country name
+  foreign GDP growth
 
-- iso2, iso3:
+- pi_f:
 
-  2 & 3 letter ISO country codes
+  foreign CPI inflation
 
-- year:
+- i_f:
 
-  Year
+  foreign 3-month interest rate
+
+- delta y:
+
+  domestic GDP growth
+
+- pi:
+
+  domestic CPI inflation
+
+- i:
+
+  domestic 3-month interest rate
+
+- q:
+
+  level of the real exchange rate defined as q = s + p_f - p, where p_f
+  and p are the foreign and domestic CPI levels in logs and s is the log
+  of the trade-weighted nominal exchange rate
 
 ## Source
 
 Villani, M. (2009). Steady-state priors for vector autoregressions.
-*Journal of Applied Econometrics*, 24(4), 630-650.
+*Journal of Applied Econometrics*, 24(4), pp. 630-650.

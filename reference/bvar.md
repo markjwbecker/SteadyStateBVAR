@@ -1,8 +1,8 @@
 # Create a steady-state BVAR model object
 
-Initialises a steady-state Bayesian Vector Autoregression (BVAR) model
-object. This is the starting point for all models in `SteadyStateBVAR`.
-After creation, pass the object sequentially to
+Initialises a A steady-state `bvar` object. This is the starting point
+for all models in `SteadyStateBVAR`. After creation, pass the object
+sequentially to
 [`setup`](https://markjwbecker.github.io/SteadyStateBVAR/reference/setup.md),
 [`priors`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md),
 and
@@ -29,6 +29,7 @@ An object of class `bvar`.
 ## Examples
 
 ``` r
-yt <- matrix(rnorm(40, 0, 1), 20, 2)
+yt <- matrix(rnorm(50), 25, 2)
+
 bvar_obj <- bvar(data = yt)
 ```

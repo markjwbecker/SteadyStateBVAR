@@ -194,14 +194,13 @@ vary over time such that we have a time-varying covariance matrix
 $`\Sigma_{u,t}`$ (more details on this found in the respective
 vignettes).
 
-\##Example
+## Example
 
 To estimate the model in Section 4.1 of Villani (2009) and perform
-impulse response analysis and forecasting, simply run the following
-code:
+impulse response analysis and (un)conditional forecasting, simply run
+the following code:
 
 ``` r
-
 library(SteadyStateBVAR)
 data("Villani2009")
 yt <- Villani2009
@@ -293,6 +292,7 @@ for(i in 1:p){
   cols <- 1:kf
   restriction_matrix[rows, cols] <- 0
 }
+
 #block exogeneity for foreign variables
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
@@ -306,11 +306,25 @@ bvar_obj <- fit(bvar_obj,
 
 summary(bvar_obj)
 
+#unconditional forecasts
 fcst <- forecast(bvar_obj,
                  ci = 0.95,
                  fcst_type = "mean",
                  growth_rate_idx = c(4,5), #annual inflation/real GDP growth instead of QoQ
                  plot_idx = c(4,5,6))
+
+#conditional forecasts
+conditions <- data.frame(
+              var     = rep(6,12),
+              horizon = rep(1:12),
+              value   = seq(2, 8, length.out = 12))
+              
+cond_fcst <- conditional_forecast(bvar_obj,
+                    conditions,
+                    ci=0.68,
+                    fcst_type = "mean",
+                    plot_idx = c(4,6),
+                    growth_rate_idx = c(4)))
 
 irf <- IRF(bvar_obj,
            H=20,

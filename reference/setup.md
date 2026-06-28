@@ -1,4 +1,4 @@
-# Set up a steady-state BVAR model
+# Set up the steady-state BVAR model
 
 Prepares the matrices needed for prior specification and estimation.
 Also computes OLS estimates.
@@ -43,7 +43,9 @@ for prior specification and estimation, and also the OLS estimates.
 ## Examples
 
 ``` r
-yt <- matrix(rnorm(40, 0, 1), 20, 2)
+yt <- matrix(rnorm(50), 25, 2)
+
 bvar_obj <- bvar(data = yt)
+
 bvar_obj <- setup(bvar_obj, p = 1)
 ```

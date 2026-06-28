@@ -1,15 +1,17 @@
-# Estimate a steady-state BVAR model using Stan
+# Estimate the steady-state BVAR model using Stan
 
-Runs Stan to estimate a Bayesian VAR with steady-state formulation using
-data, setup, and priors stored in a `bvar` object. Supports both
-homoscedastic specifications and stochastic volatility models (RW or
-AR1).
+Estimates the steady-state BVAR using the No-U-Turn sampler (a variant
+of Hamiltonian Monte Carlo) via Stan. Uses the data, setup, and priors
+stored in the steady-state `bvar` object. Supports both homoscedastic
+and stochastic volatility (RW or AR1) specifications.
 
 ## Usage
 
 ``` r
 fit(
   x,
+  H = 1,
+  d_pred = NULL,
   iter = 5000,
   warmup = 2500,
   chains = 2,
@@ -22,14 +24,23 @@ fit(
 
 - x:
 
-  A `bvar` object that has been passed through
+  A steady-state `bvar` object that has been passed through
   [`setup`](https://markjwbecker.github.io/SteadyStateBVAR/reference/setup.md)
   and
   [`priors`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md).
 
+- H:
+
+  Positive Integer. Forecast horizon. Default is `1`.
+
+- d_pred:
+
+  Matrix of size H x q. Future values of the deterministic variables
+  d_t.
+
 - iter:
 
-  Integer. Total number of MCMC iterations per chain. Default is `5000`.
+  Integer. Total number of MCMC iterations per chain. Default is 5000.
 
 - warmup:
 
@@ -43,7 +54,7 @@ fit(
 - cores:
 
   Integer. Number of CPU cores used for sampling. Default is
-  `min(chains, available cores)`.
+  `min(chains, parallel::detectCores())`.
 
 - auto_write:
 
@@ -55,7 +66,20 @@ A `bvar` object with:
 
 - `fit$stan`: Stan fit object containing posterior draws
 
-- `posterior_means`: List of posterior mean estimates:
+- `fit$posterior_means`: List of posterior mean estimates:
+
+  - `beta`: k×k VAR coefficient matrix
+
+  - `Psi`: k×q steady-state parameter matrix
+
+  - `Sigma_u`: covariance matrix (k×k for homoscedastic, T×k×k for
+    stochastic volatility)
+
+  - RW SV: `A`, `phi`
+
+  - AR1 SV: `A`, `gamma_0`, `gamma_1`, `Phi`
+
+- `fit$posterior_medians`: List of posterior median estimates:
 
   - `beta`: k×k VAR coefficient matrix
 
@@ -69,9 +93,6 @@ A `bvar` object with:
   - AR1 SV: `A`, `gamma_0`, `gamma_1`, `Phi`
 
 ## Details
-
-Forecast inputs must be supplied in `x$predict$H` and `x$predict$d_pred`
-prior to calling `fit()`.
 
 The function selects the appropriate Stan model based on prior settings:
 
@@ -94,7 +115,7 @@ For stochastic volatility models, SV-specific priors in
 
 ``` r
 if (FALSE) { # \dontrun{
-yt <- matrix(rnorm(40), 20, 2)
+yt <- matrix(rnorm(50), 25, 2)
 bvar_obj <- bvar(data = yt)
 bvar_obj <- setup(bvar_obj, p = 1)
 bvar_obj <- priors(bvar_obj,

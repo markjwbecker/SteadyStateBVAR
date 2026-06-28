@@ -1,9 +1,8 @@
 # Restrict VAR coefficients to zero
 
-Applies zero restrictions to the VAR coefficient matrix by setting the
-corresponding prior variances in `Omega_beta` to a value near zero. This
-enforces restrictions through the prior rather than hard-coding them in
-the likelihood, which is compatible with the Stan estimation.
+Applies zero restrictions to the VAR coefficient matrix (beta) by
+setting the corresponding prior variances in `Omega_beta` to a value
+near zero (prior means are zero by default in the Minnesota prior).
 
 ## Usage
 
@@ -15,7 +14,7 @@ restrict_beta(x, restriction_matrix)
 
 - x:
 
-  A `bvar` object that has been passed through
+  A steady-state `bvar` object that has been passed through
   [`priors`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md).
 
 - restriction_matrix:
@@ -32,11 +31,11 @@ The `bvar` object with the restriction matrix stored in `setup` and
 ## Examples
 
 ``` r
-yt <- matrix(rnorm(40, 0, 1), 20, 2)
+yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)
 
-bvar_obj <- setup(bvar_obj, p=1)
+bvar_obj <- setup(bvar_obj, p=2)
 
 bvar_obj <- priors(bvar_obj,
                    theta_Psi = rep(0, 2),
@@ -44,8 +43,11 @@ bvar_obj <- priors(bvar_obj,
                    
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
+
 restriction_matrix <- matrix(1, k*p, k)
+
 restriction_matrix[1, 1] <- 0
+restriction_matrix[4, 2] <- 0
 
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 ```
