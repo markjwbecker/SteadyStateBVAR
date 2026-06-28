@@ -36,17 +36,24 @@ normal-diffuse prior distribution, so the incoming analysis will be
 restricted to this case.*”
 
 Times are different now, and with the help of Stan, we can basically do
-whatever we can imagine. To showcase this, in the last section we build
-on the steady-state BVAR model of Clark (2011) \[which itself is an
-extension of the original model (Villani, 2009)\], by letting the log
-volatilities follow correlated AR(1) processes instead of uncorrelated
-driftless random walks. And this is done without asking Professor
-Villani for any derivations. I simply wrote down the model equations,
-put some priors on the parameters, and Stan did the rest!
+whatever we can imagine. In this package we can for example choose an
+AR(1) stochastic volatility specification, and thus build on the
+steady-state BVAR of Clark (2011), which itself extends Villani (2009),
+by letting the log volatilities follow correlated AR(1) processes
+instead of independent driftless random walks. And this is done without
+asking Professor Villani for any derivations. I simply wrote down the
+model equations, put some priors on the parameters, and Stan did the
+rest!
 
 ## Installation
 
-You can install the development version of SteadyStateBVAR from
+You can install SteadyStateBVAR with:
+
+``` r
+install.packages("SteadyStateBVAR")
+```
+
+You can also install the development version of SteadyStateBVAR from
 [GitHub](https://github.com/) with:
 
 ``` r
