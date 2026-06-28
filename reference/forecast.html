@@ -7,10 +7,10 @@
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Forecast from a fitted BVAR model — forecast"><meta name="description" content="Computes and plots forecasts from a fitted bvar object. Posterior
 predictive draws from Stan are used to construct point forecasts and
-credible intervals. Optionally converts level forecasts to annual growth
+prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 rates for selected variables."><meta property="og:description" content="Computes and plots forecasts from a fitted bvar object. Posterior
 predictive draws from Stan are used to construct point forecasts and
-credible intervals. Optionally converts level forecasts to annual growth
+prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 rates for selected variables."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -52,7 +52,7 @@ rates for selected variables."></head><body>
     <div class="ref-description section level2">
     <p>Computes and plots forecasts from a fitted <code>bvar</code> object. Posterior
 predictive draws from Stan are used to construct point forecasts and
-credible intervals. Optionally converts level forecasts to annual growth
+prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 rates for selected variables.</p>
     </div>
 
@@ -73,11 +73,11 @@ rates for selected variables.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A <code>bvar</code> object that has been passed through <code><a href="fit.html">fit</a></code>.</p></dd>
+<dd><p>A steady-state <code>bvar</code> object that has been passed through <code><a href="fit.html">fit</a></code>.</p></dd>
 
 
 <dt id="arg-ci">ci<a class="anchor" aria-label="anchor" href="#arg-ci"></a></dt>
-<dd><p>Numeric. The credible interval width. Default <code>0.95</code>.</p></dd>
+<dd><p>Numeric. The prediction interval width. Default <code>0.95</code>, i.e. 95% prediction interval.</p></dd>
 
 
 <dt id="arg-fcst-type">fcst_type<a class="anchor" aria-label="anchor" href="#arg-fcst-type"></a></dt>
@@ -87,8 +87,7 @@ as the point forecast. Default <code>"mean"</code>.</p></dd>
 
 <dt id="arg-growth-rate-idx">growth_rate_idx<a class="anchor" aria-label="anchor" href="#arg-growth-rate-idx"></a></dt>
 <dd><p>Integer vector. Indices of variables to convert to
-annual growth rates. If <code>NULL</code> (default), all variables are plotted
-in levels.</p></dd>
+annual growth rates. Default is <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-plot-idx">plot_idx<a class="anchor" aria-label="anchor" href="#arg-plot-idx"></a></dt>
@@ -104,7 +103,7 @@ history is shown.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with three matrices: <code>forecast</code>, <code>lower</code>, and
+    <p>Invisibly returns a list with three matrices: <code>forecast</code>, <code>lower</code>, and
 <code>upper</code>, each of dimension <code>H x k</code> where <code>H</code> is the
 forecast horizon and <code>k</code> is the number of variables.</p>
     </div>
@@ -112,11 +111,36 @@ forecast horizon and <code>k</code> is the number of variables.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">my_data</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="setup.html">setup</a></span><span class="op">(</span><span class="va">model</span>, p <span class="op">=</span> <span class="fl">2</span>, deterministic <span class="op">=</span> <span class="st">"constant"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="priors.html">priors</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit.html">fit</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">fcst</span> <span class="op">&lt;-</span> <span class="fu">forecast</span><span class="op">(</span><span class="va">model</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, fcst_type <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">#homoscedastic with Jeffreys prior</span></span></span>
+<span class="r-in"><span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span>, <span class="fl">25</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">yt</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="setup.html">setup</a></span><span class="op">(</span><span class="va">bvar_obj</span>, p<span class="op">=</span><span class="fl">1</span>, deterministic <span class="op">=</span> <span class="st">"constant"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="priors.html">priors</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>
+<span class="r-in"><span>                   lambda_1 <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
+<span class="r-in"><span>                   lambda_2 <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
+<span class="r-in"><span>                   lambda_3 <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                   first_own_lag_prior_mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   theta_Psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   Omega_Psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   Jeffrey <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                   SV <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                   SV_type <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>                   SV_priors <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   </span></span>
+<span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>
+<span class="r-in"><span>                H <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                iter <span class="op">=</span> <span class="fl">200</span>,</span></span>
+<span class="r-in"><span>                warmup <span class="op">=</span> <span class="fl">50</span>,</span></span>
+<span class="r-in"><span>                chains <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                cores <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                auto_write <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">forecast</span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.90</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

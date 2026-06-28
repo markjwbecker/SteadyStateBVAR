@@ -94,7 +94,9 @@ The function selects the appropriate Stan model based on prior settings:
 - AR1 stochastic volatility:
   `steady_state_bvar_AR1_stochastic_volatility.stan`
 
-The function estimates the following parameters:
+The function estimates the following parameters (see
+[bvar](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
+for details):
 
 - `beta`: kp×k VAR coefficient matrix
 
@@ -132,7 +134,7 @@ yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)
 
-bvar_obj <- setup(bvar_obj, p=1)
+bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
 
 bvar_obj <- priors(bvar_obj,
                    lambda_1 = 0.2,
@@ -161,7 +163,7 @@ yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)
 
-bvar_obj <- setup(bvar_obj, p=1)
+bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
 
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
@@ -201,7 +203,7 @@ yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)
 
-bvar_obj <- setup(bvar_obj, p=1)
+bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
 
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A

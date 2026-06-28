@@ -1,9 +1,9 @@
-# Impulse Response Functions for a BVAR model
+# Impulse Response Functions for a fitted steady-state BVAR model
 
 Computes and plots impulse response functions (IRFs) from a fitted
-`bvar` object. Supports both orthogonalised (OIRF) and generalised
-(GIRF) impulse responses, with optional conversion to annual growth
-rates.
+steady-state `bvar` object. Supports both orthogonalized (OIRF) and
+generalized (GIRF) impulse responses, with optional conversion to annual
+growth rates.
 
 ## Usage
 
@@ -25,7 +25,7 @@ IRF(
 
 - x:
 
-  A `bvar` object that has been passed through
+  A steady-state `bvar` object that has been passed through
   [`fit`](https://markjwbecker.github.io/SteadyStateBVAR/reference/fit.md).
 
 - H:
@@ -49,36 +49,61 @@ IRF(
 
 - method:
 
-  Character. The IRF method: `"OIRF"` for orthogonalised or `"GIRF"` for
-  generalised impulse responses. Default `"OIRF"`.
+  Character. The IRF method: `"OIRF"` for orthogonalized or `"GIRF"` for
+  generalized impulse responses. Default `"OIRF"`.
 
 - ci:
 
-  Numeric. The credible interval width. Default `0.95`.
+  Numeric. The credible interval width. Default `0.95`, i.e. 95%.
 
 - t:
 
   Integer. Time index for the covariance matrix when using stochastic
-  volatility models. If `NULL` (default), the last time period is used.
+  volatility models. If `NULL` (default), the last time `t` is used.
 
 - growth_rate_idx:
 
   Integer vector. Indices of variables to convert to annual growth
-  rates. If `NULL` (default), no conversion is applied.
+  rates. Default is `NULL`.
 
 ## Value
 
-A list with three arrays: the point estimate IRF, `lower`, and `upper`
-credible bounds, each of dimension `k x k x (H+1)`.
+Invisibly returns a list with three arrays: the point estimate IRF,
+`lower`, and `upper` credible bounds, each of dimension `k x k x (H+1)`.
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-model <- bvar(data = my_data)
-model <- setup(model, p = 2, deterministic = "constant")
-model <- priors(model)
-model <- fit(model)
-irf <- IRF(model, H = 16, method = "OIRF")
+#homoscedastic with Jeffreys prior
+yt <- matrix(rnorm(50), 25, 2)
+
+bvar_obj <- bvar(data = yt)
+
+bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
+
+bvar_obj <- priors(bvar_obj,
+                   lambda_1 = 0.2,
+                   lambda_2 = 0.5,
+                   lambda_3 = 1,
+                   first_own_lag_prior_mean = rep(1,2),
+                   theta_Psi = rep(0, 2),
+                   Omega_Psi = diag(0.1, 2, 2),
+                   Jeffrey = TRUE,
+                   SV = FALSE,
+                   SV_type = NULL,
+                   SV_priors = NULL)
+                   
+bvar_obj <- fit(bvar_obj,
+                H = 8,
+                d_pred = matrix(rep(1,8)),
+                iter = 200,
+                warmup = 50,
+                chains = 1,
+                cores = 1,
+                verbose = FALSE,
+                auto_write = FALSE)
+                
+IRF(bvar_obj)
 } # }
 ```

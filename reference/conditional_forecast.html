@@ -5,12 +5,12 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Conditional forecasts from a fitted BVAR model — conditional_forecast"><meta name="description" content="Computes and plots conditional forecasts from a fitted bvar object.
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Conditional forecasts from a fitted BVAR model — conditional_forecast"><meta name="description" content="Computes and plots conditional forecasts from a fitted steady-state bvar object.
 Conditions are imposed on specific variables at specific horizons using the
-method of Waggoner and Zha (1999). Both conditional and unconditional
-forecasts are plotted for comparison."><meta property="og:description" content="Computes and plots conditional forecasts from a fitted bvar object.
+method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
+forecasts are plotted for comparison."><meta property="og:description" content="Computes and plots conditional forecasts from a fitted steady-state bvar object.
 Conditions are imposed on specific variables at specific horizons using the
-method of Waggoner and Zha (1999). Both conditional and unconditional
+method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
 forecasts are plotted for comparison."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -50,9 +50,9 @@ forecasts are plotted for comparison."></head><body>
     </div>
 
     <div class="ref-description section level2">
-    <p>Computes and plots conditional forecasts from a fitted <code>bvar</code> object.
+    <p>Computes and plots conditional forecasts from a fitted steady-state <code>bvar</code> object.
 Conditions are imposed on specific variables at specific horizons using the
-method of Waggoner and Zha (1999). Both conditional and unconditional
+method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
 forecasts are plotted for comparison.</p>
     </div>
 
@@ -80,12 +80,13 @@ forecasts are plotted for comparison.</p>
 <dt id="arg-conditions">conditions<a class="anchor" aria-label="anchor" href="#arg-conditions"></a></dt>
 <dd><p>A data frame with three columns: <code>var</code> (integer index
 of the conditioned variable), <code>horizon</code> (integer forecast horizon at
-which the condition is imposed), and <code>value</code> (numeric value the
-variable is conditioned on).</p></dd>
+which the condition is imposed), and <code>value</code> (numeric, the imposed
+condition). Note that <code>var</code> and <code>horizon</code> must be integers, as
+they are used for indexing.</p></dd>
 
 
 <dt id="arg-ci">ci<a class="anchor" aria-label="anchor" href="#arg-ci"></a></dt>
-<dd><p>Numeric. The credible interval width. Default <code>0.95</code>.</p></dd>
+<dd><p>Numeric. The prediction interval width. Default <code>0.95</code>.</p></dd>
 
 
 <dt id="arg-fcst-type">fcst_type<a class="anchor" aria-label="anchor" href="#arg-fcst-type"></a></dt>
@@ -94,9 +95,8 @@ as the point forecast. Default <code>"mean"</code>.</p></dd>
 
 
 <dt id="arg-growth-rate-idx">growth_rate_idx<a class="anchor" aria-label="anchor" href="#arg-growth-rate-idx"></a></dt>
-<dd><p>Integer vector. Indices of variables to convert to
-annual growth rates. If <code>NULL</code> (default), all variables are plotted
-in levels.</p></dd>
+<dd><p>Integer vector. Indices of variables to convert to annual growth rates.
+Default is <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-plot-idx">plot_idx<a class="anchor" aria-label="anchor" href="#arg-plot-idx"></a></dt>
@@ -106,27 +106,57 @@ in levels.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list with three matrices: <code>forecast</code>, <code>lower</code>, and
+    <p>Invisibly returns a list with three matrices: <code>forecast</code>, <code>lower</code>, and
 <code>upper</code>, each of dimension <code>H x k</code>, as well as <code>cond_draws</code>,
 an array of all posterior conditional forecast draws.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Waggoner, D. F. and Zha, T. (1999). Conditional forecasts in dynamic
-multivariate models. <em>Review of Economics and Statistics</em>, 81(4),
-639-651.</p>
+    <p>Dieppe, A., Legrand, R., and van Roye, B. (2018).
+<em>The Bayesian Estimation, Analysis and Regression (BEAR) Toolbox Technical guide</em>.
+European Central Bank.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Condition on variable 1 being 2.0 at horizon 4</span></span></span>
-<span class="r-in"><span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>var <span class="op">=</span> <span class="fl">1</span>, horizon <span class="op">=</span> <span class="fl">4</span>, value <span class="op">=</span> <span class="fl">2.0</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">my_data</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="setup.html">setup</a></span><span class="op">(</span><span class="va">model</span>, p <span class="op">=</span> <span class="fl">2</span>, deterministic <span class="op">=</span> <span class="st">"constant"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="priors.html">priors</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit.html">fit</a></span><span class="op">(</span><span class="va">model</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">conditional_forecast</span><span class="op">(</span><span class="va">model</span>, conditions <span class="op">=</span> <span class="va">conditions</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">#homoscedastic with Jeffreys prior</span></span></span>
+<span class="r-in"><span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span>, <span class="fl">25</span>, <span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">yt</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="setup.html">setup</a></span><span class="op">(</span><span class="va">bvar_obj</span>, p<span class="op">=</span><span class="fl">1</span>, deterministic <span class="op">=</span> <span class="st">"constant"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="priors.html">priors</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>
+<span class="r-in"><span>                   lambda_1 <span class="op">=</span> <span class="fl">0.2</span>,</span></span>
+<span class="r-in"><span>                   lambda_2 <span class="op">=</span> <span class="fl">0.5</span>,</span></span>
+<span class="r-in"><span>                   lambda_3 <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                   first_own_lag_prior_mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   theta_Psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   Omega_Psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                   Jeffrey <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                   SV <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                   SV_type <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span>                   SV_priors <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   </span></span>
+<span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>
+<span class="r-in"><span>                H <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                iter <span class="op">=</span> <span class="fl">200</span>,</span></span>
+<span class="r-in"><span>                warmup <span class="op">=</span> <span class="fl">50</span>,</span></span>
+<span class="r-in"><span>                chains <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                cores <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                auto_write <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                </span></span>
+<span class="r-in"><span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>var <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">8</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                         horizon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                         value   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                         </span></span>
+<span class="r-in"><span><span class="va">cond_fcst</span> <span class="op">&lt;-</span> <span class="fu">conditional_forecast</span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>
+<span class="r-in"><span>                                  <span class="va">conditions</span>,</span></span>
+<span class="r-in"><span>                                  ci<span class="op">=</span><span class="fl">0.68</span>,</span></span>
+<span class="r-in"><span>                                  fcst_type <span class="op">=</span> <span class="st">"mean"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
