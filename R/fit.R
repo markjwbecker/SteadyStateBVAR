@@ -67,15 +67,109 @@
 #' @export
 #' @examples
 #' \dontrun{
+#' #homoscedastic with Jeffreys prior
 #' yt <- matrix(rnorm(50), 25, 2)
-#' 
+#'
 #' bvar_obj <- bvar(data = yt)
-#' 
-#' bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
-#' 
+#'
+#' bvar_obj <- setup(bvar_obj, p=1)
+#'
 #' bvar_obj <- priors(bvar_obj,
+#'                    lambda_1 = 0.2,
+#'                    lambda_2 = 0.5,
+#'                    lambda_3 = 1,
+#'                    first_own_lag_prior_mean = rep(1,2),
 #'                    theta_Psi = rep(0, 2),
-#'                    Omega_Psi = diag(0.1, 2, 2))
+#'                    Omega_Psi = diag(0.1, 2, 2),
+#'                    Jeffrey = TRUE,
+#'                    SV = FALSE,
+#'                    SV_type = NULL,
+#'                    SV_priors = NULL)
+#'                    
+#' bvar_obj <- fit(bvar_obj,
+#'                 H = 8,
+#'                 d_pred = matrix(rep(1,8)),
+#'                 iter = 200,
+#'                 warmup = 50,
+#'                 chains = 1,
+#'                 cores = 1,
+#'                 verbose = FALSE,
+#'                 auto_write = FALSE)
+#'                    
+#' #RW stochastic volatility
+#' yt <- matrix(rnorm(50), 25, 2)
+#'
+#' bvar_obj <- bvar(data = yt)
+#'
+#' bvar_obj <- setup(bvar_obj, p=1)
+#' 
+#' k <- bvar_obj$setup$k
+#' n_free_params_A <- bvar_obj$setup$n_free_params_A
+#' 
+#' SV_priors_RW <- list(
+#' theta_A             =  rep(0, n_free_params_A),
+#' Omega_A             =  diag(1000, n_free_params_A),
+#' mu_log_lambda_0     =  rep(0, k),
+#' sigma2_log_lambda_0 =  rep(1000, k),
+#' alpha_phi           =  rep(5, k),
+#' beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
+#' )
+#'
+#' bvar_obj <- priors(bvar_obj,
+#'                    lambda_1 = 0.2,
+#'                    lambda_2 = 0.5,
+#'                    lambda_3 = 1,
+#'                    first_own_lag_prior_mean = rep(1,2),
+#'                    theta_Psi = rep(0, 2),
+#'                    Omega_Psi = diag(0.1, 2, 2),
+#'                    SV = TRUE,
+#'                    SV_type = "RW",
+#'                    SV_priors = SV_priors_RW)
+#'
+#' bvar_obj <- fit(bvar_obj,
+#'                 H = 8,
+#'                 d_pred = matrix(rep(1,8)),
+#'                 iter = 200,
+#'                 warmup = 50,
+#'                 chains = 1,
+#'                 cores = 1,
+#'                 verbose = FALSE,
+#'                 auto_write = FALSE)
+#'                    
+#' #AR1 stochastic volatility
+#' yt <- matrix(rnorm(50), 25, 2)
+#'
+#' bvar_obj <- bvar(data = yt)
+#'
+#' bvar_obj <- setup(bvar_obj, p=1)
+#' 
+#' k <- bvar_obj$setup$k
+#' n_free_params_A <- bvar_obj$setup$n_free_params_A
+#' 
+#' SV_priors_AR <- list(
+#' theta_A            =  rep(0, n_free_params_A),
+#' Omega_A            =  diag(1000, n_free_params_A),
+#' theta_gamma_0      =  rep(0.1, k),
+#' Omega_gamma_0      =  diag(1000, k),
+#' theta_gamma_1      =  rep(0.9, k),
+#' Omega_gamma_1      =  diag(10, k),
+#' theta_log_lambda_0 =  rep(0.1, k)/(1-rep(0.9, k)),
+#' Omega_log_lambda_0 =  diag(1000, k),
+#' V_0                = (10 - k - 1) * diag(k),
+#' m_0                =  10
+#' )
+#'
+#' bvar_obj <- priors(bvar_obj,
+#'                    lambda_1 = 0.2,
+#'                    lambda_2 = 0.5,
+#'                    lambda_3 = 1,
+#'                    first_own_lag_prior_mean = rep(1,2),
+#'                    theta_Psi = rep(0, 2),
+#'                    Omega_Psi = diag(0.1, 2, 2),
+#'                    SV = TRUE,
+#'                    SV_type = "AR1",
+#'                    SV_priors = SV_priors_AR)
+#'
 #'
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
