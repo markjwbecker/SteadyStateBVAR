@@ -4,9 +4,9 @@
 \name{SteadyStateBVAR-package}
 \alias{SteadyStateBVAR}
 \alias{SteadyStateBVAR-package}
-\title{SteadyStateBVAR: Estimation of the steady-state Bayesian Vector Autoregression model using Hamiltonian Monte Carlo}
+\title{SteadyStateBVAR: Bayesian Vector Autoregression Models with Steady-State Priors via Stan}
 \description{
-Estimation of Bayesian Vector Autoregression ('BVAR') models with steady-state priors using 'Stan'.
+Provides estimation of Bayesian Vector Autoregression ('BVAR') models with steady-state priors using 'Stan'. After estimation, the package provides functions for unconditional and conditional forecasting, and impulse response analysis. For more details on the steady-state BVAR model see Villani (2009) \doi{10.1002/jae.1065}.
 }
 \seealso{
 Useful links:
@@ -17,11 +17,11 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Mark Becker \email{mark.jw.becker@gmail.com}
+\strong{Maintainer}: Mark Becker \email{mark.jw.becker@gmail.com} [copyright holder]
 
 Authors:
 \itemize{
-  \item Mark Becker \email{mark.jw.becker@gmail.com}
+  \item Mark Becker \email{mark.jw.becker@gmail.com} [copyright holder]
 }
 
 }
