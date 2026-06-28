@@ -29,6 +29,7 @@ and fit to build and estimate the model. See Villani (2009) for details on the m
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
+    <li><a class="dropdown-item" href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">Random Walk stochastic volatility steady-state BVAR (Clark, 2011)</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -107,6 +108,8 @@ For the <code>RW</code> stochastic volatility specification, the log volatilitie
 <p>where \(\Phi\) is <strong>not</strong> diagonal and as such the innovations to the log
 volatilities are allowed to be correlated across variables. For the <code>RW</code> case, \(\Phi\) is diagonal
 with variances \(\phi_i\) for \(i=1,\dots,k\).</p>
+<p>Note that under both stochastic volatility specifications, the time-varying covariance matrix is</p>
+<p>$$\Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'.$$</p>
 <p>For details on the homoscedastic steady-state BVAR model, see Villani (2009).
 For the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
 For details regarding AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).</p>

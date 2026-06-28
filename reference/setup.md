@@ -38,7 +38,7 @@ setup(
 ## Value
 
 The steady-state `bvar` object with a `setup` list containing the
-matrices required for prior specification and estimation, and also the
+required components for prior specification and estimation, and also the
 OLS estimates.
 
 ## Examples

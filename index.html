@@ -42,6 +42,7 @@
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
+    <li><a class="dropdown-item" href="articles/RW-stochastic-volatility-steady-state-BVAR.html">Random Walk stochastic volatility steady-state BVAR (Clark, 2011)</a></li>
   </ul>
 </li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
@@ -123,145 +124,146 @@
 <p>However, if the user wants, an inverse Wishart prior can be used instead</p>
 <p><span class="math display">\[\Sigma_u \sim \mathrm{IW}(V_0,m_0)\]</span></p>
 <p>where <span class="math inline">\(V_0\)</span> is the scale matrix and <span class="math inline">\(m_0\geq k+2\)</span> is the number of degrees of freedom. An uninformative prior can be (and is in this package) specified by setting <span class="math inline">\(V_0=(m_0-k-1)\hat{\Sigma}_u\)</span> where <span class="math inline">\(\hat{\Sigma}_u\)</span> is the least squares estimate from the VAR(<span class="math inline">\(p\)</span>) (including the constant and dummy/trend variable if applicable), and <span class="math inline">\(m_0=k+2\)</span>.</p>
-<p>This package also allows for stochastic volatility (Random Walk or AR1 specifications), where we let the covariance matrix of the innovations vary over time such that we have a time-varying covariance matrix <span class="math inline">\(\Sigma_{u,t}\)</span> (more details on this found in the respective vignettes).</p>
+<p>This package also allows for stochastic volatility (Random Walk or AR1 specifications), where we let the covariance matrix of the innovations vary over time such that we have a time-varying covariance matrix <span class="math inline">\(\Sigma_{u,t}\)</span> (more details found in <code><a href="reference/bvar.html">?bvar</a></code>).</p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>To estimate the model in Section 4.1 of Villani (2009) and perform impulse response analysis and (un)conditional forecasting, simply run the following code:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">library</span>(SteadyStateBVAR)</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="fu">data</span>(<span class="st">"Villani2009"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>yt <span class="ot">&lt;-</span> Villani2009</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>yt <span class="ot">&lt;-</span> <span class="fu">ts</span>(yt[<span class="dv">1</span><span class="sc">:</span><span class="dv">102</span>, ], <span class="at">start =</span> <span class="fu">start</span>(yt), <span class="at">frequency =</span> <span class="fu">frequency</span>(yt))</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>bvar_obj <span class="ot">&lt;-</span> <span class="fu">bvar</span>(<span class="at">data =</span> yt)</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>bp <span class="ot">&lt;-</span> <span class="fu">which</span>(<span class="fu">time</span>(yt) <span class="sc">==</span> <span class="fl">1992.75</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>dum_var <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rep</span>(<span class="dv">1</span>,bp), <span class="fu">rep</span>(<span class="dv">0</span>,<span class="fu">nrow</span>(yt)<span class="sc">-</span>bp))</span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>bvar_obj <span class="ot">&lt;-</span> <span class="fu">setup</span>(bvar_obj,</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>                  <span class="at">p=</span><span class="dv">4</span>,</span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>                  <span class="at">deterministic =</span> <span class="st">"constant_and_dummy"</span>,</span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>                  <span class="at">dummy =</span> dum_var)</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>lambda_1 <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>lambda_2 <span class="ot">&lt;-</span> <span class="fl">0.5</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>lambda_3 <span class="ot">&lt;-</span> <span class="fl">1.0</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a><span class="co">#fol_pm = first own lag prior means</span></span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>fol_pm<span class="ot">=</span><span class="fu">c</span>(<span class="dv">0</span>,   <span class="co">#delta y_f</span></span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>         <span class="dv">0</span>,   <span class="co">#pi_f</span></span>
-<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>         <span class="fl">0.9</span>, <span class="co">#i_f</span></span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>         <span class="dv">0</span>,   <span class="co">#delta y</span></span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>         <span class="dv">0</span>,   <span class="co">#pi</span></span>
-<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>         <span class="fl">0.9</span>, <span class="co">#i</span></span>
-<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>         <span class="fl">0.9</span>  <span class="co">#q</span></span>
-<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>         )</span>
-<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a></span>
-<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a><span class="co">#psi_1 = Psi col 1</span></span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a><span class="co">#psi_2 = Psi col 2</span></span>
-<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a></span>
-<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a><span class="co"># default is 95% prior probability ('interval=0.95')</span></span>
-<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>theta_Psi <span class="ot">&lt;-</span> </span>
-<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">2.00</span>,  <span class="fl">3.00</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>mean,   <span class="co">#psi_1: delta y_f</span></span>
-<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>mean,   <span class="co">#psi_1: pi_f</span></span>
-<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">4.50</span>,  <span class="fl">5.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>mean,  <span class="co">#psi_1: i_f</span></span>
-<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">2.00</span>,  <span class="fl">2.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>mean,   <span class="co">#psi_1: delta y</span></span>
-<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">1.70</span>,  <span class="fl">2.30</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>mean,   <span class="co">#psi_1: pi</span></span>
-<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">4.00</span>,  <span class="fl">4.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>mean,  <span class="co">#psi_1: i</span></span>
-<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">3.85</span>,  <span class="fl">4.00</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>mean,  <span class="co">#psi_1: q</span></span>
-<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>  <span class="fu">ppi</span>(<span class="sc">-</span><span class="fl">1.00</span>,  <span class="fl">1.00</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>mean,   <span class="co">#psi_2: delta y_f</span></span>
-<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>mean,   <span class="co">#psi_2: pi_f</span></span>
-<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>mean,  <span class="co">#psi_2: i_f</span></span>
-<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a>  <span class="fu">ppi</span>(<span class="sc">-</span><span class="fl">1.00</span>,  <span class="fl">1.00</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>mean,   <span class="co">#psi_2: delta y</span></span>
-<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">4.30</span>,  <span class="fl">5.70</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>mean,   <span class="co">#psi_2: pi</span></span>
-<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">3.00</span>,  <span class="fl">5.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>mean,  <span class="co">#psi_2: i</span></span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a>  <span class="fu">ppi</span>(<span class="sc">-</span><span class="fl">0.50</span>,  <span class="fl">0.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>mean   <span class="co">#psi_2: q</span></span>
-<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>  )</span>
-<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a></span>
-<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>Omega_Psi <span class="ot">&lt;-</span> </span>
-<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>  <span class="fu">diag</span>(</span>
-<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>  <span class="fu">c</span>(</span>
-<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">2.00</span>,  <span class="fl">3.00</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>var,    <span class="co">#psi_1: delta y_f</span></span>
-<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>var,    <span class="co">#psi_1: pi_f</span></span>
-<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">4.50</span>,  <span class="fl">5.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>var,   <span class="co">#psi_1: i_f</span></span>
-<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">2.00</span>,  <span class="fl">2.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>var,    <span class="co">#psi_1: delta y</span></span>
-<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">1.70</span>,  <span class="fl">2.30</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>var,    <span class="co">#psi_1: pi</span></span>
-<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">4.00</span>,  <span class="fl">4.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>var,   <span class="co">#psi_1: i</span></span>
-<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">3.85</span>,  <span class="fl">4.00</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>var,   <span class="co">#psi_1: q</span></span>
-<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a>  <span class="fu">ppi</span>(<span class="sc">-</span><span class="fl">1.00</span>,  <span class="fl">1.00</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>var,    <span class="co">#psi_2: delta y_f</span></span>
-<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>var,    <span class="co">#psi_2: pi_f</span></span>
-<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>var,   <span class="co">#psi_2: i_f</span></span>
-<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>  <span class="fu">ppi</span>(<span class="sc">-</span><span class="fl">1.00</span>,  <span class="fl">1.00</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>var,    <span class="co">#psi_2: delta y</span></span>
-<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">4.30</span>,  <span class="fl">5.70</span>,  <span class="at">annualized_growthrate=</span><span class="cn">TRUE</span>)<span class="sc">$</span>var,    <span class="co">#psi_2: pi</span></span>
-<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>  <span class="fu">ppi</span>( <span class="fl">3.00</span>,  <span class="fl">5.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>var,   <span class="co">#psi_2: i</span></span>
-<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a>  <span class="fu">ppi</span>(<span class="sc">-</span><span class="fl">0.50</span>,  <span class="fl">0.50</span>,  <span class="at">annualized_growthrate=</span><span class="cn">FALSE</span>)<span class="sc">$</span>var    <span class="co">#psi_2: q</span></span>
-<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a>  )</span>
-<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a>  )</span>
-<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a></span>
-<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a>bvar_obj <span class="ot">&lt;-</span> <span class="fu">priors</span>(bvar_obj,</span>
-<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a>                   lambda_1,</span>
-<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a>                   lambda_2,</span>
-<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a>                   lambda_3,</span>
-<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a>                   fol_pm,</span>
-<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a>                   theta_Psi,</span>
-<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a>                   Omega_Psi,</span>
-<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a>                   <span class="at">Jeffrey=</span><span class="cn">TRUE</span>)</span>
-<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a></span>
-<span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a>p <span class="ot">&lt;-</span> bvar_obj<span class="sc">$</span>setup<span class="sc">$</span>p</span>
-<span id="cb3-82"><a href="#cb3-82" tabindex="-1"></a>k <span class="ot">&lt;-</span> bvar_obj<span class="sc">$</span>setup<span class="sc">$</span>k</span>
-<span id="cb3-83"><a href="#cb3-83" tabindex="-1"></a>kf <span class="ot">&lt;-</span> <span class="dv">3</span> <span class="co">#foreign variables</span></span>
-<span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a></span>
-<span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a>restriction_matrix <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="dv">1</span>, k<span class="sc">*</span>p, k)</span>
-<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a></span>
-<span id="cb3-87"><a href="#cb3-87" tabindex="-1"></a><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>p){</span>
-<span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a>  rows <span class="ot">&lt;-</span> ((i<span class="dv">-1</span>)<span class="sc">*</span>k <span class="sc">+</span> kf <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">:</span> (i<span class="sc">*</span>k)</span>
-<span id="cb3-89"><a href="#cb3-89" tabindex="-1"></a>  cols <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span>kf</span>
-<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a>  restriction_matrix[rows, cols] <span class="ot">&lt;-</span> <span class="dv">0</span></span>
-<span id="cb3-91"><a href="#cb3-91" tabindex="-1"></a>}</span>
-<span id="cb3-92"><a href="#cb3-92" tabindex="-1"></a></span>
-<span id="cb3-93"><a href="#cb3-93" tabindex="-1"></a><span class="co">#block exogeneity for foreign variables</span></span>
-<span id="cb3-94"><a href="#cb3-94" tabindex="-1"></a>bvar_obj <span class="ot">&lt;-</span> <span class="fu">restrict_beta</span>(bvar_obj, restriction_matrix)</span>
-<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a></span>
-<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a>bvar_obj<span class="sc">$</span>predict<span class="sc">$</span>H <span class="ot">&lt;-</span> <span class="dv">12</span></span>
-<span id="cb3-97"><a href="#cb3-97" tabindex="-1"></a>bvar_obj<span class="sc">$</span>predict<span class="sc">$</span>d_pred <span class="ot">&lt;-</span> <span class="fu">cbind</span>(<span class="fu">rep</span>(<span class="dv">1</span>, <span class="dv">12</span>), <span class="dv">0</span>)</span>
-<span id="cb3-98"><a href="#cb3-98" tabindex="-1"></a></span>
-<span id="cb3-99"><a href="#cb3-99" tabindex="-1"></a>bvar_obj <span class="ot">&lt;-</span> <span class="fu">fit</span>(bvar_obj,</span>
-<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a>                <span class="at">iter =</span> <span class="dv">20000</span>,</span>
-<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a>                <span class="at">warmup =</span> <span class="dv">10000</span>,</span>
-<span id="cb3-102"><a href="#cb3-102" tabindex="-1"></a>                <span class="at">chains =</span> <span class="dv">4</span>)</span>
-<span id="cb3-103"><a href="#cb3-103" tabindex="-1"></a></span>
-<span id="cb3-104"><a href="#cb3-104" tabindex="-1"></a><span class="fu">summary</span>(bvar_obj)</span>
-<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a></span>
-<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a><span class="co">#unconditional forecasts</span></span>
-<span id="cb3-107"><a href="#cb3-107" tabindex="-1"></a>fcst <span class="ot">&lt;-</span> <span class="fu">forecast</span>(bvar_obj,</span>
-<span id="cb3-108"><a href="#cb3-108" tabindex="-1"></a>                 <span class="at">ci =</span> <span class="fl">0.95</span>,</span>
-<span id="cb3-109"><a href="#cb3-109" tabindex="-1"></a>                 <span class="at">fcst_type =</span> <span class="st">"mean"</span>,</span>
-<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a>                 <span class="at">growth_rate_idx =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>), <span class="co">#annual inflation/real GDP growth instead of QoQ</span></span>
-<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a>                 <span class="at">plot_idx =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>))</span>
-<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a></span>
-<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a><span class="co">#conditional forecasts</span></span>
-<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a>conditions <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
-<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a>              <span class="at">var     =</span> <span class="fu">rep</span>(<span class="dv">6</span>,<span class="dv">12</span>),</span>
-<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a>              <span class="at">horizon =</span> <span class="fu">rep</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">12</span>),</span>
-<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a>              <span class="at">value   =</span> <span class="fu">seq</span>(<span class="dv">2</span>, <span class="dv">8</span>, <span class="at">length.out =</span> <span class="dv">12</span>))</span>
-<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a>              </span>
-<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a>cond_fcst <span class="ot">&lt;-</span> <span class="fu">conditional_forecast</span>(bvar_obj,</span>
-<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a>                    conditions,</span>
-<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a>                    <span class="at">ci=</span><span class="fl">0.68</span>,</span>
-<span id="cb3-122"><a href="#cb3-122" tabindex="-1"></a>                    <span class="at">fcst_type =</span> <span class="st">"mean"</span>,</span>
-<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a>                    <span class="at">plot_idx =</span> <span class="fu">c</span>(<span class="dv">4</span>,<span class="dv">6</span>),</span>
-<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a>                    <span class="at">growth_rate_idx =</span> <span class="fu">c</span>(<span class="dv">4</span>))<span class="er">)</span></span>
-<span id="cb3-125"><a href="#cb3-125" tabindex="-1"></a></span>
-<span id="cb3-126"><a href="#cb3-126" tabindex="-1"></a>irf <span class="ot">&lt;-</span> <span class="fu">IRF</span>(bvar_obj,</span>
-<span id="cb3-127"><a href="#cb3-127" tabindex="-1"></a>           <span class="at">H=</span><span class="dv">20</span>,</span>
-<span id="cb3-128"><a href="#cb3-128" tabindex="-1"></a>           <span class="at">response=</span><span class="dv">5</span>,<span class="co">#inflation</span></span>
-<span id="cb3-129"><a href="#cb3-129" tabindex="-1"></a>           <span class="at">shock=</span><span class="dv">6</span>, <span class="co">#interest rate</span></span>
-<span id="cb3-130"><a href="#cb3-130" tabindex="-1"></a>           <span class="at">type=</span><span class="st">"median"</span>,</span>
-<span id="cb3-131"><a href="#cb3-131" tabindex="-1"></a>           <span class="at">method=</span><span class="st">"OIRF"</span>,</span>
-<span id="cb3-132"><a href="#cb3-132" tabindex="-1"></a>           <span class="at">ci=</span><span class="fl">0.68</span>,</span>
-<span id="cb3-133"><a href="#cb3-133" tabindex="-1"></a>           <span class="at">growth_rate_idx=</span><span class="dv">5</span>) <span class="co">#annual inflation instead of QoQ</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/markjwbecker/SteadyStateBVAR" class="external-link">SteadyStateBVAR</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Villani2009"</span><span class="op">)</span></span>
+<span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="va">Villani2009</span></span>
+<span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">102</span>, <span class="op">]</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/start.html" class="external-link">start</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span>, frequency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">yt</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">time</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1992.75</span><span class="op">)</span></span>
+<span><span class="va">dum_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">bp</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span><span class="op">-</span><span class="va">bp</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/setup.html">setup</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
+<span>                  p<span class="op">=</span><span class="fl">4</span>,</span>
+<span>                  deterministic <span class="op">=</span> <span class="st">"constant_and_dummy"</span>,</span>
+<span>                  dummy <span class="op">=</span> <span class="va">dum_var</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">lambda_1</span> <span class="op">&lt;-</span> <span class="fl">0.2</span></span>
+<span><span class="va">lambda_2</span> <span class="op">&lt;-</span> <span class="fl">0.5</span></span>
+<span><span class="va">lambda_3</span> <span class="op">&lt;-</span> <span class="fl">1.0</span></span>
+<span></span>
+<span><span class="co">#fol_pm = first own lag prior means</span></span>
+<span><span class="va">fol_pm</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,   <span class="co">#delta y_f</span></span>
+<span>         <span class="fl">0</span>,   <span class="co">#pi_f</span></span>
+<span>         <span class="fl">0.9</span>, <span class="co">#i_f</span></span>
+<span>         <span class="fl">0</span>,   <span class="co">#delta y</span></span>
+<span>         <span class="fl">0</span>,   <span class="co">#pi</span></span>
+<span>         <span class="fl">0.9</span>, <span class="co">#i</span></span>
+<span>         <span class="fl">0.9</span>  <span class="co">#q</span></span>
+<span>         <span class="op">)</span></span>
+<span></span>
+<span><span class="co">#psi_1 = Psi col 1</span></span>
+<span><span class="co">#psi_2 = Psi col 2</span></span>
+<span></span>
+<span><span class="co"># default is 95% prior probability ('interval=0.95')</span></span>
+<span><span class="va">theta_Psi</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">2.00</span>,  <span class="fl">3.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_1: delta y_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_1: pi_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">4.50</span>,  <span class="fl">5.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,  <span class="co">#psi_1: i_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">2.00</span>,  <span class="fl">2.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_1: delta y</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">1.70</span>,  <span class="fl">2.30</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_1: pi</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">4.00</span>,  <span class="fl">4.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,  <span class="co">#psi_1: i</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">3.85</span>,  <span class="fl">4.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,  <span class="co">#psi_1: q</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.00</span>,  <span class="fl">1.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_2: delta y_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_2: pi_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,  <span class="co">#psi_2: i_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.00</span>,  <span class="fl">1.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_2: delta y</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">4.30</span>,  <span class="fl">5.70</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_2: pi</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">3.00</span>,  <span class="fl">5.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,  <span class="co">#psi_2: i</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.50</span>,  <span class="fl">0.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>   <span class="co">#psi_2: q</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">Omega_Psi</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">2.00</span>,  <span class="fl">3.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,    <span class="co">#psi_1: delta y_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,    <span class="co">#psi_1: pi_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">4.50</span>,  <span class="fl">5.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,   <span class="co">#psi_1: i_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">2.00</span>,  <span class="fl">2.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,    <span class="co">#psi_1: delta y</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">1.70</span>,  <span class="fl">2.30</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,    <span class="co">#psi_1: pi</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">4.00</span>,  <span class="fl">4.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,   <span class="co">#psi_1: i</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">3.85</span>,  <span class="fl">4.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,   <span class="co">#psi_1: q</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.00</span>,  <span class="fl">1.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,    <span class="co">#psi_2: delta y_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,    <span class="co">#psi_2: pi_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">1.50</span>,  <span class="fl">2.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,   <span class="co">#psi_2: i_f</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1.00</span>,  <span class="fl">1.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,    <span class="co">#psi_2: delta y</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">4.30</span>,  <span class="fl">5.70</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,    <span class="co">#psi_2: pi</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">3.00</span>,  <span class="fl">5.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>,   <span class="co">#psi_2: i</span></span>
+<span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.50</span>,  <span class="fl">0.50</span>,  annualized_growthrate<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span><span class="op">$</span><span class="va">var</span>    <span class="co">#psi_2: q</span></span>
+<span>  <span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span></span>
+<span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/priors.html">priors</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
+<span>                   <span class="va">lambda_1</span>,</span>
+<span>                   <span class="va">lambda_2</span>,</span>
+<span>                   <span class="va">lambda_3</span>,</span>
+<span>                   <span class="va">fol_pm</span>,</span>
+<span>                   <span class="va">theta_Psi</span>,</span>
+<span>                   <span class="va">Omega_Psi</span>,</span>
+<span>                   Jeffrey<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">p</span></span>
+<span><span class="va">k</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">k</span></span>
+<span><span class="va">kf</span> <span class="op">&lt;-</span> <span class="fl">3</span> <span class="co">#foreign variables</span></span>
+<span></span>
+<span><span class="va">restriction_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">k</span><span class="op">*</span><span class="va">p</span>, <span class="va">k</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">p</span><span class="op">)</span><span class="op">{</span></span>
+<span>  <span class="va">rows</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="op">(</span><span class="va">i</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">*</span><span class="va">k</span> <span class="op">+</span> <span class="va">kf</span> <span class="op">+</span> <span class="fl">1</span><span class="op">)</span> <span class="op">:</span> <span class="op">(</span><span class="va">i</span><span class="op">*</span><span class="va">k</span><span class="op">)</span></span>
+<span>  <span class="va">cols</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">kf</span></span>
+<span>  <span class="va">restriction_matrix</span><span class="op">[</span><span class="va">rows</span>, <span class="va">cols</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co">#block exogeneity for foreign variables</span></span>
+<span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/restrict_beta.html">restrict_beta</a></span><span class="op">(</span><span class="va">bvar_obj</span>, <span class="va">restriction_matrix</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
+<span>                H <span class="op">=</span> <span class="fl">12</span>,</span>
+<span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">12</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>                iter <span class="op">=</span> <span class="fl">500</span>,</span>
+<span>                warmup <span class="op">=</span> <span class="fl">100</span>,</span>
+<span>                chains <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>                cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bvar_obj</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#unconditional forecasts</span></span>
+<span><span class="va">fcst</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
+<span>                 ci <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>                 fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
+<span>                 growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span>, <span class="co">#annual inflation/real GDP growth instead of QoQ</span></span>
+<span>                 plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">#conditional forecasts</span></span>
+<span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
+<span>              var     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">12</span><span class="op">)</span>,</span>
+<span>              horizon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span>,</span>
+<span>              value   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">8</span>, length.out <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span></span>
+<span>              </span>
+<span><span class="va">cond_fcst</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conditional_forecast.html">conditional_forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
+<span>                    <span class="va">conditions</span>,</span>
+<span>                    ci<span class="op">=</span><span class="fl">0.68</span>,</span>
+<span>                    fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
+<span>                    plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>,</span>
+<span>                    growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
+<span>           H<span class="op">=</span><span class="fl">20</span>,</span>
+<span>           response<span class="op">=</span><span class="fl">5</span>,<span class="co">#inflation</span></span>
+<span>           shock<span class="op">=</span><span class="fl">6</span>, <span class="co">#interest rate</span></span>
+<span>           type<span class="op">=</span><span class="st">"median"</span>,</span>
+<span>           method<span class="op">=</span><span class="st">"OIRF"</span>,</span>
+<span>           ci<span class="op">=</span><span class="fl">0.68</span>,</span>
+<span>           growth_rate_idx<span class="op">=</span><span class="fl">5</span><span class="op">)</span> <span class="co">#annual inflation instead of QoQ</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
