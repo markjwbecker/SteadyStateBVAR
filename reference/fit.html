@@ -56,8 +56,8 @@ homoscedastic and stochastic volatility (RW or AR1) specifications.</p>
 <span>  iter <span class="op">=</span> <span class="fl">5000</span>,</span>
 <span>  warmup <span class="op">=</span> <span class="fl">2500</span>,</span>
 <span>  chains <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  cores <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="va">chains</span>, <span class="fu">parallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/parallel/detectCores.html" class="external-link">detectCores</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>  auto_write <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  cores <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  auto_write <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -93,18 +93,19 @@ Default is <code>2500</code>.</p></dd>
 
 
 <dt id="arg-cores">cores<a class="anchor" aria-label="anchor" href="#arg-cores"></a></dt>
-<dd><p>Integer. Number of CPU cores used for sampling.
-Default is <code>min(chains, parallel::detectCores())</code>.</p></dd>
+<dd><p>Positive integer specifying the number of CPU cores used for
+sampling. Must be specified by the user.</p></dd>
 
 
 <dt id="arg-auto-write">auto_write<a class="anchor" aria-label="anchor" href="#arg-auto-write"></a></dt>
-<dd><p>Logical. Whether to enable <code>rstan</code> auto-write.
-Default is <code>TRUE</code>.</p></dd>
+<dd><p>Logical indicating whether Stan models should be
+automatically written to the disk cache via <code>rstan</code>. Must be specified
+by the user.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A <code>bvar</code> object with:</p><ul><li><p><code>fit$stan</code>: Stan fit object containing posterior draws</p></li>
+    <p>A fitted steady-state <code>bvar</code> object with:</p><ul><li><p><code>fit$stan</code>: Stan fit object containing posterior draws</p></li>
 <li><p><code>fit$posterior_means</code>: List of posterior mean estimates:</p><ul><li><p><code>beta</code>: k×k VAR coefficient matrix</p></li>
 <li><p><code>Psi</code>: k×q steady-state parameter matrix</p></li>
 <li><p><code>Sigma_u</code>: covariance matrix (k×k for homoscedastic,

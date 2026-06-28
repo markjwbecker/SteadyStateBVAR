@@ -15,8 +15,8 @@ fit(
   iter = 5000,
   warmup = 2500,
   chains = 2,
-  cores = min(chains, parallel::detectCores()),
-  auto_write = TRUE
+  cores = NULL,
+  auto_write = NULL
 )
 ```
 
@@ -53,16 +53,17 @@ fit(
 
 - cores:
 
-  Integer. Number of CPU cores used for sampling. Default is
-  `min(chains, parallel::detectCores())`.
+  Positive integer specifying the number of CPU cores used for sampling.
+  Must be specified by the user.
 
 - auto_write:
 
-  Logical. Whether to enable `rstan` auto-write. Default is `TRUE`.
+  Logical indicating whether Stan models should be automatically written
+  to the disk cache via `rstan`. Must be specified by the user.
 
 ## Value
 
-A `bvar` object with:
+A fitted steady-state `bvar` object with:
 
 - `fit$stan`: Stan fit object containing posterior draws
 
