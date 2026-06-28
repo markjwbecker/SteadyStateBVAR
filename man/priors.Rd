@@ -2,7 +2,7 @@
 % Please edit documentation in R/priors.R
 \name{priors}
 \alias{priors}
-\title{Specify priors for a steady-state BVAR model}
+\title{Specify priors for the steady-state BVAR model}
 \usage{
 priors(
   x,
@@ -28,14 +28,14 @@ Default \code{0.2}.}
 
 \item{lambda_3}{Numeric. Lag decay rate of the Minnesota prior. Default \code{1}.}
 
-\item{first_own_lag_prior_mean}{Numeric vector of length \code{k}. Prior means for the first own lags
+\item{first_own_lag_prior_mean}{Numeric vector of length \code{k}. Prior means for the first own lag
 of each variable. If \code{NULL}, defaults to a zero vector.}
 
-\item{theta_Psi}{Numeric vector. Prior mean vector for steady-state parameters. If \code{NULL},
-defaults to OLS estimate.}
+\item{theta_Psi}{Numeric vector. Prior mean for vec(Psi), i.e. the steady-state parameters. If \code{NULL},
+defaults to the OLS estimates.}
 
-\item{Omega_Psi}{Numeric matrix. Prior covariance matrix for steady-state parameters. If \code{NULL},
-defaults to a diagonal matrix with variances 1000.}
+\item{Omega_Psi}{Numeric matrix. Prior covariance matrix for vec(Psi), i.e. the steady-state parameters. If \code{NULL},
+defaults to a diagonal matrix with variances \code{1000}.}
 
 \item{Jeffrey}{Logical. If \code{TRUE}, uses a Jeffreys prior for the innovation covariance matrix.
 If \code{FALSE}, uses an uninformative inverse-Wishart prior.}
@@ -50,9 +50,9 @@ Required if \code{SV = TRUE}.}
 Required when \code{SV = TRUE}.}
 }
 \value{
-The \code{bvar} object with an appended \code{priors} list containing:
-\item{theta_beta}{Prior mean for vec(beta)}
-\item{Omega_beta}{Prior covariance matrix for vec(beta)}
+The steady-state \code{bvar} object with an appended \code{priors} list containing:
+\item{theta_beta}{Prior mean vector for vec(beta) constructed with the Minnesota prior}
+\item{Omega_beta}{Prior covariance matrix for vec(beta) constructed with the Minnesota prior}
 \item{theta_Psi}{Prior mean for vec(Psi), i.e. the steady-state parameters}
 \item{Omega_Psi}{Prior covariance matrix for vec(Psi), i.e. the steady-state parameters}
 \item{Jeffrey}{Indicator for Jeffreys prior usage}
@@ -64,14 +64,14 @@ The \code{bvar} object with an appended \code{priors} list containing:
 \item{SV_priors}{User-supplied SV prior list (if \code{SV = TRUE})}
 }
 \description{
-The Minnesota prior is used for the autoregressive parameters, and is determined by
+The function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
 Optionally enables a stochastic volatility specification for the covariance matrix of the innovations (random walk or AR(1)).
 }
 \examples{
-yt <- matrix(rnorm(40, 0, 1), 20, 2)
+yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)
 

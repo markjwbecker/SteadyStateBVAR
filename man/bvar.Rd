@@ -14,12 +14,13 @@ variable and each row is a time period.}
 An object of class \code{bvar}.
 }
 \description{
-Initialises a steady-state Bayesian Vector Autoregression (BVAR) model object. This is
+Initialises a A steady-state \code{bvar} object. This is
 the starting point for all models in \code{SteadyStateBVAR}. After creation,
 pass the object sequentially to \code{\link{setup}}, \code{\link{priors}},
 and \code{\link{fit}} to build and estimate the model.
 }
 \examples{
-yt <- matrix(rnorm(40, 0, 1), 20, 2)
+yt <- matrix(rnorm(50), 25, 2)
+
 bvar_obj <- bvar(data = yt)
 }

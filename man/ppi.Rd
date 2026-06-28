@@ -14,8 +14,8 @@ ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4)
 \item{interval}{Numeric. The prior probability mass within the interval.
 Default \code{0.95}, i.e. 95\%.}
 
-\item{annualized_growthrate}{Logical. If \code{TRUE}, converts the interval
-from annualized to per-period units by dividing by \code{freq}. Default
+\item{annualized_growthrate}{Logical. If \code{TRUE}, converts the implied mean and variance
+from the annualized scale to the quarterly/monthly etc. scale by dividing by \code{freq}. Default
 \code{FALSE}.}
 
 \item{freq}{Integer. The data frequency (e.g. \code{4} for quarterly).
@@ -30,8 +30,9 @@ Calculates the mean and variance of a normal prior probability interval.
 Given a lower and upper bound of a (1-alpha) prior probability interval
 this function recovers the implied normal prior parameters.
 Useful for specifying informative priors
-on the steady-state (Psi) parameters in an intuitive way.
+on the steady-state parameters (elements of Psi).
 }
 \examples{
-ppi(l = 1, u = 3, interval = 0.95)
+ppi(l = 1.7, u = 2.3, interval = 0.95)
+ppi(l = 1.7, u = 2.3, interval = 0.95, annualized_growthrate = TRUE)
 }

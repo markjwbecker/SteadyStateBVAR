@@ -1,6 +1,6 @@
-#' Specify priors for a steady-state BVAR model
+#' Specify priors for the steady-state BVAR model
 #'
-#' The Minnesota prior is used for the autoregressive parameters, and is determined by
+#' The function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
 #' the overall tightness, cross-equation tightness, and the lag decay rate.
 #' For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 #' the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
@@ -11,12 +11,12 @@
 #'   Default \code{0.2}.
 #' @param lambda_2 Numeric. Cross-equation tightness of the Minnesota prior. Default \code{0.5}.
 #' @param lambda_3 Numeric. Lag decay rate of the Minnesota prior. Default \code{1}.
-#' @param first_own_lag_prior_mean Numeric vector of length \code{k}. Prior means for the first own lags
+#' @param first_own_lag_prior_mean Numeric vector of length \code{k}. Prior means for the first own lag
 #'   of each variable. If \code{NULL}, defaults to a zero vector.
-#' @param theta_Psi Numeric vector. Prior mean vector for steady-state parameters. If \code{NULL},
-#'   defaults to OLS estimate.
-#' @param Omega_Psi Numeric matrix. Prior covariance matrix for steady-state parameters. If \code{NULL},
-#'   defaults to a diagonal matrix with variances 1000.
+#' @param theta_Psi Numeric vector. Prior mean for vec(Psi), i.e. the steady-state parameters. If \code{NULL},
+#'   defaults to the OLS estimates.
+#' @param Omega_Psi Numeric matrix. Prior covariance matrix for vec(Psi), i.e. the steady-state parameters. If \code{NULL},
+#'   defaults to a diagonal matrix with variances \code{1000}.
 #' @param Jeffrey Logical. If \code{TRUE}, uses a Jeffreys prior for the innovation covariance matrix.
 #'   If \code{FALSE}, uses an uninformative inverse-Wishart prior.
 #' @param SV Logical. If \code{TRUE}, enables stochastic volatility specification.
@@ -26,9 +26,9 @@
 #' @param SV_priors List. User-supplied stochastic volatility priors.
 #'   Required when \code{SV = TRUE}.
 #'
-#' @return The \code{bvar} object with an appended \code{priors} list containing:
-#'   \item{theta_beta}{Prior mean for vec(beta)}
-#'   \item{Omega_beta}{Prior covariance matrix for vec(beta)}
+#' @return The steady-state \code{bvar} object with an appended \code{priors} list containing:
+#'   \item{theta_beta}{Prior mean vector for vec(beta) constructed with the Minnesota prior}
+#'   \item{Omega_beta}{Prior covariance matrix for vec(beta) constructed with the Minnesota prior}
 #'   \item{theta_Psi}{Prior mean for vec(Psi), i.e. the steady-state parameters}
 #'   \item{Omega_Psi}{Prior covariance matrix for vec(Psi), i.e. the steady-state parameters}
 #'   \item{Jeffrey}{Indicator for Jeffreys prior usage}
@@ -42,7 +42,7 @@
 #' @export
 #'
 #' @examples
-#' yt <- matrix(rnorm(40, 0, 1), 20, 2)
+#' yt <- matrix(rnorm(50), 25, 2)
 #'
 #' bvar_obj <- bvar(data = yt)
 #'

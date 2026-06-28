@@ -1,34 +1,43 @@
-#' Estimate a steady-state BVAR model using Stan
+#' Estimate the steady-state BVAR model using Stan
 #'
-#' Runs Stan to estimate a Bayesian VAR with steady-state formulation using
-#' data, setup, and priors stored in a \code{bvar} object. Supports both
-#' homoscedastic specifications and stochastic volatility models (RW or AR1).
+#' Estimates the steady-state BVAR using the  No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
+#' Uses the data, setup, and priors stored in the steady-state \code{bvar} object. Supports both
+#' homoscedastic and stochastic volatility (RW or AR1) specifications.
 #'
-#' Forecast inputs must be supplied in \code{x$predict$H} and
-#' \code{x$predict$d_pred} prior to calling \code{fit()}.
 #'
-#' @param x A \code{bvar} object that has been passed through
+#' @param x A steady-state \code{bvar} object that has been passed through
 #'   \code{\link{setup}} and \code{\link{priors}}.
-#' @param iter Integer. Total number of MCMC iterations per chain.
-#'   Default is \code{5000}.
+#' @param H Positive Integer. Forecast horizon.
+#'   Default is \code{1}.
+#' @param d_pred Matrix of size H x q. Future values of the deterministic variables d_t.
+#' @param iter Integer. Total number of MCMC iterations per chain. Default is 5000.
 #' @param warmup Integer. Number of warmup (burn-in) iterations per chain.
 #'   Default is \code{2500}.
 #' @param chains Integer. Number of MCMC chains. Default is \code{2}.
 #' @param cores Integer. Number of CPU cores used for sampling.
-#'   Default is \code{min(chains, available cores)}.
+#'   Default is \code{min(chains, parallel::detectCores())}.
 #' @param auto_write Logical. Whether to enable \code{rstan} auto-write.
 #'   Default is \code{TRUE}.
 #'
 #' @return A \code{bvar} object with:
 #' \itemize{
 #'   \item \code{fit$stan}: Stan fit object containing posterior draws
-#'   \item \code{posterior_means}: List of posterior mean estimates:
+#'   \item \code{fit$posterior_means}: List of posterior mean estimates:
 #'     \itemize{
 #'       \item \code{beta}: k×k VAR coefficient matrix
 #'       \item \code{Psi}: k×q steady-state parameter matrix
 #'       \item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
 #'         T×k×k for stochastic volatility)
-#'       \item RW  SV: \code{A}, \code{phi}
+#'       \item RW SV: \code{A}, \code{phi}
+#'       \item AR1 SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
+#'     }
+#'   \item \code{fit$posterior_medians}: List of posterior median estimates:
+#'     \itemize{
+#'       \item \code{beta}: k×k VAR coefficient matrix
+#'       \item \code{Psi}: k×q steady-state parameter matrix
+#'       \item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
+#'         T×k×k for stochastic volatility)
+#'       \item RW SV: \code{A}, \code{phi}
 #'       \item AR1 SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
 #'     }
 #' }
@@ -52,7 +61,7 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' yt <- matrix(rnorm(40), 20, 2)
+#' yt <- matrix(rnorm(50), 25, 2)
 #' bvar_obj <- bvar(data = yt)
 #' bvar_obj <- setup(bvar_obj, p = 1)
 #' bvar_obj <- priors(bvar_obj,
@@ -67,6 +76,8 @@
 #' summary(bvar_obj)
 #' }
 fit <- function(x,
+                H = 1,
+                d_pred = NULL,
                 iter = 5000,
                 warmup = 2500,
                 chains = 2,
@@ -77,30 +88,30 @@ fit <- function(x,
   if (is.null(x$setup)) stop("must be passed through setup")
   if (is.null(x$priors)) stop("must be passed through priors")
   
-  if (is.null(x$predict) ||
-      is.null(x$predict$H) ||
-      is.null(x$predict$d_pred)) {
-    stop("predict must contain H and d_pred")
+  if (is.null(H) ||
+      is.null(d_pred)) {
+    stop("H and d_pred must be supplied")
   }
   
-  if (!is.numeric(x$predict$H) ||
-      length(x$predict$H) != 1 ||
-      x$predict$H < 1) {
+  if (!is.numeric(H) || length(H) != 1 || H < 1) {
     stop("H must be a positive integer")
   }
   
-  if (!is.matrix(x$predict$d_pred)) {
+  if (!is.matrix(d_pred)) {
     stop("d_pred must be a matrix")
   }
   
-  if (nrow(x$predict$d_pred) != x$predict$H) {
+  if (nrow(d_pred) != H) {
     stop("nrow(d_pred) must equal H")
   }
   
   if (!is.null(x$setup$q) &&
-      ncol(x$predict$d_pred) != x$setup$q) {
+      ncol(d_pred) != x$setup$q) {
     stop("ncol(d_pred) must equal q")
   }
+  
+  x$predict$H <- H
+  x$predict$d_pred <- d_pred
   
   setup <- x$setup
   priors <- x$priors
@@ -168,31 +179,50 @@ fit <- function(x,
   
   posterior <- rstan::extract(x$fit$stan)
   
-  x$posterior_means <- list()
+  x$fit$posterior_means <- list()
+  x$fit$posterior_medians <- list()
   
   if (!SV) {
     
-    x$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
-    x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
-    x$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3), mean)
+    x$fit$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
+    x$fit$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
+    x$fit$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3), mean)
+    
+    x$fit$posterior_medians$beta <- apply(posterior$beta, c(2, 3), median)
+    x$fit$posterior_medians$Psi <- apply(posterior$Psi, c(2, 3), median)
+    x$fit$posterior_medians$Sigma_u <- apply(posterior$Sigma_u, c(2, 3), median)
     
   } else if (SV_type == "AR1") {
     
-    x$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
-    x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
-    x$posterior_means$A <- apply(posterior$A, c(2, 3), mean)
-    x$posterior_means$gamma_0 <- apply(posterior$gamma_0, 2, mean)
-    x$posterior_means$gamma_1 <- apply(posterior$gamma_1, 2, mean)
-    x$posterior_means$Phi <- apply(posterior$Phi, c(2, 3), mean)
-    x$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3, 4), mean)
+    x$fit$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
+    x$fit$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
+    x$fit$posterior_means$A <- apply(posterior$A, c(2, 3), mean)
+    x$fit$posterior_means$gamma_0 <- apply(posterior$gamma_0, 2, mean)
+    x$fit$posterior_means$gamma_1 <- apply(posterior$gamma_1, 2, mean)
+    x$fit$posterior_means$Phi <- apply(posterior$Phi, c(2, 3), mean)
+    x$fit$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3, 4), mean)
+    
+    x$fit$posterior_medians$beta <- apply(posterior$beta, c(2, 3), median)
+    x$fit$posterior_medians$Psi <- apply(posterior$Psi, c(2, 3), median)
+    x$fit$posterior_medians$A <- apply(posterior$A, c(2, 3), median)
+    x$fit$posterior_medians$gamma_0 <- apply(posterior$gamma_0, 2, median)
+    x$fit$posterior_medians$gamma_1 <- apply(posterior$gamma_1, 2, median)
+    x$fit$posterior_medians$Phi <- apply(posterior$Phi, c(2, 3), median)
+    x$fit$posterior_medians$Sigma_u <- apply(posterior$Sigma_u, c(2, 3, 4), median)
     
   } else if (SV_type == "RW") {
     
-    x$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
-    x$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
-    x$posterior_means$A <- apply(posterior$A, c(2, 3), mean)
-    x$posterior_means$phi <- apply(posterior$phi, 2, mean)
-    x$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3, 4), mean)
+    x$fit$posterior_means$beta <- apply(posterior$beta, c(2, 3), mean)
+    x$fit$posterior_means$Psi <- apply(posterior$Psi, c(2, 3), mean)
+    x$fit$posterior_means$A <- apply(posterior$A, c(2, 3), mean)
+    x$fit$posterior_means$phi <- apply(posterior$phi, 2, mean)
+    x$fit$posterior_means$Sigma_u <- apply(posterior$Sigma_u, c(2, 3, 4), mean)
+    
+    x$fit$posterior_medians$beta <- apply(posterior$beta, c(2, 3), median)
+    x$fit$posterior_medians$Psi <- apply(posterior$Psi, c(2, 3), median)
+    x$fit$posterior_medians$A <- apply(posterior$A, c(2, 3), median)
+    x$fit$posterior_medians$phi <- apply(posterior$phi, 2, median)
+    x$fit$posterior_medians$Sigma_u <- apply(posterior$Sigma_u, c(2, 3, 4), median)
   }
   
   return(x)

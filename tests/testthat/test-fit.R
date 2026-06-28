@@ -13,12 +13,15 @@ test_that("fit requires priors", {
   expect_error(fit(model), "must be passed through priors")
 })
 
-test_that("fit requires predict", {
+test_that("fit requires H and d_pred", {
   model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
   model <- setup(model, p = 2)
   model <- priors(model)
   
-  expect_error(fit(model), "predict must contain H and d_pred")
+  expect_error(
+    fit(model),
+    "H and d_pred must be supplied"
+  )
 })
 
 test_that("fit validates H", {
@@ -26,8 +29,10 @@ test_that("fit validates H", {
   model <- setup(model, p = 2)
   model <- priors(model)
   
-  model$predict <- list(H = 0, d_pred = matrix(0, 1, 1))
-  expect_error(fit(model), "H must be a positive integer")
+  expect_error(
+    fit(model, H = 0, d_pred = matrix(0, 1, 1)),
+    "H must be a positive integer"
+  )
 })
 
 test_that("fit validates d_pred type", {
@@ -35,8 +40,10 @@ test_that("fit validates d_pred type", {
   model <- setup(model, p = 2)
   model <- priors(model)
   
-  model$predict <- list(H = 1, d_pred = 1)
-  expect_error(fit(model), "d_pred must be a matrix")
+  expect_error(
+    fit(model, H = 1, d_pred = 1),
+    "d_pred must be a matrix"
+  )
 })
 
 test_that("fit validates d_pred row dimension", {
@@ -44,8 +51,10 @@ test_that("fit validates d_pred row dimension", {
   model <- setup(model, p = 2)
   model <- priors(model)
   
-  model$predict <- list(H = 2, d_pred = matrix(0, 1, 3))
-  expect_error(fit(model), "nrow\\(d_pred\\) must equal H")
+  expect_error(
+    fit(model, H = 2, d_pred = matrix(0, 1, 3)),
+    "nrow\\(d_pred\\) must equal H"
+  )
 })
 
 test_that("fit validates d_pred column dimension", {
@@ -53,6 +62,8 @@ test_that("fit validates d_pred column dimension", {
   model <- setup(model, p = 2)
   model <- priors(model)
   
-  model$predict <- list(H = 1, d_pred = matrix(0, 1, 999))
-  expect_error(fit(model), "ncol\\(d_pred\\) must equal q")
+  expect_error(
+    fit(model, H = 1, d_pred = matrix(0, 1, 999)),
+    "ncol\\(d_pred\\) must equal q"
+  )
 })

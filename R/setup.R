@@ -1,4 +1,4 @@
-#' Set up a steady-state BVAR model
+#' Set up the steady-state BVAR model
 #'
 #' Prepares the matrices needed for prior specification and estimation. 
 #' Also computes OLS estimates.
@@ -16,8 +16,10 @@
 #' @export
 #'
 #' @examples
-#' yt <- matrix(rnorm(40, 0, 1), 20, 2)
+#' yt <- matrix(rnorm(50), 25, 2)
+#' 
 #' bvar_obj <- bvar(data = yt)
+#' 
 #' bvar_obj <- setup(bvar_obj, p = 1)
 setup <- function(x, p, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL) {
   

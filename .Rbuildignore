@@ -10,3 +10,4 @@
 ^vignettes/figure$
 ^codecov\.yml$
 ^docs$
+^inst/.*\.rds$

@@ -2,10 +2,12 @@
 % Please edit documentation in R/fit.R
 \name{fit}
 \alias{fit}
-\title{Estimate a steady-state BVAR model using Stan}
+\title{Estimate the steady-state BVAR model using Stan}
 \usage{
 fit(
   x,
+  H = 1,
+  d_pred = NULL,
   iter = 5000,
   warmup = 2500,
   chains = 2,
@@ -14,11 +16,15 @@ fit(
 )
 }
 \arguments{
-\item{x}{A \code{bvar} object that has been passed through
+\item{x}{A steady-state \code{bvar} object that has been passed through
 \code{\link{setup}} and \code{\link{priors}}.}
 
-\item{iter}{Integer. Total number of MCMC iterations per chain.
-Default is \code{5000}.}
+\item{H}{Positive Integer. Forecast horizon.
+Default is \code{1}.}
+
+\item{d_pred}{Matrix of size H x q. Future values of the deterministic variables d_t.}
+
+\item{iter}{Integer. Total number of MCMC iterations per chain. Default is 5000.}
 
 \item{warmup}{Integer. Number of warmup (burn-in) iterations per chain.
 Default is \code{2500}.}
@@ -26,7 +32,7 @@ Default is \code{2500}.}
 \item{chains}{Integer. Number of MCMC chains. Default is \code{2}.}
 
 \item{cores}{Integer. Number of CPU cores used for sampling.
-Default is \code{min(chains, available cores)}.}
+Default is \code{min(chains, parallel::detectCores())}.}
 
 \item{auto_write}{Logical. Whether to enable \code{rstan} auto-write.
 Default is \code{TRUE}.}
@@ -35,26 +41,32 @@ Default is \code{TRUE}.}
 A \code{bvar} object with:
 \itemize{
 \item \code{fit$stan}: Stan fit object containing posterior draws
-\item \code{posterior_means}: List of posterior mean estimates:
+\item \code{fit$posterior_means}: List of posterior mean estimates:
 \itemize{
 \item \code{beta}: k×k VAR coefficient matrix
 \item \code{Psi}: k×q steady-state parameter matrix
 \item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
 T×k×k for stochastic volatility)
-\item RW  SV: \code{A}, \code{phi}
+\item RW SV: \code{A}, \code{phi}
+\item AR1 SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
+}
+\item \code{fit$posterior_medians}: List of posterior median estimates:
+\itemize{
+\item \code{beta}: k×k VAR coefficient matrix
+\item \code{Psi}: k×q steady-state parameter matrix
+\item \code{Sigma_u}: covariance matrix (k×k for homoscedastic,
+T×k×k for stochastic volatility)
+\item RW SV: \code{A}, \code{phi}
 \item AR1 SV: \code{A}, \code{gamma_0}, \code{gamma_1}, \code{Phi}
 }
 }
 }
 \description{
-Runs Stan to estimate a Bayesian VAR with steady-state formulation using
-data, setup, and priors stored in a \code{bvar} object. Supports both
-homoscedastic specifications and stochastic volatility models (RW or AR1).
+Estimates the steady-state BVAR using the  No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
+Uses the data, setup, and priors stored in the steady-state \code{bvar} object. Supports both
+homoscedastic and stochastic volatility (RW or AR1) specifications.
 }
 \details{
-Forecast inputs must be supplied in \code{x$predict$H} and
-\code{x$predict$d_pred} prior to calling \code{fit()}.
-
 The function selects the appropriate Stan model based on prior settings:
 \itemize{
 \item Homoscedastic + Jeffreys prior:
@@ -72,7 +84,7 @@ For stochastic volatility models, SV-specific priors in
 }
 \examples{
 \dontrun{
-yt <- matrix(rnorm(40), 20, 2)
+yt <- matrix(rnorm(50), 25, 2)
 bvar_obj <- bvar(data = yt)
 bvar_obj <- setup(bvar_obj, p = 1)
 bvar_obj <- priors(bvar_obj,
