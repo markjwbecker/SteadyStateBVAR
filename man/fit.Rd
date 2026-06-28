@@ -11,8 +11,8 @@ fit(
   iter = 5000,
   warmup = 2500,
   chains = 2,
-  cores = min(chains, parallel::detectCores()),
-  auto_write = TRUE
+  cores = NULL,
+  auto_write = NULL
 )
 }
 \arguments{
@@ -31,14 +31,15 @@ Default is \code{2500}.}
 
 \item{chains}{Integer. Number of MCMC chains. Default is \code{2}.}
 
-\item{cores}{Integer. Number of CPU cores used for sampling.
-Default is \code{min(chains, parallel::detectCores())}.}
+\item{cores}{Positive integer specifying the number of CPU cores used for
+sampling. Must be specified by the user.}
 
-\item{auto_write}{Logical. Whether to enable \code{rstan} auto-write.
-Default is \code{TRUE}.}
+\item{auto_write}{Logical indicating whether Stan models should be
+automatically written to the disk cache via \code{rstan}. Must be specified
+by the user.}
 }
 \value{
-A \code{bvar} object with:
+A fitted steady-state \code{bvar} object with:
 \itemize{
 \item \code{fit$stan}: Stan fit object containing posterior draws
 \item \code{fit$posterior_means}: List of posterior mean estimates:

@@ -14,12 +14,13 @@
 #' @param warmup Integer. Number of warmup (burn-in) iterations per chain.
 #'   Default is \code{2500}.
 #' @param chains Integer. Number of MCMC chains. Default is \code{2}.
-#' @param cores Integer. Number of CPU cores used for sampling.
-#'   Default is \code{min(chains, parallel::detectCores())}.
-#' @param auto_write Logical. Whether to enable \code{rstan} auto-write.
-#'   Default is \code{TRUE}.
+#' @param cores Positive integer specifying the number of CPU cores used for
+#' sampling. Must be specified by the user.
+#' @param auto_write Logical indicating whether Stan models should be
+#' automatically written to the disk cache via \code{rstan}. Must be specified
+#' by the user.
 #'
-#' @return A \code{bvar} object with:
+#' @return A fitted steady-state \code{bvar} object with:
 #' \itemize{
 #'   \item \code{fit$stan}: Stan fit object containing posterior draws
 #'   \item \code{fit$posterior_means}: List of posterior mean estimates:
@@ -81,8 +82,8 @@ fit <- function(x,
                 iter = 5000,
                 warmup = 2500,
                 chains = 2,
-                cores = min(chains, parallel::detectCores()),
-                auto_write = TRUE) {
+                cores = NULL,
+                auto_write = NULL) {
   
   if (!inherits(x, "bvar")) stop("must be a 'bvar' object")
   if (is.null(x$setup)) stop("must be passed through setup")
@@ -93,21 +94,58 @@ fit <- function(x,
     stop("H and d_pred must be supplied")
   }
   
-  if (!is.numeric(H) || length(H) != 1 || H < 1) {
+  if (!is.numeric(H) ||
+      length(H) != 1 ||
+      !is.finite(H) ||
+      H < 1 ||
+      H != floor(H)) {
     stop("H must be a positive integer")
   }
   
-  if (!is.matrix(d_pred)) {
-    stop("d_pred must be a matrix")
+  if (!is.numeric(iter) ||
+      length(iter) != 1 ||
+      !is.finite(iter) ||
+      iter < 1 ||
+      iter != floor(iter)) {
+    stop("iter must be a positive integer")
   }
   
-  if (nrow(d_pred) != H) {
-    stop("nrow(d_pred) must equal H")
+  if (!is.numeric(warmup) ||
+      length(warmup) != 1 ||
+      !is.finite(warmup) ||
+      warmup < 0 ||
+      warmup != floor(warmup)) {
+    stop("warmup must be a non-negative integer")
   }
   
-  if (!is.null(x$setup$q) &&
-      ncol(d_pred) != x$setup$q) {
-    stop("ncol(d_pred) must equal q")
+  if (!is.numeric(chains) ||
+      length(chains) != 1 ||
+      !is.finite(chains) ||
+      chains < 1 ||
+      chains != floor(chains)) {
+    stop("chains must be a positive integer")
+  }
+  
+  if (is.null(cores)) {
+    stop("Please select how many cores to use")
+  }
+  
+  if (!is.numeric(cores) ||
+      length(cores) != 1 ||
+      !is.finite(cores) ||
+      cores < 1 ||
+      cores != floor(cores)) {
+    stop("cores must be a positive integer")
+  }
+  
+  if (is.null(auto_write)) {
+    stop("Please select TRUE or FALSE for auto_write")
+  }
+  
+  if (!is.logical(auto_write) ||
+      length(auto_write) != 1 ||
+      is.na(auto_write)) {
+    stop("auto_write must be TRUE or FALSE")
   }
   
   x$predict$H <- H
@@ -164,8 +202,21 @@ fit <- function(x,
   options(mc.cores = cores)
   on.exit(options(mc.cores = old_mc_cores), add = TRUE)
   
-  if (isTRUE(auto_write)) {
-    rstan::rstan_options(auto_write = TRUE)
+  old_auto_write <- rstan::rstan_options("auto_write")
+  on.exit(rstan::rstan_options(auto_write = old_auto_write), add = TRUE)
+  rstan::rstan_options(auto_write = auto_write)
+  
+  if (!is.matrix(d_pred)) {
+    stop("d_pred must be a matrix")
+  }
+  
+  if (nrow(d_pred) != H) {
+    stop("nrow(d_pred) must equal H")
+  }
+  
+  if (!is.null(x$setup$q) &&
+      ncol(d_pred) != x$setup$q) {
+    stop("ncol(d_pred) must equal q")
   }
   
   x$fit$stan <- rstan::stan(
