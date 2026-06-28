@@ -4,14 +4,14 @@
 #' Also computes OLS estimates.
 #'
 #' @param x A steady-state \code{bvar} object created by \code{\link{bvar}}.
-#' @param p Integer. The lag order of the VAR.
+#' @param p Integer. The lag order of the VAR. Default \code{1}.
 #' @param deterministic Character. The deterministic component to include.
 #'   One of \code{"constant"} (default), \code{"constant_and_dummy"}, or
 #'   \code{"constant_and_trend"}.
 #' @param dummy Numeric vector of a dummy variable. Only
 #'   used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.
 #'
-#' @return The \code{bvar} object with a \code{setup} list containing the
+#' @return The steady-state \code{bvar} object with a \code{setup} list containing the
 #' matrices required for prior specification and estimation, and also the OLS estimates.
 #' @export
 #'
@@ -20,8 +20,8 @@
 #' 
 #' bvar_obj <- bvar(data = yt)
 #' 
-#' bvar_obj <- setup(bvar_obj, p = 1)
-setup <- function(x, p, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL) {
+#' bvar_obj <- setup(bvar_obj)
+setup <- function(x, p = 1, deterministic=c("constant", "constant_and_dummy", "constant_and_trend"), dummy=NULL) {
   
   if (!inherits(x, "bvar")) {
     stop("x must be a 'bvar' object")

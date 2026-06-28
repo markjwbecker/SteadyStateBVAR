@@ -6,7 +6,7 @@
 \usage{
 setup(
   x,
-  p,
+  p = 1,
   deterministic = c("constant", "constant_and_dummy", "constant_and_trend"),
   dummy = NULL
 )
@@ -14,7 +14,7 @@ setup(
 \arguments{
 \item{x}{A steady-state \code{bvar} object created by \code{\link{bvar}}.}
 
-\item{p}{Integer. The lag order of the VAR.}
+\item{p}{Integer. The lag order of the VAR. Default \code{1}.}
 
 \item{deterministic}{Character. The deterministic component to include.
 One of \code{"constant"} (default), \code{"constant_and_dummy"}, or
@@ -24,7 +24,7 @@ One of \code{"constant"} (default), \code{"constant_and_dummy"}, or
 used when \code{deterministic = "constant_and_dummy"}. Default \code{NULL}.}
 }
 \value{
-The \code{bvar} object with a \code{setup} list containing the
+The steady-state \code{bvar} object with a \code{setup} list containing the
 matrices required for prior specification and estimation, and also the OLS estimates.
 }
 \description{
@@ -36,5 +36,5 @@ yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)
 
-bvar_obj <- setup(bvar_obj, p = 1)
+bvar_obj <- setup(bvar_obj)
 }
