@@ -6,7 +6,7 @@
 #' forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
 #' is only enabled for the homoscedastic steady-state BVAR, i.e. when \code{SV=FALSE} in \code{priors()}.
 #'
-#' @param bvar_obj A \code{bvar} object that has been passed through
+#' @param bvar_obj A steady-state \code{bvar} object that has been passed through
 #'   \code{\link{fit}}.
 #' @param conditions A data frame with three columns: \code{var} (integer index
 #'   of the conditioned variable), \code{horizon} (integer forecast horizon at

@@ -1,4 +1,4 @@
-#' Koop and Korobilis (2010) Dataset
+#' Koop and Korobilis (2010) dataset
 #'
 #' Quarterly US macroeconomic data (1953Q1--2006Q3) from Koop and Korobilis (2010)
 #' used for estimating Bayesian VAR models.
@@ -14,7 +14,7 @@
 #'  Methods for Empirical Macroeconomics. \emph{Foundations and Trends in Econometrics}. 3(4), pp. 267-358.
 "KoopKorobilis2010"
 
-#' Villani (2009) data
+#' Villani (2009) dataset
 #'
 #' Swedish macroeconomic data (1980Q1–2005Q4) from Section 4.1 in Villani (2009)
 #'

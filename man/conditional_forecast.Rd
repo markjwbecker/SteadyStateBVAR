@@ -14,7 +14,7 @@ conditional_forecast(
 )
 }
 \arguments{
-\item{bvar_obj}{A \code{bvar} object that has been passed through
+\item{bvar_obj}{A steady-state \code{bvar} object that has been passed through
 \code{\link{fit}}.}
 
 \item{conditions}{A data frame with three columns: \code{var} (integer index

@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.cap = NULL
 )
 ```
 
@@ -133,20 +134,20 @@ summary(bvar_obj, stat="mean")
 ```
 We can forecast
 
-```{r, fig.width=10, fig.height=10}
+```{r, fig.width=8, fig.height=8}
 forecast(bvar_obj, ci = 0.95, show_all = TRUE)
 ```
 
 Let us plot the log volatility estimates and predictions
 
-```{r, fig.width=10, fig.height=10}
+```{r, fig.width=8, fig.height=8}
 par(mfcol=c(1,1))
 stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
 ```
 
 Let us plot the estimates and predictions of the implied innovation standard deviations
 
-```{r, fig.width=10, fig.height=10}
+```{r, fig.width=8, fig.height=8}
 stochastic_volatility_plot(bvar_obj, vol = "sd")
 ```
 

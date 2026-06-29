@@ -3,7 +3,7 @@
 \docType{data}
 \name{Villani2009}
 \alias{Villani2009}
-\title{Villani (2009) data}
+\title{Villani (2009) dataset}
 \format{
 \subsection{\code{Villani2009}}{
 

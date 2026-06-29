@@ -3,7 +3,7 @@
 \docType{data}
 \name{KoopKorobilis2010}
 \alias{KoopKorobilis2010}
-\title{Koop and Korobilis (2010) Dataset}
+\title{Koop and Korobilis (2010) dataset}
 \format{
 \subsection{\code{KoopKorobilis2010}}{
 
