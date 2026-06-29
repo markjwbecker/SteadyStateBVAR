@@ -1,6 +1,6 @@
 #' Set up the steady-state BVAR model
 #'
-#' Prepares the matrices needed for prior specification and estimation. 
+#' Prepares the components needed for prior specification and estimation. 
 #' Also computes OLS estimates.
 #'
 #' @param x A steady-state \code{bvar} object created by \code{\link{bvar}}.
@@ -73,8 +73,8 @@ setup <- function(x, p = 1, deterministic=c("constant", "constant_and_dummy", "c
   
   Y <- yt[-c(1:p), ]
   W <- embed(yt, dimension = p+1)[, -(1:k)]
-  X <- dt[-c(1:p), , drop=F]
-  Q <- embed(dt, dimension = p+1)[, -(1:q), drop=F]
+  X <- dt[-c(1:p), , drop=FALSE]
+  Q <- embed(dt, dimension = p+1)[, -(1:q), drop=FALSE]
   
   Z <- cbind(W, X)
   beta_hat = solve(crossprod(Z), crossprod(Z, Y))

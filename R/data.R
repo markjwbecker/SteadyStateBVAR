@@ -1,7 +1,6 @@
 #' Koop and Korobilis (2010) dataset
 #'
 #' Quarterly US macroeconomic data (1953Q1--2006Q3) from Koop and Korobilis (2010)
-#' used for estimating Bayesian VAR models.
 #'
 #' @format ## `KoopKorobilis2010`
 #' A multivariate time series object with 215 rows and 3 columns:
@@ -16,7 +15,7 @@
 
 #' Villani (2009) dataset
 #'
-#' Swedish macroeconomic data (1980Q1–2005Q4) from Section 4.1 in Villani (2009)
+#' Swedish macroeconomic data (1980Q1–-2005Q4) from Section 4.1 in Villani (2009)
 #'
 #' @format ## `Villani2009`
 #' A multivariate time series object with 104 rows and 7 columns:

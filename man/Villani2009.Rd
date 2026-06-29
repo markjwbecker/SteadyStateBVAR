@@ -17,7 +17,6 @@ A multivariate time series object with 104 rows and 7 columns:
 \item{i}{domestic 3-month interest rate}
 \item{q}{level of the real exchange rate defined as q = s + p_f - p, where p_f and p
 are the foreign and domestic CPI levels in logs and s is the log of the trade-weighted nominal exchange rate}
-...
 }
 }
 }
@@ -29,6 +28,6 @@ Villani, M. (2009). Steady-state priors for vector autoregressions.
 Villani2009
 }
 \description{
-Swedish macroeconomic data (1980Q1–2005Q4) from Section 4.1 in Villani (2009)
+Swedish macroeconomic data (1980Q1–-2005Q4) from Section 4.1 in Villani (2009)
 }
 \keyword{datasets}

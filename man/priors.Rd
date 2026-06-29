@@ -28,16 +28,16 @@ Default \code{0.2}.}
 
 \item{lambda_3}{Numeric. Lag decay rate of the Minnesota prior. Default \code{1}.}
 
-\item{first_own_lag_prior_mean}{Numeric vector of length \code{k}. Prior means for the first own lag
-of each variable. If \code{NULL}, defaults to a zero vector.}
+\item{first_own_lag_prior_mean}{Numeric vector of length \code{k}. Prior means for the first own lags
+of the variables. If \code{NULL} (default), a zero vector is used.}
 
-\item{theta_Psi}{Numeric vector. Prior mean for vec(Psi), i.e. the steady-state parameters. If \code{NULL},
-defaults to the OLS estimates.}
+\item{theta_Psi}{Numeric vector. Prior mean vector for vec(Psi), i.e. the steady-state parameters. If \code{NULL} (default),
+the OLS estimates are used.}
 
-\item{Omega_Psi}{Numeric matrix. Prior covariance matrix for vec(Psi), i.e. the steady-state parameters. If \code{NULL},
-defaults to a diagonal matrix with variances \code{1000}.}
+\item{Omega_Psi}{Numeric matrix. Prior covariance matrix for vec(Psi), i.e. the steady-state parameters. If \code{NULL} (default),
+a diagonal matrix with variances \code{1000} is used.}
 
-\item{Jeffrey}{Logical. If \code{TRUE}, uses a Jeffreys prior for the innovation covariance matrix.
+\item{Jeffrey}{Logical. If \code{TRUE} (default), uses a Jeffreys prior for the innovation covariance matrix.
 If \code{FALSE}, uses an uninformative inverse-Wishart prior. Only considered if \code{SV=FALSE}.}
 
 \item{SV}{Logical. If \code{TRUE}, enables stochastic volatility specification.
@@ -60,7 +60,7 @@ The list must contain the following named elements depending on \code{SV_type}:
 The steady-state \code{bvar} object with an appended \code{priors} list containing:
 \item{theta_beta}{Prior mean vector for vec(beta) constructed with the Minnesota prior}
 \item{Omega_beta}{Prior covariance matrix for vec(beta) constructed with the Minnesota prior}
-\item{theta_Psi}{Prior mean for vec(Psi), i.e. the steady-state parameters}
+\item{theta_Psi}{Prior mean vector for vec(Psi), i.e. the steady-state parameters}
 \item{Omega_Psi}{Prior covariance matrix for vec(Psi), i.e. the steady-state parameters}
 \item{Jeffrey}{Indicator for Jeffreys prior usage}
 \item{Sigma_AR}{Residual variance estimates from univariate AR fits, which are used by the Minnesota prior}
@@ -71,19 +71,18 @@ The steady-state \code{bvar} object with an appended \code{priors} list containi
 \item{SV_priors}{User-supplied SV prior list (if \code{SV = TRUE})}
 }
 \description{
-The function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
+This function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables a stochastic volatility specification for the covariance matrix of the innovations (random walk or AR(1)).
+Optionally enables stochastic volatility where the covariance matrix of the innovations varies over time (random walk or AR(1)).
 }
 \details{
 The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u}, so priors are needed.
-First, prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed.
+First, prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed. Starting with \eqn{\beta},
+the Minnesota prior is used
 
-Starting with \eqn{\beta}, the Minnesota prior is used
-
-\deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right].}
+\deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]}
 
 The prior means (the elements of \eqn{\theta_\beta}) are set to
 
@@ -116,7 +115,7 @@ diagonal matrix containing the prior variances for the elements in \eqn{\beta}. 
 \deqn{\mathrm{Var}\left(\Pi_{\ell}^{(i,j)}\right)=
 \begin{cases}\left(\frac{\lambda_1}{\ell^{\lambda_3}}\right)^2 & \text{if } i = j \\
 \left(\frac{\lambda_1 \lambda_2\sigma_i}{\ell^{\lambda_3}\sigma_j}\right)^2& \text{if } i \neq j
-\end{cases}.}
+\end{cases}}
 
 Here \eqn{\lambda_1}, \eqn{\lambda_2}, and \eqn{\lambda_3} are scalar hyperparameters known as
 the overall tightness, the cross-equation tightness and the lag decay rate. Furthermore,
@@ -126,18 +125,18 @@ from a univariate autoregression for variable \eqn{i} with \eqn{p} lags
 (including the constant and dummy/trend variable if applicable). Moving on to \eqn{\Psi}, the
 prior is
 
-\deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right].}
+\deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]}
 
 This is the core of the steady-state BVAR model.
 In \eqn{\theta_\Psi}, one specifies the prior beliefs about the location of the steady state,
 and in \eqn{\Omega_\Psi}, which is assumed to be a diagonal matrix, one specifies the degree
 of certainty in those prior beliefs. The prior for \eqn{\Sigma_u} is either the usual noninformative Jeffreys prior
 
-\deqn{p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2},}
+\deqn{p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}}
 
 or an inverse-Wishart prior
 
-\deqn{\Sigma_u \sim \mathrm{IW}(V_0,m_0),}
+\deqn{\Sigma_u \sim \mathrm{IW}(V_0,m_0)}
 
 where \eqn{V_0} is the scale matrix and \eqn{m_0\geq k+2} is the number of degrees of freedom.
 An uninformative prior can be (and is in this package) specified by setting
@@ -149,19 +148,17 @@ Therefore, stochastic volatility priors are needed, see \link{bvar} for more det
 
 \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \ln \lambda_{i,0} &\sim \mathrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
-\phi_i &\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}.}
+\phi_i &\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}}
 
 Here \eqn{a} is a \eqn{k(k-1)/2} vector that collects the free parameters in \eqn{A} in row-major order,
 and \eqn{\ln \lambda_{i,0}} are the time \eqn{t=0} values (initial conditions) of \eqn{\ln \lambda_{i,t}}.
-Furthermore, \eqn{\phi_i} are the log volatility innovation variances. Note here that the inverse gamma
-\eqn{\mathrm{IG}(\alpha, \beta)} distribution is the univariate version of the inverse-Wishart distribution
-with \eqn{\alpha=m/2, \ \beta = V/2}. For the AR(1) (\code{AR1}) stochastic volatility specification, the following priors are used
+Furthermore, \eqn{\phi_i} are the log volatility innovation variances. For the AR(1) (\code{AR1}) stochastic volatility specification, the following priors are used
 
 \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
 \ln \lambda_{0} &\sim \mathrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
-\Phi &\sim \mathrm{IW}(V_0,m_0)\end{aligned}.}
+\Phi &\sim \mathrm{IW}(V_0,m_0)\end{aligned}}
 
 Here \eqn{a} is again the \eqn{k(k-1)/2} vector that collects the free parameters in \eqn{A} in row-major order,
 and \eqn{\ln \lambda_0} are the time \eqn{t=0} values (initial conditions) of \eqn{\ln \lambda_{t}}.

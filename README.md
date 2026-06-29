@@ -11,39 +11,33 @@ coverage](https://codecov.io/gh/markjwbecker/steady_state_bvar/graph/badge.svg)]
 <!-- badges: end -->
 
 With this package, the user can estimate the steady-state BVAR(p) model
-of Mattias Villani (Villani, 2009). After estimation, the user can
-produce forecasts (unconditional and conditional) and impulse response
-functions (orthogonalized and generalized). The goal is to use modern
-Bayesian tools (Stan) to: i) estimate the model as specified in the
-original paper, and ii) extend the model in different ways. Back in the
-day, extensions of the model seemed to be limited by what Mattias
+(Villani, 2009). After estimation, the user can produce forecasts
+(unconditional and conditional) and impulse response functions
+(orthogonalized and generalized). The goal of `SteadyStateBVAR` is to
+use modern Bayesian tools (Stan) to: i) estimate the model as specified
+in the original paper, and ii) extend the model in different ways.
+Previously, extensions of the model seemed to be limited by what Mattias
 Villani had time to derive.
 
-See for example, Clark (2011): “*In a methodological sense, this paper
-extends the estimator of Villani (2009) to include stochastic
-volatility.*” Later on, he writes: “*(Special thanks are due to Mattias
-Villani for providing the formulas for posterior means and variances of*
-$\Pi$ *and* $\Psi$*, which generalize the constant-variance formulas of
-Villani 2009.)*”
+See for example Clark (2011), which extends the steady-state BVAR model
+to include Random Walk stochastic volatility: “*In a methodological
+sense, this paper extends the estimator of Villani (2009) to include
+stochastic volatility.*” Later on, he writes: “*(Special thanks are due
+to Mattias Villani for providing the formulas for posterior means and
+variances of* $\Pi$ *and* $\Psi$*, which generalize the
+constant-variance formulas of Villani 2009.)*”
 
-For a more recent example of the model being at the mercy of Professor
-Villani, we can take a look at the [Technical
-Guide](https://github.com/european-central-bank/BEAR-toolbox/blob/master/tbx/doc/Technical%20guide.pdf)
-for the BEAR (Bayesian Estimation, Analysis and Regression) toolbox by
-the ECB. On page 122, Dieppe, Legrand, and van Roye (2018) write:
-“*Villani (2009) only provides derivation in the case of the
-normal-diffuse prior distribution, so the incoming analysis will be
-restricted to this case.*”
+Another example is Dieppe, Legrand, and van Roye (2016): “*Villani
+(2009) only provides derivation in the case of the normal-diffuse prior
+distribution, so the incoming analysis will be restricted to this
+case.*”
 
-Times are different now, and with the help of Stan, we can basically do
-whatever we can imagine. In this package we can for example choose an
-AR(1) stochastic volatility specification, and thus build on the
-steady-state BVAR of Clark (2011), which itself extends Villani (2009),
-by letting the log volatilities follow correlated AR(1) processes
-instead of independent driftless random walks. And this is done without
-asking Professor Villani for any derivations. I simply wrote down the
-model equations, put some priors on the parameters, and Stan did the
-rest!
+Times are different now, and with the help of Stan, we are essentially
+limited only by our imagination. At the time of writing, the package
+provides three versions of the steady-state BVAR model: i) the
+homoscedastic model, i.e. the original model (Villani, 2009), ii) the
+Random Walk stochastic volatility model (Clark, 2011), and iii) an AR(1)
+stochastic volatility model.
 
 ## Installation
 
@@ -183,24 +177,28 @@ $m_0=k+2$.
 
 This package also allows for stochastic volatility (Random Walk or AR1
 specifications), where we let the covariance matrix of the innovations
-vary over time such that we have a time-varying covariance matrix
-$\Sigma_{u,t}$ (more details found in `?bvar`).
+vary over time (i.e. we have$\Sigma_{u,t}$, more details are found in
+`?bvar`).
 
 ## Example
 
-To estimate the model in Section 4.1 of Villani (2009) and perform
-impulse response analysis and (un)conditional forecasting, simply run
-the following code:
+To estimate the model in Section 4.1 of Villani (2009), produce
+(un)conditional forecasts and perform impulse response analysis, simply
+run the following code:
 
 ``` r
 library(SteadyStateBVAR)
 data("Villani2009")
 yt <- Villani2009
+
+#hold out last two observations to facilitate comparisons to Figures 1-3 in Villani (2009)
 yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 
 bvar_obj <- bvar(data = yt)
 
-bp <- which(time(yt) == 1992.75)
+# Use a dummy to model Sweden’s change in monetary policy in the 1990s
+# (move to inflation targeting and flexible exchange rate)
+bp <- which(time(yt) == 1992.75) #breakpoint
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
 
 bvar_obj <- setup(bvar_obj,
@@ -208,9 +206,9 @@ bvar_obj <- setup(bvar_obj,
                   deterministic = "constant_and_dummy",
                   dummy = dum_var)
 
-lambda_1 <- 0.2
-lambda_2 <- 0.5
-lambda_3 <- 1.0
+lambda_1 <- 0.2 #overall tightness
+lambda_2 <- 0.5 #cross-equation tightness
+lambda_3 <- 1.0 #lag decay rate
 
 #fol_pm = first own lag prior means
 fol_pm=c(0,   #delta y_f
@@ -225,7 +223,8 @@ fol_pm=c(0,   #delta y_f
 #psi_1 = Psi col 1
 #psi_2 = Psi col 2
 
-# default is 95% prior probability ('interval=0.95')
+#95% prior probability intervals (normal distribution)
+#See Table I in Villani (2009)
 theta_Psi <- 
   c(
   ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
@@ -288,17 +287,20 @@ for(i in 1:p){
 #block exogeneity for foreign variables
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
+#fit the model
 bvar_obj <- fit(bvar_obj,
                 H = 12,
                 d_pred = cbind(rep(1, 12), 0),
-                iter = 500,
-                warmup = 100,
-                chains = 1,
-                cores = 1)
+                iter = 10000,
+                warmup = 2500,
+                chains = 2,
+                cores = 2)
 
-summary(bvar_obj)
+#posterior summaries
+summary(bvar_obj , stat = "mean")
 
 #unconditional forecasts
+#see last forecasts in Figures 1-3 in Villani (2009)
 fcst <- forecast(bvar_obj,
                  ci = 0.95,
                  fcst_type = "mean",
@@ -309,7 +311,7 @@ fcst <- forecast(bvar_obj,
 conditions <- data.frame(
               var     = rep(6,12),
               horizon = rep(1:12),
-              value   = seq(2, 8, length.out = 12))
+              value   = seq(2, 8, length.out = 12)) #toy scenario
               
 cond_fcst <- conditional_forecast(bvar_obj,
                     conditions,
@@ -334,9 +336,8 @@ Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector
 Autoregressions with Stochastic Volatility. *Journal of Business &
 Economic Statistics*. 29(3), pp. 327–341.
 
-Dieppe, A., Legrand, R., and van Roye, B. (2018). *The Bayesian
-Estimation, Analysis and Regression (BEAR) Toolbox Technical guide*.
-European Central Bank.
+Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox.
+*Working Paper Series*, No. 1934. European Central Bank.
 
 Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
 In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic

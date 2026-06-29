@@ -42,7 +42,7 @@ an array of all posterior conditional forecast draws.
 \description{
 Computes and plots conditional forecasts from a fitted steady-state \code{bvar} object.
 Conditions are imposed on specific variables at specific horizons using the
-method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
+method of Dieppe, Legrand, and van Roye (2016). Both conditional and unconditional
 forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
 is only enabled for the homoscedastic steady-state BVAR, i.e. when \code{SV=FALSE} in \code{priors()}.
 }
@@ -88,7 +88,6 @@ cond_fcst <- conditional_forecast(bvar_obj,
 }
 }
 \references{
-Dieppe, A., Legrand, R., and van Roye, B. (2018).
-\emph{The Bayesian Estimation, Analysis and Regression (BEAR) Toolbox Technical guide}.
+Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox. \emph{Working Paper Series}, No. 1934.
 European Central Bank.
 }

@@ -182,11 +182,9 @@ summary.bvar <- function(object, pars = NULL, stat = "mean", t = NULL, ...) {
   }
   
   # ---------------- print ----------------
-  if (stat == "mean") {
-    cat("Posterior", stat, "estimates\n------------------------\n\n")
-  } else {
-    cat("Posterior", stat, "estimates\n--------------------------\n\n")
-  }
+
+  cat("Posterior", stat, "estimates\n------------------------\n\n\n")
+
   
   for (i in seq_along(results)) {
     

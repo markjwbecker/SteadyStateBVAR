@@ -24,9 +24,9 @@
 #'
 #' @return A fitted steady-state \code{bvar} object with:
 #' \itemize{
-#'   \item \code{fit$stan}: An object of class \code{stanfit}
-#'   \item \code{fit$posterior_means}: List of posterior mean estimates
-#'   \item \code{fit$posterior_medians}: List of posterior median estimates
+#' \item \code{x$fit$stan}: An object of class \code{stanfit}
+#' \item \code{x$fit$posterior_means}: List of posterior mean estimates
+#' \item \code{x$fit$posterior_medians}: List of posterior median estimates
 #' }
 #'
 #' @details
@@ -41,7 +41,7 @@
 #'   \item AR1 stochastic volatility:
 #'     \code{steady_state_bvar_AR1_stochastic_volatility.stan}
 #' }
-#' The function estimates the following parameters (see \link{bvar} for details):
+#' The function estimates the following parameters (see \link{?bvar} for details):
 #' \itemize{
 #'       \item \code{beta}: kp×k VAR coefficient matrix
 #'       \item \code{Psi}: k×q steady-state parameter matrix

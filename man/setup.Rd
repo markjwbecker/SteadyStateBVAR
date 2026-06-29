@@ -28,7 +28,7 @@ The steady-state \code{bvar} object with a \code{setup} list containing the
 required components for prior specification and estimation, and also the OLS estimates.
 }
 \description{
-Prepares the matrices needed for prior specification and estimation.
+Prepares the components needed for prior specification and estimation.
 Also computes OLS estimates.
 }
 \examples{
