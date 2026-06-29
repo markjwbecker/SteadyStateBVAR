@@ -94,7 +94,9 @@ The function selects the appropriate Stan model based on prior settings:
 - AR1 stochastic volatility:
   `steady_state_bvar_AR1_stochastic_volatility.stan`
 
-The function estimates the following parameters (see ?bvar for details):
+The function estimates the following parameters (see
+[bvar](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
+for details):
 
 - `beta`: kp×k VAR coefficient matrix
 
