@@ -29,7 +29,6 @@
 #'   \item{i}{domestic 3-month interest rate}
 #'   \item{q}{level of the real exchange rate defined as q = s + p_f - p, where p_f and p
 #'   are the foreign and domestic CPI levels in logs and s is the log of the trade-weighted nominal exchange rate}
-#'   ...
 #' }
 #' @source Villani, M. (2009). Steady-state priors for vector autoregressions.
 #'   \emph{Journal of Applied Econometrics}, 24(4), pp. 630-650.
