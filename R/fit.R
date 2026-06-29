@@ -41,7 +41,7 @@
 #'   \item AR1 stochastic volatility:
 #'     \code{steady_state_bvar_AR1_stochastic_volatility.stan}
 #' }
-#' The function estimates the following parameters (see \link{?bvar} for details):
+#' The function estimates the following parameters (see \link{bvar} for details):
 #' \itemize{
 #'       \item \code{beta}: kp×k VAR coefficient matrix
 #'       \item \code{Psi}: k×q steady-state parameter matrix
