@@ -1,6 +1,6 @@
 # Villani (2009) dataset
 
-Swedish macroeconomic data (1980Q1–2005Q4) from Section 4.1 in Villani
+Swedish macroeconomic data (1980Q1–-2005Q4) from Section 4.1 in Villani
 (2009)
 
 ## Usage

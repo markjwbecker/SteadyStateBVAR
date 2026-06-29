@@ -1,7 +1,7 @@
 # Koop and Korobilis (2010) dataset
 
 Quarterly US macroeconomic data (1953Q1–2006Q3) from Koop and Korobilis
-(2010) used for estimating Bayesian VAR models.
+(2010)
 
 ## Usage
 

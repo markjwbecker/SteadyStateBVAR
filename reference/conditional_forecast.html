@@ -7,11 +7,11 @@
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Conditional forecasts from a fitted BVAR model — conditional_forecast"><meta name="description" content="Computes and plots conditional forecasts from a fitted steady-state bvar object.
 Conditions are imposed on specific variables at specific horizons using the
-method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
+method of Dieppe, Legrand, and van Roye (2016). Both conditional and unconditional
 forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
 is only enabled for the homoscedastic steady-state BVAR, i.e. when SV=FALSE in priors()."><meta property="og:description" content="Computes and plots conditional forecasts from a fitted steady-state bvar object.
 Conditions are imposed on specific variables at specific horizons using the
-method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
+method of Dieppe, Legrand, and van Roye (2016). Both conditional and unconditional
 forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
 is only enabled for the homoscedastic steady-state BVAR, i.e. when SV=FALSE in priors()."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -55,7 +55,7 @@ is only enabled for the homoscedastic steady-state BVAR, i.e. when SV=FALSE in p
     <div class="ref-description section level2">
     <p>Computes and plots conditional forecasts from a fitted steady-state <code>bvar</code> object.
 Conditions are imposed on specific variables at specific horizons using the
-method of Dieppe, Legrand, and van Roye (2018). Both conditional and unconditional
+method of Dieppe, Legrand, and van Roye (2016). Both conditional and unconditional
 forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
 is only enabled for the homoscedastic steady-state BVAR, i.e. when <code>SV=FALSE</code> in <code><a href="priors.html">priors()</a></code>.</p>
     </div>
@@ -116,8 +116,7 @@ an array of all posterior conditional forecast draws.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Dieppe, A., Legrand, R., and van Roye, B. (2018).
-<em>The Bayesian Estimation, Analysis and Regression (BEAR) Toolbox Technical guide</em>.
+    <p>Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox. <em>Working Paper Series</em>, No. 1934.
 European Central Bank.</p>
     </div>
 

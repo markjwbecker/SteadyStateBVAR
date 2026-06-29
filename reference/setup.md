@@ -1,6 +1,6 @@
 # Set up the steady-state BVAR model
 
-Prepares the matrices needed for prior specification and estimation.
+Prepares the components needed for prior specification and estimation.
 Also computes OLS estimates.
 
 ## Usage

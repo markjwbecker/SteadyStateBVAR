@@ -7,8 +7,7 @@ sequentially to
 [`priors`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md),
 and
 [`fit`](https://markjwbecker.github.io/SteadyStateBVAR/reference/fit.md)
-to build and estimate the model. See Villani (2009) for details on the
-model.
+to build and estimate the model.
 
 ## Usage
 
@@ -32,7 +31,7 @@ An object of class `bvar`.
 The model takes the form
 
 \$\$y_t = \Psi d_t + \Pi_1(y\_{t-1}-\Psi
-d\_{t-1})+\dots+\Pi_p(y\_{t-p}-\Psi d\_{t-p})+u_t,\$\$
+d\_{t-1})+\dots+\Pi_p(y\_{t-p}-\Psi d\_{t-p})+u_t\$\$
 
 where \\y_t\\ is an \\k\\-dimensional vector of endogenous variables at
 time \\t\\, and \\d_t\\ is a \\q\\-dimensional vector of deterministic
@@ -43,9 +42,9 @@ parameters. Note that \\\mathrm{E}(y_t)=\mu_t=\Psi d_t\\ is the
 unconditional mean, or the **steady state** of the process. One can
 stack the (transposed) \\\Pi_i\\ matrices in the \\(kp \times k)\\
 matrix \\\beta\\ \$\$\beta=\begin{bmatrix}\Pi'\_1 \\ \vdots
-\\\Pi'\_p\end{bmatrix}.\$\$ Then the model can be rewritten as a
+\\\Pi'\_p\end{bmatrix}\$\$ Then the model can be rewritten as a
 nonlinear regression (Karlsson, 2013) \$\$y_t' =d_t'\Psi' +
-\left\[w_t'-q_t'(I_p \otimes \Psi') \right\]\beta +u_t',\$\$ where where
+\left\[w_t'-q_t'(I_p \otimes \Psi') \right\]\beta +u_t'\$\$ where where
 \\w_t'=(y\_{t-1}',\dots,y\_{t-p}')\\ is a \\kp\\-dimensional vector of
 lagged endogenous variables and \\q_t'=(d\_{t-1}',\dots,d\_{t-p}')\\ is
 a \\qp\\-dimensional vector of lagged deterministic (exogenous)
@@ -60,8 +59,8 @@ However, for models with stochastic volatility, there is instead a
 time-varying innovation covariance matrix \\u_t \sim
 \mathrm{N_k}(0,\Sigma\_{u,t})\\. The innovations then take the form
 
-\$\$\begin{aligned} u_t &= A^{-1} \Lambda^{0.5}\_t \epsilon_t, \\
-\epsilon_t &\sim \mathrm{N}(0, \mathrm{I}\_k),\end{aligned}\$\$
+\$\$\begin{aligned} u_t &= A^{-1} \Lambda^{0.5}\_t \epsilon_t \\
+\epsilon_t &\sim \mathrm{N}(0, \mathrm{I}\_k)\end{aligned}\$\$
 
 where \\A\\ is a lower triangular matrix with ones on the diagonal that
 describes the contemporaneous interaction of the endogenous variables,
@@ -74,14 +73,14 @@ Gaussian shocks. For the `AR1` stochastic volatility specification, the
 log volatilities follow AR(1) processes
 
 \$\$\ln \lambda\_{i,t} = \gamma\_{0,i} + \gamma\_{1,i} \ln
-\lambda\_{i,t-1} + \nu\_{i,t}, \\ i=1,\dots,k,\$\$
+\lambda\_{i,t-1} + \nu\_{i,t}, \\ i=1,\dots,k\$\$
 
 where the log volatility AR(1) processes are restricted to the
 stationary region, i.e. \\\|\gamma\_{1,i}\|\<1 \\ \forall i\\. For the
 `RW` stochastic volatility specification, the log volatilities follow
 Random Walk processes
 
-\$\$\gamma\_{0,i}=0, \\ \gamma\_{1,i}=1 \\ \forall i.\$\$
+\$\$\gamma\_{0,i}=0, \\ \gamma\_{1,i}=1 \\ \forall i\$\$
 
 The innovations to the log volatilities follow in the `AR1` case
 
@@ -96,7 +95,7 @@ log volatilities are allowed to be correlated across variables. For the
 Note that under both stochastic volatility specifications, the
 time-varying covariance matrix is
 
-\$\$\Sigma\_{u,t} = A^{-1} \Lambda_t (A^{-1})'.\$\$
+\$\$\Sigma\_{u,t} = A^{-1} \Lambda_t (A^{-1})'\$\$
 
 For details on the homoscedastic steady-state BVAR model, see Villani
 (2009). For the Random Walk stochastic volatility steady-state BVAR

@@ -72,11 +72,11 @@ fit(
 
 A fitted steady-state `bvar` object with:
 
-- `fit$stan`: An object of class `stanfit`
+- `x$fit$stan`: An object of class `stanfit`
 
-- `fit$posterior_means`: List of posterior mean estimates
+- `x$fit$posterior_means`: List of posterior mean estimates
 
-- `fit$posterior_medians`: List of posterior median estimates
+- `x$fit$posterior_medians`: List of posterior median estimates
 
 ## Details
 
@@ -94,9 +94,7 @@ The function selects the appropriate Stan model based on prior settings:
 - AR1 stochastic volatility:
   `steady_state_bvar_AR1_stochastic_volatility.stan`
 
-The function estimates the following parameters (see
-[bvar](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
-for details):
+The function estimates the following parameters (see ?bvar for details):
 
 - `beta`: kp×k VAR coefficient matrix
 

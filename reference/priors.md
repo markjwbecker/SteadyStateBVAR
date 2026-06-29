@@ -1,13 +1,13 @@
 # Specify priors for the steady-state BVAR model
 
-The function prepares the priors. The Minnesota prior is used for the
+This function prepares the priors. The Minnesota prior is used for the
 autoregressive parameters, and is determined by the overall tightness,
 cross-equation tightness, and the lag decay rate. For the steady-state
 parameters, a normal prior is used. For the covariance matrix of the
 innovations, the user can choose between Jeffreys prior or an
-uninformative inverse-Wishart prior. Optionally enables a stochastic
-volatility specification for the covariance matrix of the innovations
-(random walk or AR(1)).
+uninformative inverse-Wishart prior. Optionally enables stochastic
+volatility where the covariance matrix of the innovations varies over
+time (random walk or AR(1)).
 
 ## Usage
 
@@ -49,23 +49,23 @@ priors(
 
 - first_own_lag_prior_mean:
 
-  Numeric vector of length `k`. Prior means for the first own lag of
-  each variable. If `NULL`, defaults to a zero vector.
+  Numeric vector of length `k`. Prior means for the first own lags of
+  the variables. If `NULL` (default), a zero vector is used.
 
 - theta_Psi:
 
-  Numeric vector. Prior mean for vec(Psi), i.e. the steady-state
-  parameters. If `NULL`, defaults to the OLS estimates.
+  Numeric vector. Prior mean vector for vec(Psi), i.e. the steady-state
+  parameters. If `NULL` (default), the OLS estimates are used.
 
 - Omega_Psi:
 
   Numeric matrix. Prior covariance matrix for vec(Psi), i.e. the
-  steady-state parameters. If `NULL`, defaults to a diagonal matrix with
-  variances `1000`.
+  steady-state parameters. If `NULL` (default), a diagonal matrix with
+  variances `1000` is used.
 
 - Jeffrey:
 
-  Logical. If `TRUE`, uses a Jeffreys prior for the innovation
+  Logical. If `TRUE` (default), uses a Jeffreys prior for the innovation
   covariance matrix. If `FALSE`, uses an uninformative inverse-Wishart
   prior. Only considered if `SV=FALSE`.
 
@@ -108,7 +108,7 @@ containing:
 
 - theta_Psi:
 
-  Prior mean for vec(Psi), i.e. the steady-state parameters
+  Prior mean vector for vec(Psi), i.e. the steady-state parameters
 
 - Omega_Psi:
 
@@ -147,12 +147,11 @@ containing:
 
 The goal is to estimate \\\beta, \Psi\\, and \\\Sigma_u\\, so priors are
 needed. First, prior independence between \\\beta, \Psi\\ and
-\\\Sigma_u\\ is assumed.
-
-Starting with \\\beta\\, the Minnesota prior is used
+\\\Sigma_u\\ is assumed. Starting with \\\beta\\, the Minnesota prior is
+used
 
 \$\$\mathrm{vec}(\beta) \sim \mathrm{N}\_{kpk}
-\left\[\theta\_\beta,\Omega\_\beta\right\].\$\$
+\left\[\theta\_\beta,\Omega\_\beta\right\]\$\$
 
 The prior means (the elements of \\\theta\_\beta\\) are set to
 
@@ -189,7 +188,7 @@ specified as
 \begin{cases}\left(\frac{\lambda_1}{\ell^{\lambda_3}}\right)^2 &
 \text{if } i = j \\ \left(\frac{\lambda_1
 \lambda_2\sigma_i}{\ell^{\lambda_3}\sigma_j}\right)^2& \text{if } i \neq
-j \end{cases}.\$\$
+j \end{cases}\$\$
 
 Here \\\lambda_1\\, \\\lambda_2\\, and \\\lambda_3\\ are scalar
 hyperparameters known as the overall tightness, the cross-equation
@@ -201,7 +200,7 @@ squares residual variance from a univariate autoregression for variable
 if applicable). Moving on to \\\Psi\\, the prior is
 
 \$\$\mathrm{vec}(\Psi) \sim
-\mathrm{N}\_{kq}\left\[\theta\_\Psi,\Omega\_\Psi\right\].\$\$
+\mathrm{N}\_{kq}\left\[\theta\_\Psi,\Omega\_\Psi\right\]\$\$
 
 This is the core of the steady-state BVAR model. In \\\theta\_\Psi\\,
 one specifies the prior beliefs about the location of the steady state,
@@ -209,11 +208,11 @@ and in \\\Omega\_\Psi\\, which is assumed to be a diagonal matrix, one
 specifies the degree of certainty in those prior beliefs. The prior for
 \\\Sigma_u\\ is either the usual noninformative Jeffreys prior
 
-\$\$p(\Sigma_u) \propto\left\|\Sigma_u \right\|^{-(k+1)/2},\$\$
+\$\$p(\Sigma_u) \propto\left\|\Sigma_u \right\|^{-(k+1)/2}\$\$
 
 or an inverse-Wishart prior
 
-\$\$\Sigma_u \sim \mathrm{IW}(V_0,m_0),\$\$
+\$\$\Sigma_u \sim \mathrm{IW}(V_0,m_0)\$\$
 
 where \\V_0\\ is the scale matrix and \\m_0\geq k+2\\ is the number of
 degrees of freedom. An uninformative prior can be (and is in this
@@ -230,22 +229,20 @@ specification, the following priors are used
 \$\$\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\ \ln
 \lambda\_{i,0} &\sim \mathrm{N}(\mu\_{\ln \lambda\_{i,0}},
 \sigma^2\_{\ln \lambda\_{i,0}}) \\ \phi_i &\sim
-\mathrm{IG}(\alpha\_{\phi_i},\beta\_{\phi_i})\end{aligned}.\$\$
+\mathrm{IG}(\alpha\_{\phi_i},\beta\_{\phi_i})\end{aligned}\$\$
 
 Here \\a\\ is a \\k(k-1)/2\\ vector that collects the free parameters in
 \\A\\ in row-major order, and \\\ln \lambda\_{i,0}\\ are the time
 \\t=0\\ values (initial conditions) of \\\ln \lambda\_{i,t}\\.
-Furthermore, \\\phi_i\\ are the log volatility innovation variances.
-Note here that the inverse gamma \\\mathrm{IG}(\alpha, \beta)\\
-distribution is the univariate version of the inverse-Wishart
-distribution with \\\alpha=m/2, \\ \beta = V/2\\. For the AR(1) (`AR1`)
-stochastic volatility specification, the following priors are used
+Furthermore, \\\phi_i\\ are the log volatility innovation variances. For
+the AR(1) (`AR1`) stochastic volatility specification, the following
+priors are used
 
 \$\$\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\ \gamma\_{0}
 &\sim \mathrm{N}(\theta\_{\gamma_0}, \Omega\_{\gamma_0}) \\ \gamma\_{1}
 &\sim \mathrm{N}(\theta\_{\gamma_1}, \Omega\_{\gamma_1}) \\ \ln
 \lambda\_{0} &\sim \mathrm{N}(\theta\_{\ln \lambda\_{0}}, \Omega\_{\ln
-\lambda\_{0}}) \\ \Phi &\sim \mathrm{IW}(V_0,m_0)\end{aligned}.\$\$
+\lambda\_{0}}) \\ \Phi &\sim \mathrm{IW}(V_0,m_0)\end{aligned}\$\$
 
 Here \\a\\ is again the \\k(k-1)/2\\ vector that collects the free
 parameters in \\A\\ in row-major order, and \\\ln \lambda_0\\ are the

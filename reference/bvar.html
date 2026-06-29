@@ -7,9 +7,9 @@
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Create a steady-state BVAR model object — bvar"><meta name="description" content="Initialises a steady-state bvar object. This is the starting point for all models in SteadyStateBVAR.
 After creation, pass the object sequentially to setup, priors,
-and fit to build and estimate the model. See Villani (2009) for details on the model."><meta property="og:description" content="Initialises a steady-state bvar object. This is the starting point for all models in SteadyStateBVAR.
+and fit to build and estimate the model."><meta property="og:description" content="Initialises a steady-state bvar object. This is the starting point for all models in SteadyStateBVAR.
 After creation, pass the object sequentially to setup, priors,
-and fit to build and estimate the model. See Villani (2009) for details on the model."></head><body>
+and fit to build and estimate the model."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -51,7 +51,7 @@ and fit to build and estimate the model. See Villani (2009) for details on the m
     <div class="ref-description section level2">
     <p>Initialises a steady-state <code>bvar</code> object. This is the starting point for all models in <code>SteadyStateBVAR</code>.
 After creation, pass the object sequentially to <code><a href="setup.html">setup</a></code>, <code><a href="priors.html">priors</a></code>,
-and <code><a href="fit.html">fit</a></code> to build and estimate the model. See Villani (2009) for details on the model.</p>
+and <code><a href="fit.html">fit</a></code> to build and estimate the model.</p>
     </div>
 
     <div class="section level2">
@@ -75,16 +75,16 @@ variable and each row is a time period.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The model takes the form</p>
-<p>$$y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t,$$</p>
+<p>$$y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t$$</p>
 <p>where \(y_t\) is an \(k\)-dimensional vector of endogenous variables at time \(t\), and \(d_t\) is
 a \(q\)-dimensional vector of deterministic (exogenous) variables at time \(t\).
 Here \(\Pi_\ell\) for \(\ell=1,\dots,p\) is a \((k \times k)\) matrix of autoregressive parameters,
 and \(\Psi\) is a \((k \times q)\) matrix of steady-state parameters. Note that
 \(\mathrm{E}(y_t)=\mu_t=\Psi d_t\) is the unconditional mean, or the <strong>steady state</strong> of the process.
 One can stack the (transposed) \(\Pi_i\) matrices in the \((kp \times k)\) matrix \(\beta\)
-$$\beta=\begin{bmatrix}\Pi'_1 \\ \vdots  \\\Pi'_p\end{bmatrix}.$$
+$$\beta=\begin{bmatrix}\Pi'_1 \\ \vdots  \\\Pi'_p\end{bmatrix}$$
 Then the model can be rewritten as a nonlinear regression (Karlsson, 2013)
-$$y_t' =d_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t',$$
+$$y_t' =d_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t'$$
 where where \(w_t'=(y_{t-1}',\dots,y_{t-p}')\) is a \(kp\)-dimensional vector of lagged endogenous variables
 and \(q_t'=(d_{t-1}',\dots,d_{t-p}')\) is a \(qp\)-dimensional vector of lagged deterministic (exogenous) variables,
 \(I_p\) is the \((p \times p)\) identity matrix and \(\otimes\) denotes the Kronecker product.
@@ -92,24 +92,24 @@ This is how the likelihood is written in the Stan code. The goal is to estimate 
 <p>For the innovations to the model, in the case of the homoscedastic steady-state BVAR, they are \(u_t \sim \mathrm{N_k}(0,\Sigma_u)\).
 However, for models with stochastic volatility, there is instead a time-varying innovation covariance matrix \(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\).
 The innovations then take the form</p>
-<p>$$\begin{aligned} u_t &amp;= A^{-1} \Lambda^{0.5}_t \epsilon_t, \\
-\epsilon_t &amp;\sim \mathrm{N}(0, \mathrm{I}_k),\end{aligned}$$</p>
+<p>$$\begin{aligned} u_t &amp;= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
+\epsilon_t &amp;\sim \mathrm{N}(0, \mathrm{I}_k)\end{aligned}$$</p>
 <p>where \(A\) is a lower triangular matrix with ones on the diagonal that describes
 the contemporaneous interaction of the endogenous variables, and</p>
 <p>$$\Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})$$</p>
 <p>contains the time-varying variances (log volatilities) of conditionally Gaussian shocks.
 For the <code>AR1</code> stochastic volatility specification, the log volatilities follow AR(1) processes</p>
-<p>$$\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k,$$</p>
+<p>$$\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k$$</p>
 <p>where the log volatility AR(1) processes are restricted to the stationary region, i.e. \(|\gamma_{1,i}|&lt;1 \ \forall i\).
 For the <code>RW</code> stochastic volatility specification, the log volatilities follow Random Walk processes</p>
-<p>$$\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \forall i.$$</p>
+<p>$$\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \forall i$$</p>
 <p>The innovations to the log volatilities follow in the <code>AR1</code> case</p>
 <p>$$\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \mathrm{N}(0, \Phi)$$</p>
 <p>where \(\Phi\) is <strong>not</strong> diagonal and as such the innovations to the log
 volatilities are allowed to be correlated across variables. For the <code>RW</code> case, \(\Phi\) is diagonal
 with variances \(\phi_i\) for \(i=1,\dots,k\).</p>
 <p>Note that under both stochastic volatility specifications, the time-varying covariance matrix is</p>
-<p>$$\Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'.$$</p>
+<p>$$\Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'$$</p>
 <p>For details on the homoscedastic steady-state BVAR model, see Villani (2009).
 For the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
 For details regarding AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).</p>

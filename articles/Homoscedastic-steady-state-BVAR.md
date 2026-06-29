@@ -36,9 +36,9 @@ yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 plot.ts(yt)
 ```
 
-![plot of chunk Swedish macro data](figure/Swedish%20macro%20data-1.png)
+![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
 
-plot of chunk Swedish macro data
+plot of chunk unnamed-chunk-2
 
 Also, let us create the bvar object which we will use throughout here.
 
@@ -80,13 +80,14 @@ bvar_obj <- setup(bvar_obj,
                   dummy = dum_var)
 ```
 
-Now let us specify the priors. We first consider \\\beta\\. We choose
-the same values for the hyperparameters as in Villani (2009), i.e. an
-overall tightness of \\\lambda_1=0.2\\, a cross-equation tightness of
-\\\lambda_2=0.5\\, and a lag decay rate of \\\lambda_3=1\\. We then
-specify the prior means for the first own lags of the variables. For
-variables in growth rates, we set the prior mean to \\0\\, for variables
-in levels, we set the prior mean to \\0.9\\.
+Now let us specify the priors. We first consider \\\beta\\ (Minnesota
+prior). We choose the same values for the hyperparameters as in Villani
+(2009), i.e. an overall tightness of \\\lambda_1=0.2\\, a cross-equation
+tightness of \\\lambda_2=0.5\\, and a lag decay rate of \\\lambda_3=1\\.
+We then specify the prior means for the first own lags of the variables.
+We follow Villani (2009), and as such for variables in growth rates, we
+set the prior mean to \\0\\, for variables in levels, we set the prior
+mean to \\0.9\\.
 
 ``` r
 
@@ -178,8 +179,7 @@ Finally for \\\Sigma_u\\ we will use the noninformative Jeffreys prior
 \\\left\|\Sigma_u \right\|^{-(k+1)/2}\\, as done in Villani (2009). We
 simply pass everything to the
 [`priors()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md)
-function. Note here that the function automatically creates
-\\\theta\_\beta\\ and \\\Omega\_\beta\\.
+function.
 
 ``` r
 
@@ -198,7 +198,7 @@ small economy and therefore unlikely to affect the foreign economy by
 restricting the upper-right submatrix of \\\Pi\_\ell\\ for \\\ell
 =1,\dots,p\\ or equivalently restricting the bottom-left submatrix of
 \\\Pi\_\ell'\\ to the zero matrix. This technique is called “block
-exogeneity” (Dieppe, Legrand, and van Roye, 2018). In essence we treat
+exogeneity” (Dieppe, Legrand, and van Roye, 2016). In essence we treat
 the foreign economy as exogenous to the domestic economy, although it is
 not exogenous in the strict sense (Karlsson, 2013).
 
@@ -271,13 +271,34 @@ indicating whether \\t \leq 1992Q4\\, we simply set
 
 \\ d\_{T+1}'=\ldots=d\_{T+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix} \\
 
+hence
+
+``` r
+
+H <- 12
+(d_pred <- cbind(rep(1, 12), 0))
+#>       [,1] [,2]
+#>  [1,]    1    0
+#>  [2,]    1    0
+#>  [3,]    1    0
+#>  [4,]    1    0
+#>  [5,]    1    0
+#>  [6,]    1    0
+#>  [7,]    1    0
+#>  [8,]    1    0
+#>  [9,]    1    0
+#> [10,]    1    0
+#> [11,]    1    0
+#> [12,]    1    0
+```
+
 We can now fit the model
 
 ``` r
 
 bvar_obj <- fit(bvar_obj,
-                H = 12,
-                d_pred = cbind(rep(1, 12), 0),
+                H = H,
+                d_pred = d_pred,
                 iter = 500,
                 warmup = 100,
                 chains = 1,
@@ -285,8 +306,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.002731 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 27.31 seconds.
+#> Chain 1: Gradient evaluation took 0.002413 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 24.13 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -311,14 +332,14 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 450 / 500 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 500 / 500 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 32.817 seconds (Warm-up)
-#> Chain 1:                853.915 seconds (Sampling)
-#> Chain 1:                886.732 seconds (Total)
+#> Chain 1:  Elapsed Time: 77.273 seconds (Warm-up)
+#> Chain 1:                793.127 seconds (Sampling)
+#> Chain 1:                870.4 seconds (Total)
 #> Chain 1:
 #> Warning: There were 400 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
 #> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded
 #> Warning: Examine the pairs() plot to diagnose sampling problems
-#> Warning: The largest R-hat is 2.06, indicating chains have not mixed.
+#> Warning: The largest R-hat is 2.04, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#r-hat
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -329,7 +350,7 @@ bvar_obj <- fit(bvar_obj,
 #> https://mc-stan.org/misc/warnings.html#tail-ess
 ```
 
-Let us look at the posterior mean of \\\beta\\, \\\Psi\\, and
+Let us look at the posterior means of \\\beta\\, \\\Psi\\, and
 \\\Sigma_u\\.
 
 ``` r
@@ -338,65 +359,65 @@ summary(bvar_obj)
 #> Posterior mean estimates
 #> ------------------------
 #> 
+#> 
 #> beta
-#> ----------------------------------------              
+#> --------------------------------------------------------------------------------              
 #>                delta y_f  pi_f   i_f delta y    pi     i     q
-#>   delta y_f.l1      0.18  0.03 -0.04    0.13  0.07 -0.11  0.00
-#>   pi_f.l1          -0.01  0.32  0.29    0.13 -0.06 -0.04  0.00
-#>   i_f.l1            0.00  0.04  0.92   -0.04  0.06  0.03  0.00
-#>   delta y.l1        0.00  0.00  0.00    0.22 -0.09 -0.05  0.00
-#>   pi.l1             0.00  0.00  0.00    0.00  0.08  0.05  0.00
-#>   i.l1              0.00  0.00  0.00    0.00  0.02  0.75  0.00
-#>   q.l1              0.00  0.00  0.00    1.38  2.45 -2.47  0.94
-#>   delta y_f.l2      0.03 -0.01  0.08    0.02 -0.01  0.09  0.00
-#>   pi_f.l2           0.01  0.02  0.04    0.00 -0.01 -0.12  0.00
-#>   i_f.l2           -0.02 -0.01 -0.01    0.00  0.04  0.07  0.00
-#>   delta y.l2        0.00  0.00  0.00    0.12 -0.02  0.16  0.00
-#>   pi.l2             0.00  0.00  0.00    0.01 -0.04 -0.04  0.00
+#>   delta y_f.l1      0.17  0.03 -0.01    0.13  0.03 -0.09  0.00
+#>   pi_f.l1          -0.01  0.32  0.23    0.12 -0.12 -0.07  0.00
+#>   i_f.l1           -0.01  0.04  0.93   -0.03  0.04  0.06  0.00
+#>   delta y.l1        0.00  0.00  0.00    0.22 -0.06 -0.09  0.00
+#>   pi.l1             0.00  0.00  0.00    0.00  0.10  0.06  0.00
+#>   i.l1              0.00  0.00  0.00    0.00  0.01  0.77  0.00
+#>   q.l1              0.00  0.00  0.00    1.79  1.25  2.16  0.94
+#>   delta y_f.l2      0.03 -0.01  0.08    0.02  0.00  0.11  0.00
+#>   pi_f.l2           0.01  0.02  0.05    0.00 -0.01 -0.10  0.00
+#>   i_f.l2           -0.02 -0.01 -0.01    0.00  0.05  0.07  0.00
+#>   delta y.l2        0.00  0.00  0.00    0.11 -0.01  0.14  0.00
+#>   pi.l2             0.00  0.00  0.00    0.01 -0.04 -0.05  0.00
 #>   i.l2              0.00  0.00  0.00   -0.01  0.01  0.04  0.00
-#>   q.l2              0.00  0.00  0.00    0.63  0.90  0.82 -0.03
-#>   delta y_f.l3      0.01 -0.01  0.00    0.02 -0.01 -0.01  0.00
-#>   pi_f.l3          -0.02  0.06 -0.01    0.00  0.08  0.04  0.00
-#>   i_f.l3            0.00  0.00  0.02    0.00  0.00  0.03  0.00
-#>   delta y.l3        0.00  0.00  0.00    0.06  0.01 -0.01  0.00
+#>   q.l2              0.00  0.00  0.00    0.96 -0.43  1.05 -0.04
+#>   delta y_f.l3      0.02 -0.01  0.00    0.01 -0.02  0.00  0.00
+#>   pi_f.l3          -0.02  0.06 -0.01    0.00  0.09  0.04  0.00
+#>   i_f.l3            0.00  0.00  0.02    0.00  0.01  0.03  0.00
+#>   delta y.l3        0.00  0.00  0.00    0.06  0.01 -0.02  0.00
 #>   pi.l3             0.00  0.00  0.00    0.00  0.02 -0.02  0.00
-#>   i.l3              0.00  0.00  0.00    0.01  0.00  0.01  0.00
-#>   q.l3              0.00  0.00  0.00   -0.25 -0.20  0.49  0.00
-#>   delta y_f.l4      0.03 -0.01  0.00    0.00  0.03  0.02  0.00
-#>   pi_f.l4          -0.01  0.15 -0.03    0.00  0.01  0.03  0.00
+#>   i.l3              0.00  0.00  0.00    0.01 -0.01  0.02  0.00
+#>   q.l3              0.00  0.00  0.00   -0.26  0.58 -1.40  0.00
+#>   delta y_f.l4      0.03 -0.01  0.00    0.00  0.02  0.02  0.00
+#>   pi_f.l4           0.00  0.16 -0.03    0.00  0.01  0.00  0.00
 #>   i_f.l4            0.00  0.00 -0.02    0.00  0.00  0.03  0.00
-#>   delta y.l4        0.00  0.00  0.00   -0.08  0.01  0.03  0.00
-#>   pi.l4             0.00  0.00  0.00    0.00  0.06 -0.02  0.00
-#>   i.l4              0.00  0.00  0.00    0.00  0.00  0.00  0.00
-#>   q.l4              0.00  0.00  0.00   -0.25 -0.17 -0.86 -0.01
-#> ----------------------------------------
+#>   delta y.l4        0.00  0.00  0.00   -0.08  0.01  0.04  0.00
+#>   pi.l4             0.00  0.00  0.00    0.00  0.05 -0.01  0.00
+#>   i.l4              0.00  0.00  0.00    0.00 -0.01  0.00  0.00
+#>   q.l4              0.00  0.00  0.00   -0.26  0.42 -0.61  0.00
+#> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Psi
-#> ----------------------------------------           
+#> --------------------------------------------------------------------------------           
 #>             [,1]  [,2]
-#>   delta y_f 0.57  0.08
+#>   delta y_f 0.58  0.09
 #>   pi_f      0.50  0.46
-#>   i_f       4.99  2.07
+#>   i_f       4.91  1.92
 #>   delta y   0.58 -0.05
-#>   pi        0.49  1.15
-#>   i         4.28  4.19
-#>   q         3.92 -0.09
-#> ----------------------------------------
+#>   pi        0.48  1.15
+#>   i         4.28  3.92
+#>   q         3.90 -0.10
+#> --------------------------------------------------------------------------------
 #> 
 #> 
-#> Sigma_u 
-#> 
-#>            
+#> Sigma_u
+#> --------------------------------------------------------------------------------           
 #>             delta y_f  pi_f   i_f delta y    pi     i     q
-#>   delta y_f      0.15 -0.01  0.01    0.07  0.00  0.02  0.00
-#>   pi_f          -0.01  0.09  0.04    0.01  0.12  0.04  0.00
-#>   i_f            0.01  0.04  0.55    0.02  0.19  0.07 -0.01
-#>   delta y        0.07  0.01  0.02    0.19 -0.05 -0.01  0.00
-#>   pi             0.00  0.12  0.19   -0.05  0.61  0.12  0.00
-#>   i              0.02  0.04  0.07   -0.01  0.12  1.63 -0.01
+#>   delta y_f      0.15 -0.01  0.01    0.07  0.00  0.00  0.00
+#>   pi_f          -0.01  0.09  0.05    0.01  0.12  0.05  0.00
+#>   i_f            0.01  0.05  0.51    0.03  0.15  0.14 -0.01
+#>   delta y        0.07  0.01  0.03    0.19 -0.05 -0.02  0.00
+#>   pi             0.00  0.12  0.15   -0.05  0.61  0.11  0.00
+#>   i              0.00  0.05  0.14   -0.02  0.11  1.56 -0.01
 #>   q              0.00  0.00 -0.01    0.00  0.00 -0.01  0.00
-#> ----------------------------------------
+#> --------------------------------------------------------------------------------
 ```
 
 We can access the posterior means or medians with
@@ -420,10 +441,9 @@ rstan::plot(stanfit,
 #> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 ```
 
-![plot of chunk posterior
-histograms](figure/posterior%20histograms-1.png)
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
 
-plot of chunk posterior histograms
+plot of chunk unnamed-chunk-14
 
 We can also look at the model forecasts directly with `rstan`. Remember
 that we left out the last two observations/quarters, so let us look at
@@ -444,10 +464,9 @@ rstan::plot(stanfit,
 #> outer_level: 0.95 (95% intervals)
 ```
 
-![plot of chunk prediction density
-plots](figure/prediction%20density%20plots-1.png)
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
 
-plot of chunk prediction density plots
+plot of chunk unnamed-chunk-15
 
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
@@ -473,10 +492,9 @@ fcst <- forecast(bvar_obj,
 forecasts](figure/forecasts-2.png)![plot of chunk
 forecasts](figure/forecasts-3.png)
 
-We can also perform conditional forecasting. We will follow the
-implementation used in the BEAR toolbox (see Algorithm 3.3.1 in Dieppe,
-Legrand, and van Roye \[2018\]). Note that for the structural shocks,
-identification is based on the Cholesky factorisation.
+We can also perform conditional forecasting by following Algorithm 3.3.1
+in Dieppe, Legrand, and van Roye (2016). Note that for the structural
+shocks, identification is based on the Cholesky factorisation.
 
 Now suppose we are interested in the forecasts of the domestic GDP
 growth \\\Delta y\\ conditional on a scenario for the three-month
@@ -484,8 +502,8 @@ domestic interest rate \\i\\.
 
 First we set up our conditions/scenarios, i.e., which variables, which
 horizons, and which values the variables will take during those
-horizons. Our conditions are that \\i\\ will follow our specified path
-(toy example) at forecast horizons \\h=1,\dots,H=12\\.
+horizons. Our conditions are that \\i\\ will follow a specified path,
+from 2 to 8 (toy example), at forecast horizons \\h=1,\dots,H=12\\.
 
 ``` r
 
@@ -530,11 +548,14 @@ irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="OIRF",ci=0.95,
 irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=5)
 ```
 
-![plot of chunk impulse responses](figure/impulse%20responses-1.png)
+![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png)
 
-plot of chunk impulse responses
+plot of chunk unnamed-chunk-17
 
 ## References
+
+Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox.
+*Working Paper Series*, No. 1934. European Central Bank.
 
 Villani, M. (2009). Steady-state priors for vector autoregressions.
 *Journal of Applied Econometrics*. 24(4), pp. 630-650.
