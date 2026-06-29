@@ -1,8 +1,8 @@
 # Random Walk stochastic volatility steady-state BVAR (Clark, 2011)
 
 Here we estimate the Random Walk stochastic volatility steady-state BVAR
-from Clark (2011), which is an extension of the original homoscedastic
-steady-state BVAR model (Villani, 2009). See
+model from Clark (2011), which is an extension of the original
+homoscedastic steady-state BVAR model (Villani, 2009). See
 [`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
 for details.
 

@@ -25,7 +25,7 @@ conditional_forecast(
 
 - bvar_obj:
 
-  A `bvar` object that has been passed through
+  A steady-state `bvar` object that has been passed through
   [`fit`](https://markjwbecker.github.io/SteadyStateBVAR/reference/fit.md).
 
 - conditions:
