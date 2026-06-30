@@ -1,8 +1,7 @@
-# Random Walk stochastic volatility steady-state BVAR (Clark, 2011)
+# AR(1) stochastic volatility steady-state BVAR
 
-Here we estimate the steady-state BVAR model with Random Walk stochastic
-volatility from Clark (2011), which is an extension of the original
-homoscedastic steady-state BVAR model (Villani, 2009). See
+Here we estimate a steady-state BVAR model with AR(1) stochastic
+volatility, see
 [`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
 for details.
 
@@ -97,14 +96,18 @@ for more information about the prior specification.
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
 
-SV_priors_RW <- list(
-                     theta_A             =  rep(0, n_free_params_A),
-                     Omega_A             =  diag(1000, n_free_params_A),
-                     mu_log_lambda_0     =  rep(0, k),
-                     sigma2_log_lambda_0 =  rep(1000, k),
-                     alpha_phi           =  rep(5, k),
-                     beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
-                     )
+SV_priors_AR <- list(
+                     theta_A            =  rep(0, n_free_params_A),
+                     Omega_A            =  diag(10, n_free_params_A),
+                     theta_gamma_0      =  rep(0, k),
+                     Omega_gamma_0      =  diag(10, k),
+                     theta_gamma_1      =  rep(0.9, k),
+                     Omega_gamma_1      =  diag(1, k),
+                     theta_log_lambda_0 =  rep(0, k),
+                     Omega_log_lambda_0 =  diag(10, k),
+                     V_0                = (5 - k - 1) * 0.01 * diag(k),
+                     m_0                =  5
+                    )
 ```
 
 Let’s put everything into the
@@ -136,9 +139,7 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 2500,
                 chains = 2,
                 cores = 2)
-#> Warning: There were 1 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
-#> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded
-#> Warning: There were 2 chains where the estimated Bayesian Fraction of Missing Information was low. See
+#> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low
 #> Warning: Examine the pairs() plot to diagnose sampling problems
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -158,14 +159,14 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #> beta
 #> --------------------------------------------------------------------------------             
 #>               delta pi     u     r
-#>   delta pi.l1     1.24  0.02  0.11
-#>   u.l1           -0.11  1.15 -0.17
+#>   delta pi.l1     1.24  0.02  0.12
+#>   u.l1           -0.11  1.15 -0.18
 #>   r.l1           -0.01 -0.01  1.04
 #>   delta pi.l2    -0.14  0.00 -0.04
-#>   u.l2            0.04 -0.11  0.09
+#>   u.l2            0.04 -0.12  0.09
 #>   r.l2            0.00  0.01 -0.08
 #>   delta pi.l3    -0.08  0.01  0.01
-#>   u.l3            0.03 -0.09  0.02
+#>   u.l3            0.03 -0.08  0.03
 #>   r.l3            0.00  0.02  0.01
 #>   delta pi.l4    -0.04  0.00 -0.03
 #>   u.l4            0.02 -0.02  0.08
@@ -177,8 +178,8 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #> --------------------------------------------------------------------------------          
 #>            [,1]
 #>   delta pi 1.99
-#>   u        4.30
-#>   r        3.52
+#>   u        4.29
+#>   r        3.53
 #> --------------------------------------------------------------------------------
 #> 
 #> 
@@ -187,7 +188,7 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #>          delta pi     u     r
 #> delta pi     0.09 -0.01  0.02
 #> u           -0.01  0.02 -0.01
-#> r            0.02 -0.01  0.12
+#> r            0.02 -0.01  0.11
 #> --------------------------------------------------------------------------------
 #> 
 #> 
@@ -245,10 +246,6 @@ IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 ![](figure/unnamed-chunk-13-1.png)
 
 ## References
-
-Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector
-Autoregressions with Stochastic Volatility. *Journal of Business &
-Economic Statistics*. 29(3), pp. 327–341.
 
 Koop, G. and Korobilis, D. (2010). Bayesian Multivariate Time Series
 Methods for Empirical Macroeconomics. *Foundations and Trends in

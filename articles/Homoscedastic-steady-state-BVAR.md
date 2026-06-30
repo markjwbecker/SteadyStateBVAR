@@ -36,9 +36,7 @@ yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 plot.ts(yt)
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png)
-
-plot of chunk unnamed-chunk-2
+![](figure/unnamed-chunk-2-1.png)
 
 Also, let us create the bvar object which we will use throughout here.
 
@@ -271,8 +269,6 @@ indicating whether \\t \leq 1992Q4\\, we simply set
 
 \\ d\_{T+1}'=\ldots=d\_{T+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix} \\
 
-hence
-
 ``` r
 
 H <- 12
@@ -299,55 +295,10 @@ We can now fit the model
 bvar_obj <- fit(bvar_obj,
                 H = H,
                 d_pred = d_pred,
-                iter = 500,
-                warmup = 100,
-                chains = 1,
-                cores = 1)
-#> 
-#> SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
-#> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.002413 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 24.13 seconds.
-#> Chain 1: Adjust your expectations accordingly!
-#> Chain 1: 
-#> Chain 1: 
-#> Chain 1: WARNING: There aren't enough warmup iterations to fit the
-#> Chain 1:          three stages of adaptation as currently configured.
-#> Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
-#> Chain 1:          the given number of warmup iterations:
-#> Chain 1:            init_buffer = 15
-#> Chain 1:            adapt_window = 75
-#> Chain 1:            term_buffer = 10
-#> Chain 1: 
-#> Chain 1: Iteration:   1 / 500 [  0%]  (Warmup)
-#> Chain 1: Iteration:  50 / 500 [ 10%]  (Warmup)
-#> Chain 1: Iteration: 100 / 500 [ 20%]  (Warmup)
-#> Chain 1: Iteration: 101 / 500 [ 20%]  (Sampling)
-#> Chain 1: Iteration: 150 / 500 [ 30%]  (Sampling)
-#> Chain 1: Iteration: 200 / 500 [ 40%]  (Sampling)
-#> Chain 1: Iteration: 250 / 500 [ 50%]  (Sampling)
-#> Chain 1: Iteration: 300 / 500 [ 60%]  (Sampling)
-#> Chain 1: Iteration: 350 / 500 [ 70%]  (Sampling)
-#> Chain 1: Iteration: 400 / 500 [ 80%]  (Sampling)
-#> Chain 1: Iteration: 450 / 500 [ 90%]  (Sampling)
-#> Chain 1: Iteration: 500 / 500 [100%]  (Sampling)
-#> Chain 1: 
-#> Chain 1:  Elapsed Time: 77.273 seconds (Warm-up)
-#> Chain 1:                793.127 seconds (Sampling)
-#> Chain 1:                870.4 seconds (Total)
-#> Chain 1:
-#> Warning: There were 400 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
-#> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded
-#> Warning: Examine the pairs() plot to diagnose sampling problems
-#> Warning: The largest R-hat is 2.04, indicating chains have not mixed.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#r-hat
-#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#bulk-ess
-#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#tail-ess
+                iter = 5000,
+                warmup = 2500,
+                chains = 4,
+                cores = 4)
 ```
 
 Let us look at the posterior means of \\\beta\\, \\\Psi\\, and
@@ -363,60 +314,60 @@ summary(bvar_obj)
 #> beta
 #> --------------------------------------------------------------------------------              
 #>                delta y_f  pi_f   i_f delta y    pi     i     q
-#>   delta y_f.l1      0.17  0.03 -0.01    0.13  0.03 -0.09  0.00
-#>   pi_f.l1          -0.01  0.32  0.23    0.12 -0.12 -0.07  0.00
-#>   i_f.l1           -0.01  0.04  0.93   -0.03  0.04  0.06  0.00
-#>   delta y.l1        0.00  0.00  0.00    0.22 -0.06 -0.09  0.00
-#>   pi.l1             0.00  0.00  0.00    0.00  0.10  0.06  0.00
-#>   i.l1              0.00  0.00  0.00    0.00  0.01  0.77  0.00
-#>   q.l1              0.00  0.00  0.00    1.79  1.25  2.16  0.94
-#>   delta y_f.l2      0.03 -0.01  0.08    0.02  0.00  0.11  0.00
-#>   pi_f.l2           0.01  0.02  0.05    0.00 -0.01 -0.10  0.00
-#>   i_f.l2           -0.02 -0.01 -0.01    0.00  0.05  0.07  0.00
-#>   delta y.l2        0.00  0.00  0.00    0.11 -0.01  0.14  0.00
+#>   delta y_f.l1      0.18  0.03 -0.01    0.12  0.07 -0.12  0.00
+#>   pi_f.l1          -0.02  0.32  0.25    0.12 -0.07  0.01  0.00
+#>   i_f.l1           -0.01  0.04  0.92   -0.04  0.06  0.05  0.00
+#>   delta y.l1        0.00  0.00  0.00    0.23 -0.09 -0.10  0.00
+#>   pi.l1             0.00  0.00  0.00    0.00  0.08  0.06  0.00
+#>   i.l1              0.00  0.00  0.00    0.00  0.02  0.76  0.00
+#>   q.l1              0.00  0.00  0.00    1.22  3.96  0.73  0.93
+#>   delta y_f.l2      0.03 -0.01  0.09    0.02 -0.02  0.10  0.00
+#>   pi_f.l2           0.01  0.02  0.04    0.00 -0.03 -0.15  0.00
+#>   i_f.l2           -0.02 -0.01 -0.01    0.00  0.04  0.07  0.00
+#>   delta y.l2        0.00  0.00  0.00    0.11 -0.01  0.15  0.00
 #>   pi.l2             0.00  0.00  0.00    0.01 -0.04 -0.05  0.00
 #>   i.l2              0.00  0.00  0.00   -0.01  0.01  0.04  0.00
-#>   q.l2              0.00  0.00  0.00    0.96 -0.43  1.05 -0.04
-#>   delta y_f.l3      0.02 -0.01  0.00    0.01 -0.02  0.00  0.00
-#>   pi_f.l3          -0.02  0.06 -0.01    0.00  0.09  0.04  0.00
-#>   i_f.l3            0.00  0.00  0.02    0.00  0.01  0.03  0.00
-#>   delta y.l3        0.00  0.00  0.00    0.06  0.01 -0.02  0.00
+#>   q.l2              0.00  0.00  0.00    0.55 -0.38  0.31 -0.04
+#>   delta y_f.l3      0.01 -0.01  0.00    0.02 -0.01  0.00  0.00
+#>   pi_f.l3          -0.02  0.06 -0.01    0.00  0.08  0.02  0.00
+#>   i_f.l3            0.00  0.00  0.02    0.00  0.00  0.03  0.00
+#>   delta y.l3        0.00  0.00  0.00    0.07  0.01 -0.02  0.00
 #>   pi.l3             0.00  0.00  0.00    0.00  0.02 -0.02  0.00
-#>   i.l3              0.00  0.00  0.00    0.01 -0.01  0.02  0.00
-#>   q.l3              0.00  0.00  0.00   -0.26  0.58 -1.40  0.00
-#>   delta y_f.l4      0.03 -0.01  0.00    0.00  0.02  0.02  0.00
-#>   pi_f.l4           0.00  0.16 -0.03    0.00  0.01  0.00  0.00
+#>   i.l3              0.00  0.00  0.00    0.01  0.00  0.01  0.00
+#>   q.l3              0.00  0.00  0.00   -0.14 -0.02 -0.58  0.00
+#>   delta y_f.l4      0.03 -0.01  0.00   -0.01  0.03  0.02  0.00
+#>   pi_f.l4           0.00  0.16 -0.03    0.00  0.01  0.01  0.00
 #>   i_f.l4            0.00  0.00 -0.02    0.00  0.00  0.03  0.00
-#>   delta y.l4        0.00  0.00  0.00   -0.08  0.01  0.04  0.00
-#>   pi.l4             0.00  0.00  0.00    0.00  0.05 -0.01  0.00
+#>   delta y.l4        0.00  0.00  0.00   -0.08  0.01  0.03  0.00
+#>   pi.l4             0.00  0.00  0.00    0.00  0.06 -0.01  0.00
 #>   i.l4              0.00  0.00  0.00    0.00 -0.01  0.00  0.00
-#>   q.l4              0.00  0.00  0.00   -0.26  0.42 -0.61  0.00
+#>   q.l4              0.00  0.00  0.00   -0.15 -0.07 -0.17 -0.01
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Psi
 #> --------------------------------------------------------------------------------           
 #>             [,1]  [,2]
-#>   delta y_f 0.58  0.09
+#>   delta y_f 0.58  0.08
 #>   pi_f      0.50  0.46
-#>   i_f       4.91  1.92
-#>   delta y   0.58 -0.05
-#>   pi        0.48  1.15
-#>   i         4.28  3.92
-#>   q         3.90 -0.10
+#>   i_f       4.94  2.02
+#>   delta y   0.58 -0.04
+#>   pi        0.49  1.14
+#>   i         4.29  4.45
+#>   q         3.92 -0.10
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Sigma_u
 #> --------------------------------------------------------------------------------           
-#>             delta y_f  pi_f   i_f delta y    pi     i     q
-#>   delta y_f      0.15 -0.01  0.01    0.07  0.00  0.00  0.00
-#>   pi_f          -0.01  0.09  0.05    0.01  0.12  0.05  0.00
-#>   i_f            0.01  0.05  0.51    0.03  0.15  0.14 -0.01
-#>   delta y        0.07  0.01  0.03    0.19 -0.05 -0.02  0.00
-#>   pi             0.00  0.12  0.15   -0.05  0.61  0.11  0.00
-#>   i              0.00  0.05  0.14   -0.02  0.11  1.56 -0.01
-#>   q              0.00  0.00 -0.01    0.00  0.00 -0.01  0.00
+#>             delta y_f  pi_f  i_f delta y    pi     i     q
+#>   delta y_f      0.15 -0.01 0.01    0.07 -0.01  0.00  0.00
+#>   pi_f          -0.01  0.09 0.05    0.01  0.13  0.04  0.00
+#>   i_f            0.01  0.05 0.52    0.01  0.18  0.11  0.00
+#>   delta y        0.07  0.01 0.01    0.19 -0.05 -0.01  0.00
+#>   pi            -0.01  0.13 0.18   -0.05  0.60  0.11  0.00
+#>   i              0.00  0.04 0.11   -0.01  0.11  1.57 -0.01
+#>   q              0.00  0.00 0.00    0.00  0.00 -0.01  0.00
 #> --------------------------------------------------------------------------------
 ```
 
@@ -441,9 +392,7 @@ rstan::plot(stanfit,
 #> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
-
-plot of chunk unnamed-chunk-14
+![](figure/unnamed-chunk-14-1.png)
 
 We can also look at the model forecasts directly with `rstan`. Remember
 that we left out the last two observations/quarters, so let us look at
@@ -464,9 +413,7 @@ rstan::plot(stanfit,
 #> outer_level: 0.95 (95% intervals)
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
-
-plot of chunk unnamed-chunk-15
+![](figure/unnamed-chunk-15-1.png)
 
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
@@ -488,9 +435,7 @@ fcst <- forecast(bvar_obj,
                  plot_idx = c(4,5,6))
 ```
 
-![plot of chunk forecasts](figure/forecasts-1.png)![plot of chunk
-forecasts](figure/forecasts-2.png)![plot of chunk
-forecasts](figure/forecasts-3.png)
+![](figure/unnamed-chunk-16-1.png)![](figure/unnamed-chunk-16-2.png)![](figure/unnamed-chunk-16-3.png)
 
 We can also perform conditional forecasting by following Algorithm 3.3.1
 in Dieppe, Legrand, and van Roye (2016). Note that for the structural
@@ -527,9 +472,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
                                   growth_rate_idx = c(4))
 ```
 
-![plot of chunk conditional
-forecasts](figure/conditional%20forecasts-1.png)![plot of chunk
-conditional forecasts](figure/conditional%20forecasts-2.png)
+![](figure/unnamed-chunk-18-1.png)![](figure/unnamed-chunk-18-2.png)
 
 Now for some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
@@ -548,9 +491,7 @@ irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="OIRF",ci=0.95,
 irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=5)
 ```
 
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png)
-
-plot of chunk unnamed-chunk-17
+![](figure/unnamed-chunk-19-1.png)
 
 ## References
 
