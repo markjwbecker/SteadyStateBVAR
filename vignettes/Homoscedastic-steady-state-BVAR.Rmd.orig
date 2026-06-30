@@ -209,8 +209,6 @@ $$
 d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 & 0 \end{pmatrix}
 $$
 
-hence
-
 ```{r}
 H <- 12
 (d_pred <- cbind(rep(1, 12), 0))
@@ -222,10 +220,10 @@ We can now fit the model
 bvar_obj <- fit(bvar_obj,
                 H = H,
                 d_pred = d_pred,
-                iter = 500,
-                warmup = 100,
-                chains = 1,
-                cores = 1)
+                iter = 5000,
+                warmup = 2500,
+                chains = 4,
+                cores = 4)
 ```
 
 Let us look at the posterior means of $\beta$, $\Psi$, and $\Sigma_u$.
@@ -261,7 +259,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r forecasts}
+```{r}
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
                  fcst_type = "mean",
@@ -285,7 +283,7 @@ conditions <- data.frame(
 
 We then do the conditional forecasting. We again select a 68\% CI and the mean of the predictive distribution as the point forecast.
 
-```{r conditional forecasts}
+```{r}
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   ci=0.68,

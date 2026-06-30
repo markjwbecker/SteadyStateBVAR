@@ -11,3 +11,4 @@
 ^codecov\.yml$
 ^docs$
 ^inst/.*\.rds$
+^vignettes/*\.Rmd\.orig$
