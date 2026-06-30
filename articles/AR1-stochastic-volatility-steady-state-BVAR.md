@@ -96,18 +96,18 @@ for more information about the prior specification.
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
 
-SV_priors_AR <- list(
-                     theta_A            =  rep(0, n_free_params_A),
-                     Omega_A            =  diag(10, n_free_params_A),
-                     theta_gamma_0      =  rep(0, k),
-                     Omega_gamma_0      =  diag(10, k),
-                     theta_gamma_1      =  rep(0.9, k),
-                     Omega_gamma_1      =  diag(1, k),
-                     theta_log_lambda_0 =  rep(0, k),
-                     Omega_log_lambda_0 =  diag(10, k),
-                     V_0                = (5 - k - 1) * 0.01 * diag(k),
-                     m_0                =  5
-                    )
+SV_priors_AR1 <- list(
+                      theta_A            =  rep(0, n_free_params_A),
+                      Omega_A            =  diag(10, n_free_params_A),
+                      theta_gamma_0      =  rep(0, k),
+                      Omega_gamma_0      =  diag(10, k),
+                      theta_gamma_1      =  rep(0.9, k),
+                      Omega_gamma_1      =  diag(1, k),
+                      theta_log_lambda_0 =  rep(0, k),
+                      Omega_log_lambda_0 =  diag(10, k),
+                      V_0                = (5 - k - 1) * 0.01 * diag(k),
+                      m_0                =  5
+                     )
 ```
 
 Let’s put everything into the
@@ -124,8 +124,8 @@ bvar_obj <- priors(bvar_obj,
                    theta_Psi = theta_Psi,
                    Omega_Psi = Omega_Psi,
                    SV = TRUE,
-                   SV_type = "RW",
-                   SV_priors = SV_priors_RW)
+                   SV_type = "AR1",
+                   SV_priors = SV_priors_AR1)
 ```
 
 Now we can fit the model
@@ -135,16 +135,18 @@ Now we can fit the model
 bvar_obj <- fit(bvar_obj,
                 H = 40,
                 d_pred = matrix(rep(1,40)),
-                iter = 5000,
+                iter = 12500,
                 warmup = 2500,
                 chains = 2,
                 cores = 2)
-#> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
+#> Warning: There were 19 divergent transitions after warmup. See
+#> https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+#> to find out why this is a problem and how to eliminate them.
+#> Warning: There were 2424 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
+#> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded
+#> Warning: There were 2 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low
 #> Warning: Examine the pairs() plot to diagnose sampling problems
-#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#bulk-ess
 ```
 
 Now lets see the posterior means
@@ -159,18 +161,18 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #> beta
 #> --------------------------------------------------------------------------------             
 #>               delta pi     u     r
-#>   delta pi.l1     1.24  0.02  0.12
-#>   u.l1           -0.11  1.15 -0.18
-#>   r.l1           -0.01 -0.01  1.04
-#>   delta pi.l2    -0.14  0.00 -0.04
-#>   u.l2            0.04 -0.12  0.09
+#>   delta pi.l1     1.25  0.04  0.13
+#>   u.l1           -0.10  1.15 -0.18
+#>   r.l1            0.00 -0.02  1.03
+#>   delta pi.l2    -0.15 -0.01 -0.03
+#>   u.l2            0.03 -0.11  0.09
 #>   r.l2            0.00  0.01 -0.08
-#>   delta pi.l3    -0.08  0.01  0.01
-#>   u.l3            0.03 -0.08  0.03
+#>   delta pi.l3    -0.08  0.00  0.00
+#>   u.l3            0.04 -0.08  0.03
 #>   r.l3            0.00  0.02  0.01
-#>   delta pi.l4    -0.04  0.00 -0.03
-#>   u.l4            0.02 -0.02  0.08
-#>   r.l4            0.00  0.01 -0.04
+#>   delta pi.l4    -0.03  0.00 -0.04
+#>   u.l4            0.03 -0.02  0.08
+#>   r.l4            0.00  0.01 -0.03
 #> --------------------------------------------------------------------------------
 #> 
 #> 
@@ -178,7 +180,7 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #> --------------------------------------------------------------------------------          
 #>            [,1]
 #>   delta pi 1.99
-#>   u        4.29
+#>   u        4.27
 #>   r        3.53
 #> --------------------------------------------------------------------------------
 #> 
@@ -186,9 +188,9 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #> Sigma_u,t (t = 215)
 #> --------------------------------------------------------------------------------
 #>          delta pi     u     r
-#> delta pi     0.09 -0.01  0.02
-#> u           -0.01  0.02 -0.01
-#> r            0.02 -0.01  0.11
+#> delta pi     0.06 -0.01  0.01
+#> u           -0.01  0.03 -0.01
+#> r            0.01 -0.01  0.16
 #> --------------------------------------------------------------------------------
 #> 
 #> 
@@ -197,14 +199,30 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #>            delta pi    u r
 #>   delta pi     1.00 0.00 0
 #>   u            0.10 1.00 0
-#>   r           -0.15 0.49 1
+#>   r           -0.19 0.42 1
 #> --------------------------------------------------------------------------------
 #> 
 #> 
-#> phi
+#> gamma_0
+#> 
+#> --------------------------------------------------------------------------------delta pi        u        r 
+#>    -0.17    -0.15    -0.10 
 #> --------------------------------------------------------------------------------
-#> delta pi        u        r 
-#>     0.06     0.09     0.11 
+#> 
+#> 
+#> gamma_1
+#> 
+#> --------------------------------------------------------------------------------delta pi        u        r 
+#>     0.93     0.95     0.93 
+#> --------------------------------------------------------------------------------
+#> 
+#> 
+#> Phi
+#> --------------------------------------------------------------------------------          
+#>            delta pi    u    r
+#>   delta pi     0.08 0.06 0.10
+#>   u            0.06 0.06 0.09
+#>   r            0.10 0.09 0.18
 #> --------------------------------------------------------------------------------
 ```
 
