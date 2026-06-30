@@ -13,7 +13,8 @@ fit(
   chains = 1,
   cores = getOption("mc.cores", 1L),
   verbose = FALSE,
-  auto_write = FALSE
+  auto_write = FALSE,
+  ...
 )
 }
 \arguments{
@@ -41,6 +42,17 @@ defaults to \code{FALSE}.}
 
 \item{auto_write}{Logical indicating whether Stan models should be
 automatically written to the disk cache via \code{rstan}. Default is \code{FALSE}.}
+
+\item{...}{Additional arguments passed directly to \code{\link[rstan]{stan}}
+(e.g. \code{control}, \code{seed}, \code{init}, \code{thin}, \code{algorithm},
+\code{pars}, \code{include}, \code{refresh}, \code{save_warmup},
+\code{sample_file}, \code{diagnostic_file}). Note that \code{file}, \code{data},
+\code{iter}, \code{warmup}, \code{chains}, and \code{verbose} are already
+controlled by \code{fit()} and cannot be passed here; \code{cores} and
+\code{auto_write} should be passed as named arguments of \code{fit()} rather
+than through \code{...}. If \code{pars}/\code{include} is used to exclude
+model parameters required by \code{fit()} for posterior summaries, an error
+will be raised.}
 }
 \value{
 A fitted steady-state \code{bvar} object with:

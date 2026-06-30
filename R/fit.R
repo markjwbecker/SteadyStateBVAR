@@ -21,6 +21,16 @@
 #' defaults to \code{FALSE}.
 #' @param auto_write Logical indicating whether Stan models should be
 #' automatically written to the disk cache via \code{rstan}. Default is \code{FALSE}.
+#' @param ... Additional arguments passed directly to \code{\link[rstan]{stan}}
+#' (e.g. \code{control}, \code{seed}, \code{init}, \code{thin}, \code{algorithm},
+#' \code{pars}, \code{include}, \code{refresh}, \code{save_warmup},
+#' \code{sample_file}, \code{diagnostic_file}). Note that \code{file}, \code{data},
+#' \code{iter}, \code{warmup}, \code{chains}, and \code{verbose} are already
+#' controlled by \code{fit()} and cannot be passed here; \code{cores} and
+#' \code{auto_write} should be passed as named arguments of \code{fit()} rather
+#' than through \code{...}. If \code{pars}/\code{include} is used to exclude
+#' model parameters required by \code{fit()} for posterior summaries, an error
+#' will be raised.
 #'
 #' @return A fitted steady-state \code{bvar} object with:
 #' \itemize{
@@ -189,7 +199,8 @@ fit <- function(x,
                 chains = 1,
                 cores = getOption("mc.cores", 1L),
                 verbose = FALSE,
-                auto_write = FALSE) {
+                auto_write = FALSE,
+                ...) {
   
   if (!inherits(x, "bvar")) stop("must be a 'bvar' object")
   if (is.null(x$setup)) stop("must be passed through setup")
@@ -322,16 +333,58 @@ fit <- function(x,
   on.exit(rstan::rstan_options(auto_write = old_auto_write), add = TRUE)
   rstan::rstan_options(auto_write = auto_write)
   
-  x$fit$stan <- rstan::stan(
-    file = stan_file,
-    data = stan_data,
-    iter = iter,
-    warmup = warmup,
-    chains = chains,
-    verbose = verbose
+  extra_args <- list(...)
+  
+  reserved_stan_args <- c("file", "data", "iter", "warmup", "chains", "verbose")
+  reserved_indirect_args <- c("cores", "auto_write")
+  
+  clashes_direct <- intersect(names(extra_args), reserved_stan_args)
+  if (length(clashes_direct) > 0) {
+    stop(sprintf(
+      "The following arguments are already set internally by fit() and cannot be passed via ...: %s",
+      paste(clashes_direct, collapse = ", ")
+    ))
+  }
+  
+  clashes_indirect <- intersect(names(extra_args), reserved_indirect_args)
+  if (length(clashes_indirect) > 0) {
+    stop(sprintf(
+      "'%s' is a named argument of fit() and is not a valid rstan::stan() parameter -- it should be passed directly to fit(), not via ...",
+      paste(clashes_indirect, collapse = ", ")
+    ))
+  }
+  
+  stan_args <- c(
+    list(
+      file = stan_file,
+      data = stan_data,
+      iter = iter,
+      warmup = warmup,
+      chains = chains,
+      verbose = verbose
+    ),
+    extra_args
   )
   
+  x$fit$stan <- do.call(rstan::stan, stan_args)
+  
   posterior <- rstan::extract(x$fit$stan)
+  
+  required_params <- if (!SV) {
+    c("beta", "Psi", "Sigma_u")
+  } else if (SV_type == "AR1") {
+    c("beta", "Psi", "A", "gamma_0", "gamma_1", "Phi", "Sigma_u")
+  } else { # RW
+    c("beta", "Psi", "A", "phi", "Sigma_u")
+  }
+  
+  missing_params <- setdiff(required_params, names(posterior))
+  if (length(missing_params) > 0) {
+    stop(sprintf(
+      "The following required parameters were not found in the Stan output: %s. This likely happened because 'pars'/'include' was passed via ... and excluded them. fit() requires all model parameters listed above to be saved in order to compute posterior summaries.",
+      paste(missing_params, collapse = ", ")
+    ))
+  }
   
   x$fit$posterior_means <- list()
   x$fit$posterior_medians <- list()
