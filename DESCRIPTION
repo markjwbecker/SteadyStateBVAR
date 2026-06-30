@@ -1,12 +1,11 @@
 Package: SteadyStateBVAR
-Title: Bayesian Vector Autoregression Models with Steady-State Priors via Stan
+Title: Bayesian Vector Autoregression Models with Steady-State Priors via 'Stan'
 Version: 0.0.0.9000
 Authors@R:
     person("Mark", "Becker", email = "mark.jw.becker@gmail.com", role = c("aut", "cre", "cph"))
 Description: Provides estimation of Bayesian Vector Autoregression ('BVAR') models
-    with steady-state priors via 'Stan'. After estimation, the package provides functions for
-    unconditional and conditional forecasting, and impulse response analysis. For more details
-    on the steady-state BVAR model see Villani (2009) <doi:10.1002/jae.1065>.
+    with steady-state priors via 'Stan', along with functions for unconditional and conditional forecasting,
+    and impulse response analysis. For more details on the steady-state BVAR model see Villani (2009) <doi:10.1002/jae.1065>.
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 8.0.0

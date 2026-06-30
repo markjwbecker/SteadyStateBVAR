@@ -105,6 +105,6 @@ bvar_obj <- fit(bvar_obj,
                 verbose = FALSE,
                 auto_write = FALSE)
 
-res <- stochastic_volatility_plot(bvar_obj, ci = 0.95)
+stochastic_volatility_plot(bvar_obj, ci = 0.95)
 }
 }

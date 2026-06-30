@@ -90,18 +90,18 @@ Now we need to specify our stochastic volatility priors. See `?priors` for more 
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
 
-SV_priors_AR <- list(
-                     theta_A            =  rep(0, n_free_params_A),
-                     Omega_A            =  diag(10, n_free_params_A),
-                     theta_gamma_0      =  rep(0, k),
-                     Omega_gamma_0      =  diag(10, k),
-                     theta_gamma_1      =  rep(0.9, k),
-                     Omega_gamma_1      =  diag(1, k),
-                     theta_log_lambda_0 =  rep(0, k),
-                     Omega_log_lambda_0 =  diag(10, k),
-                     V_0                = (5 - k - 1) * 0.01 * diag(k),
-                     m_0                =  5
-                    )
+SV_priors_AR1 <- list(
+                      theta_A            =  rep(0, n_free_params_A),
+                      Omega_A            =  diag(10, n_free_params_A),
+                      theta_gamma_0      =  rep(0, k),
+                      Omega_gamma_0      =  diag(10, k),
+                      theta_gamma_1      =  rep(0.9, k),
+                      Omega_gamma_1      =  diag(1, k),
+                      theta_log_lambda_0 =  rep(0, k),
+                      Omega_log_lambda_0 =  diag(10, k),
+                      V_0                = (5 - k - 1) * 0.01 * diag(k),
+                      m_0                =  5
+                     )
 ```
 
 Let's put everything into the `priors()` function.
@@ -115,8 +115,8 @@ bvar_obj <- priors(bvar_obj,
                    theta_Psi = theta_Psi,
                    Omega_Psi = Omega_Psi,
                    SV = TRUE,
-                   SV_type = "RW",
-                   SV_priors = SV_priors_RW)
+                   SV_type = "AR1",
+                   SV_priors = SV_priors_AR1)
 ```
 
 Now we can fit the model
@@ -125,7 +125,7 @@ Now we can fit the model
 bvar_obj <- fit(bvar_obj,
                 H = 40,
                 d_pred = matrix(rep(1,40)),
-                iter = 5000,
+                iter = 12500,
                 warmup = 2500,
                 chains = 2,
                 cores = 2)

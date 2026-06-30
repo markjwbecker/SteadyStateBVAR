@@ -83,7 +83,7 @@
 #'                 verbose = FALSE,
 #'                 auto_write = FALSE)
 #'
-#' res <- stochastic_volatility_plot(bvar_obj, ci = 0.95)
+#' stochastic_volatility_plot(bvar_obj, ci = 0.95)
 #' }
 stochastic_volatility_plot <- function(x, ci = 0.95, vol = "log_lambda",
                                        stat = "mean", plot_idx = NULL,
