@@ -28,8 +28,7 @@ homoscedastic and stochastic volatility (RW or AR1) specifications."></head><bod
       <ul class="navbar-nav me-auto"><li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
-  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/AR1-stochastic-volatility-steady-state-BVAR.html">AR(1) stochastic volatility steady-state BVAR</a></li>
-    <li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
     <li><a class="dropdown-item" href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">Random Walk stochastic volatility steady-state BVAR (Clark, 2011)</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
@@ -66,7 +65,8 @@ homoscedastic and stochastic volatility (RW or AR1) specifications.</p>
 <span>  chains <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  cores <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"mc.cores"</span>, <span class="fl">1L</span><span class="op">)</span>,</span>
 <span>  verbose <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  auto_write <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  auto_write <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -115,6 +115,19 @@ defaults to <code>FALSE</code>.</p></dd>
 <dt id="arg-auto-write">auto_write<a class="anchor" aria-label="anchor" href="#arg-auto-write"></a></dt>
 <dd><p>Logical indicating whether Stan models should be
 automatically written to the disk cache via <code>rstan</code>. Default is <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional arguments passed directly to <code><a href="https://mc-stan.org/rstan/reference/stan.html" class="external-link">stan</a></code>
+(e.g. <code>control</code>, <code>seed</code>, <code>init</code>, <code>thin</code>, <code>algorithm</code>,
+<code>pars</code>, <code>include</code>, <code>refresh</code>, <code>save_warmup</code>,
+<code>sample_file</code>, <code>diagnostic_file</code>). Note that <code>file</code>, <code>data</code>,
+<code>iter</code>, <code>warmup</code>, <code>chains</code>, and <code>verbose</code> are already
+controlled by <code>fit()</code> and cannot be passed here; <code>cores</code> and
+<code>auto_write</code> should be passed as named arguments of <code>fit()</code> rather
+than through <code>...</code>. If <code>pars</code>/<code>include</code> is used to exclude
+model parameters required by <code>fit()</code> for posterior summaries, an error
+will be raised.</p></dd>
 
 </dl></div>
     <div class="section level2">

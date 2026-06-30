@@ -17,7 +17,8 @@ fit(
   chains = 1,
   cores = getOption("mc.cores", 1L),
   verbose = FALSE,
-  auto_write = FALSE
+  auto_write = FALSE,
+  ...
 )
 ```
 
@@ -67,6 +68,19 @@ fit(
 
   Logical indicating whether Stan models should be automatically written
   to the disk cache via `rstan`. Default is `FALSE`.
+
+- ...:
+
+  Additional arguments passed directly to
+  [`stan`](https://mc-stan.org/rstan/reference/stan.html) (e.g.
+  `control`, `seed`, `init`, `thin`, `algorithm`, `pars`, `include`,
+  `refresh`, `save_warmup`, `sample_file`, `diagnostic_file`). Note that
+  `file`, `data`, `iter`, `warmup`, `chains`, and `verbose` are already
+  controlled by `fit()` and cannot be passed here; `cores` and
+  `auto_write` should be passed as named arguments of `fit()` rather
+  than through `...`. If `pars`/`include` is used to exclude model
+  parameters required by `fit()` for posterior summaries, an error will
+  be raised.
 
 ## Value
 
