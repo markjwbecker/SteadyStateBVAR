@@ -138,7 +138,7 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 2000,
                 chains = 4,
                 cores = 4,
-                control = list(max_treedepth = 12, adapt_delta = 0.85))
+                control = list(max_treedepth = 15, adapt_delta = 0.95))
 #> Warning: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low
 #> Warning: Examine the pairs() plot to diagnose sampling problems
