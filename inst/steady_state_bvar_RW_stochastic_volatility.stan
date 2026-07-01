@@ -56,7 +56,7 @@ transformed data {
 parameters {
   matrix[k*p, k] beta; //beta' = (Pi_1,...,Pi_p)
   matrix[k, q] Psi; //Psi * d_t = steady state
-  matrix[N, k] log_lambda; //log volatilities
+  matrix[N, k] log_lambda_std; //standard normal innovations driving log volatilities
   vector<lower=0>[k] phi; //log volatility innovation variances
   vector[k*(k-1)/2] a; //free parameters in A
 }
@@ -65,7 +65,7 @@ transformed parameters {
   matrix[k,k] A;
   matrix[k,k] Ainv;
   matrix[k,k] Sigma_u[N]; //time varying covariance matrix of reduced form errors u_t
-
+  matrix[N, k] log_lambda;
   // construct A (1's on diagonal, and then free parameters on lower triangular)
   A = diag_matrix(rep_vector(1,k));
   {
@@ -79,23 +79,24 @@ transformed parameters {
   }
   Ainv = inverse(A);
   
+  for (i in 1:k) {
+    log_lambda[1, i] = mu_log_lambda_0[i] + sqrt(sigma2_log_lambda_0[i]) * log_lambda_std[1, i];
+  }
+  for (t in 2:N) {
+    for (i in 1:k) {
+      log_lambda[t, i] = log_lambda[t-1, i] + sqrt(phi[i]) * log_lambda_std[t, i];
+    }
+  }
+  
   for (t in 1:N) {
-    matrix[k,k] Lambda_t = diag_matrix(exp(log_lambda[t]'));
-    Sigma_u[t] = Ainv * Lambda_t * Ainv';
+    matrix[k,k] sqrt_Lambda_t = diag_matrix(sqrt(exp(log_lambda[t]')));
+    Sigma_u[t] = tcrossprod(Ainv * sqrt_Lambda_t);
   }
 }
 
 model {
   
-  for (i in 1:k) {
-  log_lambda[1, i] ~ normal(mu_log_lambda_0[i], sqrt(sigma2_log_lambda_0[i]));
-  }
-
-  for (t in 2:N) {
-    for (i in 1:k) {
-      log_lambda[t, i] ~ normal(log_lambda[t-1, i], sqrt(phi[i]));
-    }
-  }
+  to_vector(log_lambda_std) ~ std_normal();
 
   for(t in 1:N){
       vector[k] u_t = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
