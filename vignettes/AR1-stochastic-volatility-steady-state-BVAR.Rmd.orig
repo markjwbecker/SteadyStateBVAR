@@ -121,15 +121,15 @@ bvar_obj <- priors(bvar_obj,
 
 Now we can fit the model. Note that we can use arguments from the `rstan::stan()`.
 
-```{r, fig.width=8, fig.height=8}
+```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE}
 bvar_obj <- fit(bvar_obj,
                 H = 40,
                 d_pred = matrix(rep(1, 40)),
                 iter = 10000,
-                warmup = 5000,
+                warmup = 2000,
                 chains = 4,
                 cores = 4,
-                control = list(max_treedepth = 15, adapt_delta = 0.9999))
+                control = list(max_treedepth = 15, adapt_delta = 0.85))
 ```
 
 Now lets see the posterior means
@@ -158,7 +158,7 @@ stochastic_volatility_plot(bvar_obj, vol = "sd")
 
 We can also produce orthogonalized IRFs
 
-```{r AR(1)-5, fig.width=10, fig.height=10}
+```{r AR(1)-5 , fig.width=10, fig.height=10}
 IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 ```
 

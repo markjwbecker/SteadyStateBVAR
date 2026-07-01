@@ -29,7 +29,7 @@ $$
 
 First, let's load the package, then import and plot the data.
 
-```{r example, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
+```{r RW-1, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
 library(SteadyStateBVAR)
 data("KoopKorobilis2010")
 yt <- KoopKorobilis2010
@@ -42,11 +42,11 @@ Let's create the bvar object which we will use throughout here.
 bvar_obj <- bvar(data = yt)
 ```
 
-We choose 4 lags and only a constant as the deterministic variable.
+We choose 2 lags and only a constant as the deterministic variable.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- setup(bvar_obj,
-                  p=4,
+                  p=2,
                   deterministic = "constant")
 ```
 
@@ -120,11 +120,12 @@ Now we can fit the model
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- fit(bvar_obj,
                 H = 40,
-                d_pred = matrix(rep(1,40)),
-                iter = 12500,
-                warmup = 2500,
-                chains = 2,
-                cores = 2)
+                d_pred = matrix(rep(1, 40)),
+                iter = 10000,
+                warmup = 2000,
+                chains = 4,
+                cores = 4,
+                control = list(max_treedepth = 12, adapt_delta = 0.85))
 ```
 Now lets see the posterior means
 
@@ -133,25 +134,25 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 ```
 We can forecast
 
-```{r, fig.width=8, fig.height=6}
+```{r RW-2, fig.width=8, fig.height=6}
 forecast(bvar_obj, ci = 0.95, show_all = TRUE)
 ```
 
 Let us plot the log volatility estimates and predictions
 
-```{r, fig.width=8, fig.height=6}
+```{r RW-3, fig.width=8, fig.height=6}
 stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
 ```
 
 Let us plot the estimates and predictions of the implied innovation standard deviations
 
-```{r, fig.width=8, fig.height=6}
+```{r RW-4, fig.width=8, fig.height=6}
 stochastic_volatility_plot(bvar_obj, vol = "sd")
 ```
 
 We can also produce orthogonalized IRFs
 
-```{r, fig.width=10, fig.height=10}
+```{r RW-5, fig.width=10, fig.height=10}
 IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 ```
 
