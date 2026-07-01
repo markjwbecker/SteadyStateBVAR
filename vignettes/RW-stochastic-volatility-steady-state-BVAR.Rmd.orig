@@ -125,7 +125,7 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 2000,
                 chains = 4,
                 cores = 4,
-                control = list(max_treedepth = 12, adapt_delta = 0.85))
+                control = list(max_treedepth = 15, adapt_delta = 0.95))
 ```
 Now lets see the posterior means
 
