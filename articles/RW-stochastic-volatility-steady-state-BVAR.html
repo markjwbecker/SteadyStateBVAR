@@ -97,15 +97,17 @@ r_t
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"KoopKorobilis2010"</span><span class="op">)</span></span>
 <span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="va">KoopKorobilis2010</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">plot.ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/example-1.png"></p>
+<div class="float">
+<img src="figure/RW-1-1.png" alt="plot of chunk RW-1"><div class="figcaption">plot of chunk RW-1</div>
+</div>
 <p>Let’s create the bvar object which we will use throughout here.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">yt</span><span class="op">)</span></span></code></pre></div>
-<p>We choose 4 lags and only a constant as the deterministic
+<p>We choose 2 lags and only a constant as the deterministic
 variable.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup.html">setup</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
-<span>                  p<span class="op">=</span><span class="fl">4</span>,</span>
+<span>                  p<span class="op">=</span><span class="fl">2</span>,</span>
 <span>                  deterministic <span class="op">=</span> <span class="st">"constant"</span><span class="op">)</span></span></code></pre></div>
 <p>We set the overall tightness to <span class="math inline">\(\lambda_1
 = 0.20\)</span>, cross-equation tightness to <span class="math inline">\(\lambda_2 = 0.50\)</span> and the lag decay rate
@@ -175,12 +177,13 @@ specification.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                H <span class="op">=</span> <span class="fl">40</span>,</span>
-<span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                iter <span class="op">=</span> <span class="fl">12500</span>,</span>
-<span>                warmup <span class="op">=</span> <span class="fl">2500</span>,</span>
-<span>                chains <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>                cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: There were 2 chains where the estimated Bayesian Fraction of Missing Information was low. See</span></span>
+<span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                iter <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>                warmup <span class="op">=</span> <span class="fl">2000</span>,</span>
+<span>                chains <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>                cores <span class="op">=</span> <span class="fl">4</span>,</span>
+<span>                control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>max_treedepth <span class="op">=</span> <span class="fl">12</span>, adapt_delta <span class="op">=</span> <span class="fl">0.85</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See</span></span>
 <span><span class="co">#&gt; https://mc-stan.org/misc/warnings.html#bfmi-low</span></span>
 <span><span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></span></code></pre></div>
 <p>Now lets see the posterior means</p>
@@ -193,45 +196,39 @@ specification.</p>
 <span><span class="co">#&gt; beta</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------             </span></span>
 <span><span class="co">#&gt;               delta pi     u     r</span></span>
-<span><span class="co">#&gt;   delta pi.l1     1.24  0.02  0.11</span></span>
-<span><span class="co">#&gt;   u.l1           -0.11  1.15 -0.18</span></span>
-<span><span class="co">#&gt;   r.l1           -0.01 -0.01  1.04</span></span>
-<span><span class="co">#&gt;   delta pi.l2    -0.14  0.00 -0.04</span></span>
-<span><span class="co">#&gt;   u.l2            0.04 -0.12  0.09</span></span>
-<span><span class="co">#&gt;   r.l2            0.00  0.01 -0.08</span></span>
-<span><span class="co">#&gt;   delta pi.l3    -0.08  0.01  0.01</span></span>
-<span><span class="co">#&gt;   u.l3            0.03 -0.09  0.02</span></span>
-<span><span class="co">#&gt;   r.l3            0.00  0.02  0.01</span></span>
-<span><span class="co">#&gt;   delta pi.l4    -0.04  0.00 -0.04</span></span>
-<span><span class="co">#&gt;   u.l4            0.02 -0.02  0.08</span></span>
-<span><span class="co">#&gt;   r.l4            0.00  0.01 -0.04</span></span>
+<span><span class="co">#&gt;   delta pi.l1     1.26  0.01  0.15</span></span>
+<span><span class="co">#&gt;   u.l1           -0.09  1.17 -0.16</span></span>
+<span><span class="co">#&gt;   r.l1            0.00 -0.01  1.04</span></span>
+<span><span class="co">#&gt;   delta pi.l2    -0.27  0.02 -0.10</span></span>
+<span><span class="co">#&gt;   u.l2            0.07 -0.23  0.17</span></span>
+<span><span class="co">#&gt;   r.l2            0.00  0.02 -0.11</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Psi</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------          </span></span>
 <span><span class="co">#&gt;            [,1]</span></span>
-<span><span class="co">#&gt;   delta pi 1.99</span></span>
-<span><span class="co">#&gt;   u        4.29</span></span>
-<span><span class="co">#&gt;   r        3.52</span></span>
+<span><span class="co">#&gt;   delta pi 2.00</span></span>
+<span><span class="co">#&gt;   u        4.28</span></span>
+<span><span class="co">#&gt;   r        3.50</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sigma_u,t (t = 215)</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;          delta pi     u     r</span></span>
-<span><span class="co">#&gt; delta pi     0.09 -0.01  0.02</span></span>
+<span><span class="co">#&gt; delta pi     0.09 -0.01  0.03</span></span>
 <span><span class="co">#&gt; u           -0.01  0.02 -0.01</span></span>
-<span><span class="co">#&gt; r            0.02 -0.01  0.12</span></span>
+<span><span class="co">#&gt; r            0.03 -0.01  0.16</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; A</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------          </span></span>
-<span><span class="co">#&gt;            delta pi    u r</span></span>
-<span><span class="co">#&gt;   delta pi     1.00 0.00 0</span></span>
-<span><span class="co">#&gt;   u            0.10 1.00 0</span></span>
-<span><span class="co">#&gt;   r           -0.15 0.49 1</span></span>
+<span><span class="co">#&gt;            delta pi   u r</span></span>
+<span><span class="co">#&gt;   delta pi     1.00 0.0 0</span></span>
+<span><span class="co">#&gt;   u            0.12 1.0 0</span></span>
+<span><span class="co">#&gt;   r           -0.22 0.5 1</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -243,20 +240,22 @@ specification.</p>
 <p>We can forecast</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-10-1.png"><img src="figure/unnamed-chunk-10-2.png"><img src="figure/unnamed-chunk-10-3.png"></p>
+<p><img src="figure/RW-2-1.png" alt="plot of chunk RW-2"><img src="figure/RW-2-2.png" alt="plot of chunk RW-2"><img src="figure/RW-2-3.png" alt="plot of chunk RW-2"></p>
 <p>Let us plot the log volatility estimates and predictions</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, vol <span class="op">=</span> <span class="st">"log_lambda"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-11-1.png"><img src="figure/unnamed-chunk-11-2.png"><img src="figure/unnamed-chunk-11-3.png"></p>
+<p><img src="figure/RW-3-1.png" alt="plot of chunk RW-3"><img src="figure/RW-3-2.png" alt="plot of chunk RW-3"><img src="figure/RW-3-3.png" alt="plot of chunk RW-3"></p>
 <p>Let us plot the estimates and predictions of the implied innovation
 standard deviations</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, vol <span class="op">=</span> <span class="st">"sd"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-12-1.png"><img src="figure/unnamed-chunk-12-2.png"><img src="figure/unnamed-chunk-12-3.png"></p>
+<p><img src="figure/RW-4-1.png" alt="plot of chunk RW-4"><img src="figure/RW-4-2.png" alt="plot of chunk RW-4"><img src="figure/RW-4-3.png" alt="plot of chunk RW-4"></p>
 <p>We can also produce orthogonalized IRFs</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>, method <span class="op">=</span> <span class="st">"OIRF"</span>, t<span class="op">=</span><span class="fl">215</span>, ci<span class="op">=</span><span class="fl">0.68</span><span class="op">)</span> <span class="co">#latest t</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-13-1.png"></p>
+<div class="float">
+<img src="figure/RW-5-1.png" alt="plot of chunk RW-5"><div class="figcaption">plot of chunk RW-5</div>
+</div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
