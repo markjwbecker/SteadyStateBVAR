@@ -40,8 +40,8 @@ option (if it has been set), otherwise defaults to \code{1} core.}
 \item{verbose}{Logical indicating whether to print intermediate output from Stan on the console,
 defaults to \code{FALSE}.}
 
-\item{auto_write}{Logical indicating whether Stan models should be
-automatically written to the disk cache via \code{rstan}. Default is \code{FALSE}.}
+\item{auto_write}{Logical indicating whether compiled Stan models should be
+automatically written to the hard disk via \code{rstan}. Default is \code{FALSE}.}
 
 \item{...}{Additional arguments passed directly to \code{\link[rstan]{stan}}
 (e.g. \code{control}, \code{seed}, \code{init}, \code{thin}, \code{algorithm},
@@ -128,9 +128,7 @@ bvar_obj <- fit(bvar_obj,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
-                cores = 1,
-                verbose = FALSE,
-                auto_write = FALSE)
+                cores = 1)
                    
 #RW stochastic volatility
 yt <- matrix(rnorm(50), 25, 2)
@@ -169,8 +167,8 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
-                verbose = FALSE,
-                auto_write = FALSE)
+                control = list(max_treedepth = 12, adapt_delta = 0.85)
+                )
                    
 #AR1 stochastic volatility
 yt <- matrix(rnorm(50), 25, 2)
@@ -214,7 +212,7 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
-                verbose = FALSE,
-                auto_write = FALSE)
+                control = list(max_treedepth = 12, adapt_delta = 0.85)
+                )
 }
 }
