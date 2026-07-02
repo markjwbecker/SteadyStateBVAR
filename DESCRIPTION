@@ -15,7 +15,11 @@ Depends:
     R (>= 3.6.0)
 Imports:
     MTS (>= 1.2.1),
-    rstan (>= 2.32.7)
+    rstan (>= 2.32.7),
+    grDevices,
+    graphics,
+    stats,
+    utils
 Suggests: 
     knitr,
     rmarkdown,
