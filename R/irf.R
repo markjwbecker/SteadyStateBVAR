@@ -65,6 +65,9 @@ IRF <- function(x, H = 16, response = NULL, shock = NULL,
   type   <- match.arg(type)
   freq   <- frequency(x$data)
   
+  old_par <- par(no.readonly = TRUE)
+  on.exit(par(old_par), add = TRUE)
+  
   compute_OIRF <- function(A, Sigma, e, N) {
     k            <- nrow(Sigma)
     OIRF_matrix  <- matrix(NA, k * k, N + 1)
