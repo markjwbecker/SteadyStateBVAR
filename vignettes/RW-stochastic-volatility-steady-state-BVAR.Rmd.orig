@@ -97,7 +97,7 @@ SV_priors_RW <- list(
                      sigma2_log_lambda_0 =  rep(10, k),
                      alpha_phi           =  rep(5, k),
                      beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
-                     )
+                    )
 ```
 
 Let's put everything into the `priors()` function.
@@ -115,27 +115,35 @@ bvar_obj <- priors(bvar_obj,
                    SV_priors = SV_priors_RW)
 ```
 
-Now we can fit the model
+Now we can fit the model. Note that we can use arguments from `rstan::stan()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- fit(bvar_obj,
                 H = 40,
                 d_pred = matrix(rep(1, 40)),
-                iter = 10000,
-                warmup = 2000,
-                chains = 4,
-                cores = 4,
-                control = list(max_treedepth = 15, adapt_delta = 0.95))
+                iter = 4000,
+                warmup = 1000,
+                chains = 2,
+                cores = 2,
+                control = list(max_treedepth = 14, adapt_delta = 0.95))
 ```
+
 Now lets see the posterior means
 
 ```{r, fig.width=8, fig.height=8}
 summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 ```
+
+Note that you can always look at the `stanfit` object `bvar_obj$fit$stan` directly if you want
+
+```{r, fig.width=8, fig.height=8}
+rstan::summary(bvar_obj$fit$stan, pars="Psi")$summary #steady-state parameters
+```
+
 We can forecast
 
 ```{r RW-2, fig.width=8, fig.height=6}
-forecast(bvar_obj, ci = 0.95, show_all = TRUE)
+forecast(bvar_obj, ci = 0.68, show_all = TRUE)
 ```
 
 Let us plot the log volatility estimates and predictions

@@ -42,11 +42,11 @@ Let's create the bvar object which we will use throughout here.
 bvar_obj <- bvar(data = yt)
 ```
 
-We choose 4 lags and only a constant as the deterministic variable.
+We choose 2 lags and only a constant as the deterministic variable.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- setup(bvar_obj,
-                  p=4,
+                  p=2,
                   deterministic = "constant")
 ```
 
@@ -99,7 +99,7 @@ SV_priors_AR1 <- list(
                       Omega_gamma_1      =  diag(1, k),
                       theta_log_lambda_0 =  rep(0, k),
                       Omega_log_lambda_0 =  diag(10, k),
-                      V_0                = (5 - k - 1) * 0.01 * diag(k),
+                      V_0                = (5 - k - 1) * 0.1 * diag(k),
                       m_0                =  5
                      )
 ```
@@ -119,17 +119,17 @@ bvar_obj <- priors(bvar_obj,
                    SV_priors = SV_priors_AR1)
 ```
 
-Now we can fit the model. Note that we can use arguments from the `rstan::stan()`.
+Now we can fit the model. Note that we can use arguments from `rstan::stan()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
 
-```{r, fig.width=8, fig.height=8, warning=FALSE, message=FALSE}
+```{r}
 bvar_obj <- fit(bvar_obj,
                 H = 40,
                 d_pred = matrix(rep(1, 40)),
-                iter = 10000,
-                warmup = 2000,
-                chains = 4,
-                cores = 4,
-                control = list(max_treedepth = 15, adapt_delta = 0.85))
+                iter = 4000,
+                warmup = 1000,
+                chains = 2,
+                cores = 2,
+                control = list(max_treedepth = 12, adapt_delta = 0.999))
 ```
 
 Now lets see the posterior means
@@ -138,10 +138,16 @@ Now lets see the posterior means
 summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 ```
 
+Note that you can always look at the `stanfit` object `bvar_obj$fit$stan` directly if you want
+
+```{r, fig.width=8, fig.height=8}
+rstan::summary(bvar_obj$fit$stan, pars="Psi")$summary #steady-state parameters
+```
+
 We can forecast
 
 ```{r AR(1)-2, fig.width=8, fig.height=6}
-forecast(bvar_obj, ci = 0.95, show_all = TRUE)
+forecast(bvar_obj, ci = 0.68, show_all = TRUE)
 ```
 
 Let us plot the log volatility estimates and predictions
