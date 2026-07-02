@@ -47,7 +47,7 @@ forecasts are plotted for comparison. Please note that for the moment, condition
 is only enabled for the homoscedastic steady-state BVAR, i.e. when \code{SV=FALSE} in \code{priors()}.
 }
 \examples{
-\dontrun{
+\donttest{
 #homoscedastic with Jeffreys prior
 yt <- matrix(rnorm(50), 25, 2)
 

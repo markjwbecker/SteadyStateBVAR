@@ -25,7 +25,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' #homoscedastic with Jeffreys prior
 #' yt <- matrix(rnorm(50), 25, 2)
 #'

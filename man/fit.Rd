@@ -102,7 +102,7 @@ the contemporaneous interaction of the endogenous variables
 }
 }
 \examples{
-\dontrun{
+\donttest{
 #homoscedastic with Jeffreys prior
 yt <- matrix(rnorm(50), 25, 2)
 

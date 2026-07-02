@@ -69,7 +69,7 @@ path and credible bands over the estimation sample, and the predictive point
 estimate path and prediction intervals over the forecast horizon.
 }
 \examples{
-\dontrun{
+\donttest{
 yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)

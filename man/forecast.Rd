@@ -43,7 +43,7 @@ prediction intervals. Optionally converts monthly or quarterly growth rate forec
 rates for selected variables.
 }
 \examples{
-\dontrun{
+\donttest{
 #homoscedastic with Jeffreys prior
 yt <- matrix(rnorm(50), 25, 2)
 

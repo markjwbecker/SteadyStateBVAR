@@ -42,7 +42,7 @@
 #' @method summary bvar
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' yt <- matrix(rnorm(50), 25, 2)
 #' bvar_obj <- bvar(data = yt)
 #' bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")

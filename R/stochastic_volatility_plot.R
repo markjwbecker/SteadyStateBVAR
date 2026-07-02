@@ -47,7 +47,7 @@
 #'
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' yt <- matrix(rnorm(50), 25, 2)
 #'
 #' bvar_obj <- bvar(data = yt)
