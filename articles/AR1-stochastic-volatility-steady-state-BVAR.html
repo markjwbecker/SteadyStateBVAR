@@ -96,15 +96,17 @@ r_t
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"KoopKorobilis2010"</span><span class="op">)</span></span>
 <span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="va">KoopKorobilis2010</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">plot.ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/example-1.png"></p>
+<div class="float">
+<img src="figure/AR(1)-1-1.png" alt="plot of chunk AR(1)-1"><div class="figcaption">plot of chunk AR(1)-1</div>
+</div>
 <p>Let’s create the bvar object which we will use throughout here.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">yt</span><span class="op">)</span></span></code></pre></div>
-<p>We choose 4 lags and only a constant as the deterministic
+<p>We choose 2 lags and only a constant as the deterministic
 variable.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/setup.html">setup</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
-<span>                  p<span class="op">=</span><span class="fl">4</span>,</span>
+<span>                  p<span class="op">=</span><span class="fl">2</span>,</span>
 <span>                  deterministic <span class="op">=</span> <span class="st">"constant"</span><span class="op">)</span></span></code></pre></div>
 <p>We set the overall tightness to <span class="math inline">\(\lambda_1
 = 0.20\)</span>, cross-equation tightness to <span class="math inline">\(\lambda_2 = 0.50\)</span> and the lag decay rate
@@ -159,7 +161,7 @@ specification.</p>
 <span>                      Omega_gamma_1      <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">k</span><span class="op">)</span>,</span>
 <span>                      theta_log_lambda_0 <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">k</span><span class="op">)</span>,</span>
 <span>                      Omega_log_lambda_0 <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">10</span>, <span class="va">k</span><span class="op">)</span>,</span>
-<span>                      V_0                <span class="op">=</span> <span class="op">(</span><span class="fl">5</span> <span class="op">-</span> <span class="va">k</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.01</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span>,</span>
+<span>                      V_0                <span class="op">=</span> <span class="op">(</span><span class="fl">5</span> <span class="op">-</span> <span class="va">k</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span>,</span>
 <span>                      m_0                <span class="op">=</span>  <span class="fl">5</span></span>
 <span>                     <span class="op">)</span></span></code></pre></div>
 <p>Let’s put everything into the <code><a href="../reference/priors.html">priors()</a></code> function.</p>
@@ -174,23 +176,18 @@ specification.</p>
 <span>                   SV <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   SV_type <span class="op">=</span> <span class="st">"AR1"</span>,</span>
 <span>                   SV_priors <span class="op">=</span> <span class="va">SV_priors_AR1</span><span class="op">)</span></span></code></pre></div>
-<p>Now we can fit the model</p>
+<p>Now we can fit the model. Note that we can use arguments from
+<code><a href="https://mc-stan.org/rstan/reference/stan.html" class="external-link">rstan::stan()</a></code> such as <code>control</code> where we can
+tweak <code>max_treedepth</code> and <code>adapt_delta</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                H <span class="op">=</span> <span class="fl">40</span>,</span>
-<span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">40</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                iter <span class="op">=</span> <span class="fl">12500</span>,</span>
-<span>                warmup <span class="op">=</span> <span class="fl">2500</span>,</span>
+<span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                iter <span class="op">=</span> <span class="fl">4000</span>,</span>
+<span>                warmup <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>                chains <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>                cores <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: There were 19 divergent transitions after warmup. See</span></span>
-<span><span class="co">#&gt; https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup</span></span>
-<span><span class="co">#&gt; to find out why this is a problem and how to eliminate them.</span></span>
-<span><span class="co">#&gt; Warning: There were 2424 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See</span></span>
-<span><span class="co">#&gt; https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded</span></span>
-<span><span class="co">#&gt; Warning: There were 2 chains where the estimated Bayesian Fraction of Missing Information was low. See</span></span>
-<span><span class="co">#&gt; https://mc-stan.org/misc/warnings.html#bfmi-low</span></span>
-<span><span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></span></code></pre></div>
+<span>                cores <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>max_treedepth <span class="op">=</span> <span class="fl">12</span>, adapt_delta <span class="op">=</span> <span class="fl">0.999</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Now lets see the posterior means</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bvar_obj</span>, stat<span class="op">=</span><span class="st">"mean"</span>, t <span class="op">=</span> <span class="fl">215</span><span class="op">)</span> <span class="co">#t = 215 for covariance matrix</span></span>
@@ -201,36 +198,30 @@ specification.</p>
 <span><span class="co">#&gt; beta</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------             </span></span>
 <span><span class="co">#&gt;               delta pi     u     r</span></span>
-<span><span class="co">#&gt;   delta pi.l1     1.25  0.04  0.13</span></span>
-<span><span class="co">#&gt;   u.l1           -0.10  1.15 -0.18</span></span>
-<span><span class="co">#&gt;   r.l1            0.00 -0.02  1.03</span></span>
-<span><span class="co">#&gt;   delta pi.l2    -0.15 -0.01 -0.03</span></span>
-<span><span class="co">#&gt;   u.l2            0.03 -0.11  0.09</span></span>
-<span><span class="co">#&gt;   r.l2            0.00  0.01 -0.08</span></span>
-<span><span class="co">#&gt;   delta pi.l3    -0.08  0.00  0.00</span></span>
-<span><span class="co">#&gt;   u.l3            0.04 -0.08  0.03</span></span>
-<span><span class="co">#&gt;   r.l3            0.00  0.02  0.01</span></span>
-<span><span class="co">#&gt;   delta pi.l4    -0.03  0.00 -0.04</span></span>
-<span><span class="co">#&gt;   u.l4            0.03 -0.02  0.08</span></span>
-<span><span class="co">#&gt;   r.l4            0.00  0.01 -0.03</span></span>
+<span><span class="co">#&gt;   delta pi.l1     1.27  0.02  0.17</span></span>
+<span><span class="co">#&gt;   u.l1           -0.09  1.16 -0.15</span></span>
+<span><span class="co">#&gt;   r.l1            0.00 -0.01  1.04</span></span>
+<span><span class="co">#&gt;   delta pi.l2    -0.28  0.01 -0.11</span></span>
+<span><span class="co">#&gt;   u.l2            0.07 -0.22  0.17</span></span>
+<span><span class="co">#&gt;   r.l2           -0.01  0.03 -0.11</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Psi</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------          </span></span>
 <span><span class="co">#&gt;            [,1]</span></span>
-<span><span class="co">#&gt;   delta pi 1.99</span></span>
+<span><span class="co">#&gt;   delta pi 2.00</span></span>
 <span><span class="co">#&gt;   u        4.27</span></span>
-<span><span class="co">#&gt;   r        3.53</span></span>
+<span><span class="co">#&gt;   r        3.50</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Sigma_u,t (t = 215)</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt;          delta pi     u     r</span></span>
-<span><span class="co">#&gt; delta pi     0.06 -0.01  0.01</span></span>
-<span><span class="co">#&gt; u           -0.01  0.03 -0.01</span></span>
-<span><span class="co">#&gt; r            0.01 -0.01  0.16</span></span>
+<span><span class="co">#&gt; delta pi     0.07 -0.01  0.02</span></span>
+<span><span class="co">#&gt; u           -0.01  0.03 -0.02</span></span>
+<span><span class="co">#&gt; r            0.02 -0.02  0.18</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -238,49 +229,63 @@ specification.</p>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------          </span></span>
 <span><span class="co">#&gt;            delta pi    u r</span></span>
 <span><span class="co">#&gt;   delta pi     1.00 0.00 0</span></span>
-<span><span class="co">#&gt;   u            0.10 1.00 0</span></span>
-<span><span class="co">#&gt;   r           -0.19 0.42 1</span></span>
+<span><span class="co">#&gt;   u            0.13 1.00 0</span></span>
+<span><span class="co">#&gt;   r           -0.24 0.42 1</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; gamma_0</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; --------------------------------------------------------------------------------delta pi        u        r </span></span>
-<span><span class="co">#&gt;    -0.17    -0.15    -0.10 </span></span>
+<span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; delta pi        u        r </span></span>
+<span><span class="co">#&gt;    -0.17    -0.19    -0.12 </span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; gamma_1</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; --------------------------------------------------------------------------------delta pi        u        r </span></span>
-<span><span class="co">#&gt;     0.93     0.95     0.93 </span></span>
+<span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; delta pi        u        r </span></span>
+<span><span class="co">#&gt;     0.94     0.94     0.92 </span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Phi</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------          </span></span>
 <span><span class="co">#&gt;            delta pi    u    r</span></span>
-<span><span class="co">#&gt;   delta pi     0.08 0.06 0.10</span></span>
-<span><span class="co">#&gt;   u            0.06 0.06 0.09</span></span>
-<span><span class="co">#&gt;   r            0.10 0.09 0.18</span></span>
+<span><span class="co">#&gt;   delta pi     0.08 0.05 0.09</span></span>
+<span><span class="co">#&gt;   u            0.05 0.10 0.10</span></span>
+<span><span class="co">#&gt;   r            0.09 0.10 0.20</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span></code></pre></div>
-<p>We can forecast</p>
+<p>Note that you can always look at the <code>stanfit</code> object
+<code>bvar_obj$fit$stan</code> directly if you want</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-10-1.png"><img src="figure/unnamed-chunk-10-2.png"><img src="figure/unnamed-chunk-10-3.png"></p>
-<p>Let us plot the log volatility estimates and predictions</p>
+<code class="sourceCode R"><span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">summary</span><span class="op">(</span><span class="va">bvar_obj</span><span class="op">$</span><span class="va">fit</span><span class="op">$</span><span class="va">stan</span>, pars<span class="op">=</span><span class="st">"Psi"</span><span class="op">)</span><span class="op">$</span><span class="va">summary</span> <span class="co">#steady-state parameters</span></span>
+<span><span class="co">#&gt;              mean     se_mean         sd     2.5%      25%      50%      75%</span></span>
+<span><span class="co">#&gt; Psi[1,1] 1.995011 0.000477527 0.05027294 1.895153 1.961089 1.995275 2.029316</span></span>
+<span><span class="co">#&gt; Psi[2,1] 4.270307 0.001796891 0.17600323 3.926752 4.149507 4.269818 4.391082</span></span>
+<span><span class="co">#&gt; Psi[3,1] 3.504518 0.003869865 0.33419304 2.839858 3.279355 3.508558 3.734335</span></span>
+<span><span class="co">#&gt;             97.5%     n_eff      Rhat</span></span>
+<span><span class="co">#&gt; Psi[1,1] 2.092983 11083.390 1.0001377</span></span>
+<span><span class="co">#&gt; Psi[2,1] 4.614236  9593.956 0.9997044</span></span>
+<span><span class="co">#&gt; Psi[3,1] 4.153442  7457.670 0.9997675</span></span></code></pre></div>
+<p>We can forecast</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.68</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="figure/AR(1)-2-1.png" alt="plot of chunk AR(1)-2"><img src="figure/AR(1)-2-2.png" alt="plot of chunk AR(1)-2"><img src="figure/AR(1)-2-3.png" alt="plot of chunk AR(1)-2"></p>
+<p>Let us plot the log volatility estimates and predictions</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, vol <span class="op">=</span> <span class="st">"log_lambda"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-11-1.png"><img src="figure/unnamed-chunk-11-2.png"><img src="figure/unnamed-chunk-11-3.png"></p>
+<p><img src="figure/AR(1)-3-1.png" alt="plot of chunk AR(1)-3"><img src="figure/AR(1)-3-2.png" alt="plot of chunk AR(1)-3"><img src="figure/AR(1)-3-3.png" alt="plot of chunk AR(1)-3"></p>
 <p>Let us plot the estimates and predictions of the implied innovation
 standard deviations</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, vol <span class="op">=</span> <span class="st">"sd"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-12-1.png"><img src="figure/unnamed-chunk-12-2.png"><img src="figure/unnamed-chunk-12-3.png"></p>
-<p>We can also produce orthogonalized IRFs</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, vol <span class="op">=</span> <span class="st">"sd"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="figure/AR(1)-4-1.png" alt="plot of chunk AR(1)-4"><img src="figure/AR(1)-4-2.png" alt="plot of chunk AR(1)-4"><img src="figure/AR(1)-4-3.png" alt="plot of chunk AR(1)-4"></p>
+<p>We can also produce orthogonalized IRFs</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>, method <span class="op">=</span> <span class="st">"OIRF"</span>, t<span class="op">=</span><span class="fl">215</span>, ci<span class="op">=</span><span class="fl">0.68</span><span class="op">)</span> <span class="co">#latest t</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-13-1.png"></p>
+<div class="float">
+<img src="figure/AR(1)-5%20-1.png" alt="plot of chunk AR(1)-5"><div class="figcaption">plot of chunk AR(1)-5</div>
+</div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>

@@ -24,7 +24,9 @@ yt <- KoopKorobilis2010
 plot.ts(yt)
 ```
 
-![](figure/example-1.png)
+![plot of chunk AR(1)-1](figure/AR(1)-1-1.png)
+
+plot of chunk AR(1)-1
 
 Let’s create the bvar object which we will use throughout here.
 
@@ -33,12 +35,12 @@ Let’s create the bvar object which we will use throughout here.
 bvar_obj <- bvar(data = yt)
 ```
 
-We choose 4 lags and only a constant as the deterministic variable.
+We choose 2 lags and only a constant as the deterministic variable.
 
 ``` r
 
 bvar_obj <- setup(bvar_obj,
-                  p=4,
+                  p=2,
                   deterministic = "constant")
 ```
 
@@ -105,7 +107,7 @@ SV_priors_AR1 <- list(
                       Omega_gamma_1      =  diag(1, k),
                       theta_log_lambda_0 =  rep(0, k),
                       Omega_log_lambda_0 =  diag(10, k),
-                      V_0                = (5 - k - 1) * 0.01 * diag(k),
+                      V_0                = (5 - k - 1) * 0.1 * diag(k),
                       m_0                =  5
                      )
 ```
@@ -128,25 +130,20 @@ bvar_obj <- priors(bvar_obj,
                    SV_priors = SV_priors_AR1)
 ```
 
-Now we can fit the model
+Now we can fit the model. Note that we can use arguments from
+[`rstan::stan()`](https://mc-stan.org/rstan/reference/stan.html) such as
+`control` where we can tweak `max_treedepth` and `adapt_delta`.
 
 ``` r
 
 bvar_obj <- fit(bvar_obj,
                 H = 40,
-                d_pred = matrix(rep(1,40)),
-                iter = 12500,
-                warmup = 2500,
+                d_pred = matrix(rep(1, 40)),
+                iter = 4000,
+                warmup = 1000,
                 chains = 2,
-                cores = 2)
-#> Warning: There were 19 divergent transitions after warmup. See
-#> https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-#> to find out why this is a problem and how to eliminate them.
-#> Warning: There were 2424 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
-#> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded
-#> Warning: There were 2 chains where the estimated Bayesian Fraction of Missing Information was low. See
-#> https://mc-stan.org/misc/warnings.html#bfmi-low
-#> Warning: Examine the pairs() plot to diagnose sampling problems
+                cores = 2,
+                control = list(max_treedepth = 12, adapt_delta = 0.999))
 ```
 
 Now lets see the posterior means
@@ -161,36 +158,30 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #> beta
 #> --------------------------------------------------------------------------------             
 #>               delta pi     u     r
-#>   delta pi.l1     1.25  0.04  0.13
-#>   u.l1           -0.10  1.15 -0.18
-#>   r.l1            0.00 -0.02  1.03
-#>   delta pi.l2    -0.15 -0.01 -0.03
-#>   u.l2            0.03 -0.11  0.09
-#>   r.l2            0.00  0.01 -0.08
-#>   delta pi.l3    -0.08  0.00  0.00
-#>   u.l3            0.04 -0.08  0.03
-#>   r.l3            0.00  0.02  0.01
-#>   delta pi.l4    -0.03  0.00 -0.04
-#>   u.l4            0.03 -0.02  0.08
-#>   r.l4            0.00  0.01 -0.03
+#>   delta pi.l1     1.27  0.02  0.17
+#>   u.l1           -0.09  1.16 -0.15
+#>   r.l1            0.00 -0.01  1.04
+#>   delta pi.l2    -0.28  0.01 -0.11
+#>   u.l2            0.07 -0.22  0.17
+#>   r.l2           -0.01  0.03 -0.11
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Psi
 #> --------------------------------------------------------------------------------          
 #>            [,1]
-#>   delta pi 1.99
+#>   delta pi 2.00
 #>   u        4.27
-#>   r        3.53
+#>   r        3.50
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Sigma_u,t (t = 215)
 #> --------------------------------------------------------------------------------
 #>          delta pi     u     r
-#> delta pi     0.06 -0.01  0.01
-#> u           -0.01  0.03 -0.01
-#> r            0.01 -0.01  0.16
+#> delta pi     0.07 -0.01  0.02
+#> u           -0.01  0.03 -0.02
+#> r            0.02 -0.02  0.18
 #> --------------------------------------------------------------------------------
 #> 
 #> 
@@ -198,42 +189,60 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #> --------------------------------------------------------------------------------          
 #>            delta pi    u r
 #>   delta pi     1.00 0.00 0
-#>   u            0.10 1.00 0
-#>   r           -0.19 0.42 1
+#>   u            0.13 1.00 0
+#>   r           -0.24 0.42 1
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> gamma_0
-#> 
-#> --------------------------------------------------------------------------------delta pi        u        r 
-#>    -0.17    -0.15    -0.10 
+#> --------------------------------------------------------------------------------
+#> delta pi        u        r 
+#>    -0.17    -0.19    -0.12 
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> gamma_1
-#> 
-#> --------------------------------------------------------------------------------delta pi        u        r 
-#>     0.93     0.95     0.93 
+#> --------------------------------------------------------------------------------
+#> delta pi        u        r 
+#>     0.94     0.94     0.92 
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Phi
 #> --------------------------------------------------------------------------------          
 #>            delta pi    u    r
-#>   delta pi     0.08 0.06 0.10
-#>   u            0.06 0.06 0.09
-#>   r            0.10 0.09 0.18
+#>   delta pi     0.08 0.05 0.09
+#>   u            0.05 0.10 0.10
+#>   r            0.09 0.10 0.20
 #> --------------------------------------------------------------------------------
+```
+
+Note that you can always look at the `stanfit` object
+`bvar_obj$fit$stan` directly if you want
+
+``` r
+
+rstan::summary(bvar_obj$fit$stan, pars="Psi")$summary #steady-state parameters
+#>              mean     se_mean         sd     2.5%      25%      50%      75%
+#> Psi[1,1] 1.995011 0.000477527 0.05027294 1.895153 1.961089 1.995275 2.029316
+#> Psi[2,1] 4.270307 0.001796891 0.17600323 3.926752 4.149507 4.269818 4.391082
+#> Psi[3,1] 3.504518 0.003869865 0.33419304 2.839858 3.279355 3.508558 3.734335
+#>             97.5%     n_eff      Rhat
+#> Psi[1,1] 2.092983 11083.390 1.0001377
+#> Psi[2,1] 4.614236  9593.956 0.9997044
+#> Psi[3,1] 4.153442  7457.670 0.9997675
 ```
 
 We can forecast
 
 ``` r
 
-forecast(bvar_obj, ci = 0.95, show_all = TRUE)
+forecast(bvar_obj, ci = 0.68, show_all = TRUE)
 ```
 
-![](figure/unnamed-chunk-10-1.png)![](figure/unnamed-chunk-10-2.png)![](figure/unnamed-chunk-10-3.png)
+![plot of chunk AR(1)-2](figure/AR(1)-2-1.png)![plot of chunk
+AR(1)-2](figure/AR(1)-2-2.png)![plot of chunk
+AR(1)-2](figure/AR(1)-2-3.png)
 
 Let us plot the log volatility estimates and predictions
 
@@ -242,7 +251,9 @@ Let us plot the log volatility estimates and predictions
 stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
 ```
 
-![](figure/unnamed-chunk-11-1.png)![](figure/unnamed-chunk-11-2.png)![](figure/unnamed-chunk-11-3.png)
+![plot of chunk AR(1)-3](figure/AR(1)-3-1.png)![plot of chunk
+AR(1)-3](figure/AR(1)-3-2.png)![plot of chunk
+AR(1)-3](figure/AR(1)-3-3.png)
 
 Let us plot the estimates and predictions of the implied innovation
 standard deviations
@@ -252,7 +263,9 @@ standard deviations
 stochastic_volatility_plot(bvar_obj, vol = "sd")
 ```
 
-![](figure/unnamed-chunk-12-1.png)![](figure/unnamed-chunk-12-2.png)![](figure/unnamed-chunk-12-3.png)
+![plot of chunk AR(1)-4](figure/AR(1)-4-1.png)![plot of chunk
+AR(1)-4](figure/AR(1)-4-2.png)![plot of chunk
+AR(1)-4](figure/AR(1)-4-3.png)
 
 We can also produce orthogonalized IRFs
 
@@ -261,7 +274,9 @@ We can also produce orthogonalized IRFs
 IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 ```
 
-![](figure/unnamed-chunk-13-1.png)
+![plot of chunk AR(1)-5](figure/AR(1)-5%20-1.png)
+
+plot of chunk AR(1)-5
 
 ## References
 

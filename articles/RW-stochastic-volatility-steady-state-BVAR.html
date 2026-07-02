@@ -39,7 +39,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
+<li><a class="dropdown-item" href="../articles/AR1-stochastic-volatility-steady-state-BVAR.html">AR(1) stochastic volatility steady-state BVAR</a></li>
+    <li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
     <li><a class="dropdown-item" href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">Random Walk stochastic volatility steady-state BVAR (Clark, 2011)</a></li>
   </ul>
 </li>
@@ -160,7 +161,7 @@ specification.</p>
 <span>                     sigma2_log_lambda_0 <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">10</span>, <span class="va">k</span><span class="op">)</span>,</span>
 <span>                     alpha_phi           <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span>,</span>
 <span>                     beta_phi            <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">k</span><span class="op">)</span></span>
-<span>                     <span class="op">)</span></span></code></pre></div>
+<span>                    <span class="op">)</span></span></code></pre></div>
 <p>Let’s put everything into the <code><a href="../reference/priors.html">priors()</a></code> function.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/priors.html">priors</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
@@ -173,19 +174,18 @@ specification.</p>
 <span>                   SV <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>                   SV_type <span class="op">=</span> <span class="st">"RW"</span>,</span>
 <span>                   SV_priors <span class="op">=</span> <span class="va">SV_priors_RW</span><span class="op">)</span></span></code></pre></div>
-<p>Now we can fit the model</p>
+<p>Now we can fit the model. Note that we can use arguments from
+<code><a href="https://mc-stan.org/rstan/reference/stan.html" class="external-link">rstan::stan()</a></code> such as <code>control</code> where we can
+tweak <code>max_treedepth</code> and <code>adapt_delta</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                H <span class="op">=</span> <span class="fl">40</span>,</span>
 <span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">40</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                iter <span class="op">=</span> <span class="fl">10000</span>,</span>
-<span>                warmup <span class="op">=</span> <span class="fl">2000</span>,</span>
-<span>                chains <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>                cores <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>                control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>max_treedepth <span class="op">=</span> <span class="fl">15</span>, adapt_delta <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See</span></span>
-<span><span class="co">#&gt; https://mc-stan.org/misc/warnings.html#bfmi-low</span></span>
-<span><span class="co">#&gt; Warning: Examine the pairs() plot to diagnose sampling problems</span></span></code></pre></div>
+<span>                iter <span class="op">=</span> <span class="fl">4000</span>,</span>
+<span>                warmup <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>                chains <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                cores <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>                control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>max_treedepth <span class="op">=</span> <span class="fl">14</span>, adapt_delta <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Now lets see the posterior means</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="va">bvar_obj</span>, stat<span class="op">=</span><span class="st">"mean"</span>, t <span class="op">=</span> <span class="fl">215</span><span class="op">)</span> <span class="co">#t = 215 for covariance matrix</span></span>
@@ -237,21 +237,33 @@ specification.</p>
 <span><span class="co">#&gt; delta pi        u        r </span></span>
 <span><span class="co">#&gt;     0.06     0.09     0.11 </span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span></code></pre></div>
-<p>We can forecast</p>
+<p>Note that you can always look at the <code>stanfit</code> object
+<code>bvar_obj$fit$stan</code> directly if you want</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">summary</span><span class="op">(</span><span class="va">bvar_obj</span><span class="op">$</span><span class="va">fit</span><span class="op">$</span><span class="va">stan</span>, pars<span class="op">=</span><span class="st">"Psi"</span><span class="op">)</span><span class="op">$</span><span class="va">summary</span> <span class="co">#steady-state parameters</span></span>
+<span><span class="co">#&gt;              mean      se_mean         sd     2.5%      25%      50%      75%</span></span>
+<span><span class="co">#&gt; Psi[1,1] 1.997087 0.0004086451 0.05120416 1.896298 1.962480 1.997027 2.030755</span></span>
+<span><span class="co">#&gt; Psi[2,1] 4.277367 0.0015407362 0.17599368 3.936070 4.156539 4.280978 4.399586</span></span>
+<span><span class="co">#&gt; Psi[3,1] 3.503088 0.0029289469 0.32181000 2.853228 3.290138 3.515644 3.717915</span></span>
+<span><span class="co">#&gt;             97.5%    n_eff      Rhat</span></span>
+<span><span class="co">#&gt; Psi[1,1] 2.097637 15700.66 0.9997290</span></span>
+<span><span class="co">#&gt; Psi[2,1] 4.616449 13047.81 0.9997874</span></span>
+<span><span class="co">#&gt; Psi[3,1] 4.120118 12071.91 1.0000220</span></span></code></pre></div>
+<p>We can forecast</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.68</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figure/RW-2-1.png" alt="plot of chunk RW-2"><img src="figure/RW-2-2.png" alt="plot of chunk RW-2"><img src="figure/RW-2-3.png" alt="plot of chunk RW-2"></p>
 <p>Let us plot the log volatility estimates and predictions</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, vol <span class="op">=</span> <span class="st">"log_lambda"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figure/RW-3-1.png" alt="plot of chunk RW-3"><img src="figure/RW-3-2.png" alt="plot of chunk RW-3"><img src="figure/RW-3-3.png" alt="plot of chunk RW-3"></p>
 <p>Let us plot the estimates and predictions of the implied innovation
 standard deviations</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, vol <span class="op">=</span> <span class="st">"sd"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="figure/RW-4-1.png" alt="plot of chunk RW-4"><img src="figure/RW-4-2.png" alt="plot of chunk RW-4"><img src="figure/RW-4-3.png" alt="plot of chunk RW-4"></p>
 <p>We can also produce orthogonalized IRFs</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>, method <span class="op">=</span> <span class="st">"OIRF"</span>, t<span class="op">=</span><span class="fl">215</span>, ci<span class="op">=</span><span class="fl">0.68</span><span class="op">)</span> <span class="co">#latest t</span></span></code></pre></div>
 <div class="float">
 <img src="figure/RW-5-1.png" alt="plot of chunk RW-5"><div class="figcaption">plot of chunk RW-5</div>

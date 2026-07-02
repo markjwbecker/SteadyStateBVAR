@@ -106,7 +106,7 @@ SV_priors_RW <- list(
                      sigma2_log_lambda_0 =  rep(10, k),
                      alpha_phi           =  rep(5, k),
                      beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
-                     )
+                    )
 ```
 
 Let’s put everything into the
@@ -127,21 +127,20 @@ bvar_obj <- priors(bvar_obj,
                    SV_priors = SV_priors_RW)
 ```
 
-Now we can fit the model
+Now we can fit the model. Note that we can use arguments from
+[`rstan::stan()`](https://mc-stan.org/rstan/reference/stan.html) such as
+`control` where we can tweak `max_treedepth` and `adapt_delta`.
 
 ``` r
 
 bvar_obj <- fit(bvar_obj,
                 H = 40,
                 d_pred = matrix(rep(1, 40)),
-                iter = 10000,
-                warmup = 2000,
-                chains = 4,
-                cores = 4,
-                control = list(max_treedepth = 15, adapt_delta = 0.95))
-#> Warning: There were 4 chains where the estimated Bayesian Fraction of Missing Information was low. See
-#> https://mc-stan.org/misc/warnings.html#bfmi-low
-#> Warning: Examine the pairs() plot to diagnose sampling problems
+                iter = 4000,
+                warmup = 1000,
+                chains = 2,
+                cores = 2,
+                control = list(max_treedepth = 14, adapt_delta = 0.95))
 ```
 
 Now lets see the posterior means
@@ -199,11 +198,27 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 #> --------------------------------------------------------------------------------
 ```
 
+Note that you can always look at the `stanfit` object
+`bvar_obj$fit$stan` directly if you want
+
+``` r
+
+rstan::summary(bvar_obj$fit$stan, pars="Psi")$summary #steady-state parameters
+#>              mean      se_mean         sd     2.5%      25%      50%      75%
+#> Psi[1,1] 1.997087 0.0004086451 0.05120416 1.896298 1.962480 1.997027 2.030755
+#> Psi[2,1] 4.277367 0.0015407362 0.17599368 3.936070 4.156539 4.280978 4.399586
+#> Psi[3,1] 3.503088 0.0029289469 0.32181000 2.853228 3.290138 3.515644 3.717915
+#>             97.5%    n_eff      Rhat
+#> Psi[1,1] 2.097637 15700.66 0.9997290
+#> Psi[2,1] 4.616449 13047.81 0.9997874
+#> Psi[3,1] 4.120118 12071.91 1.0000220
+```
+
 We can forecast
 
 ``` r
 
-forecast(bvar_obj, ci = 0.95, show_all = TRUE)
+forecast(bvar_obj, ci = 0.68, show_all = TRUE)
 ```
 
 ![plot of chunk RW-2](figure/RW-2-1.png)![plot of chunk
