@@ -1,4 +1,4 @@
-# SteadyStateBVAR: Bayesian Vector Autoregression Models with Steady-State Priors via 'Stan'
+# SteadyStateBVAR: Bayesian Vector Autoregression Models with Steady-State Priors
 
 Provides estimation of Bayesian Vector Autoregression ('BVAR') models
 with steady-state priors via 'Stan', along with functions for
