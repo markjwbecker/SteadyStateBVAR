@@ -44,7 +44,7 @@ $$
 
 Also, we will leave out the last two observations, so the user can compare the forecasts produced here to the last forecasts seen in Figures 1-3 in Villani (2009) to verify that this implementation works correctly.
 
-```{r, fig.width=8, fig.height=8}
+```{r HOMO-1, fig.width=8, fig.height=8}
 yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 plot.ts(yt)
 ```
@@ -236,7 +236,7 @@ We can access the posterior means or medians with `bvar_obj$fit$posterior_means`
 
 Note that `bvar_obj$fit$stan` is an object of class `stanfit`. So we can do the usual `rstan` inference on our fitted model. Let's look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean to 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to obtain the annualized rate).
 
-```{r, fig.width=8, fig.height=8}
+```{r HOMO-2, fig.width=8, fig.height=8}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit,
@@ -246,7 +246,7 @@ rstan::plot(stanfit,
 
 We can also look at the model forecasts directly with `rstan`. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate and compare them with the actual values.
 
-```{r, fig.width=8, fig.height=8}
+```{r HOMO-3, fig.width=8, fig.height=8}
 (Villani2009[103:104,6]) #true values
 
 rstan::plot(stanfit,
@@ -259,7 +259,7 @@ rstan::plot(stanfit,
 So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
-```{r}
+```{r HOMO-4}
 fcst <- forecast(bvar_obj,
                  ci = 0.68,
                  fcst_type = "mean",
@@ -283,7 +283,7 @@ conditions <- data.frame(
 
 We then do the conditional forecasting. We again select a 68\% CI and the mean of the predictive distribution as the point forecast.
 
-```{r}
+```{r HOMO-5}
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   ci=0.68,
@@ -295,7 +295,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to forecasting, we can choose either the mean or the median (the default is the median), and we can also transform the IRFs for the quarter-on-quarter growth rate variables to the annual/yearly scale.
 
-```{r, fig.width=8, fig.height=8}
+```{r HOMO-6, fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
 
 irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=4)

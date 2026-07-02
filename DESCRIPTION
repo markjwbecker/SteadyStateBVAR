@@ -3,23 +3,27 @@ Title: Bayesian Vector Autoregression Models with Steady-State Priors
 Version: 0.0.0.9000
 Authors@R:
     person("Mark", "Becker", email = "mark.jw.becker@gmail.com", role = c("aut", "cre", "cph"))
-Description: Provides estimation of Bayesian Vector Autoregression ('BVAR') models
-    with steady-state priors via 'Stan', along with functions for unconditional and conditional forecasting,
-    and impulse response analysis. For more details on the steady-state BVAR model see Villani (2009) <doi:10.1002/jae.1065>.
-Encoding: UTF-8
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 8.0.0
+Description: Provides estimation of Bayesian Vector Autoregression
+    ('BVAR') models with steady-state priors via 'Stan', along with
+    functions for unconditional and conditional forecasting, and impulse
+    response analysis.  For more details on the steady-state BVAR model
+    see Villani (2009) <doi:10.1002/jae.1065>.
+License: MIT + file LICENSE
+URL: https://github.com/markjwbecker/SteadyStateBVAR,
+    https://markjwbecker.github.io/SteadyStateBVAR/
 Depends:
     R (>= 3.6.0)
 Imports:
     MTS (>= 1.2.1),
     rstan (>= 2.32.7)
-LazyData: true
-URL: https://github.com/markjwbecker/SteadyStateBVAR, https://markjwbecker.github.io/SteadyStateBVAR/
-License: MIT + file LICENSE
 Suggests: 
     knitr,
     rmarkdown,
     testthat (>= 3.0.0)
+VignetteBuilder: 
+    knitr
 Config/testthat/edition: 3
-VignetteBuilder: knitr
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 8.0.0
