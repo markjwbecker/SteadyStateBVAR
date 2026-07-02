@@ -111,9 +111,7 @@ correctly.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">102</span>, <span class="op">]</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/start.html" class="external-link">start</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span>, frequency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">plot.ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span></span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-2-1.png" alt="plot of chunk unnamed-chunk-2"><div class="figcaption">plot of chunk unnamed-chunk-2</div>
-</div>
+<p><img src="figure/HOMO-1-1.png"></p>
 <p>Also, let us create the bvar object which we will use throughout
 here.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -358,33 +356,33 @@ d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 &amp; 0 \end{pmatrix}
 <span><span class="co">#&gt; --------------------------------------------------------------------------------              </span></span>
 <span><span class="co">#&gt;                delta y_f  pi_f   i_f delta y    pi     i     q</span></span>
 <span><span class="co">#&gt;   delta y_f.l1      0.18  0.03 -0.01    0.12  0.07 -0.12  0.00</span></span>
-<span><span class="co">#&gt;   pi_f.l1          -0.02  0.31  0.25    0.12 -0.08  0.01  0.00</span></span>
+<span><span class="co">#&gt;   pi_f.l1          -0.02  0.32  0.25    0.12 -0.07  0.01  0.00</span></span>
 <span><span class="co">#&gt;   i_f.l1           -0.01  0.04  0.92   -0.04  0.06  0.05  0.00</span></span>
 <span><span class="co">#&gt;   delta y.l1        0.00  0.00  0.00    0.23 -0.09 -0.10  0.00</span></span>
 <span><span class="co">#&gt;   pi.l1             0.00  0.00  0.00    0.00  0.08  0.06  0.00</span></span>
 <span><span class="co">#&gt;   i.l1              0.00  0.00  0.00    0.00  0.02  0.76  0.00</span></span>
-<span><span class="co">#&gt;   q.l1              0.00  0.00  0.00    1.23  3.93  0.73  0.93</span></span>
-<span><span class="co">#&gt;   delta y_f.l2      0.03 -0.01  0.09    0.02 -0.02  0.09  0.00</span></span>
+<span><span class="co">#&gt;   q.l1              0.00  0.00  0.00    1.20  3.96  0.76  0.93</span></span>
+<span><span class="co">#&gt;   delta y_f.l2      0.03 -0.01  0.09    0.02 -0.02  0.10  0.00</span></span>
 <span><span class="co">#&gt;   pi_f.l2           0.01  0.02  0.04    0.00 -0.03 -0.15  0.00</span></span>
 <span><span class="co">#&gt;   i_f.l2           -0.02 -0.01 -0.01    0.00  0.04  0.07  0.00</span></span>
 <span><span class="co">#&gt;   delta y.l2        0.00  0.00  0.00    0.11 -0.01  0.15  0.00</span></span>
 <span><span class="co">#&gt;   pi.l2             0.00  0.00  0.00    0.01 -0.04 -0.05  0.00</span></span>
 <span><span class="co">#&gt;   i.l2              0.00  0.00  0.00   -0.01  0.01  0.04  0.00</span></span>
-<span><span class="co">#&gt;   q.l2              0.00  0.00  0.00    0.55 -0.37  0.31 -0.04</span></span>
+<span><span class="co">#&gt;   q.l2              0.00  0.00  0.00    0.56 -0.38  0.28 -0.04</span></span>
 <span><span class="co">#&gt;   delta y_f.l3      0.01 -0.01  0.00    0.02 -0.01  0.00  0.00</span></span>
 <span><span class="co">#&gt;   pi_f.l3          -0.02  0.06 -0.01    0.00  0.08  0.03  0.00</span></span>
 <span><span class="co">#&gt;   i_f.l3            0.00  0.00  0.02    0.00  0.00  0.03  0.00</span></span>
 <span><span class="co">#&gt;   delta y.l3        0.00  0.00  0.00    0.06  0.01 -0.02  0.00</span></span>
 <span><span class="co">#&gt;   pi.l3             0.00  0.00  0.00    0.00  0.02 -0.02  0.00</span></span>
-<span><span class="co">#&gt;   i.l3              0.00  0.00  0.00    0.01  0.00  0.00  0.00</span></span>
-<span><span class="co">#&gt;   q.l3              0.00  0.00  0.00   -0.15 -0.01 -0.59  0.00</span></span>
-<span><span class="co">#&gt;   delta y_f.l4      0.03 -0.01  0.00   -0.01  0.02  0.02  0.00</span></span>
-<span><span class="co">#&gt;   pi_f.l4           0.00  0.16 -0.03    0.00  0.01  0.01  0.00</span></span>
+<span><span class="co">#&gt;   i.l3              0.00  0.00  0.00    0.01  0.00  0.01  0.00</span></span>
+<span><span class="co">#&gt;   q.l3              0.00  0.00  0.00   -0.14 -0.01 -0.58  0.00</span></span>
+<span><span class="co">#&gt;   delta y_f.l4      0.03 -0.01  0.00   -0.01  0.03  0.02  0.00</span></span>
+<span><span class="co">#&gt;   pi_f.l4           0.00  0.16 -0.03    0.00  0.01  0.02  0.00</span></span>
 <span><span class="co">#&gt;   i_f.l4            0.00  0.00 -0.02    0.00  0.00  0.03  0.00</span></span>
 <span><span class="co">#&gt;   delta y.l4        0.00  0.00  0.00   -0.08  0.01  0.03  0.00</span></span>
 <span><span class="co">#&gt;   pi.l4             0.00  0.00  0.00    0.00  0.06 -0.01  0.00</span></span>
 <span><span class="co">#&gt;   i.l4              0.00  0.00  0.00    0.00 -0.01  0.00  0.00</span></span>
-<span><span class="co">#&gt;   q.l4              0.00  0.00  0.00   -0.15 -0.07 -0.18 -0.01</span></span>
+<span><span class="co">#&gt;   q.l4              0.00  0.00  0.00   -0.14 -0.07 -0.17 -0.01</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -393,10 +391,10 @@ d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 &amp; 0 \end{pmatrix}
 <span><span class="co">#&gt;             [,1]  [,2]</span></span>
 <span><span class="co">#&gt;   delta y_f 0.58  0.08</span></span>
 <span><span class="co">#&gt;   pi_f      0.50  0.46</span></span>
-<span><span class="co">#&gt;   i_f       4.95  2.01</span></span>
-<span><span class="co">#&gt;   delta y   0.58 -0.04</span></span>
+<span><span class="co">#&gt;   i_f       4.95  2.02</span></span>
+<span><span class="co">#&gt;   delta y   0.58 -0.03</span></span>
 <span><span class="co">#&gt;   pi        0.49  1.15</span></span>
-<span><span class="co">#&gt;   i         4.29  4.45</span></span>
+<span><span class="co">#&gt;   i         4.29  4.47</span></span>
 <span><span class="co">#&gt;   q         3.92 -0.10</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -405,10 +403,10 @@ d_{T+1}'=\ldots=d_{T+H}'=\begin{pmatrix} 1 &amp; 0 \end{pmatrix}
 <span><span class="co">#&gt; --------------------------------------------------------------------------------           </span></span>
 <span><span class="co">#&gt;             delta y_f  pi_f  i_f delta y    pi     i     q</span></span>
 <span><span class="co">#&gt;   delta y_f      0.15 -0.01 0.01    0.07 -0.01  0.00  0.00</span></span>
-<span><span class="co">#&gt;   pi_f          -0.01  0.09 0.05    0.01  0.12  0.04  0.00</span></span>
+<span><span class="co">#&gt;   pi_f          -0.01  0.09 0.05    0.01  0.13  0.04  0.00</span></span>
 <span><span class="co">#&gt;   i_f            0.01  0.05 0.52    0.01  0.18  0.11  0.00</span></span>
 <span><span class="co">#&gt;   delta y        0.07  0.01 0.01    0.19 -0.05 -0.01  0.00</span></span>
-<span><span class="co">#&gt;   pi            -0.01  0.12 0.18   -0.05  0.59  0.11  0.00</span></span>
+<span><span class="co">#&gt;   pi            -0.01  0.13 0.18   -0.05  0.59  0.11  0.00</span></span>
 <span><span class="co">#&gt;   i              0.00  0.04 0.11   -0.01  0.11  1.56 -0.01</span></span>
 <span><span class="co">#&gt;   q              0.00  0.00 0.00    0.00  0.00 -0.01  0.00</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span></code></pre></div>
@@ -429,9 +427,7 @@ annualized rate).</p>
 <span>            pars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"beta[6,6]"</span>, <span class="st">"Psi[5,1]"</span><span class="op">)</span>,</span>
 <span>            plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-14-1.png" alt="plot of chunk unnamed-chunk-14"><div class="figcaption">plot of chunk unnamed-chunk-14</div>
-</div>
+<p><img src="figure/HOMO-2-1.png"></p>
 <p>We can also look at the model forecasts directly with
 <code>rstan</code>. Remember that we left out the last two
 observations/quarters, so let us look at our forecasts of the domestic
@@ -447,9 +443,7 @@ interest rate and compare them with the actual values.</p>
 <span>            fill_color <span class="op">=</span> <span class="st">"blue"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; ci_level: 0.68 (68% intervals)</span></span>
 <span><span class="co">#&gt; outer_level: 0.95 (95% intervals)</span></span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-15-1.png" alt="plot of chunk unnamed-chunk-15"><div class="figcaption">plot of chunk unnamed-chunk-15</div>
-</div>
+<p><img src="figure/HOMO-3-1.png"></p>
 <p>So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
 historical data. We will choose a 68% prediction interval and the mean
@@ -466,7 +460,7 @@ fourth differences.</p>
 <span>                 fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                 growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span>,</span>
 <span>                 plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-16-1.png" alt="plot of chunk unnamed-chunk-16"><img src="figure/unnamed-chunk-16-2.png" alt="plot of chunk unnamed-chunk-16"><img src="figure/unnamed-chunk-16-3.png" alt="plot of chunk unnamed-chunk-16"></p>
+<p><img src="figure/HOMO-4-1.png"><img src="figure/HOMO-4-2.png"><img src="figure/HOMO-4-3.png"></p>
 <p>We can also perform conditional forecasting by following Algorithm
 3.3.1 in Dieppe, Legrand, and van Roye (2016). Note that for the
 structural shocks, identification is based on the Cholesky
@@ -494,7 +488,7 @@ the mean of the predictive distribution as the point forecast.</p>
 <span>                                  fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                                  plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>,</span>
 <span>                                  growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/unnamed-chunk-18-1.png" alt="plot of chunk unnamed-chunk-18"><img src="figure/unnamed-chunk-18-2.png" alt="plot of chunk unnamed-chunk-18"></p>
+<p><img src="figure/HOMO-5-1.png"><img src="figure/HOMO-5-2.png"></p>
 <p>Now for some impulse response analysis. We can choose between the
 orthogonalized impulse response function (OIRF) and the generalized
 impulse response function (GIRF). Similar to forecasting, we can choose
@@ -508,9 +502,7 @@ to the annual/yearly scale.</p>
 <span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">4</span>,shock<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"GIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span>
 <span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">5</span>,shock<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"OIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span>
 <span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">5</span>,shock<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"GIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
-<div class="float">
-<img src="figure/unnamed-chunk-19-1.png" alt="plot of chunk unnamed-chunk-19"><div class="figcaption">plot of chunk unnamed-chunk-19</div>
-</div>
+<p><img src="figure/HOMO-6-1.png"></p>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>

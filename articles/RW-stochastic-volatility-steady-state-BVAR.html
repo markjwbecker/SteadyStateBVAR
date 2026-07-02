@@ -98,9 +98,7 @@ r_t
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"KoopKorobilis2010"</span><span class="op">)</span></span>
 <span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="va">KoopKorobilis2010</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">plot.ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span></span></code></pre></div>
-<div class="float">
-<img src="figure/RW-1-1.png" alt="plot of chunk RW-1"><div class="figcaption">plot of chunk RW-1</div>
-</div>
+<p><img src="figure/RW-1-1.png"></p>
 <p>Let’s create the bvar object which we will use throughout here.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">yt</span><span class="op">)</span></span></code></pre></div>
@@ -252,22 +250,20 @@ tweak <code>max_treedepth</code> and <code>adapt_delta</code>.</p>
 <p>We can forecast</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.68</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/RW-2-1.png" alt="plot of chunk RW-2"><img src="figure/RW-2-2.png" alt="plot of chunk RW-2"><img src="figure/RW-2-3.png" alt="plot of chunk RW-2"></p>
+<p><img src="figure/RW-2-1.png"><img src="figure/RW-2-2.png"><img src="figure/RW-2-3.png"></p>
 <p>Let us plot the log volatility estimates and predictions</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, vol <span class="op">=</span> <span class="st">"log_lambda"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/RW-3-1.png" alt="plot of chunk RW-3"><img src="figure/RW-3-2.png" alt="plot of chunk RW-3"><img src="figure/RW-3-3.png" alt="plot of chunk RW-3"></p>
+<p><img src="figure/RW-3-1.png"><img src="figure/RW-3-2.png"><img src="figure/RW-3-3.png"></p>
 <p>Let us plot the estimates and predictions of the implied innovation
 standard deviations</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, vol <span class="op">=</span> <span class="st">"sd"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="figure/RW-4-1.png" alt="plot of chunk RW-4"><img src="figure/RW-4-2.png" alt="plot of chunk RW-4"><img src="figure/RW-4-3.png" alt="plot of chunk RW-4"></p>
+<p><img src="figure/RW-4-1.png"><img src="figure/RW-4-2.png"><img src="figure/RW-4-3.png"></p>
 <p>We can also produce orthogonalized IRFs</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>, method <span class="op">=</span> <span class="st">"OIRF"</span>, t<span class="op">=</span><span class="fl">215</span>, ci<span class="op">=</span><span class="fl">0.68</span><span class="op">)</span> <span class="co">#latest t</span></span></code></pre></div>
-<div class="float">
-<img src="figure/RW-5-1.png" alt="plot of chunk RW-5"><div class="figcaption">plot of chunk RW-5</div>
-</div>
+<p><img src="figure/RW-5-1.png"></p>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>

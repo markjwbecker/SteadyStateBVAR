@@ -25,9 +25,7 @@ yt <- KoopKorobilis2010
 plot.ts(yt)
 ```
 
-![plot of chunk RW-1](figure/RW-1-1.png)
-
-plot of chunk RW-1
+![](figure/RW-1-1.png)
 
 Let’s create the bvar object which we will use throughout here.
 
@@ -221,8 +219,7 @@ We can forecast
 forecast(bvar_obj, ci = 0.68, show_all = TRUE)
 ```
 
-![plot of chunk RW-2](figure/RW-2-1.png)![plot of chunk
-RW-2](figure/RW-2-2.png)![plot of chunk RW-2](figure/RW-2-3.png)
+![](figure/RW-2-1.png)![](figure/RW-2-2.png)![](figure/RW-2-3.png)
 
 Let us plot the log volatility estimates and predictions
 
@@ -231,8 +228,7 @@ Let us plot the log volatility estimates and predictions
 stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
 ```
 
-![plot of chunk RW-3](figure/RW-3-1.png)![plot of chunk
-RW-3](figure/RW-3-2.png)![plot of chunk RW-3](figure/RW-3-3.png)
+![](figure/RW-3-1.png)![](figure/RW-3-2.png)![](figure/RW-3-3.png)
 
 Let us plot the estimates and predictions of the implied innovation
 standard deviations
@@ -242,8 +238,7 @@ standard deviations
 stochastic_volatility_plot(bvar_obj, vol = "sd")
 ```
 
-![plot of chunk RW-4](figure/RW-4-1.png)![plot of chunk
-RW-4](figure/RW-4-2.png)![plot of chunk RW-4](figure/RW-4-3.png)
+![](figure/RW-4-1.png)![](figure/RW-4-2.png)![](figure/RW-4-3.png)
 
 We can also produce orthogonalized IRFs
 
@@ -252,9 +247,7 @@ We can also produce orthogonalized IRFs
 IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 ```
 
-![plot of chunk RW-5](figure/RW-5-1.png)
-
-plot of chunk RW-5
+![](figure/RW-5-1.png)
 
 ## References
 
