@@ -74,7 +74,7 @@ Invisibly returns a list with three arrays: the point estimate IRF,
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 #homoscedastic with Jeffreys prior
 yt <- matrix(rnorm(50), 25, 2)
 
@@ -103,7 +103,9 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 verbose = FALSE,
                 auto_write = FALSE)
+#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
                 
 IRF(bvar_obj)
-} # }
+#> Error: unable to find an inherited method for function ‘extract’ for signature ‘object = "NULL"’
+# }
 ```

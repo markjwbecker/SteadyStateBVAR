@@ -69,7 +69,7 @@ Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 #homoscedastic with Jeffreys prior
 yt <- matrix(rnorm(50), 25, 2)
 
@@ -98,6 +98,7 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 verbose = FALSE,
                 auto_write = FALSE)
+#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
                 
 conditions <- data.frame(var = rep(2,8),
                          horizon = rep(1:8),
@@ -107,5 +108,6 @@ cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   ci=0.68,
                                   fcst_type = "mean")
-} # }
+#> Error: unable to find an inherited method for function ‘extract’ for signature ‘object = "NULL"’
+# }
 ```

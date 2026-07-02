@@ -165,7 +165,7 @@ the contemporaneous interaction of the endogenous variables</p></li>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">#homoscedastic with Jeffreys prior</span></span></span>
 <span class="r-in"><span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span>, <span class="fl">25</span>, <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -192,6 +192,7 @@ the contemporaneous interaction of the endogenous variables</p></li>
 <span class="r-in"><span>                warmup <span class="op">=</span> <span class="fl">50</span>,</span></span>
 <span class="r-in"><span>                chains <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose):</span> Boost not found; call install.packages('BH')</span>
 <span class="r-in"><span>                   </span></span>
 <span class="r-in"><span><span class="co">#RW stochastic volatility</span></span></span>
 <span class="r-in"><span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span>, <span class="fl">25</span>, <span class="fl">2</span><span class="op">)</span></span></span>
@@ -232,6 +233,7 @@ the contemporaneous interaction of the endogenous variables</p></li>
 <span class="r-in"><span>                cores <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>max_treedepth <span class="op">=</span> <span class="fl">12</span>, adapt_delta <span class="op">=</span> <span class="fl">0.85</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                <span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose):</span> Boost not found; call install.packages('BH')</span>
 <span class="r-in"><span>                   </span></span>
 <span class="r-in"><span><span class="co">#AR1 stochastic volatility</span></span></span>
 <span class="r-in"><span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">50</span><span class="op">)</span>, <span class="fl">25</span>, <span class="fl">2</span><span class="op">)</span></span></span>
@@ -277,7 +279,8 @@ the contemporaneous interaction of the endogenous variables</p></li>
 <span class="r-in"><span>                cores <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                control <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>max_treedepth <span class="op">=</span> <span class="fl">12</span>, adapt_delta <span class="op">=</span> <span class="fl">0.85</span><span class="op">)</span></span></span>
 <span class="r-in"><span>                <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose):</span> Boost not found; call install.packages('BH')</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

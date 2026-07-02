@@ -143,7 +143,7 @@ for details):
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 #homoscedastic with Jeffreys prior
 yt <- matrix(rnorm(50), 25, 2)
 
@@ -170,6 +170,7 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
+#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
                    
 #RW stochastic volatility
 yt <- matrix(rnorm(50), 25, 2)
@@ -210,6 +211,7 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
+#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
                    
 #AR1 stochastic volatility
 yt <- matrix(rnorm(50), 25, 2)
@@ -255,5 +257,6 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
-} # }
+#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
+# }
 ```

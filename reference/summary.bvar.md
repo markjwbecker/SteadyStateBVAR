@@ -76,7 +76,7 @@ The function summarises the following estimated parameters:
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 yt <- matrix(rnorm(50), 25, 2)
 bvar_obj <- bvar(data = yt)
 bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
@@ -93,7 +93,9 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 verbose = FALSE,
                 auto_write = FALSE)
+#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
 
 summary(bvar_obj)
-} # }
+#> Error in summary.bvar(bvar_obj): object must be passed through fit() first
+# }
 ```

@@ -94,7 +94,7 @@ forecast horizon.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 yt <- matrix(rnorm(50), 25, 2)
 
 bvar_obj <- bvar(data = yt)
@@ -129,7 +129,9 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 verbose = FALSE,
                 auto_write = FALSE)
+#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
 
 stochastic_volatility_plot(bvar_obj, ci = 0.95)
-} # }
+#> Error: unable to find an inherited method for function ‘extract’ for signature ‘object = "NULL"’
+# }
 ```
