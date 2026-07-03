@@ -4,18 +4,7 @@
 \alias{fit}
 \title{Estimate the steady-state BVAR model using Stan}
 \usage{
-fit(
-  x,
-  H = 1,
-  d_pred = NULL,
-  iter = 2000,
-  warmup = floor(iter/2),
-  chains = 1,
-  cores = getOption("mc.cores", 1L),
-  verbose = FALSE,
-  auto_write = FALSE,
-  ...
-)
+fit(x, H = 1, d_pred = NULL, ...)
 }
 \arguments{
 \item{x}{A steady-state \code{bvar} object that has been passed through
@@ -26,33 +15,13 @@ Default is \code{1}.}
 
 \item{d_pred}{Matrix of size H x q. Future values of the deterministic variables d_t. Default is \code{NULL}, must be provided by the user.}
 
-\item{iter}{Integer. Total number of MCMC iterations per chain. Default is \code{2000}.}
-
-\item{warmup}{Integer. Number of warmup (burn-in) iterations per chain.
-Default is \code{floor(iter/2)}.}
-
-\item{chains}{Integer. Number of MCMC chains. Default is \code{1}.}
-
-\item{cores}{Positive integer specifying the number of CPU cores used for
-sampling. Default is \code{getOption("mc.cores", 1L)}, i.e. the \code{mc.cores}
-option (if it has been set), otherwise defaults to \code{1} core.}
-
-\item{verbose}{Logical indicating whether to print intermediate output from Stan on the console,
-defaults to \code{FALSE}.}
-
-\item{auto_write}{Logical indicating whether compiled Stan models should be
-automatically written to the hard disk via \code{rstan}. Default is \code{FALSE}.}
-
-\item{...}{Additional arguments passed directly to \code{\link[rstan]{stan}}
-(e.g. \code{control}, \code{seed}, \code{init}, \code{thin}, \code{algorithm},
-\code{pars}, \code{include}, \code{refresh}, \code{save_warmup},
-\code{sample_file}, \code{diagnostic_file}). Note that \code{file}, \code{data},
-\code{iter}, \code{warmup}, \code{chains}, and \code{verbose} are already
-controlled by \code{fit()} and cannot be passed here; \code{cores} and
-\code{auto_write} should be passed as named arguments of \code{fit()} rather
-than through \code{...}. If \code{pars}/\code{include} is used to exclude
-model parameters required by \code{fit()} for posterior summaries, an error
-will be raised.}
+\item{...}{Additional arguments passed directly to \code{\link[rstan]{sampling}}
+(e.g. \code{iter}, \code{warmup}, \code{chains}, \code{cores}, \code{control},
+\code{seed}, \code{init}, \code{thin}, \code{algorithm}, \code{pars},
+\code{include}, \code{refresh}, \code{verbose}, \code{save_warmup},
+\code{sample_file}, \code{diagnostic_file}). If \code{pars}/\code{include} is
+used to exclude model parameters required by \code{fit()} for posterior
+summaries, an error will be raised.}
 }
 \value{
 A fitted steady-state \code{bvar} object with:
@@ -63,21 +32,21 @@ A fitted steady-state \code{bvar} object with:
 }
 }
 \description{
-Estimates the steady-state BVAR model using the  No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
+Estimates the steady-state BVAR model using the No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
 Uses the data, setup, and priors stored in the steady-state \code{bvar} object. Supports both
 homoscedastic and stochastic volatility (RW or AR1) specifications.
 }
 \details{
-The function selects the appropriate Stan model based on prior settings:
+The function selects the appropriate precompiled Stan model based on prior settings:
 \itemize{
 \item Homoscedastic with Jeffreys prior:
-\code{steady_state_bvar_homoscedastic_jeffreys_prior.stan}
+\code{steady_state_bvar_homoscedastic_jeffreys_prior}
 \item Homoscedastic with uninformative inverse-Wishart prior:
-\code{steady_state_bvar_homoscedastic_inverse_wishart_prior.stan}
+\code{steady_state_bvar_homoscedastic_inverse_wishart_prior}
 \item Random Walk stochastic volatility:
-\code{steady_state_bvar_RW_stochastic_volatility.stan}
+\code{steady_state_bvar_RW_stochastic_volatility}
 \item AR1 stochastic volatility:
-\code{steady_state_bvar_AR1_stochastic_volatility.stan}
+\code{steady_state_bvar_AR1_stochastic_volatility}
 }
 The function estimates the following parameters (see \link{bvar} for details):
 \itemize{
@@ -121,7 +90,7 @@ bvar_obj <- priors(bvar_obj,
                    SV = FALSE,
                    SV_type = NULL,
                    SV_priors = NULL)
-                   
+
 bvar_obj <- fit(bvar_obj,
                 H = 8,
                 d_pred = matrix(rep(1,8)),
@@ -129,7 +98,7 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
-                   
+
 #RW stochastic volatility
 yt <- matrix(rnorm(50), 25, 2)
 
@@ -169,7 +138,7 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
-                   
+
 #AR1 stochastic volatility
 yt <- matrix(rnorm(50), 25, 2)
 
@@ -203,7 +172,6 @@ bvar_obj <- priors(bvar_obj,
                    SV = TRUE,
                    SV_type = "AR1",
                    SV_priors = SV_priors_AR)
-
 
 bvar_obj <- fit(bvar_obj,
                 H = 8,

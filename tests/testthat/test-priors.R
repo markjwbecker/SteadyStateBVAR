@@ -12,7 +12,7 @@ test_that("priors requires setup to be run first", {
 test_that("priors validates lambda parameters are positive", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   expect_error(priors(model, lambda_1 = -0.1), "must be positive")
   expect_error(priors(model, lambda_2 = 0), "must be positive")
@@ -22,7 +22,7 @@ test_that("priors validates lambda parameters are positive", {
 test_that("priors validates first_own_lag_prior_mean length", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   expect_error(
     priors(model, first_own_lag_prior_mean = c(1,2)),
@@ -33,7 +33,7 @@ test_that("priors validates first_own_lag_prior_mean length", {
 test_that("priors validates theta_Psi and Omega_Psi dimensions match", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   expect_error(
     priors(model, theta_Psi = c(1,2,3), Omega_Psi = diag(2)),
@@ -44,7 +44,7 @@ test_that("priors validates theta_Psi and Omega_Psi dimensions match", {
 test_that("priors default behavior", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   result <- priors(model)
   
@@ -55,7 +55,7 @@ test_that("priors default behavior", {
 test_that("theta_beta structure correct", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   result <- priors(model)
   
@@ -65,7 +65,7 @@ test_that("theta_beta structure correct", {
 test_that("Omega_beta structure correct", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   result <- priors(model)
   
@@ -75,7 +75,7 @@ test_that("Omega_beta structure correct", {
 test_that("Sigma_AR computed", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   result <- priors(model)
   
@@ -85,7 +85,7 @@ test_that("Sigma_AR computed", {
 test_that("Jeffrey FALSE adds hyperparameters", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   r1 <- priors(model, Jeffrey = TRUE)
   r2 <- priors(model, Jeffrey = FALSE)
@@ -97,7 +97,7 @@ test_that("Jeffrey FALSE adds hyperparameters", {
 test_that("SV requires SV_priors", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   expect_error(
     priors(model, SV = TRUE, SV_type = "AR1"),
@@ -108,7 +108,7 @@ test_that("SV requires SV_priors", {
 test_that("RW SV_priors validates required names", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -128,7 +128,7 @@ test_that("RW SV_priors validates required names", {
 test_that("RW SV_priors validates theta_A length", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -151,7 +151,7 @@ test_that("RW SV_priors validates theta_A length", {
 test_that("RW SV_priors validates Omega_A dimensions", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -174,7 +174,7 @@ test_that("RW SV_priors validates Omega_A dimensions", {
 test_that("RW SV_priors validates sigma2_log_lambda_0 positivity", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -197,7 +197,7 @@ test_that("RW SV_priors validates sigma2_log_lambda_0 positivity", {
 test_that("RW SV_priors validates alpha_phi positivity", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -220,7 +220,7 @@ test_that("RW SV_priors validates alpha_phi positivity", {
 test_that("RW SV_priors validates beta_phi positivity", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -243,7 +243,7 @@ test_that("RW SV_priors validates beta_phi positivity", {
 test_that("RW SV attaches correctly with valid priors", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -267,7 +267,7 @@ test_that("RW SV attaches correctly with valid priors", {
 test_that("AR1 SV_priors validates required names", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -287,7 +287,7 @@ test_that("AR1 SV_priors validates required names", {
 test_that("AR1 SV_priors validates Omega_gamma_0 dimensions", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -314,7 +314,7 @@ test_that("AR1 SV_priors validates Omega_gamma_0 dimensions", {
 test_that("AR1 SV_priors validates m_0 >= k", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -341,7 +341,7 @@ test_that("AR1 SV_priors validates m_0 >= k", {
 test_that("AR1 SV_priors validates V_0 dimensions", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -368,7 +368,7 @@ test_that("AR1 SV_priors validates V_0 dimensions", {
 test_that("AR1 SV attaches correctly with valid priors", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   k <- model$setup$k
   n_free <- model$setup$n_free_params_A
@@ -396,7 +396,7 @@ test_that("AR1 SV attaches correctly with valid priors", {
 test_that("SV_type must be RW or AR1", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
-  model <- setup(model, p = 2, deterministic = "constant")
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
   expect_error(
     priors(model, SV = TRUE, SV_type = "invalid", SV_priors = list()),

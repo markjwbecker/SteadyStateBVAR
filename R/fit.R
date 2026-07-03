@@ -1,36 +1,21 @@
 #' Estimate the steady-state BVAR model using Stan
 #'
-#' Estimates the steady-state BVAR model using the  No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
+#' Estimates the steady-state BVAR model using the No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
 #' Uses the data, setup, and priors stored in the steady-state \code{bvar} object. Supports both
 #' homoscedastic and stochastic volatility (RW or AR1) specifications.
-#'
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through
 #'   \code{\link{setup}} and \code{\link{priors}}.
 #' @param H Positive Integer. Forecast horizon.
 #'   Default is \code{1}.
 #' @param d_pred Matrix of size H x q. Future values of the deterministic variables d_t. Default is \code{NULL}, must be provided by the user.
-#' @param iter Integer. Total number of MCMC iterations per chain. Default is \code{2000}.
-#' @param warmup Integer. Number of warmup (burn-in) iterations per chain.
-#'   Default is \code{floor(iter/2)}.
-#' @param chains Integer. Number of MCMC chains. Default is \code{1}.
-#' @param cores Positive integer specifying the number of CPU cores used for
-#' sampling. Default is \code{getOption("mc.cores", 1L)}, i.e. the \code{mc.cores}
-#' option (if it has been set), otherwise defaults to \code{1} core.
-#' @param verbose Logical indicating whether to print intermediate output from Stan on the console,
-#' defaults to \code{FALSE}.
-#' @param auto_write Logical indicating whether compiled Stan models should be
-#' automatically written to the hard disk via \code{rstan}. Default is \code{FALSE}.
-#' @param ... Additional arguments passed directly to \code{\link[rstan]{stan}}
-#' (e.g. \code{control}, \code{seed}, \code{init}, \code{thin}, \code{algorithm},
-#' \code{pars}, \code{include}, \code{refresh}, \code{save_warmup},
-#' \code{sample_file}, \code{diagnostic_file}). Note that \code{file}, \code{data},
-#' \code{iter}, \code{warmup}, \code{chains}, and \code{verbose} are already
-#' controlled by \code{fit()} and cannot be passed here; \code{cores} and
-#' \code{auto_write} should be passed as named arguments of \code{fit()} rather
-#' than through \code{...}. If \code{pars}/\code{include} is used to exclude
-#' model parameters required by \code{fit()} for posterior summaries, an error
-#' will be raised.
+#' @param ... Additional arguments passed directly to \code{\link[rstan]{sampling}}
+#' (e.g. \code{iter}, \code{warmup}, \code{chains}, \code{cores}, \code{control},
+#' \code{seed}, \code{init}, \code{thin}, \code{algorithm}, \code{pars},
+#' \code{include}, \code{refresh}, \code{verbose}, \code{save_warmup},
+#' \code{sample_file}, \code{diagnostic_file}). If \code{pars}/\code{include} is
+#' used to exclude model parameters required by \code{fit()} for posterior
+#' summaries, an error will be raised.
 #'
 #' @return A fitted steady-state \code{bvar} object with:
 #' \itemize{
@@ -40,16 +25,16 @@
 #' }
 #'
 #' @details
-#' The function selects the appropriate Stan model based on prior settings:
+#' The function selects the appropriate precompiled Stan model based on prior settings:
 #' \itemize{
 #'   \item Homoscedastic with Jeffreys prior:
-#'     \code{steady_state_bvar_homoscedastic_jeffreys_prior.stan}
+#'     \code{steady_state_bvar_homoscedastic_jeffreys_prior}
 #'   \item Homoscedastic with uninformative inverse-Wishart prior:
-#'     \code{steady_state_bvar_homoscedastic_inverse_wishart_prior.stan}
+#'     \code{steady_state_bvar_homoscedastic_inverse_wishart_prior}
 #'   \item Random Walk stochastic volatility:
-#'     \code{steady_state_bvar_RW_stochastic_volatility.stan}
+#'     \code{steady_state_bvar_RW_stochastic_volatility}
 #'   \item AR1 stochastic volatility:
-#'     \code{steady_state_bvar_AR1_stochastic_volatility.stan}
+#'     \code{steady_state_bvar_AR1_stochastic_volatility}
 #' }
 #' The function estimates the following parameters (see \link{bvar} for details):
 #' \itemize{
@@ -57,11 +42,11 @@
 #'       \item \code{Psi}: k×q steady-state parameter matrix
 #'       \item \code{Sigma_u}: innovation covariance matrix (k×k for homoscedastic,
 #'         T×k×k for stochastic volatility)
-#'       \item If Random Walk stochastic volatility: 
+#'       \item If Random Walk stochastic volatility:
 #'        \itemize{
 #'        \item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
 #'         the contemporaneous interaction of the endogenous variables
-#'        \item \code{phi}: k-dimensional vector of log volatility innovation variances 
+#'        \item \code{phi}: k-dimensional vector of log volatility innovation variances
 #'        }
 #'       \item If AR1 stochastic volatility:
 #'        \itemize{
@@ -72,7 +57,6 @@
 #'         \item \code{Phi}: k×k log volatility innovation covariance matrix
 #'        }
 #'     }
-#'
 #'
 #' @export
 #' @examples
@@ -95,7 +79,7 @@
 #'                    SV = FALSE,
 #'                    SV_type = NULL,
 #'                    SV_priors = NULL)
-#'                    
+#'
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
 #'                 d_pred = matrix(rep(1,8)),
@@ -103,17 +87,17 @@
 #'                 warmup = 50,
 #'                 chains = 1,
 #'                 cores = 1)
-#'                    
+#'
 #' #RW stochastic volatility
 #' yt <- matrix(rnorm(50), 25, 2)
 #'
 #' bvar_obj <- bvar(data = yt)
 #'
 #' bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
-#' 
+#'
 #' k <- bvar_obj$setup$k
 #' n_free_params_A <- bvar_obj$setup$n_free_params_A
-#' 
+#'
 #' SV_priors_RW <- list(
 #' theta_A             =  rep(0, n_free_params_A),
 #' Omega_A             =  diag(1000, n_free_params_A),
@@ -143,17 +127,17 @@
 #'                 cores = 1,
 #'                 control = list(max_treedepth = 12, adapt_delta = 0.85)
 #'                 )
-#'                    
+#'
 #' #AR1 stochastic volatility
 #' yt <- matrix(rnorm(50), 25, 2)
 #'
 #' bvar_obj <- bvar(data = yt)
 #'
 #' bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
-#' 
+#'
 #' k <- bvar_obj$setup$k
 #' n_free_params_A <- bvar_obj$setup$n_free_params_A
-#' 
+#'
 #' SV_priors_AR <- list(
 #' theta_A            =  rep(0, n_free_params_A),
 #' Omega_A            =  diag(1000, n_free_params_A),
@@ -178,7 +162,6 @@
 #'                    SV_type = "AR1",
 #'                    SV_priors = SV_priors_AR)
 #'
-#'
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
 #'                 d_pred = matrix(rep(1,8)),
@@ -189,87 +172,19 @@
 #'                 control = list(max_treedepth = 12, adapt_delta = 0.85)
 #'                 )
 #' }
-fit <- function(x,
-                H = 1,
-                d_pred = NULL,
-                iter = 2000,
-                warmup = floor(iter/2),
-                chains = 1,
-                cores = getOption("mc.cores", 1L),
-                verbose = FALSE,
-                auto_write = FALSE,
-                ...) {
+fit <- function(x, H = 1, d_pred = NULL, ...) {
   
   if (!inherits(x, "bvar")) stop("must be a 'bvar' object")
   if (is.null(x$setup)) stop("must be passed through setup")
   if (is.null(x$priors)) stop("must be passed through priors")
+  if (is.null(d_pred)) stop("d_pred must be supplied")
   
-  if (is.null(d_pred)) {
-    stop("d_pred must be supplied")
-  }
-  
-  if (!is.logical(verbose) ||
-      length(verbose) != 1 ||
-      is.na(verbose)) {
-    stop("verbose must be TRUE or FALSE")
-  }
-  
-  if (!is.numeric(H) ||
-      length(H) != 1 ||
-      !is.finite(H) ||
-      H < 1 ||
-      H != floor(H)) {
+  if (!is.numeric(H) || length(H) != 1 || !is.finite(H) || H < 1 || H != floor(H)) {
     stop("H must be a positive integer")
   }
-  
-  if (!is.numeric(iter) ||
-      length(iter) != 1 ||
-      !is.finite(iter) ||
-      iter < 1 ||
-      iter != floor(iter)) {
-    stop("iter must be a positive integer")
-  }
-  
-  if (!is.numeric(warmup) ||
-      length(warmup) != 1 ||
-      !is.finite(warmup) ||
-      warmup < 0 ||
-      warmup != floor(warmup)) {
-    stop("warmup must be a non-negative integer")
-  }
-  
-  if (!is.numeric(chains) ||
-      length(chains) != 1 ||
-      !is.finite(chains) ||
-      chains < 1 ||
-      chains != floor(chains)) {
-    stop("chains must be a positive integer")
-  }
-  
-  if (!is.numeric(cores) ||
-      length(cores) != 1 ||
-      !is.finite(cores) ||
-      cores < 1 ||
-      cores != floor(cores)) {
-    stop("cores must be a positive integer")
-  }
-  
-  if (!is.logical(auto_write) ||
-      length(auto_write) != 1 ||
-      is.na(auto_write)) {
-    stop("auto_write must be TRUE or FALSE")
-  }
-  
-  if (!is.matrix(d_pred)) {
-    stop("d_pred must be a matrix")
-  }
-  
-  if (nrow(d_pred) != H) {
-    stop("nrow(d_pred) must equal H")
-  }
-  
-  if (!is.null(x$setup$q) &&
-      ncol(d_pred) != x$setup$q) {
+  if (!is.matrix(d_pred)) stop("d_pred must be a matrix")
+  if (nrow(d_pred) != H) stop("nrow(d_pred) must equal H")
+  if (!is.null(x$setup$q) && ncol(d_pred) != x$setup$q) {
     stop("ncol(d_pred) must equal q")
   }
   
@@ -278,93 +193,33 @@ fit <- function(x,
   
   setup <- x$setup
   priors <- x$priors
-  
   SV <- isTRUE(priors$SV)
   SV_type <- priors$SV_type
   
-  stan_data <- c(
-    setup,
-    list(H = x$predict$H, d_pred = x$predict$d_pred),
-    priors
-  )
+  stan_data <- c(setup, list(H = H, d_pred = d_pred), priors)
   
-  stan_file <- if (isFALSE(priors$Jeffrey)) {
-    system.file("steady_state_bvar_homoscedastic_inverse_wishart_prior.stan", package = "SteadyStateBVAR")
+  model_name <- if (isFALSE(priors$Jeffrey)) {
+    "steady_state_bvar_homoscedastic_inverse_wishart_prior"
   } else {
-    system.file("steady_state_bvar_homoscedastic_jeffreys_prior.stan", package = "SteadyStateBVAR")
+    "steady_state_bvar_homoscedastic_jeffreys_prior"
   }
   
   if (isTRUE(SV)) {
-    
     if (is.null(SV_type)) stop("SV_type missing in priors")
-    
-    if (SV_type == "RW") {
-      stan_file <- system.file(
-        "steady_state_bvar_RW_stochastic_volatility.stan",
-        package = "SteadyStateBVAR"
-      )
+    model_name <- if (SV_type == "RW") {
+      "steady_state_bvar_RW_stochastic_volatility"
     } else if (SV_type == "AR1") {
-      stan_file <- system.file(
-        "steady_state_bvar_AR1_stochastic_volatility.stan",
-        package = "SteadyStateBVAR"
-      )
+      "steady_state_bvar_AR1_stochastic_volatility"
     } else {
       stop("SV_type must be 'RW' or 'AR1'")
     }
-    
     stan_data <- c(priors$SV_priors, stan_data)
-    
     if (setup$k == 2 && !is.null(priors$SV_priors$theta_A)) {
       stan_data$theta_A <- as.array(priors$SV_priors$theta_A[1])
     }
   }
   
-  if (!nzchar(stan_file)) {
-    stop("Stan model file not found in installed package.")
-  }
-  
-  old_mc_cores <- getOption("mc.cores")
-  options(mc.cores = cores)
-  on.exit(options(mc.cores = old_mc_cores), add = TRUE)
-  
-  old_auto_write <- rstan::rstan_options("auto_write")
-  on.exit(rstan::rstan_options(auto_write = old_auto_write), add = TRUE)
-  rstan::rstan_options(auto_write = auto_write)
-  
-  extra_args <- list(...)
-  
-  reserved_stan_args <- c("file", "data", "iter", "warmup", "chains", "verbose")
-  reserved_indirect_args <- c("cores", "auto_write")
-  
-  clashes_direct <- intersect(names(extra_args), reserved_stan_args)
-  if (length(clashes_direct) > 0) {
-    stop(sprintf(
-      "The following arguments are already set internally by fit() and cannot be passed via ...: %s",
-      paste(clashes_direct, collapse = ", ")
-    ))
-  }
-  
-  clashes_indirect <- intersect(names(extra_args), reserved_indirect_args)
-  if (length(clashes_indirect) > 0) {
-    stop(sprintf(
-      "'%s' is a named argument of fit() and is not a valid rstan::stan() parameter -- it should be passed directly to fit(), not via ...",
-      paste(clashes_indirect, collapse = ", ")
-    ))
-  }
-  
-  stan_args <- c(
-    list(
-      file = stan_file,
-      data = stan_data,
-      iter = iter,
-      warmup = warmup,
-      chains = chains,
-      verbose = verbose
-    ),
-    extra_args
-  )
-  
-  x$fit$stan <- do.call(rstan::stan, stan_args)
+  x$fit$stan <- rstan::sampling(stanmodels[[model_name]], data = stan_data, ...)
   
   posterior <- rstan::extract(x$fit$stan)
   
@@ -372,14 +227,14 @@ fit <- function(x,
     c("beta", "Psi", "Sigma_u")
   } else if (SV_type == "AR1") {
     c("beta", "Psi", "A", "gamma_0", "gamma_1", "Phi", "Sigma_u")
-  } else { # RW
+  } else {
     c("beta", "Psi", "A", "phi", "Sigma_u")
   }
   
   missing_params <- setdiff(required_params, names(posterior))
   if (length(missing_params) > 0) {
     stop(sprintf(
-      "The following required parameters were not found in the Stan output: %s. This likely happened because 'pars'/'include' was passed via ... and excluded them. fit() requires all model parameters listed above to be saved in order to compute posterior summaries.",
+      "The following required parameters were not found in the Stan output: %s. This likely happened because 'pars'/'include' was passed via ... and excluded them.",
       paste(missing_params, collapse = ", ")
     ))
   }

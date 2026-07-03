@@ -58,8 +58,7 @@
 #'                 warmup = 50,
 #'                 chains = 1,
 #'                 cores = 1,
-#'                 verbose = FALSE,
-#'                 auto_write = FALSE)
+#'                 verbose = FALSE)
 #'                 
 #' conditions <- data.frame(var = rep(2,8),
 #'                          horizon = rep(1:8),

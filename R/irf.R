@@ -52,8 +52,7 @@
 #'                 warmup = 50,
 #'                 chains = 1,
 #'                 cores = 1,
-#'                 verbose = FALSE,
-#'                 auto_write = FALSE)
+#'                 verbose = FALSE)
 #'                 
 #' IRF(bvar_obj)
 #' }

@@ -9,13 +9,13 @@ test_that("fit requires setup", {
 
 test_that("fit requires priors", {
   model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   expect_error(fit(model), "must be passed through priors")
 })
 
 test_that("fit requires d_pred", {
   model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
   expect_error(
@@ -26,7 +26,7 @@ test_that("fit requires d_pred", {
 
 test_that("fit validates H", {
   model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
   expect_error(
@@ -35,75 +35,9 @@ test_that("fit validates H", {
   )
 })
 
-test_that("fit validates iter", {
-  model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
-  model <- priors(model)
-  
-  expect_error(
-    fit(model, H = 1, d_pred = matrix(0, 1, 1), iter = 0),
-    "iter must be a positive integer"
-  )
-})
-
-test_that("fit validates warmup", {
-  model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
-  model <- priors(model)
-  
-  expect_error(
-    fit(model, H = 1, d_pred = matrix(0, 1, 1), warmup = -1),
-    "warmup must be a non-negative integer"
-  )
-})
-
-test_that("fit validates chains", {
-  model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
-  model <- priors(model)
-  
-  expect_error(
-    fit(model, H = 1, d_pred = matrix(0, 1, 1), chains = 0),
-    "chains must be a positive integer"
-  )
-})
-
-test_that("fit validates cores", {
-  model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
-  model <- priors(model)
-  
-  expect_error(
-    fit(model, H = 1, d_pred = matrix(0, 1, 1), cores = 0),
-    "cores must be a positive integer"
-  )
-})
-
-test_that("fit validates auto_write NA", {
-  model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
-  model <- priors(model)
-  
-  expect_error(
-    fit(model, H = 1, d_pred = matrix(0, 1, 1), auto_write = NA),
-    "auto_write must be TRUE or FALSE"
-  )
-})
-
-test_that("fit validates auto_write type", {
-  model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
-  model <- priors(model)
-  
-  expect_error(
-    fit(model, H = 1, d_pred = matrix(0, 1, 1), auto_write = 1),
-    "auto_write must be TRUE or FALSE"
-  )
-})
-
 test_that("fit validates d_pred type", {
   model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
   expect_error(
@@ -114,7 +48,7 @@ test_that("fit validates d_pred type", {
 
 test_that("fit validates d_pred row dimension", {
   model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
   expect_error(
@@ -125,7 +59,7 @@ test_that("fit validates d_pred row dimension", {
 
 test_that("fit validates d_pred column dimension", {
   model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
   expect_error(

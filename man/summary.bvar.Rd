@@ -68,8 +68,7 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
-                verbose = FALSE,
-                auto_write = FALSE)
+                verbose = FALSE)
 
 summary(bvar_obj)
 }

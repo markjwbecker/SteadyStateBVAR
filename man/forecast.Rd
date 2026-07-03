@@ -70,8 +70,7 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
-                verbose = FALSE,
-                auto_write = FALSE)
+                verbose = FALSE)
 
 forecast(bvar_obj, ci = 0.90, show_all = TRUE)
 }

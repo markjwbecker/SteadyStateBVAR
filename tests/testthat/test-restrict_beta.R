@@ -1,7 +1,7 @@
 test_that("restrict_beta stores restriction matrix", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data)
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
   k <- model$setup$k
@@ -17,7 +17,7 @@ test_that("restrict_beta stores restriction matrix", {
 test_that("restrict_beta updates Omega_beta for zero restrictions", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data)
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
   k <- model$setup$k
@@ -34,7 +34,7 @@ test_that("restrict_beta updates Omega_beta for zero restrictions", {
 test_that("restrict_beta checks matrix dimensions", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data)
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
   k <- model$setup$k
@@ -50,7 +50,7 @@ test_that("restrict_beta checks matrix dimensions", {
 test_that("restrict_beta warns if Omega_beta is missing", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data)
-  model <- setup(model, p = 2)
+  model <- SteadyStateBVAR::setup(model, p = 2)
   model$priors <- list()
   
   k <- model$setup$k
