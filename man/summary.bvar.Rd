@@ -54,7 +54,7 @@ the contemporaneous interaction of the endogenous variables
 }
 \examples{
 \donttest{
-yt <- matrix(rnorm(50), 25, 2)
+yt <- matrix(rnorm(20), 10, 2)
 bvar_obj <- bvar(data = yt)
 bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
 bvar_obj <- priors(bvar_obj,
@@ -64,7 +64,7 @@ bvar_obj <- priors(bvar_obj,
 bvar_obj <- fit(bvar_obj,
                 H = 1,
                 d_pred = matrix(1),
-                iter = 200,
+                iter = 100,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
