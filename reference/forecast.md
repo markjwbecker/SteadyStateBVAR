@@ -86,11 +86,52 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
-                verbose = FALSE,
-                auto_write = FALSE)
-#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
+                verbose = FALSE)
+#> 
+#> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
+#> Chain 1: 
+#> Chain 1: Gradient evaluation took 7.2e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.72 seconds.
+#> Chain 1: Adjust your expectations accordingly!
+#> Chain 1: 
+#> Chain 1: 
+#> Chain 1: WARNING: There aren't enough warmup iterations to fit the
+#> Chain 1:          three stages of adaptation as currently configured.
+#> Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
+#> Chain 1:          the given number of warmup iterations:
+#> Chain 1:            init_buffer = 7
+#> Chain 1:            adapt_window = 38
+#> Chain 1:            term_buffer = 5
+#> Chain 1: 
+#> Chain 1: Iteration:   1 / 200 [  0%]  (Warmup)
+#> Chain 1: Iteration:  20 / 200 [ 10%]  (Warmup)
+#> Chain 1: Iteration:  40 / 200 [ 20%]  (Warmup)
+#> Chain 1: Iteration:  51 / 200 [ 25%]  (Sampling)
+#> Chain 1: Iteration:  70 / 200 [ 35%]  (Sampling)
+#> Chain 1: Iteration:  90 / 200 [ 45%]  (Sampling)
+#> Chain 1: Iteration: 110 / 200 [ 55%]  (Sampling)
+#> Chain 1: Iteration: 130 / 200 [ 65%]  (Sampling)
+#> Chain 1: Iteration: 150 / 200 [ 75%]  (Sampling)
+#> Chain 1: Iteration: 170 / 200 [ 85%]  (Sampling)
+#> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
+#> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
+#> Chain 1: 
+#> Chain 1:  Elapsed Time: 0.034 seconds (Warm-up)
+#> Chain 1:                0.089 seconds (Sampling)
+#> Chain 1:                0.123 seconds (Total)
+#> Chain 1: 
+#> Warning: The largest R-hat is 1.09, indicating chains have not mixed.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#r-hat
+#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#bulk-ess
+#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#tail-ess
 
 forecast(bvar_obj, ci = 0.90, show_all = TRUE)
-#> Error: unable to find an inherited method for function ‘extract’ for signature ‘object = "NULL"’
+
+
 # }
 ```

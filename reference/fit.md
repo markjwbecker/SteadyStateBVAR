@@ -8,18 +8,7 @@ homoscedastic and stochastic volatility (RW or AR1) specifications.
 ## Usage
 
 ``` r
-fit(
-  x,
-  H = 1,
-  d_pred = NULL,
-  iter = 2000,
-  warmup = floor(iter/2),
-  chains = 1,
-  cores = getOption("mc.cores", 1L),
-  verbose = FALSE,
-  auto_write = FALSE,
-  ...
-)
+fit(x, H = 1, d_pred = NULL, ...)
 ```
 
 ## Arguments
@@ -40,48 +29,15 @@ fit(
   Matrix of size H x q. Future values of the deterministic variables
   d_t. Default is `NULL`, must be provided by the user.
 
-- iter:
-
-  Integer. Total number of MCMC iterations per chain. Default is `2000`.
-
-- warmup:
-
-  Integer. Number of warmup (burn-in) iterations per chain. Default is
-  `floor(iter/2)`.
-
-- chains:
-
-  Integer. Number of MCMC chains. Default is `1`.
-
-- cores:
-
-  Positive integer specifying the number of CPU cores used for sampling.
-  Default is `getOption("mc.cores", 1L)`, i.e. the `mc.cores` option (if
-  it has been set), otherwise defaults to `1` core.
-
-- verbose:
-
-  Logical indicating whether to print intermediate output from Stan on
-  the console, defaults to `FALSE`.
-
-- auto_write:
-
-  Logical indicating whether compiled Stan models should be
-  automatically written to the hard disk via `rstan`. Default is
-  `FALSE`.
-
 - ...:
 
   Additional arguments passed directly to
-  [`stan`](https://mc-stan.org/rstan/reference/stan.html) (e.g.
-  `control`, `seed`, `init`, `thin`, `algorithm`, `pars`, `include`,
-  `refresh`, `save_warmup`, `sample_file`, `diagnostic_file`). Note that
-  `file`, `data`, `iter`, `warmup`, `chains`, and `verbose` are already
-  controlled by `fit()` and cannot be passed here; `cores` and
-  `auto_write` should be passed as named arguments of `fit()` rather
-  than through `...`. If `pars`/`include` is used to exclude model
-  parameters required by `fit()` for posterior summaries, an error will
-  be raised.
+  [`sampling`](https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html)
+  (e.g. `iter`, `warmup`, `chains`, `cores`, `control`, `seed`, `init`,
+  `thin`, `algorithm`, `pars`, `include`, `refresh`, `verbose`,
+  `save_warmup`, `sample_file`, `diagnostic_file`). If `pars`/`include`
+  is used to exclude model parameters required by `fit()` for posterior
+  summaries, an error will be raised.
 
 ## Value
 
@@ -95,19 +51,20 @@ A fitted steady-state `bvar` object with:
 
 ## Details
 
-The function selects the appropriate Stan model based on prior settings:
+The function selects the appropriate precompiled Stan model based on
+prior settings:
 
 - Homoscedastic with Jeffreys prior:
-  `steady_state_bvar_homoscedastic_jeffreys_prior.stan`
+  `steady_state_bvar_homoscedastic_jeffreys_prior`
 
 - Homoscedastic with uninformative inverse-Wishart prior:
-  `steady_state_bvar_homoscedastic_inverse_wishart_prior.stan`
+  `steady_state_bvar_homoscedastic_inverse_wishart_prior`
 
 - Random Walk stochastic volatility:
-  `steady_state_bvar_RW_stochastic_volatility.stan`
+  `steady_state_bvar_RW_stochastic_volatility`
 
 - AR1 stochastic volatility:
-  `steady_state_bvar_AR1_stochastic_volatility.stan`
+  `steady_state_bvar_AR1_stochastic_volatility`
 
 The function estimates the following parameters (see
 [bvar](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
@@ -162,7 +119,7 @@ bvar_obj <- priors(bvar_obj,
                    SV = FALSE,
                    SV_type = NULL,
                    SV_priors = NULL)
-                   
+
 bvar_obj <- fit(bvar_obj,
                 H = 8,
                 d_pred = matrix(rep(1,8)),
@@ -170,8 +127,46 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
-#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
-                   
+#> 
+#> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
+#> Chain 1: 
+#> Chain 1: Gradient evaluation took 7.3e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.73 seconds.
+#> Chain 1: Adjust your expectations accordingly!
+#> Chain 1: 
+#> Chain 1: 
+#> Chain 1: WARNING: There aren't enough warmup iterations to fit the
+#> Chain 1:          three stages of adaptation as currently configured.
+#> Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
+#> Chain 1:          the given number of warmup iterations:
+#> Chain 1:            init_buffer = 7
+#> Chain 1:            adapt_window = 38
+#> Chain 1:            term_buffer = 5
+#> Chain 1: 
+#> Chain 1: Iteration:   1 / 200 [  0%]  (Warmup)
+#> Chain 1: Iteration:  20 / 200 [ 10%]  (Warmup)
+#> Chain 1: Iteration:  40 / 200 [ 20%]  (Warmup)
+#> Chain 1: Iteration:  51 / 200 [ 25%]  (Sampling)
+#> Chain 1: Iteration:  70 / 200 [ 35%]  (Sampling)
+#> Chain 1: Iteration:  90 / 200 [ 45%]  (Sampling)
+#> Chain 1: Iteration: 110 / 200 [ 55%]  (Sampling)
+#> Chain 1: Iteration: 130 / 200 [ 65%]  (Sampling)
+#> Chain 1: Iteration: 150 / 200 [ 75%]  (Sampling)
+#> Chain 1: Iteration: 170 / 200 [ 85%]  (Sampling)
+#> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
+#> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
+#> Chain 1: 
+#> Chain 1:  Elapsed Time: 0.045 seconds (Warm-up)
+#> Chain 1:                0.105 seconds (Sampling)
+#> Chain 1:                0.15 seconds (Total)
+#> Chain 1: 
+#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#bulk-ess
+#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#tail-ess
+
 #RW stochastic volatility
 yt <- matrix(rnorm(50), 25, 2)
 
@@ -211,8 +206,49 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
-#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
-                   
+#> 
+#> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).
+#> Chain 1: 
+#> Chain 1: Gradient evaluation took 0.000212 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 2.12 seconds.
+#> Chain 1: Adjust your expectations accordingly!
+#> Chain 1: 
+#> Chain 1: 
+#> Chain 1: WARNING: There aren't enough warmup iterations to fit the
+#> Chain 1:          three stages of adaptation as currently configured.
+#> Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
+#> Chain 1:          the given number of warmup iterations:
+#> Chain 1:            init_buffer = 7
+#> Chain 1:            adapt_window = 38
+#> Chain 1:            term_buffer = 5
+#> Chain 1: 
+#> Chain 1: Iteration:   1 / 200 [  0%]  (Warmup)
+#> Chain 1: Iteration:  20 / 200 [ 10%]  (Warmup)
+#> Chain 1: Iteration:  40 / 200 [ 20%]  (Warmup)
+#> Chain 1: Iteration:  51 / 200 [ 25%]  (Sampling)
+#> Chain 1: Iteration:  70 / 200 [ 35%]  (Sampling)
+#> Chain 1: Iteration:  90 / 200 [ 45%]  (Sampling)
+#> Chain 1: Iteration: 110 / 200 [ 55%]  (Sampling)
+#> Chain 1: Iteration: 130 / 200 [ 65%]  (Sampling)
+#> Chain 1: Iteration: 150 / 200 [ 75%]  (Sampling)
+#> Chain 1: Iteration: 170 / 200 [ 85%]  (Sampling)
+#> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
+#> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
+#> Chain 1: 
+#> Chain 1:  Elapsed Time: 1.45 seconds (Warm-up)
+#> Chain 1:                5.683 seconds (Sampling)
+#> Chain 1:                7.133 seconds (Total)
+#> Chain 1: 
+#> Warning: The largest R-hat is NA, indicating chains have not mixed.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#r-hat
+#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#bulk-ess
+#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#tail-ess
+
 #AR1 stochastic volatility
 yt <- matrix(rnorm(50), 25, 2)
 
@@ -247,7 +283,6 @@ bvar_obj <- priors(bvar_obj,
                    SV_type = "AR1",
                    SV_priors = SV_priors_AR)
 
-
 bvar_obj <- fit(bvar_obj,
                 H = 8,
                 d_pred = matrix(rep(1,8)),
@@ -257,6 +292,51 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
-#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
+#> 
+#> SAMPLING FOR MODEL 'steady_state_bvar_AR1_stochastic_volatility' NOW (CHAIN 1).
+#> Chain 1: 
+#> Chain 1: Gradient evaluation took 0.00023 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 2.3 seconds.
+#> Chain 1: Adjust your expectations accordingly!
+#> Chain 1: 
+#> Chain 1: 
+#> Chain 1: WARNING: There aren't enough warmup iterations to fit the
+#> Chain 1:          three stages of adaptation as currently configured.
+#> Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
+#> Chain 1:          the given number of warmup iterations:
+#> Chain 1:            init_buffer = 7
+#> Chain 1:            adapt_window = 38
+#> Chain 1:            term_buffer = 5
+#> Chain 1: 
+#> Chain 1: Iteration:   1 / 200 [  0%]  (Warmup)
+#> Chain 1: Iteration:  20 / 200 [ 10%]  (Warmup)
+#> Chain 1: Iteration:  40 / 200 [ 20%]  (Warmup)
+#> Chain 1: Iteration:  51 / 200 [ 25%]  (Sampling)
+#> Chain 1: Iteration:  70 / 200 [ 35%]  (Sampling)
+#> Chain 1: Iteration:  90 / 200 [ 45%]  (Sampling)
+#> Chain 1: Iteration: 110 / 200 [ 55%]  (Sampling)
+#> Chain 1: Iteration: 130 / 200 [ 65%]  (Sampling)
+#> Chain 1: Iteration: 150 / 200 [ 75%]  (Sampling)
+#> Chain 1: Iteration: 170 / 200 [ 85%]  (Sampling)
+#> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
+#> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
+#> Chain 1: 
+#> Chain 1:  Elapsed Time: 2.042 seconds (Warm-up)
+#> Chain 1:                0.197 seconds (Sampling)
+#> Chain 1:                2.239 seconds (Total)
+#> Chain 1: 
+#> Warning: There were 150 divergent transitions after warmup. See
+#> https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
+#> to find out why this is a problem and how to eliminate them.
+#> Warning: Examine the pairs() plot to diagnose sampling problems
+#> Warning: The largest R-hat is NA, indicating chains have not mixed.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#r-hat
+#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#bulk-ess
+#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#tail-ess
 # }
 ```

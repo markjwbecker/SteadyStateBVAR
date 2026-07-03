@@ -77,7 +77,7 @@ The function summarises the following estimated parameters:
 
 ``` r
 # \donttest{
-yt <- matrix(rnorm(50), 25, 2)
+yt <- matrix(rnorm(20), 10, 2)
 bvar_obj <- bvar(data = yt)
 bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
 bvar_obj <- priors(bvar_obj,
@@ -87,15 +87,81 @@ bvar_obj <- priors(bvar_obj,
 bvar_obj <- fit(bvar_obj,
                 H = 1,
                 d_pred = matrix(1),
-                iter = 200,
+                iter = 100,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
-                verbose = FALSE,
-                auto_write = FALSE)
-#> Error in stan_model(file, model_name = model_name, model_code = model_code,     stanc_ret = NULL, boost_lib = boost_lib, eigen_lib = eigen_lib,     save_dso = save_dso, verbose = verbose): Boost not found; call install.packages('BH')
+                verbose = FALSE)
+#> 
+#> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
+#> Chain 1: 
+#> Chain 1: Gradient evaluation took 4.8e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.48 seconds.
+#> Chain 1: Adjust your expectations accordingly!
+#> Chain 1: 
+#> Chain 1: 
+#> Chain 1: WARNING: There aren't enough warmup iterations to fit the
+#> Chain 1:          three stages of adaptation as currently configured.
+#> Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
+#> Chain 1:          the given number of warmup iterations:
+#> Chain 1:            init_buffer = 7
+#> Chain 1:            adapt_window = 38
+#> Chain 1:            term_buffer = 5
+#> Chain 1: 
+#> Chain 1: Iteration:  1 / 100 [  1%]  (Warmup)
+#> Chain 1: Iteration: 10 / 100 [ 10%]  (Warmup)
+#> Chain 1: Iteration: 20 / 100 [ 20%]  (Warmup)
+#> Chain 1: Iteration: 30 / 100 [ 30%]  (Warmup)
+#> Chain 1: Iteration: 40 / 100 [ 40%]  (Warmup)
+#> Chain 1: Iteration: 50 / 100 [ 50%]  (Warmup)
+#> Chain 1: Iteration: 51 / 100 [ 51%]  (Sampling)
+#> Chain 1: Iteration: 60 / 100 [ 60%]  (Sampling)
+#> Chain 1: Iteration: 70 / 100 [ 70%]  (Sampling)
+#> Chain 1: Iteration: 80 / 100 [ 80%]  (Sampling)
+#> Chain 1: Iteration: 90 / 100 [ 90%]  (Sampling)
+#> Chain 1: Iteration: 100 / 100 [100%]  (Sampling)
+#> Chain 1: 
+#> Chain 1:  Elapsed Time: 0.014 seconds (Warm-up)
+#> Chain 1:                0.013 seconds (Sampling)
+#> Chain 1:                0.027 seconds (Total)
+#> Chain 1: 
+#> Warning: The largest R-hat is 1.09, indicating chains have not mixed.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#r-hat
+#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#bulk-ess
+#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
+#> Running the chains for more iterations may help. See
+#> https://mc-stan.org/misc/warnings.html#tail-ess
 
 summary(bvar_obj)
-#> Error in summary.bvar(bvar_obj): object must be passed through fit() first
+#> Posterior mean estimates
+#> ------------------------
+#> 
+#> 
+#> beta
+#> --------------------------------------------------------------------------------         
+#>            Var1 Var2
+#>   Var1.l1 -0.21 0.08
+#>   Var2.l1  0.02 0.12
+#> --------------------------------------------------------------------------------
+#> 
+#> 
+#> Psi
+#> --------------------------------------------------------------------------------      
+#>         [,1]
+#>   Var1 -0.35
+#>   Var2  0.15
+#> --------------------------------------------------------------------------------
+#> 
+#> 
+#> Sigma_u
+#> --------------------------------------------------------------------------------      
+#>        Var1 Var2
+#>   Var1 1.07 0.88
+#>   Var2 0.88 1.33
+#> --------------------------------------------------------------------------------
+#> 
 # }
 ```
