@@ -6,4 +6,6 @@
 .Rproj.user
 inst/doc
 docs
-inst/*.rds
+inst/*.rds"src/*.o" 
+"src/*.dll" 
+"src/*.so" 
