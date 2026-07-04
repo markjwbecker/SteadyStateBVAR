@@ -1,6 +1,6 @@
 # Restrict VAR coefficients to zero
 
-Applies zero restrictions to the VAR coefficient matrix (beta) by
+Applies zero restrictions to the VAR coefficient matrix \\\beta\\ by
 setting the corresponding prior variances in `Omega_beta` to a value
 near zero (prior means are zero by default in the Minnesota prior).
 
@@ -26,7 +26,26 @@ restrict_beta(x, restriction_matrix)
 ## Value
 
 The steady-state `bvar` object with the restriction matrix stored in
-`setup` and `Omega_beta` updated accordingly.
+`setup` and the prior covariance matrix `Omega_beta` updated
+accordingly.
+
+## Details
+
+The steady-state BVAR model takes the form
+
+\$\$y_t = \Psi d_t + \Pi_1(y\_{t-1}-\Psi
+d\_{t-1})+\dots+\Pi_p(y\_{t-p}-\Psi d\_{t-p})+u_t\$\$
+
+where \\y_t\\ is an \\k\\-dimensional vector of endogenous variables at
+time \\t\\, and \\d_t\\ is a \\q\\-dimensional vector of deterministic
+(exogenous) variables at time \\t\\. Here \\\Pi\_\ell\\ for
+\\\ell=1,\dots,p\\ is a \\(k \times k)\\ matrix of autoregressive
+parameters, and \\\Psi\\ is a \\(k \times q)\\ matrix of steady-state
+parameters. One can stack the (transposed) \\\Pi_i\\ matrices in the
+\\(kp \times k)\\ matrix \\\beta\\ \$\$\beta=\begin{bmatrix}\Pi'\_1 \\
+\vdots \\\Pi'\_p\end{bmatrix}\$\$.
+
+This function puts zero restrictions on the elements of \\\beta\\.
 
 ## Examples
 

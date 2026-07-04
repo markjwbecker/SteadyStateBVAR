@@ -11,11 +11,11 @@
 - [`bvar()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
   : Create a steady-state BVAR model object
 - [`conditional_forecast()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/conditional_forecast.md)
-  : Conditional forecasts from a fitted BVAR model
+  : Conditional forecasts from a fitted steady-state BVAR model
 - [`fit()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/fit.md)
   : Estimate the steady-state BVAR model using Stan
 - [`forecast()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/forecast.md)
-  : Forecast from a fitted BVAR model
+  : Forecast from a fitted steady-state BVAR model
 - [`ppi()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/ppi.md)
   : Prior Probability Interval for a Normal Distribution
 - [`priors()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md)
