@@ -13,7 +13,7 @@ fit(x, H = 1, d_pred = NULL, ...)
 \item{H}{Positive Integer. Forecast horizon.
 Default is \code{1}.}
 
-\item{d_pred}{Matrix of size H x q. Future values of the deterministic variables d_t. Default is \code{NULL}, must be provided by the user.}
+\item{d_pred}{Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL}, must be provided by the user.}
 
 \item{...}{Additional arguments passed directly to \code{\link[rstan]{sampling}}
 (e.g. \code{iter}, \code{warmup}, \code{chains}, \code{cores}, \code{control},
@@ -37,47 +37,44 @@ Uses the data, setup, and priors stored in the steady-state \code{bvar} object. 
 homoscedastic and stochastic volatility (RW or AR1) specifications.
 }
 \details{
-The function selects the appropriate precompiled Stan model based on prior settings:
+The function selects the appropriate precompiled Stan model based on settings from \link{priors}:
 \itemize{
-\item Homoscedastic with Jeffreys prior:
-\code{steady_state_bvar_homoscedastic_jeffreys_prior}
-\item Homoscedastic with uninformative inverse-Wishart prior:
-\code{steady_state_bvar_homoscedastic_inverse_wishart_prior}
-\item Random Walk stochastic volatility:
-\code{steady_state_bvar_RW_stochastic_volatility}
-\item AR1 stochastic volatility:
-\code{steady_state_bvar_AR1_stochastic_volatility}
+\item \code{steady_state_bvar_homoscedastic_jeffreys_prior}
+\item \code{steady_state_bvar_homoscedastic_inverse_wishart_prior}
+\item \code{steady_state_bvar_RW_stochastic_volatility}
+\item \code{steady_state_bvar_AR1_stochastic_volatility}
 }
 The function estimates the following parameters (see \link{bvar} for details):
 \itemize{
-\item \code{beta}: kp×k VAR coefficient matrix
-\item \code{Psi}: k×q steady-state parameter matrix
-\item \code{Sigma_u}: innovation covariance matrix (k×k for homoscedastic,
-T×k×k for stochastic volatility)
+\item \code{beta}: \eqn{kp \times k} VAR coefficient matrix
+\item \code{Psi}: \eqn{k \times q} steady-state parameter matrix
+\item \code{Sigma_u}: innovation covariance matrix (\eqn{k \times k} for homoscedastic,
+\eqn{T \times k \times k} for stochastic volatility)
 \item If Random Walk stochastic volatility:
 \itemize{
-\item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
+\item \code{A}: \eqn{k \times k} lower triangular matrix with ones on the diagonal that describes
 the contemporaneous interaction of the endogenous variables
-\item \code{phi}: k-dimensional vector of log volatility innovation variances
+\item \code{phi}: \eqn{k}-dimensional vector of log volatility innovation variances
 }
 \item If AR1 stochastic volatility:
 \itemize{
-\item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
+\item \code{A}: \eqn{k \times k} lower triangular matrix with ones on the diagonal that describes
 the contemporaneous interaction of the endogenous variables
-\item \code{gamma_0}: k-dimensional vector of log volatility intercepts
-\item \code{gamma_1}: k-dimensional vector of log volatility slopes
-\item \code{Phi}: k×k log volatility innovation covariance matrix
+\item \code{gamma_0}: \eqn{k}-dimensional vector of log volatility intercepts
+\item \code{gamma_1}: \eqn{k}-dimensional vector of log volatility slopes
+\item \code{Phi}: \eqn{k \times k} log volatility innovation covariance matrix
 }
 }
 }
 \examples{
 \donttest{
-#homoscedastic with Jeffreys prior
-yt <- matrix(rnorm(50), 25, 2)
+#homoscedastic with Jeffreys prior, d_t = constant
+
+yt <- matrix(rnorm(20), 10, 2)
 
 bvar_obj <- bvar(data = yt)
 
-bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
+bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
 
 bvar_obj <- priors(bvar_obj,
                    lambda_1 = 0.2,
@@ -86,21 +83,65 @@ bvar_obj <- priors(bvar_obj,
                    first_own_lag_prior_mean = rep(1,2),
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2),
-                   Jeffrey = TRUE,
-                   SV = FALSE,
-                   SV_type = NULL,
-                   SV_priors = NULL)
+                   Jeffrey = TRUE)
+                   
+H <- 8
+d_pred <- matrix(rep(1,8))
+colnames(d_pred) <- c("constant")
+rownames(d_pred) <- paste("Horizon", 1:H)
+print(d_pred)
 
 bvar_obj <- fit(bvar_obj,
-                H = 8,
-                d_pred = matrix(rep(1,8)),
+                H = H,
+                d_pred = d_pred,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
+                
+                
+#homoscedastic with inverse-Wishart prior, d_t = constant and dummy
+
+yt <- matrix(rnorm(20), 10, 2)
+
+bvar_obj <- bvar(data = yt)
+
+dummy_variable <- c(rep(1,5), rep(0,5))
+
+bvar_obj <- setup(bvar_obj, p = 1,
+                  deterministic = "constant_and_dummy",
+                  dummy = dummy_variable)
+                  
+k <- bvar_obj$setup$k
+q <- bvar_obj$setup$q
+
+bvar_obj <- priors(bvar_obj,
+                   lambda_1 = 0.2,
+                   lambda_2 = 0.5,
+                   lambda_3 = 1,
+                   first_own_lag_prior_mean = rep(1,2),
+                   theta_Psi = rep(0, k*q),
+                   Omega_Psi = diag(0.1, k*q, k*q),
+                   Jeffrey = FALSE) #inverse-Wishart
+
+H <- 8
+d_pred <- cbind(rep(1, H), rep(0, H))
+colnames(d_pred) <- c("constant", "dummy")
+rownames(d_pred) <- paste("Horizon", 1:H)
+print(d_pred)
+
+bvar_obj <- fit(bvar_obj,
+                H = H,
+                d_pred = d_pred,
+                iter = 200,
+                warmup = 50,
+                chains = 1,
+                cores = 1)
+ 
 
 #RW stochastic volatility
-yt <- matrix(rnorm(50), 25, 2)
+
+yt <- matrix(rnorm(20), 10, 2)
 
 bvar_obj <- bvar(data = yt)
 
@@ -139,8 +180,10 @@ bvar_obj <- fit(bvar_obj,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
 
+
 #AR1 stochastic volatility
-yt <- matrix(rnorm(50), 25, 2)
+
+yt <- matrix(rnorm(20), 10, 2)
 
 bvar_obj <- bvar(data = yt)
 

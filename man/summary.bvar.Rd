@@ -32,23 +32,23 @@ stochastic volatility (RW or AR1 specification).
 \details{
 The function summarises the following estimated parameters:
 \itemize{
-\item \code{beta}: kp×k VAR coefficient matrix
-\item \code{Psi}: k×q steady-state parameter matrix
-\item \code{Sigma_u}: innovation covariance matrix (k×k for homoscedastic,
-T×k×k for stochastic volatility)
+\item \code{beta}: \eqn{kp \times k} VAR coefficient matrix
+\item \code{Psi}: \eqn{k \times q} steady-state parameter matrix
+\item \code{Sigma_u}: innovation covariance matrix (\eqn{k \times k} for homoscedastic,
+\eqn{T \times k \times k} for stochastic volatility)
 \item If Random Walk stochastic volatility:
 \itemize{
-\item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
+\item \code{A}: \eqn{k \times k} lower triangular matrix with ones on the diagonal that describes
 the contemporaneous interaction of the endogenous variables
-\item \code{phi}: k-dimensional vector of log volatility innovation variances
+\item \code{phi}: \eqn{k}-dimensional vector of log volatility innovation variances
 }
 \item If AR1 stochastic volatility:
 \itemize{
-\item \code{A}: k×k lower triangular matrix with ones on the diagonal that describes
+\item \code{A}: \eqn{k \times k} lower triangular matrix with ones on the diagonal that describes
 the contemporaneous interaction of the endogenous variables
-\item \code{gamma_0}: k-dimensional vector of log volatility intercepts
-\item \code{gamma_1}: k-dimensional vector of log volatility slopes
-\item \code{Phi}: k×k log volatility innovation covariance matrix
+\item \code{gamma_0}: \eqn{k}-dimensional vector of log volatility intercepts
+\item \code{gamma_1}: \eqn{k}-dimensional vector of log volatility slopes
+\item \code{Phi}: \eqn{k \times k} log volatility innovation covariance matrix
 }
 }
 }
