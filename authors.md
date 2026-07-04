@@ -7,7 +7,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/markjwbecker/SteadyStateBVAR/blob/test/inst/CITATION)
+[`inst/CITATION`](https://github.com/markjwbecker/SteadyStateBVAR/blob/main/inst/CITATION)
 
 Becker M (2026). *Bayesian Vector Autoregression Models with
 Steady-State Priors via 'Stan'*.
