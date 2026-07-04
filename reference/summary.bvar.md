@@ -46,32 +46,33 @@ Returns the input object invisibly.
 
 The function summarises the following estimated parameters:
 
-- `beta`: kp×k VAR coefficient matrix
+- `beta`: \\kp \times k\\ VAR coefficient matrix
 
-- `Psi`: k×q steady-state parameter matrix
+- `Psi`: \\k \times q\\ steady-state parameter matrix
 
-- `Sigma_u`: innovation covariance matrix (k×k for homoscedastic, T×k×k
-  for stochastic volatility)
+- `Sigma_u`: innovation covariance matrix (\\k \times k\\ for
+  homoscedastic, \\T \times k \times k\\ for stochastic volatility)
 
 - If Random Walk stochastic volatility:
 
-  - `A`: k×k lower triangular matrix with ones on the diagonal that
-    describes the contemporaneous interaction of the endogenous
-    variables
+  - `A`: \\k \times k\\ lower triangular matrix with ones on the
+    diagonal that describes the contemporaneous interaction of the
+    endogenous variables
 
-  - `phi`: k-dimensional vector of log volatility innovation variances
+  - `phi`: \\k\\-dimensional vector of log volatility innovation
+    variances
 
 - If AR1 stochastic volatility:
 
-  - `A`: k×k lower triangular matrix with ones on the diagonal that
-    describes the contemporaneous interaction of the endogenous
-    variables
+  - `A`: \\k \times k\\ lower triangular matrix with ones on the
+    diagonal that describes the contemporaneous interaction of the
+    endogenous variables
 
-  - `gamma_0`: k-dimensional vector of log volatility intercepts
+  - `gamma_0`: \\k\\-dimensional vector of log volatility intercepts
 
-  - `gamma_1`: k-dimensional vector of log volatility slopes
+  - `gamma_1`: \\k\\-dimensional vector of log volatility slopes
 
-  - `Phi`: k×k log volatility innovation covariance matrix
+  - `Phi`: \\k \times k\\ log volatility innovation covariance matrix
 
 ## Examples
 
@@ -95,8 +96,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 4.8e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.48 seconds.
+#> Chain 1: Gradient evaluation took 4.1e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.41 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -121,11 +122,11 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 90 / 100 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 100 / 100 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.014 seconds (Warm-up)
-#> Chain 1:                0.013 seconds (Sampling)
-#> Chain 1:                0.027 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.017 seconds (Warm-up)
+#> Chain 1:                0.016 seconds (Sampling)
+#> Chain 1:                0.033 seconds (Total)
 #> Chain 1: 
-#> Warning: The largest R-hat is 1.09, indicating chains have not mixed.
+#> Warning: The largest R-hat is 1.22, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#r-hat
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -142,25 +143,25 @@ summary(bvar_obj)
 #> 
 #> beta
 #> --------------------------------------------------------------------------------         
-#>            Var1 Var2
-#>   Var1.l1 -0.21 0.08
-#>   Var2.l1  0.02 0.12
+#>           Var1  Var2
+#>   Var1.l1 0.01 -0.01
+#>   Var2.l1 0.03  0.05
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Psi
 #> --------------------------------------------------------------------------------      
-#>         [,1]
-#>   Var1 -0.35
-#>   Var2  0.15
+#>        [,1]
+#>   Var1 0.03
+#>   Var2 0.00
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Sigma_u
 #> --------------------------------------------------------------------------------      
 #>        Var1 Var2
-#>   Var1 1.07 0.88
-#>   Var2 0.88 1.33
+#>   Var1 3.59 0.09
+#>   Var2 0.09 1.32
 #> --------------------------------------------------------------------------------
 #> 
 # }
