@@ -7,5 +7,9 @@
 inst/doc
 docs
 inst/*.rds"src/*.o" 
-"src/*.dll" 
-"src/*.so" 
+src/*.o
+src/*.so
+src/*.dll
+src/*.rds
+src/**/*.o
+

@@ -1,4 +1,4 @@
-#' Conditional forecasts from a fitted BVAR model
+#' Conditional forecasts from a fitted steady-state BVAR model
 #'
 #' Computes and plots conditional forecasts from a fitted steady-state \code{bvar} object.
 #' Conditions are imposed on specific variables at specific horizons using the

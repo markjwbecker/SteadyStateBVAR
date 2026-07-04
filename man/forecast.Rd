@@ -2,7 +2,7 @@
 % Please edit documentation in R/forecast.R
 \name{forecast}
 \alias{forecast}
-\title{Forecast from a fitted BVAR model}
+\title{Forecast from a fitted steady-state BVAR model}
 \usage{
 forecast(
   x,

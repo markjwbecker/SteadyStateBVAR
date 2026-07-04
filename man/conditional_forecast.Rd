@@ -2,7 +2,7 @@
 % Please edit documentation in R/conditional_forecast.R
 \name{conditional_forecast}
 \alias{conditional_forecast}
-\title{Conditional forecasts from a fitted BVAR model}
+\title{Conditional forecasts from a fitted steady-state BVAR model}
 \usage{
 conditional_forecast(
   bvar_obj,

@@ -1,4 +1,4 @@
-#' Forecast from a fitted BVAR model
+#' Forecast from a fitted steady-state BVAR model
 #'
 #' Computes and plots forecasts from a fitted \code{bvar} object. Posterior
 #' predictive draws from Stan are used to construct point forecasts and
