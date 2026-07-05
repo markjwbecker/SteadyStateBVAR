@@ -12,3 +12,5 @@
 ^docs$
 ^inst/.*\.rds$
 ^vignettes/*\.Rmd\.orig$
+^doc$
+^Meta$

@@ -21,8 +21,12 @@ forecast(
 \item{fcst_type}{Character. Whether to use \code{"mean"} or \code{"median"}
 as the point forecast. Default \code{"mean"}.}
 
-\item{growth_rate_idx}{Integer vector. Indices of variables to convert to
-annual growth rates. Suitable for variables specified as \eqn{100 \ln y_{t,k}-t_{t-1,k}}. Default is \code{NULL}.}
+\item{growth_rate_idx}{Integer vector. Indices of variables of which to convert forecasts to
+annual growth rates \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
+the frequency of the data (4 for quarterly, 12 for monthly).
+Suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
+\code{diff(log(x))} or \code{100*diff(log(x))}.
+Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.}
 
 \item{plot_idx}{Integer vector. Indices of variables to plot. If \code{NULL}
 (default), all variables are plotted.}

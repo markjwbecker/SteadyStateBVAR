@@ -17,8 +17,12 @@
 #' @param ci Numeric. The credible interval width. Default \code{0.95}, i.e. 95%.
 #' @param t Integer. Time index for the covariance matrix when using stochastic
 #'   volatility models. If \code{NULL} (default), the last time \code{t} is used.
-#' @param growth_rate_idx Integer vector. Indices of variables to convert to annual growth rates.
-#'  Default is \code{NULL}.
+#' @param growth_rate_idx Integer vector. Indices of variables of which to convert forecasts to
+#'   annual growth rates \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
+#'   the frequency of the data (4 for quarterly, 12 for monthly).
+#'   Suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
+#'   \code{diff(log(x))} or \code{100*diff(log(x))}.
+#'   Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.
 #'
 #' @return Invisibly returns a list with three arrays: the point estimate IRF, \code{lower}, and
 #'   \code{upper} credible bounds, each of dimension \code{k x k x (H+1)}.
