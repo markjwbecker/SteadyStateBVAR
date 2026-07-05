@@ -9,11 +9,11 @@
 Given a lower and upper bound of a prior probability interval
 this function recovers the implied normal prior parameters.
 Useful for specifying informative priors
-on the steady-state parameters (elements of Psi)."><meta property="og:description" content="Calculates the mean and variance of a normal prior probability interval.
+on the steady-state parameters (elements of \(\Psi\))."><meta property="og:description" content="Calculates the mean and variance of a normal prior probability interval.
 Given a lower and upper bound of a prior probability interval
 this function recovers the implied normal prior parameters.
 Useful for specifying informative priors
-on the steady-state parameters (elements of Psi)."></head><body>
+on the steady-state parameters (elements of \(\Psi\))."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -58,7 +58,7 @@ on the steady-state parameters (elements of Psi)."></head><body>
 Given a lower and upper bound of a prior probability interval
 this function recovers the implied normal prior parameters.
 Useful for specifying informative priors
-on the steady-state parameters (elements of Psi).</p>
+on the steady-state parameters (elements of \(\Psi\)).</p>
     </div>
 
     <div class="section level2">
@@ -84,9 +84,10 @@ Default <code>0.95</code>, i.e. 95%.</p></dd>
 
 
 <dt id="arg-annualized-growthrate">annualized_growthrate<a class="anchor" aria-label="anchor" href="#arg-annualized-growthrate"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, converts the implied mean and variance
-from the annualized scale to the quarterly/monthly etc. scale by dividing by <code>freq</code>. Default
-<code>FALSE</code>.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, treats <code>l</code> and <code>u</code> as
+bounds on the annualized steady-state growth rate and calculates the implied mean
+and variance on the corresponding quarterly/monthly scale. Useful if you are working with
+a variable <code>diff(log(x))</code> (which may be scaled by 100). Default <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-freq">freq<a class="anchor" aria-label="anchor" href="#arg-freq"></a></dt>
@@ -98,6 +99,15 @@ Only used when <code>annualized_growthrate = TRUE</code>. Default <code>4</code>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list with two elements: <code>mean</code> and <code>var</code>, giving the
 mean and variance of the implied normal distribution.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>As an example, say we have a CPI variable <code>CPI &lt;- data$CPI</code>, where CPI is on the quarterly frequency.
+Then in the model we work with quarter-on-quarter inflation <code>x &lt;- 100*diff(log(CPI))</code>.
+Lets say our prior for annualized steady-state inflation of <code>x</code> is between 1.7 and 2.3 with 95% probability (with mean at 2).
+This translates to 0.425 and 0.575 with 95% probability (with mean at 0.5). Clearly it is easier to think of a
+steady-state prior on the annualized scale, hence the <code>annualized_growthrate</code> argument.
+Please see <code><a href="../articles/Homoscedastic-steady-state-BVAR.html">vignette("Homoscedastic-steady-state-BVAR")</a></code> on how to use in practise.</p>
     </div>
 
     <div class="section level2">

@@ -5,7 +5,7 @@ articles:
   AR1-stochastic-volatility-steady-state-BVAR: AR1-stochastic-volatility-steady-state-BVAR.html
   Homoscedastic-steady-state-BVAR: Homoscedastic-steady-state-BVAR.html
   RW-stochastic-volatility-steady-state-BVAR: RW-stochastic-volatility-steady-state-BVAR.html
-last_built: 2026-07-05T02:45Z
+last_built: 2026-07-05T12:33Z
 urls:
   reference: https://markjwbecker.github.io/SteadyStateBVAR/reference
   article: https://markjwbecker.github.io/SteadyStateBVAR/articles

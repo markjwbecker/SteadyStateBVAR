@@ -37,9 +37,12 @@ forecast(
 
 - growth_rate_idx:
 
-  Integer vector. Indices of variables to convert to annual growth
-  rates. Suitable for variables specified as \\100 \ln
-  y\_{t,k}-t\_{t-1,k}\\. Default is `NULL`.
+  Integer vector. Indices of variables of which to convert forecasts to
+  annual growth rates \\\ln x\_{t} - \ln x\_{t-f}\\, where \\f\\ is the
+  frequency of the data (4 for quarterly, 12 for monthly). Suitable for
+  variables specified as \\\ln x\_{t} - \ln x\_{t-1}\\, i.e.
+  `diff(log(x))` or `100*diff(log(x))`. Computed by summing up to \\f\\
+  log first differences. Default is `NULL`.
 
 - plot_idx:
 
@@ -91,8 +94,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6.8e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.68 seconds.
+#> Chain 1: Gradient evaluation took 6.5e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.65 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -117,9 +120,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.026 seconds (Warm-up)
-#> Chain 1:                0.082 seconds (Sampling)
-#> Chain 1:                0.108 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.025 seconds (Warm-up)
+#> Chain 1:                0.077 seconds (Sampling)
+#> Chain 1:                0.102 seconds (Total)
 #> Chain 1: 
 #> Warning: The largest R-hat is 1.08, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
