@@ -1,6 +1,6 @@
 # Villani (2009) dataset
 
-Swedish macroeconomic data (1980Q1–-2005Q4) from Section 4.1 in Villani
+Swedish macroeconomic data (1980Q1–2005Q4) from Section 4.1 in Villani
 (2009)
 
 ## Usage
@@ -47,5 +47,5 @@ A multivariate time series object with 104 rows and 7 columns:
 
 ## Source
 
-Villani, M. (2009). Steady-state priors for vector autoregressions.
+Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
 *Journal of Applied Econometrics*, 24(4), pp. 630-650.

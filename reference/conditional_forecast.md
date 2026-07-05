@@ -14,7 +14,7 @@ for the homoscedastic steady-state BVAR, i.e. when `SV=FALSE` in
 conditional_forecast(
   bvar_obj,
   conditions,
-  ci = 0.95,
+  pi = 0.95,
   fcst_type = c("mean", "median"),
   growth_rate_idx = NULL,
   plot_idx = NULL
@@ -36,9 +36,10 @@ conditional_forecast(
   condition). Note that `var` and `horizon` must be integers, as they
   are used for indexing.
 
-- ci:
+- pi:
 
-  Numeric. The prediction interval width. Default `0.95`.
+  Numeric. The prediction interval width. Default `0.95`, i.e. 95%
+  prediction interval.
 
 - fcst_type:
 
@@ -100,8 +101,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 7e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.7 seconds.
+#> Chain 1: Gradient evaluation took 8.2e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.82 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -126,9 +127,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.034 seconds (Warm-up)
+#> Chain 1:  Elapsed Time: 0.035 seconds (Warm-up)
 #> Chain 1:                0.101 seconds (Sampling)
-#> Chain 1:                0.135 seconds (Total)
+#> Chain 1:                0.136 seconds (Total)
 #> Chain 1: 
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
 #> Running the chains for more iterations may help. See
@@ -143,8 +144,9 @@ conditions <- data.frame(var = rep(2,8),
                          
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
-                                  ci=0.68,
+                                  pi=0.68,
                                   fcst_type = "mean")
-#> Error in conditional_forecast(bvar_obj, conditions, ci = 0.68, fcst_type = "mean"): unused argument (ci = 0.68)
+
+
 # }
 ```
