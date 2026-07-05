@@ -165,7 +165,7 @@ package) specified by setting \\V_0=(m_0-k-1)\hat{\Sigma}\_u\\ where
 
 This package also allows for stochastic volatility (Random Walk or AR1
 specifications), where we let the covariance matrix of the innovations
-vary over time,i.e. we have \\\Sigma\_{u,t}\\ (see
+vary over time, i.e. we have \\\Sigma\_{u,t}\\ (see
 [`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
 for more details).
 

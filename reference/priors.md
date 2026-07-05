@@ -54,14 +54,15 @@ priors(
 
 - theta_Psi:
 
-  Numeric vector. Prior mean vector for vec(Psi), i.e. the steady-state
-  parameters. If `NULL` (default), the OLS estimates are used.
+  Numeric vector. Prior mean vector for \\\text{vec}(\Psi)\\, i.e. the
+  steady-state parameters. If `NULL` (default), the OLS estimates are
+  used.
 
 - Omega_Psi:
 
-  Numeric matrix. Prior covariance matrix for vec(Psi), i.e. the
-  steady-state parameters. If `NULL` (default), a diagonal matrix with
-  variances `1000` is used.
+  Numeric matrix. Prior covariance matrix for \\\text{vec}(\Psi)\\, i.e.
+  the steady-state parameters. If `NULL` (default), a diagonal matrix
+  with variances `1000` is used.
 
 - Jeffrey:
 
@@ -99,20 +100,23 @@ containing:
 
 - theta_beta:
 
-  Prior mean vector for vec(beta) constructed with the Minnesota prior
+  Prior mean vector for \\\text{vec}(\beta)\\ constructed with the
+  Minnesota prior
 
 - Omega_beta:
 
-  Prior covariance matrix for vec(beta) constructed with the Minnesota
-  prior
+  Prior covariance matrix for \\\text{vec}(\beta)\\ constructed with the
+  Minnesota prior
 
 - theta_Psi:
 
-  Prior mean vector for vec(Psi), i.e. the steady-state parameters
+  Prior mean vector for \\\text{vec}(\Psi)\\, i.e. the steady-state
+  parameters
 
 - Omega_Psi:
 
-  Prior covariance matrix for vec(Psi), i.e. the steady-state parameters
+  Prior covariance matrix for \\\text{vec}(\Psi)\\, i.e. the
+  steady-state parameters
 
 - Jeffrey:
 

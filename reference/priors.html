@@ -105,12 +105,12 @@ of the variables. If <code>NULL</code> (default), a zero vector is used.</p></dd
 
 
 <dt id="arg-theta-psi">theta_Psi<a class="anchor" aria-label="anchor" href="#arg-theta-psi"></a></dt>
-<dd><p>Numeric vector. Prior mean vector for vec(Psi), i.e. the steady-state parameters. If <code>NULL</code> (default),
+<dd><p>Numeric vector. Prior mean vector for \(\text{vec}(\Psi)\), i.e. the steady-state parameters. If <code>NULL</code> (default),
 the OLS estimates are used.</p></dd>
 
 
 <dt id="arg-omega-psi">Omega_Psi<a class="anchor" aria-label="anchor" href="#arg-omega-psi"></a></dt>
-<dd><p>Numeric matrix. Prior covariance matrix for vec(Psi), i.e. the steady-state parameters. If <code>NULL</code> (default),
+<dd><p>Numeric matrix. Prior covariance matrix for \(\text{vec}(\Psi)\), i.e. the steady-state parameters. If <code>NULL</code> (default),
 a diagonal matrix with variances <code>1000</code> is used.</p></dd>
 
 
@@ -143,16 +143,16 @@ The list must contain the following named elements depending on <code>SV_type</c
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>The steady-state <code>bvar</code> object with an appended <code>priors</code> list containing:</p>
 <dl><dt>theta_beta</dt>
-<dd><p>Prior mean vector for vec(beta) constructed with the Minnesota prior</p></dd>
+<dd><p>Prior mean vector for \(\text{vec}(\beta)\) constructed with the Minnesota prior</p></dd>
 
 <dt>Omega_beta</dt>
-<dd><p>Prior covariance matrix for vec(beta) constructed with the Minnesota prior</p></dd>
+<dd><p>Prior covariance matrix for \(\text{vec}(\beta)\) constructed with the Minnesota prior</p></dd>
 
 <dt>theta_Psi</dt>
-<dd><p>Prior mean vector for vec(Psi), i.e. the steady-state parameters</p></dd>
+<dd><p>Prior mean vector for \(\text{vec}(\Psi)\), i.e. the steady-state parameters</p></dd>
 
 <dt>Omega_Psi</dt>
-<dd><p>Prior covariance matrix for vec(Psi), i.e. the steady-state parameters</p></dd>
+<dd><p>Prior covariance matrix for \(\text{vec}(\Psi)\), i.e. the steady-state parameters</p></dd>
 
 <dt>Jeffrey</dt>
 <dd><p>Indicator for Jeffreys prior usage</p></dd>

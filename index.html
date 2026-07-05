@@ -125,7 +125,7 @@
 <p>However, if the user wants, an inverse Wishart prior can be used instead</p>
 <p><span class="math display">\[\Sigma_u \sim \mathrm{IW}(V_0,m_0)\]</span></p>
 <p>where <span class="math inline">\(V_0\)</span> is the scale matrix and <span class="math inline">\(m_0\geq k+2\)</span> is the number of degrees of freedom. An uninformative prior can be (and is in this package) specified by setting <span class="math inline">\(V_0=(m_0-k-1)\hat{\Sigma}_u\)</span> where <span class="math inline">\(\hat{\Sigma}_u\)</span> is the least squares estimate from the VAR(<span class="math inline">\(p\)</span>) (including the constant and dummy/trend variable if applicable), and <span class="math inline">\(m_0=k+2\)</span>.</p>
-<p>This package also allows for stochastic volatility (Random Walk or AR1 specifications), where we let the covariance matrix of the innovations vary over time,i.e. we have <span class="math inline">\(\Sigma_{u,t}\)</span> (see <code><a href="reference/bvar.html">?bvar</a></code> for more details).</p>
+<p>This package also allows for stochastic volatility (Random Walk or AR1 specifications), where we let the covariance matrix of the innovations vary over time, i.e. we have <span class="math inline">\(\Sigma_{u,t}\)</span> (see <code><a href="reference/bvar.html">?bvar</a></code> for more details).</p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>

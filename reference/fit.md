@@ -1,9 +1,9 @@
 # Estimate the steady-state BVAR model using Stan
 
 Estimates the steady-state BVAR model using the No-U-Turn sampler (a
-variant of Hamiltonian Monte Carlo) via Stan. Uses the data, setup, and
-priors stored in the steady-state `bvar` object. Supports both
-homoscedastic and stochastic volatility (RW or AR1) specifications.
+variant of Hamiltonian Monte Carlo) via Stan. Also generates draws from
+the joint predictive distribution. Uses the data, setup, and priors
+stored in the steady-state `bvar` object.
 
 ## Usage
 
@@ -141,8 +141,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6.5e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.65 seconds.
+#> Chain 1: Gradient evaluation took 4.4e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.44 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -167,9 +167,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.025 seconds (Warm-up)
-#> Chain 1:                0.064 seconds (Sampling)
-#> Chain 1:                0.089 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.019 seconds (Warm-up)
+#> Chain 1:                0.048 seconds (Sampling)
+#> Chain 1:                0.067 seconds (Total)
 #> Chain 1: 
 #> Warning: The largest R-hat is 1.05, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
@@ -231,8 +231,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_inverse_wishart_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 3.5e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.35 seconds.
+#> Chain 1: Gradient evaluation took 4e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.4 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -257,9 +257,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.023 seconds (Warm-up)
-#> Chain 1:                0.05 seconds (Sampling)
-#> Chain 1:                0.073 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.017 seconds (Warm-up)
+#> Chain 1:                0.037 seconds (Sampling)
+#> Chain 1:                0.054 seconds (Total)
 #> Chain 1: 
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
 #> Running the chains for more iterations may help. See
@@ -312,8 +312,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.6 seconds.
+#> Chain 1: Gradient evaluation took 5.4e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.54 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -338,9 +338,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.019 seconds (Warm-up)
-#> Chain 1:                0.041 seconds (Sampling)
-#> Chain 1:                0.06 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.015 seconds (Warm-up)
+#> Chain 1:                0.029 seconds (Sampling)
+#> Chain 1:                0.044 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low
@@ -406,8 +406,8 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1:   Error evaluating the log probability at the initial value.
 #> Chain 1: Exception: multi_normal_lpdf: LDLT_Factor of covariance parameter is not positive definite.  last conditional variance is -1.69407e-21. (in 'steady_state_bvar_AR1_stochastic_volatility', line 102, column 6 to column 54)
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 8.1e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.81 seconds.
+#> Chain 1: Gradient evaluation took 6.2e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.62 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -432,9 +432,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.619 seconds (Warm-up)
-#> Chain 1:                1.93 seconds (Sampling)
-#> Chain 1:                2.549 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.444 seconds (Warm-up)
+#> Chain 1:                1.404 seconds (Sampling)
+#> Chain 1:                1.848 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 57 divergent transitions after warmup. See
 #> https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
