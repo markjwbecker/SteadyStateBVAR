@@ -1,8 +1,8 @@
 #' Estimate the steady-state BVAR model using Stan
 #'
 #' Estimates the steady-state BVAR model using the No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
-#' Uses the data, setup, and priors stored in the steady-state \code{bvar} object. Supports both
-#' homoscedastic and stochastic volatility (RW or AR1) specifications.
+#' Also generates draws from the joint predictive distribution.
+#' Uses the data, setup, and priors stored in the steady-state \code{bvar} object.
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through
 #'   \code{\link{setup}} and \code{\link{priors}}.

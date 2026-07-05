@@ -33,8 +33,8 @@ A fitted steady-state \code{bvar} object with:
 }
 \description{
 Estimates the steady-state BVAR model using the No-U-Turn sampler (a variant of Hamiltonian Monte Carlo) via Stan.
-Uses the data, setup, and priors stored in the steady-state \code{bvar} object. Supports both
-homoscedastic and stochastic volatility (RW or AR1) specifications.
+Also generates draws from the joint predictive distribution.
+Uses the data, setup, and priors stored in the steady-state \code{bvar} object.
 }
 \details{
 The function selects the appropriate precompiled Stan model based on settings from \link{priors}:

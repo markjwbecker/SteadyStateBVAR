@@ -177,7 +177,7 @@ $m_0=k+2$.
 
 This package also allows for stochastic volatility (Random Walk or AR1
 specifications), where we let the covariance matrix of the innovations
-vary over time,i.e. we have $\Sigma_{u,t}$ (see `?bvar` for more
+vary over time, i.e. we have $\Sigma_{u,t}$ (see `?bvar` for more
 details).
 
 ## Example

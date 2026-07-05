@@ -13,9 +13,9 @@
 #' @param lambda_3 Numeric. Lag decay rate of the Minnesota prior. Default \code{1}.
 #' @param first_own_lag_prior_mean Numeric vector of length \code{k}. Prior means for the first own lags
 #'   of the variables. If \code{NULL} (default), a zero vector is used.
-#' @param theta_Psi Numeric vector. Prior mean vector for vec(Psi), i.e. the steady-state parameters. If \code{NULL} (default),
+#' @param theta_Psi Numeric vector. Prior mean vector for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters. If \code{NULL} (default),
 #'   the OLS estimates are used.
-#' @param Omega_Psi Numeric matrix. Prior covariance matrix for vec(Psi), i.e. the steady-state parameters. If \code{NULL} (default),
+#' @param Omega_Psi Numeric matrix. Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters. If \code{NULL} (default),
 #'    a diagonal matrix with variances \code{1000} is used.
 #' @param Jeffrey Logical. If \code{TRUE} (default), uses a Jeffreys prior for the innovation covariance matrix.
 #'   If \code{FALSE}, uses an uninformative inverse-Wishart prior. Only considered if \code{SV=FALSE}.
@@ -34,10 +34,10 @@
 #'   }
 #'
 #' @return The steady-state \code{bvar} object with an appended \code{priors} list containing:
-#'   \item{theta_beta}{Prior mean vector for vec(beta) constructed with the Minnesota prior}
-#'   \item{Omega_beta}{Prior covariance matrix for vec(beta) constructed with the Minnesota prior}
-#'   \item{theta_Psi}{Prior mean vector for vec(Psi), i.e. the steady-state parameters}
-#'   \item{Omega_Psi}{Prior covariance matrix for vec(Psi), i.e. the steady-state parameters}
+#'   \item{theta_beta}{Prior mean vector for \eqn{\text{vec}(\beta)} constructed with the Minnesota prior}
+#'   \item{Omega_beta}{Prior covariance matrix for \eqn{\text{vec}(\beta)} constructed with the Minnesota prior}
+#'   \item{theta_Psi}{Prior mean vector for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters}
+#'   \item{Omega_Psi}{Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters}
 #'   \item{Jeffrey}{Indicator for Jeffreys prior usage}
 #'   \item{Sigma_AR}{Residual variance estimates from univariate AR fits, which are used by the Minnesota prior}
 #'   \item{m_0}{Inverse-Wishart prior degrees of freedom (if \code{Jeffrey = FALSE})}
