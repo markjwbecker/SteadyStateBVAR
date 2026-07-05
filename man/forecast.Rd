@@ -6,7 +6,7 @@
 \usage{
 forecast(
   x,
-  ci = 0.95,
+  pi = 0.95,
   fcst_type = c("mean", "median"),
   growth_rate_idx = NULL,
   plot_idx = NULL,
@@ -16,13 +16,13 @@ forecast(
 \arguments{
 \item{x}{A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.}
 
-\item{ci}{Numeric. The prediction interval width. Default \code{0.95}, i.e. 95\% prediction interval.}
+\item{pi}{Numeric. The prediction interval width. Default \code{0.95}, i.e. 95\% prediction interval.}
 
 \item{fcst_type}{Character. Whether to use \code{"mean"} or \code{"median"}
 as the point forecast. Default \code{"mean"}.}
 
 \item{growth_rate_idx}{Integer vector. Indices of variables to convert to
-annual growth rates. Default is \code{NULL}.}
+annual growth rates. Suitable for variables specified as \eqn{100 \ln y_{t,k}-t_{t-1,k}}. Default is \code{NULL}.}
 
 \item{plot_idx}{Integer vector. Indices of variables to plot. If \code{NULL}
 (default), all variables are plotted.}
@@ -72,6 +72,6 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 verbose = FALSE)
 
-forecast(bvar_obj, ci = 0.90, show_all = TRUE)
+forecast(bvar_obj, pi = 0.90, show_all = TRUE)
 }
 }

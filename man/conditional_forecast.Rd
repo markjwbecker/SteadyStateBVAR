@@ -7,7 +7,7 @@
 conditional_forecast(
   bvar_obj,
   conditions,
-  ci = 0.95,
+  pi = 0.95,
   fcst_type = c("mean", "median"),
   growth_rate_idx = NULL,
   plot_idx = NULL
@@ -23,7 +23,7 @@ which the condition is imposed), and \code{value} (numeric, the imposed
 condition). Note that \code{var} and \code{horizon} must be integers, as
 they are used for indexing.}
 
-\item{ci}{Numeric. The prediction interval width. Default \code{0.95}.}
+\item{pi}{Numeric. The prediction interval width. Default \code{0.95}, i.e. 95\% prediction interval.}
 
 \item{fcst_type}{Character. Whether to use \code{"mean"} or \code{"median"}
 as the point forecast. Default \code{"mean"}.}
@@ -82,7 +82,7 @@ conditions <- data.frame(var = rep(2,8),
                          
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
-                                  ci=0.68,
+                                  pi=0.68,
                                   fcst_type = "mean")
 }
 }

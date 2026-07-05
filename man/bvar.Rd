@@ -93,6 +93,6 @@ Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
 In: Elliott, G. and Timmerman, A. (eds) \emph{Handbook of Economic Forecasting}.
 Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
-Villani, M. (2009). Steady-state priors for vector autoregressions.
+Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
 \emph{Journal of Applied Econometrics}. 24(4), pp. 630--649.
 }

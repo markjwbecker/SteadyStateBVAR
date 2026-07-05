@@ -23,6 +23,6 @@ Methods for Empirical Macroeconomics. \emph{Foundations and Trends in Econometri
 KoopKorobilis2010
 }
 \description{
-Quarterly US macroeconomic data (1953Q1--2006Q3) from Koop and Korobilis (2010)
+Quarterly US macroeconomic data (1953Q1-2006Q3) from Koop and Korobilis (2010)
 }
 \keyword{datasets}

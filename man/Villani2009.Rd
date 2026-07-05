@@ -21,13 +21,13 @@ are the foreign and domestic CPI levels in logs and s is the log of the trade-we
 }
 }
 \source{
-Villani, M. (2009). Steady-state priors for vector autoregressions.
+Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
 \emph{Journal of Applied Econometrics}, 24(4), pp. 630-650.
 }
 \usage{
 Villani2009
 }
 \description{
-Swedish macroeconomic data (1980Q1–-2005Q4) from Section 4.1 in Villani (2009)
+Swedish macroeconomic data (1980Q1–2005Q4) from Section 4.1 in Villani (2009)
 }
 \keyword{datasets}

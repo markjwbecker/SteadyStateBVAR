@@ -1,15 +1,13 @@
-.Rproj.user/ 
+.Rproj.user/
 .Rhistory
 .RData
 .Ruserdata
 *.Rproj
-.Rproj.user
 inst/doc
 docs
-inst/*.rds"src/*.o" 
+inst/*.rds
 src/*.o
 src/*.so
 src/*.dll
 src/*.rds
 src/**/*.o
-
