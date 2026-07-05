@@ -13,7 +13,7 @@
 #'   which the condition is imposed), and \code{value} (numeric, the imposed
 #'   condition). Note that \code{var} and \code{horizon} must be integers, as
 #'   they are used for indexing.
-#' @param ci Numeric. The prediction interval width. Default \code{0.95}.
+#' @param pi Numeric. The prediction interval width. Default \code{0.95}, i.e. 95% prediction interval.
 #' @param fcst_type Character. Whether to use \code{"mean"} or \code{"median"}
 #'   as the point forecast. Default \code{"mean"}.
 #' @param growth_rate_idx Integer vector. Indices of variables to convert to annual growth rates.
@@ -66,10 +66,10 @@
 #'                          
 #' cond_fcst <- conditional_forecast(bvar_obj,
 #'                                   conditions,
-#'                                   ci=0.68,
+#'                                   pi=0.68,
 #'                                   fcst_type = "mean")
 #' }
-conditional_forecast <- function(bvar_obj, conditions, ci = 0.95,
+conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
                                  fcst_type = c("mean", "median"),
                                  growth_rate_idx = NULL, plot_idx = NULL) {
   
@@ -88,7 +88,7 @@ conditional_forecast <- function(bvar_obj, conditions, ci = 0.95,
   N      <- bvar_obj$setup$N
   d_pred <- bvar_obj$predict$d_pred
   H      <- bvar_obj$predict$H
-  alpha  <- 1 - ci
+  alpha  <- 1 - pi
   s      <- k * H
   
   cond_forecast_array <- array(NA, dim = c(H, k, n_draws))

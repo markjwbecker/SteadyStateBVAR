@@ -6,11 +6,11 @@
 #' rates for selected variables.
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.
-#' @param ci Numeric. The prediction interval width. Default \code{0.95}, i.e. 95% prediction interval.
+#' @param pi Numeric. The prediction interval width. Default \code{0.95}, i.e. 95% prediction interval.
 #' @param fcst_type Character. Whether to use \code{"mean"} or \code{"median"}
 #'   as the point forecast. Default \code{"mean"}.
 #' @param growth_rate_idx Integer vector. Indices of variables to convert to
-#'   annual growth rates. Default is \code{NULL}.
+#'   annual growth rates. Suitable for variables specified as \eqn{100 \ln y_{t,k}-t_{t-1,k}}. Default is \code{NULL}.
 #' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
 #'   (default), all variables are plotted.
 #' @param show_all Logical. If \code{FALSE} (default), only the last two years
@@ -52,9 +52,9 @@
 #'                 cores = 1,
 #'                 verbose = FALSE)
 #'
-#' forecast(bvar_obj, ci = 0.90, show_all = TRUE)
+#' forecast(bvar_obj, pi = 0.90, show_all = TRUE)
 #' }
-forecast <- function(x, ci = 0.95, fcst_type = c("mean", "median"),
+forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
                      growth_rate_idx = NULL, plot_idx = NULL, show_all = FALSE) {
   
   fcst_type <- match.arg(fcst_type)
@@ -67,7 +67,7 @@ forecast <- function(x, ci = 0.95, fcst_type = c("mean", "median"),
   
   posterior    <- rstan::extract(x$fit$stan)
   y_pred       <- posterior$y_pred
-  alpha        <- 1 - ci
+  alpha        <- 1 - pi
   y_pred_m     <- apply(y_pred, c(2, 3), fcst_type)
   y_pred_lower <- apply(y_pred, c(2, 3), quantile, probs = alpha / 2)
   y_pred_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - alpha / 2)

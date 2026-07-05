@@ -1,6 +1,6 @@
 #' Koop and Korobilis (2010) dataset
 #'
-#' Quarterly US macroeconomic data (1953Q1--2006Q3) from Koop and Korobilis (2010)
+#' Quarterly US macroeconomic data (1953Q1-2006Q3) from Koop and Korobilis (2010)
 #'
 #' @format ## `KoopKorobilis2010`
 #' A multivariate time series object with 215 rows and 3 columns:
@@ -15,7 +15,7 @@
 
 #' Villani (2009) dataset
 #'
-#' Swedish macroeconomic data (1980Q1–-2005Q4) from Section 4.1 in Villani (2009)
+#' Swedish macroeconomic data (1980Q1–2005Q4) from Section 4.1 in Villani (2009)
 #'
 #' @format ## `Villani2009`
 #' A multivariate time series object with 104 rows and 7 columns:
@@ -29,6 +29,6 @@
 #'   \item{q}{level of the real exchange rate defined as q = s + p_f - p, where p_f and p
 #'   are the foreign and domestic CPI levels in logs and s is the log of the trade-weighted nominal exchange rate}
 #' }
-#' @source Villani, M. (2009). Steady-state priors for vector autoregressions.
+#' @source Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
 #'   \emph{Journal of Applied Econometrics}, 24(4), pp. 630-650.
 "Villani2009"
