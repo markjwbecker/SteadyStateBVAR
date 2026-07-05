@@ -125,7 +125,7 @@
 <p>However, if the user wants, an inverse Wishart prior can be used instead</p>
 <p><span class="math display">\[\Sigma_u \sim \mathrm{IW}(V_0,m_0)\]</span></p>
 <p>where <span class="math inline">\(V_0\)</span> is the scale matrix and <span class="math inline">\(m_0\geq k+2\)</span> is the number of degrees of freedom. An uninformative prior can be (and is in this package) specified by setting <span class="math inline">\(V_0=(m_0-k-1)\hat{\Sigma}_u\)</span> where <span class="math inline">\(\hat{\Sigma}_u\)</span> is the least squares estimate from the VAR(<span class="math inline">\(p\)</span>) (including the constant and dummy/trend variable if applicable), and <span class="math inline">\(m_0=k+2\)</span>.</p>
-<p>This package also allows for stochastic volatility (Random Walk or AR1 specifications), where we let the covariance matrix of the innovations vary over time (i.e. we have<span class="math inline">\(\Sigma_{u,t}\)</span>, more details are found in <code><a href="reference/bvar.html">?bvar</a></code>).</p>
+<p>This package also allows for stochastic volatility (Random Walk or AR1 specifications), where we let the covariance matrix of the innovations vary over time,i.e. we have <span class="math inline">\(\Sigma_{u,t}\)</span> (see <code><a href="reference/bvar.html">?bvar</a></code> for more details).</p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -136,13 +136,14 @@
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Villani2009"</span><span class="op">)</span></span>
 <span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="va">Villani2009</span></span>
 <span></span>
-<span><span class="co">#hold out last two observations to facilitate comparisons to Figures 1-3 in Villani (2009)</span></span>
+<span><span class="co">#hold out last two observations to facilitate comparisons</span></span>
+<span><span class="co">#to Figures 1-3 in Villani (2009)</span></span>
 <span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">102</span>, <span class="op">]</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/start.html" class="external-link">start</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span>, frequency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bvar.html">bvar</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">yt</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Use a dummy to model Sweden’s change in monetary policy in the 1990s</span></span>
-<span><span class="co"># (move to inflation targeting and flexible exchange rate)</span></span>
+<span><span class="co">#Use a dummy to model Sweden’s change in monetary policy in the 1990s</span></span>
+<span><span class="co">#(move to inflation targeting and flexible exchange rate)</span></span>
 <span><span class="va">bp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">time</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1992.75</span><span class="op">)</span> <span class="co">#breakpoint</span></span>
 <span><span class="va">dum_var</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">bp</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span><span class="op">-</span><span class="va">bp</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
@@ -247,7 +248,7 @@
 <span><span class="co">#unconditional forecasts</span></span>
 <span><span class="co">#see last forecasts in Figures 1-3 in Villani (2009)</span></span>
 <span><span class="va">fcst</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
-<span>                 ci <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>                 pi <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>                 fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                 growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span>, <span class="co">#annual inflation/real GDP growth instead of QoQ</span></span>
 <span>                 plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
@@ -260,7 +261,7 @@
 <span>              </span>
 <span><span class="va">cond_fcst</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conditional_forecast.html">conditional_forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                    <span class="va">conditions</span>,</span>
-<span>                    ci<span class="op">=</span><span class="fl">0.68</span>,</span>
+<span>                    pi<span class="op">=</span><span class="fl">0.68</span>,</span>
 <span>                    fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                    plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>,</span>
 <span>                    growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
@@ -280,7 +281,7 @@
 <p>Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector Autoregressions with Stochastic Volatility. <em>Journal of Business &amp; Economic Statistics</em>. 29(3), pp. 327–341.</p>
 <p>Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox. <em>Working Paper Series</em>, No. 1934. European Central Bank.</p>
 <p>Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression. In: Elliott, G. and Timmerman, A. (eds) <em>Handbook of Economic Forecasting</em>. Elsevier B.V. Vol 2, Part B., pp. 791-897.</p>
-<p>Villani, M. (2009). Steady-state priors for vector autoregressions. <em>Journal of Applied Econometrics</em>. 24(4), pp. 630-650.</p>
+<p>Villani, M. (2009). Steady-State Priors for Vector Autoregressions. <em>Journal of Applied Econometrics</em>. 24(4), pp. 630-650.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">

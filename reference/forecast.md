@@ -90,8 +90,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6.6e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.66 seconds.
+#> Chain 1: Gradient evaluation took 6.9e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.69 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -116,11 +116,11 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.026 seconds (Warm-up)
-#> Chain 1:                0.082 seconds (Sampling)
-#> Chain 1:                0.108 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.033 seconds (Warm-up)
+#> Chain 1:                0.091 seconds (Sampling)
+#> Chain 1:                0.124 seconds (Total)
 #> Chain 1: 
-#> Warning: The largest R-hat is 1.08, indicating chains have not mixed.
+#> Warning: The largest R-hat is 1.07, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#r-hat
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -131,7 +131,6 @@ bvar_obj <- fit(bvar_obj,
 #> https://mc-stan.org/misc/warnings.html#tail-ess
 
 forecast(bvar_obj, ci = 0.90, show_all = TRUE)
-
-
+#> Error in forecast(bvar_obj, ci = 0.9, show_all = TRUE): unused argument (ci = 0.9)
 # }
 ```

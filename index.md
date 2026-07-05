@@ -165,8 +165,9 @@ package) specified by setting \\V_0=(m_0-k-1)\hat{\Sigma}\_u\\ where
 
 This package also allows for stochastic volatility (Random Walk or AR1
 specifications), where we let the covariance matrix of the innovations
-vary over time (i.e. we have\\\Sigma\_{u,t}\\, more details are found in
-[`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)).
+vary over time,i.e. we have \\\Sigma\_{u,t}\\ (see
+[`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
+for more details).
 
 ## Example
 
@@ -180,13 +181,14 @@ library(SteadyStateBVAR)
 data("Villani2009")
 yt <- Villani2009
 
-#hold out last two observations to facilitate comparisons to Figures 1-3 in Villani (2009)
+#hold out last two observations to facilitate comparisons
+#to Figures 1-3 in Villani (2009)
 yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 
 bvar_obj <- bvar(data = yt)
 
-# Use a dummy to model Sweden’s change in monetary policy in the 1990s
-# (move to inflation targeting and flexible exchange rate)
+#Use a dummy to model Sweden’s change in monetary policy in the 1990s
+#(move to inflation targeting and flexible exchange rate)
 bp <- which(time(yt) == 1992.75) #breakpoint
 dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
 
@@ -291,7 +293,7 @@ summary(bvar_obj , stat = "mean")
 #unconditional forecasts
 #see last forecasts in Figures 1-3 in Villani (2009)
 fcst <- forecast(bvar_obj,
-                 ci = 0.95,
+                 pi = 0.95,
                  fcst_type = "mean",
                  growth_rate_idx = c(4,5), #annual inflation/real GDP growth instead of QoQ
                  plot_idx = c(4,5,6))
@@ -304,7 +306,7 @@ conditions <- data.frame(
               
 cond_fcst <- conditional_forecast(bvar_obj,
                     conditions,
-                    ci=0.68,
+                    pi=0.68,
                     fcst_type = "mean",
                     plot_idx = c(4,6),
                     growth_rate_idx = c(4))
@@ -332,5 +334,5 @@ Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
 In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic
 Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
-Villani, M. (2009). Steady-state priors for vector autoregressions.
+Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
 *Journal of Applied Econometrics*. 24(4), pp. 630-650.
