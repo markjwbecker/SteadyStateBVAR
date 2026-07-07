@@ -134,8 +134,8 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1:   Error evaluating the log probability at the initial value.
 #> Chain 1: Exception: multi_normal_lpdf: LDLT_Factor of covariance parameter is not positive definite.  last conditional variance is -2.68435e+08. (in 'steady_state_bvar_RW_stochastic_volatility', line 97, column 6 to column 54)
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 9.6e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.96 seconds.
+#> Chain 1: Gradient evaluation took 0.000109 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.09 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -160,9 +160,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 1.717 seconds (Warm-up)
-#> Chain 1:                5.402 seconds (Sampling)
-#> Chain 1:                7.119 seconds (Total)
+#> Chain 1:  Elapsed Time: 1.702 seconds (Warm-up)
+#> Chain 1:                5.387 seconds (Sampling)
+#> Chain 1:                7.089 seconds (Total)
 #> Chain 1: 
 #> Warning: The largest R-hat is NA, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See

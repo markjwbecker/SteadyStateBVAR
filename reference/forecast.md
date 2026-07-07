@@ -94,8 +94,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6.7e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.67 seconds.
+#> Chain 1: Gradient evaluation took 6.6e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.66 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -121,8 +121,8 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
 #> Chain 1:  Elapsed Time: 0.033 seconds (Warm-up)
-#> Chain 1:                0.089 seconds (Sampling)
-#> Chain 1:                0.122 seconds (Total)
+#> Chain 1:                0.087 seconds (Sampling)
+#> Chain 1:                0.12 seconds (Total)
 #> Chain 1: 
 #> Warning: The largest R-hat is 1.05, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
