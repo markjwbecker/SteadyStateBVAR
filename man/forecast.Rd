@@ -62,7 +62,7 @@ bvar_obj <- priors(bvar_obj,
                    first_own_lag_prior_mean = rep(1,2),
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2),
-                   Jeffrey = TRUE,
+                   Jeffreys = TRUE,
                    SV = FALSE,
                    SV_type = NULL,
                    SV_priors = NULL)
@@ -73,8 +73,7 @@ bvar_obj <- fit(bvar_obj,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
-                cores = 1,
-                verbose = FALSE)
+                cores = 1)
 
 forecast(bvar_obj, pi = 0.90, show_all = TRUE)
 }
