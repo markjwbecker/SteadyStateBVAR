@@ -47,8 +47,8 @@ data {
   matrix[k, k] Omega_gamma_1; //gamma_1 prior covariance matrix
   vector[k] theta_log_lambda_0; //log lambda initial condition prior mean
   matrix[k, k] Omega_log_lambda_0; //log lambda initial condition prior covariance matrix
-  int<lower=k> m_0; //Phi prior degrees of freedom
-  matrix[k,k] V_0; //Phi prior scale matrix
+  int<lower=k> m_Phi; //Phi prior degrees of freedom
+  matrix[k,k] V_Phi; //Phi prior scale matrix
   int<lower=1> H; // Forecast horizon
   matrix[H, q] d_pred; //future deterministic variables
 }
@@ -114,7 +114,7 @@ model {
   a               ~ multi_normal(theta_A, Omega_A);
   gamma_0         ~ multi_normal(theta_gamma_0, Omega_gamma_0);
   gamma_1         ~ multi_normal(theta_gamma_1, Omega_gamma_1);
-  Phi             ~ inv_wishart(m_0, V_0);
+  Phi             ~ inv_wishart(m_Phi, V_Phi);
 }
 
 generated quantities {

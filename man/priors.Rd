@@ -12,7 +12,7 @@ priors(
   first_own_lag_prior_mean = NULL,
   theta_Psi = NULL,
   Omega_Psi = NULL,
-  Jeffrey = TRUE,
+  Jeffreys = TRUE,
   SV = FALSE,
   SV_type = NULL,
   SV_priors = NULL
@@ -37,7 +37,7 @@ the OLS estimates are used.}
 \item{Omega_Psi}{Numeric matrix. Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters. If \code{NULL} (default),
 a diagonal matrix with variances \code{1000} is used.}
 
-\item{Jeffrey}{Logical. If \code{TRUE} (default), uses a Jeffreys prior for the innovation covariance matrix.
+\item{Jeffreys}{Logical. If \code{TRUE} (default), uses a Jeffreys prior for the innovation covariance matrix.
 If \code{FALSE}, uses an uninformative inverse-Wishart prior. Only considered if \code{SV=FALSE}.}
 
 \item{SV}{Logical. If \code{TRUE}, enables stochastic volatility specification.
@@ -53,7 +53,7 @@ The list must contain the following named elements depending on \code{SV_type}:
 \code{sigma2_log_lambda_0}, \code{alpha_phi}, \code{beta_phi}.
 \item For \code{"AR1"}: \code{theta_A}, \code{Omega_A}, \code{theta_gamma_0},
 \code{Omega_gamma_0}, \code{theta_gamma_1}, \code{Omega_gamma_1},
-\code{theta_log_lambda_0}, \code{Omega_log_lambda_0}, \code{V_0}, \code{m_0}.
+\code{theta_log_lambda_0}, \code{Omega_log_lambda_0}, \code{V_Phi}, \code{m_Phi}.
 }}
 }
 \value{
@@ -62,10 +62,10 @@ The steady-state \code{bvar} object with an appended \code{priors} list containi
 \item{Omega_beta}{Prior covariance matrix for \eqn{\text{vec}(\beta)} constructed with the Minnesota prior}
 \item{theta_Psi}{Prior mean vector for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters}
 \item{Omega_Psi}{Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters}
-\item{Jeffrey}{Indicator for Jeffreys prior usage}
+\item{Jeffreys}{Indicator for Jeffreys prior usage}
 \item{Sigma_AR}{Residual variance estimates from univariate AR fits, which are used by the Minnesota prior}
-\item{m_0}{Inverse-Wishart prior degrees of freedom (if \code{Jeffrey = FALSE})}
-\item{V_0}{Inverse-Wishart prior scale matrix (if \code{Jeffrey = FALSE})}
+\item{m}{Inverse-Wishart prior degrees of freedom (if \code{Jeffreys = FALSE})}
+\item{V}{Inverse-Wishart prior scale matrix (if \code{Jeffreys = FALSE})}
 \item{SV}{Logical indicator for stochastic volatility specification}
 \item{SV_type}{Stochastic volatility specification type}
 \item{SV_priors}{User-supplied SV prior list (if \code{SV = TRUE})}
@@ -75,7 +75,7 @@ This function prepares the priors. The Minnesota prior is used for the autoregre
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables stochastic volatility where the covariance matrix of the innovations varies over time (random walk or AR(1)).
+Optionally enables stochastic volatility where the covariance matrix varies over time (random walk or AR(1)).
 }
 \details{
 The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u}, so priors are needed.
@@ -130,20 +130,20 @@ prior is
 This is the core of the steady-state BVAR model.
 In \eqn{\theta_\Psi}, one specifies the prior beliefs about the location of the steady state,
 and in \eqn{\Omega_\Psi}, which is assumed to be a diagonal matrix, one specifies the degree
-of certainty in those prior beliefs. The prior for \eqn{\Sigma_u} is either the usual noninformative Jeffreys prior
+of certainty in those prior beliefs. The prior for \eqn{\Sigma_u} is either the usual non-informative Jeffreys prior
 
 \deqn{p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}}
 
-or an inverse-Wishart prior
+or a proper uninformative inverse-Wishart prior
 
-\deqn{\Sigma_u \sim \mathrm{IW}(V_0,m_0)}
+\deqn{\Sigma_u \sim \mathrm{IW}(V,m)}
 
-where \eqn{V_0} is the scale matrix and \eqn{m_0\geq k+2} is the number of degrees of freedom.
-An uninformative prior can be (and is in this package) specified by setting
-\eqn{V_0=(m_0-k-1)\hat{\Sigma}_u} where \eqn{\hat{\Sigma}_u} is the least squares estimate
-from the VAR(\eqn{p}) (including the constant and dummy/trend variable if applicable), and \eqn{m_0=k+2}.
+where \eqn{V} is the scale matrix and \eqn{m\geq k+2} is the number of degrees of freedom.
+An uninformative prior is specified by setting
+\eqn{V=(m-k-1)\hat{\Sigma}_u} where \eqn{\hat{\Sigma}_u} is the least squares estimate
+from the VAR(\eqn{p}) (including the constant and dummy/trend variable if applicable), and \eqn{m=k+2}.
 For the stochastic volatility specifications, the innovation covariance matrix is now time-varying \eqn{\Sigma_{u,t}}.
-Therefore, stochastic volatility priors are needed, see \link{bvar} for more details. For the Random Walk
+Therefore, stochastic volatility priors are needed, see \link{?bvar} for more details. For the Random Walk
 (\code{RW}) stochastic volatility specification, the following priors are used
 
 \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
@@ -158,7 +158,7 @@ Furthermore, \eqn{\phi_i} are the log volatility innovation variances. For the A
 \gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
 \ln \lambda_{0} &\sim \mathrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
-\Phi &\sim \mathrm{IW}(V_0,m_0)\end{aligned}}
+\Phi &\sim \mathrm{IW}(V_{\Phi},m_{\Phi})\end{aligned}}
 
 Here \eqn{a} is again the \eqn{k(k-1)/2} vector that collects the free parameters in \eqn{A} in row-major order,
 and \eqn{\ln \lambda_0} are the time \eqn{t=0} values (initial conditions) of \eqn{\ln \lambda_{t}}.
@@ -180,7 +180,7 @@ bvar_obj <- priors(bvar_obj,
                    first_own_lag_prior_mean = rep(1,2),
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2),
-                   Jeffrey = TRUE,
+                   Jeffreys = TRUE,
                    SV = FALSE,
                    SV_type = NULL,
                    SV_priors = NULL)
@@ -234,8 +234,8 @@ theta_gamma_1      =  rep(0.9, k),
 Omega_gamma_1      =  diag(10, k),
 theta_log_lambda_0 =  rep(0.1, k)/(1-rep(0.9, k)),
 Omega_log_lambda_0 =  diag(1000, k),
-V_0                = (10 - k - 1) * diag(k),
-m_0                =  10
+V_Phi              = (10 - k - 1) * diag(k),
+m_Phi              =  10
 )
 
 bvar_obj <- priors(bvar_obj,

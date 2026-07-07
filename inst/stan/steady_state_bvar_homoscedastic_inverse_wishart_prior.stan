@@ -39,8 +39,8 @@ data {
   matrix[k*p*k, k*p*k] Omega_beta; //vec_beta prior covariance matrix
   vector[k*q] theta_Psi; //vec_Psi prior mean
   matrix[k*q, k*q] Omega_Psi; //vec_Psi prior covariance matrix
-  int<lower=k+2> m_0; // df
-  matrix[k, k] V_0; // prior scale matrix
+  int<lower=k+2> m; // df
+  matrix[k, k] V; // prior scale matrix
   int<lower=1> H; // Forecast horizon
   matrix[H, q] d_pred; //future exogenous/deterministic variables
 }
@@ -62,7 +62,7 @@ model {
   }
   to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
   to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
-  Sigma_u ~ inv_wishart(m_0, V_0);
+  Sigma_u ~ inv_wishart(m, V);
 }
 
 generated quantities {
