@@ -9,11 +9,11 @@
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables stochastic volatility where the covariance matrix of the innovations varies over time (random walk or AR(1))."><meta property="og:description" content="This function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
+Optionally enables stochastic volatility where the covariance matrix varies over time (random walk or AR(1))."><meta property="og:description" content="This function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables stochastic volatility where the covariance matrix of the innovations varies over time (random walk or AR(1))."></head><body>
+Optionally enables stochastic volatility where the covariance matrix varies over time (random walk or AR(1))."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -58,7 +58,7 @@ Optionally enables stochastic volatility where the covariance matrix of the inno
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables stochastic volatility where the covariance matrix of the innovations varies over time (random walk or AR(1)).</p>
+Optionally enables stochastic volatility where the covariance matrix varies over time (random walk or AR(1)).</p>
     </div>
 
     <div class="section level2">
@@ -71,7 +71,7 @@ Optionally enables stochastic volatility where the covariance matrix of the inno
 <span>  first_own_lag_prior_mean <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  theta_Psi <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Omega_Psi <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Jeffrey <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  Jeffreys <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  SV <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  SV_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  SV_priors <span class="op">=</span> <span class="cn">NULL</span></span>
@@ -114,7 +114,7 @@ the OLS estimates are used.</p></dd>
 a diagonal matrix with variances <code>1000</code> is used.</p></dd>
 
 
-<dt id="arg-jeffrey">Jeffrey<a class="anchor" aria-label="anchor" href="#arg-jeffrey"></a></dt>
+<dt id="arg-jeffreys">Jeffreys<a class="anchor" aria-label="anchor" href="#arg-jeffreys"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> (default), uses a Jeffreys prior for the innovation covariance matrix.
 If <code>FALSE</code>, uses an uninformative inverse-Wishart prior. Only considered if <code>SV=FALSE</code>.</p></dd>
 
@@ -135,7 +135,7 @@ The list must contain the following named elements depending on <code>SV_type</c
 <code>sigma2_log_lambda_0</code>, <code>alpha_phi</code>, <code>beta_phi</code>.</p></li>
 <li><p>For <code>"AR1"</code>: <code>theta_A</code>, <code>Omega_A</code>, <code>theta_gamma_0</code>,
 <code>Omega_gamma_0</code>, <code>theta_gamma_1</code>, <code>Omega_gamma_1</code>,
-<code>theta_log_lambda_0</code>, <code>Omega_log_lambda_0</code>, <code>V_0</code>, <code>m_0</code>.</p></li>
+<code>theta_log_lambda_0</code>, <code>Omega_log_lambda_0</code>, <code>V_Phi</code>, <code>m_Phi</code>.</p></li>
 </ul></dd>
 
 </dl></div>
@@ -154,17 +154,17 @@ The list must contain the following named elements depending on <code>SV_type</c
 <dt>Omega_Psi</dt>
 <dd><p>Prior covariance matrix for \(\text{vec}(\Psi)\), i.e. the steady-state parameters</p></dd>
 
-<dt>Jeffrey</dt>
+<dt>Jeffreys</dt>
 <dd><p>Indicator for Jeffreys prior usage</p></dd>
 
 <dt>Sigma_AR</dt>
 <dd><p>Residual variance estimates from univariate AR fits, which are used by the Minnesota prior</p></dd>
 
-<dt>m_0</dt>
-<dd><p>Inverse-Wishart prior degrees of freedom (if <code>Jeffrey = FALSE</code>)</p></dd>
+<dt>m</dt>
+<dd><p>Inverse-Wishart prior degrees of freedom (if <code>Jeffreys = FALSE</code>)</p></dd>
 
-<dt>V_0</dt>
-<dd><p>Inverse-Wishart prior scale matrix (if <code>Jeffrey = FALSE</code>)</p></dd>
+<dt>V</dt>
+<dd><p>Inverse-Wishart prior scale matrix (if <code>Jeffreys = FALSE</code>)</p></dd>
 
 <dt>SV</dt>
 <dd><p>Logical indicator for stochastic volatility specification</p></dd>
@@ -222,16 +222,16 @@ prior is</p>
 <p>This is the core of the steady-state BVAR model.
 In \(\theta_\Psi\), one specifies the prior beliefs about the location of the steady state,
 and in \(\Omega_\Psi\), which is assumed to be a diagonal matrix, one specifies the degree
-of certainty in those prior beliefs. The prior for \(\Sigma_u\) is either the usual noninformative Jeffreys prior</p>
+of certainty in those prior beliefs. The prior for \(\Sigma_u\) is either the usual non-informative Jeffreys prior</p>
 <p>$$p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}$$</p>
-<p>or an inverse-Wishart prior</p>
-<p>$$\Sigma_u \sim \mathrm{IW}(V_0,m_0)$$</p>
-<p>where \(V_0\) is the scale matrix and \(m_0\geq k+2\) is the number of degrees of freedom.
-An uninformative prior can be (and is in this package) specified by setting
-\(V_0=(m_0-k-1)\hat{\Sigma}_u\) where \(\hat{\Sigma}_u\) is the least squares estimate
-from the VAR(\(p\)) (including the constant and dummy/trend variable if applicable), and \(m_0=k+2\).
+<p>or a proper uninformative inverse-Wishart prior</p>
+<p>$$\Sigma_u \sim \mathrm{IW}(V,m)$$</p>
+<p>where \(V\) is the scale matrix and \(m\geq k+2\) is the number of degrees of freedom.
+An uninformative prior is specified by setting
+\(V=(m-k-1)\hat{\Sigma}_u\) where \(\hat{\Sigma}_u\) is the least squares estimate
+from the VAR(\(p\)) (including the constant and dummy/trend variable if applicable), and \(m=k+2\).
 For the stochastic volatility specifications, the innovation covariance matrix is now time-varying \(\Sigma_{u,t}\).
-Therefore, stochastic volatility priors are needed, see <a href="bvar.html">bvar</a> for more details. For the Random Walk
+Therefore, stochastic volatility priors are needed, see ?bvar for more details. For the Random Walk
 (<code>RW</code>) stochastic volatility specification, the following priors are used</p>
 <p>$$\begin{aligned}a &amp;\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \ln \lambda_{i,0} &amp;\sim \mathrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
@@ -243,7 +243,7 @@ Furthermore, \(\phi_i\) are the log volatility innovation variances. For the AR(
 \gamma_{0} &amp;\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &amp;\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
 \ln \lambda_{0} &amp;\sim \mathrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
-\Phi &amp;\sim \mathrm{IW}(V_0,m_0)\end{aligned}$$</p>
+\Phi &amp;\sim \mathrm{IW}(V_{\Phi},m_{\Phi})\end{aligned}$$</p>
 <p>Here \(a\) is again the \(k(k-1)/2\) vector that collects the free parameters in \(A\) in row-major order,
 and \(\ln \lambda_0\) are the time \(t=0\) values (initial conditions) of \(\ln \lambda_{t}\).
 Furthermore, \(\gamma_{0}\) are the log volatility intercepts, \(\gamma_{1}\) are the log volatility
@@ -266,7 +266,7 @@ slopes, and \(\Phi\) is the log volatility innovation covariance matrix.</p>
 <span class="r-in"><span>                   first_own_lag_prior_mean <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                   theta_Psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                   Omega_Psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>                   Jeffrey <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>                   Jeffreys <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                   SV <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                   SV_type <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>                   SV_priors <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></span>
@@ -320,8 +320,8 @@ slopes, and \(\Phi\) is the log volatility innovation covariance matrix.</p>
 <span class="r-in"><span>Omega_gamma_1      <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">10</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>theta_log_lambda_0 <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">k</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>Omega_log_lambda_0 <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>V_0                <span class="op">=</span> <span class="op">(</span><span class="fl">10</span> <span class="op">-</span> <span class="va">k</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>m_0                <span class="op">=</span>  <span class="fl">10</span></span></span>
+<span class="r-in"><span>V_Phi              <span class="op">=</span> <span class="op">(</span><span class="fl">10</span> <span class="op">-</span> <span class="va">k</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>m_Phi              <span class="op">=</span>  <span class="fl">10</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu">priors</span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>

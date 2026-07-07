@@ -47,16 +47,17 @@ of the implied normal distribution.
 
 ## Details
 
-As an example, say we have a CPI variable `CPI <- data$CPI`, where CPI
-is on the quarterly frequency. Then in the model we work with
-quarter-on-quarter inflation `x <- 100*diff(log(CPI))`. Lets say our
-prior for annualized steady-state inflation of `x` is between 1.7 and
-2.3 with 95% probability (with mean at 2). This translates to 0.425 and
-0.575 with 95% probability (with mean at 0.5). Clearly it is easier to
-think of a steady-state prior on the annualized scale, hence the
-`annualized_growthrate` argument. Please see
+Consider a CPI variable `CPI <- data$CPI`, observed at quarterly
+frequency. In the model, quarter-on-quarter inflation is used
+`x <- 100*diff(log(CPI))`. Suppose the prior belief is that annualized
+steady-state inflation lies between 1.7 and 2.3 with 95% probability
+(mean 2). On the quarterly scale used by `x`, this corresponds to a 95%
+interval of 0.425 to 0.575 (mean 0.5). Since it is typically more
+natural to elicit a prior on the annualized scale, the
+`annualized_growthrate` argument performs this conversion automatically.
+See
 [`vignette("Homoscedastic-steady-state-BVAR")`](https://markjwbecker.github.io/SteadyStateBVAR/articles/Homoscedastic-steady-state-BVAR.md)
-on how to use in practise.
+for usage in practice.
 
 ## Examples
 
