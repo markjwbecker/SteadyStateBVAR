@@ -113,7 +113,7 @@
 #' \eqn{V=(m-k-1)\hat{\Sigma}_u} where \eqn{\hat{\Sigma}_u} is the least squares estimate
 #' from the VAR(\eqn{p}) (including the constant and dummy/trend variable if applicable), and \eqn{m=k+2}.
 #' For the stochastic volatility specifications, the innovation covariance matrix is now time-varying \eqn{\Sigma_{u,t}}.
-#' Therefore, stochastic volatility priors are needed, see \link{?bvar} for more details. For the Random Walk
+#' Therefore, stochastic volatility priors are needed, see \link{bvar} for more details. For the Random Walk
 #' (\code{RW}) stochastic volatility specification, the following priors are used
 #' 
 #' \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
