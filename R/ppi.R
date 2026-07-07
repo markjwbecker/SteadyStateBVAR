@@ -27,8 +27,8 @@
 #' Suppose the prior belief is that annualized steady-state inflation lies between 1.7 and 2.3
 #' with 95% probability (mean 2). On the quarterly scale used by \code{x}, this corresponds to a
 #' 95% interval of 0.425 to 0.575 (mean 0.5). Since it is typically more natural to elicit a prior
-#' on the annualized scale, the \code{annualized_growthrate} argument performs this conversion
-#' automatically. See \code{vignette("Homoscedastic-steady-state-BVAR")} for usage in practice.
+#' on the annualized scale, the \code{annualized_growthrate} argument performs this conversion.
+#' See \code{vignette("Homoscedastic-steady-state-BVAR")} for usage in practice.
 #' 
 #'
 #' @examples

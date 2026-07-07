@@ -115,7 +115,7 @@ static constexpr std::array<const char*, 206> locations_array__ =
   " (in 'string', line 106, column 2 to column 51)",
   " (in 'string', line 107, column 2 to column 63)",
   " (in 'string', line 108, column 2 to column 63)",
-  " (in 'string', line 109, column 2 to column 42)",
+  " (in 'string', line 109, column 2 to column 46)",
   " (in 'string', line 29, column 2 to column 17)",
   " (in 'string', line 30, column 2 to column 19)",
   " (in 'string', line 31, column 2 to column 17)",
@@ -162,10 +162,10 @@ static constexpr std::array<const char*, 206> locations_array__ =
   " (in 'string', line 48, column 9 to column 10)",
   " (in 'string', line 48, column 12 to column 13)",
   " (in 'string', line 48, column 2 to column 34)",
-  " (in 'string', line 49, column 2 to column 19)",
+  " (in 'string', line 49, column 2 to column 21)",
   " (in 'string', line 50, column 9 to column 10)",
   " (in 'string', line 50, column 11 to column 12)",
-  " (in 'string', line 50, column 2 to column 18)",
+  " (in 'string', line 50, column 2 to column 20)",
   " (in 'string', line 51, column 2 to column 17)",
   " (in 'string', line 52, column 9 to column 10)",
   " (in 'string', line 52, column 12 to column 13)",
@@ -339,8 +339,8 @@ private:
   Eigen::Matrix<double,-1,-1> Omega_gamma_1_data__;
   Eigen::Matrix<double,-1,1> theta_log_lambda_0_data__;
   Eigen::Matrix<double,-1,-1> Omega_log_lambda_0_data__;
-  int m_0;
-  Eigen::Matrix<double,-1,-1> V_0_data__;
+  int m_Phi;
+  Eigen::Matrix<double,-1,-1> V_Phi_data__;
   int H;
   Eigen::Matrix<double,-1,-1> d_pred_data__;
   Eigen::Matrix<double,-1,-1> I_p_data__;
@@ -363,7 +363,7 @@ private:
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Omega_gamma_1{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> theta_log_lambda_0{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Omega_log_lambda_0{nullptr, 0, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,-1>> V_0{nullptr, 0, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,-1>> V_Phi{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> d_pred{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> I_p{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> L_0{nullptr, 0, 0};
@@ -899,28 +899,28 @@ public:
         }
       }
       current_statement__ = 134;
-      context__.validate_dims("data initialization", "m_0", "int",
+      context__.validate_dims("data initialization", "m_Phi", "int",
         std::vector<size_t>{});
-      m_0 = std::numeric_limits<int>::min();
+      m_Phi = std::numeric_limits<int>::min();
       current_statement__ = 134;
-      m_0 = context__.vals_i("m_0")[(1 - 1)];
+      m_Phi = context__.vals_i("m_Phi")[(1 - 1)];
       current_statement__ = 134;
-      stan::math::check_greater_or_equal(function__, "m_0", m_0, k);
+      stan::math::check_greater_or_equal(function__, "m_Phi", m_Phi, k);
       current_statement__ = 135;
-      stan::math::validate_non_negative_index("V_0", "k", k);
+      stan::math::validate_non_negative_index("V_Phi", "k", k);
       current_statement__ = 136;
-      stan::math::validate_non_negative_index("V_0", "k", k);
+      stan::math::validate_non_negative_index("V_Phi", "k", k);
       current_statement__ = 137;
-      context__.validate_dims("data initialization", "V_0", "double",
+      context__.validate_dims("data initialization", "V_Phi", "double",
         std::vector<size_t>{static_cast<size_t>(k), static_cast<size_t>(k)});
-      V_0_data__ = Eigen::Matrix<double,-1,-1>::Constant(k, k,
-                     std::numeric_limits<double>::quiet_NaN());
-      new (&V_0) Eigen::Map<Eigen::Matrix<double,-1,-1>>(V_0_data__.data(),
-        k, k);
+      V_Phi_data__ = Eigen::Matrix<double,-1,-1>::Constant(k, k,
+                       std::numeric_limits<double>::quiet_NaN());
+      new (&V_Phi)
+        Eigen::Map<Eigen::Matrix<double,-1,-1>>(V_Phi_data__.data(), k, k);
       {
-        std::vector<local_scalar_t__> V_0_flat__;
+        std::vector<local_scalar_t__> V_Phi_flat__;
         current_statement__ = 137;
-        V_0_flat__ = context__.vals_r("V_0");
+        V_Phi_flat__ = context__.vals_r("V_Phi");
         current_statement__ = 137;
         pos__ = 1;
         current_statement__ = 137;
@@ -928,8 +928,8 @@ public:
           current_statement__ = 137;
           for (int sym2__ = 1; sym2__ <= k; ++sym2__) {
             current_statement__ = 137;
-            stan::model::assign(V_0, V_0_flat__[(pos__ - 1)],
-              "assigning variable V_0", stan::model::index_uni(sym2__),
+            stan::model::assign(V_Phi, V_Phi_flat__[(pos__ - 1)],
+              "assigning variable V_Phi", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
             current_statement__ = 137;
             pos__ = (pos__ + 1);
@@ -1275,7 +1275,8 @@ public:
         lp_accum__.add(stan::math::multi_normal_lpdf<propto__>(gamma_1,
                          theta_gamma_1, Omega_gamma_1));
         current_statement__ = 87;
-        lp_accum__.add(stan::math::inv_wishart_lpdf<propto__>(Phi, m_0, V_0));
+        lp_accum__.add(stan::math::inv_wishart_lpdf<propto__>(Phi, m_Phi,
+                         V_Phi));
       }
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);

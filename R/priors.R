@@ -316,9 +316,9 @@ priors<- function(x,
       if (!all(dim(SV_priors$Omega_log_lambda_0) == k))
         stop(paste("Omega_log_lambda_0 must be a", k, "x", k, "matrix"))
       if (!is.numeric(SV_priors$m_Phi) || length(SV_priors$m_Phi) != 1 || SV_priors$m_Phi < k)
-        stop(paste("m_0_Phi must be a scalar integer >= k =", k))
+        stop(paste("m_Phi must be a scalar integer >= k =", k))
       if (!all(dim(SV_priors$V_Phi) == k))
-        stop(paste("V_0_Phi must be a", k, "x", k, "matrix"))
+        stop(paste("V_Phi must be a", k, "x", k, "matrix"))
     }
   }
   

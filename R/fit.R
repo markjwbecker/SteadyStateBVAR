@@ -72,7 +72,7 @@
 #'                    first_own_lag_prior_mean = rep(1,2),
 #'                    theta_Psi = rep(0, 2),
 #'                    Omega_Psi = diag(0.1, 2, 2),
-#'                    Jeffrey = TRUE)
+#'                    Jeffreys = TRUE)
 #'                    
 #' H <- 8
 #' d_pred <- matrix(rep(1,8))
@@ -111,7 +111,7 @@
 #'                    first_own_lag_prior_mean = rep(1,2),
 #'                    theta_Psi = rep(0, k*q),
 #'                    Omega_Psi = diag(0.1, k*q, k*q),
-#'                    Jeffrey = FALSE) #inverse-Wishart
+#'                    Jeffreys = FALSE) #inverse-Wishart
 #'
 #' H <- 8
 #' d_pred <- cbind(rep(1, H), rep(0, H))
@@ -190,8 +190,8 @@
 #' Omega_gamma_1      =  diag(10, k),
 #' theta_log_lambda_0 =  rep(0.1, k)/(1-rep(0.9, k)),
 #' Omega_log_lambda_0 =  diag(1000, k),
-#' V_0                = (10 - k - 1) * diag(k),
-#' m_0                =  10
+#' V_Phi              = (10 - k - 1) * diag(k),
+#' m_Phi              =  10
 #' )
 #'
 #' bvar_obj <- priors(bvar_obj,

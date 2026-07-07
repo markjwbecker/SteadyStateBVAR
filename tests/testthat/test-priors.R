@@ -82,16 +82,28 @@ test_that("Sigma_AR computed", {
   expect_equal(dim(result$priors$Sigma_AR), c(3,3))
 })
 
-test_that("Jeffrey FALSE adds hyperparameters", {
+test_that("Jeffreys FALSE adds hyperparameters", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
   model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
   
-  r1 <- priors(model, Jeffrey = TRUE)
-  r2 <- priors(model, Jeffrey = FALSE)
+  r1 <- priors(model, Jeffreys = TRUE)
+  r2 <- priors(model, Jeffreys = FALSE)
   
-  expect_null(r1$priors$m_0)
-  expect_false(is.null(r2$priors$m_0))
+  expect_null(r1$priors$m)
+  expect_false(is.null(r2$priors$m))
+})
+
+test_that("Jeffreys FALSE hyperparameters have expected values", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  result <- priors(model, Jeffreys = FALSE)
+  
+  expect_equal(result$priors$m, k + 2)
+  expect_equal(result$priors$V, (result$priors$m - k - 1) * model$setup$Sigma_u_OLS)
 })
 
 test_that("SV requires SV_priors", {
@@ -275,7 +287,7 @@ test_that("AR1 SV_priors validates required names", {
   sv <- list(
     theta_A = rep(0, n_free),
     Omega_A = diag(n_free)
-    # missing remaining AR1 elements
+    # missing remaining AR1 elements, including V_Phi and m_Phi
   )
   
   expect_error(
@@ -301,8 +313,8 @@ test_that("AR1 SV_priors validates Omega_gamma_0 dimensions", {
     Omega_gamma_1      = diag(k),
     theta_log_lambda_0 = rep(0, k),
     Omega_log_lambda_0 = diag(k),
-    m_0                = k + 2,
-    V_0                = diag(k)
+    m_Phi              = k + 2,
+    V_Phi              = diag(k)
   )
   
   expect_error(
@@ -311,7 +323,7 @@ test_that("AR1 SV_priors validates Omega_gamma_0 dimensions", {
   )
 })
 
-test_that("AR1 SV_priors validates m_0 >= k", {
+test_that("AR1 SV_priors validates m_Phi >= k", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
   model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
@@ -328,17 +340,17 @@ test_that("AR1 SV_priors validates m_0 >= k", {
     Omega_gamma_1      = diag(k),
     theta_log_lambda_0 = rep(0, k),
     Omega_log_lambda_0 = diag(k),
-    m_0                = k - 1, # too small
-    V_0                = diag(k)
+    m_Phi              = k - 1, # too small
+    V_Phi              = diag(k)
   )
   
   expect_error(
     priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv),
-    "m_0 must be a scalar integer >= k"
+    "m_Phi must be a scalar integer >= k"
   )
 })
 
-test_that("AR1 SV_priors validates V_0 dimensions", {
+test_that("AR1 SV_priors validates V_Phi dimensions", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
   model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
@@ -355,13 +367,13 @@ test_that("AR1 SV_priors validates V_0 dimensions", {
     Omega_gamma_1      = diag(k),
     theta_log_lambda_0 = rep(0, k),
     Omega_log_lambda_0 = diag(k),
-    m_0                = k + 2,
-    V_0                = diag(k + 1) # wrong dimensions
+    m_Phi              = k + 2,
+    V_Phi              = diag(k + 1) # wrong dimensions
   )
   
   expect_error(
     priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv),
-    "V_0 must be a"
+    "V_Phi must be a"
   )
 })
 
@@ -382,8 +394,8 @@ test_that("AR1 SV attaches correctly with valid priors", {
     Omega_gamma_1      = diag(k),
     theta_log_lambda_0 = rep(0, k),
     Omega_log_lambda_0 = diag(k),
-    m_0                = k + 2,
-    V_0                = diag(k)
+    m_Phi              = k + 2,
+    V_Phi              = diag(k)
   )
   
   result <- priors(model, SV = TRUE, SV_type = "AR1", SV_priors = sv)

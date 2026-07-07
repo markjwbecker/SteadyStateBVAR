@@ -56,8 +56,7 @@
 #'                 iter = 100,
 #'                 warmup = 50,
 #'                 chains = 1,
-#'                 cores = 1,
-#'                 verbose = FALSE)
+#'                 cores = 1)
 #'
 #' summary(bvar_obj)
 #' }

@@ -44,6 +44,7 @@
 #' 
 #' restriction_matrix[1, 1] <- 0
 #' restriction_matrix[4, 2] <- 0
+#' print(restriction_matrix)
 #' 
 #' bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 restrict_beta <- function(x, restriction_matrix) {

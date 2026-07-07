@@ -160,7 +160,7 @@ This is really the core of the steady-state BVAR model. In
 $\theta_\Psi$, we specify our prior beliefs about the location of the
 steady state, and in $\Omega_\Psi$, which we assume to be a diagonal
 matrix, we specify our degree of certainty in those prior beliefs.
-Finally, the prior for $\Sigma_u$ is the usual noninformative Jeffreys
+Finally, the prior for $\Sigma_u$ is the usual non-informative Jeffreys
 prior
 
 $$p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}$$
@@ -168,13 +168,12 @@ $$p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}$$
 Alternatively, a proper inverse-Wishart prior can be used (Karlsson,
 2013)
 
-$$\Sigma_u \sim \mathrm{IW}(V_0,m_0)$$
+$$\Sigma_u \sim \mathrm{IW}(V,m)$$
 
-where $V_0$ is the scale matrix and $m_0\geq k+2$ is the number of
-degrees of freedom. This package also allows for stochastic volatility
-(Random Walk or AR1 specifications), where we let the covariance matrix
-of the innovations vary over time, i.e. we have $\Sigma_{u,t}$ (see
-`?bvar` for more details).
+where $V$ is the scale matrix and $m\geq k+2$ is the number of degrees
+of freedom. This package also allows for stochastic volatility (Random
+Walk or AR1 specifications), where the covariance matrix varies over
+time, i.e. we have $\Sigma_{u,t}$ (see `?bvar` for more details).
 
 ## Example
 
@@ -196,12 +195,12 @@ bvar_obj <- bvar(data = yt)
 #Use a dummy to model Sweden’s change in monetary policy in the 1990s
 #(move to inflation targeting and flexible exchange rate)
 bp <- which(time(yt) == 1992.75) #breakpoint
-dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+dummy_variable <- c(rep(1,bp), rep(0,nrow(yt)-bp))
 
 bvar_obj <- setup(bvar_obj,
                   p=4,
                   deterministic = "constant_and_dummy",
-                  dummy = dum_var)
+                  dummy = dummy_variable)
 
 lambda_1 <- 0.2 #overall tightness
 lambda_2 <- 0.5 #cross-equation tightness
@@ -222,6 +221,7 @@ fol_pm=c(0,   #delta y_f
 
 #95% prior probability intervals (normal distribution)
 #See Table I in Villani (2009)
+#These are the "steady-state priors"
 theta_Psi <- 
   c(
   ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
@@ -267,11 +267,11 @@ bvar_obj <- priors(bvar_obj,
                    fol_pm,
                    theta_Psi,
                    Omega_Psi,
-                   Jeffrey=TRUE)
+                   Jeffreys=TRUE) #FALSE for uninformative inverse-Wishart
 
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
-kf <- 3 #foreign variables
+kf <- 3 #first three variables in yt are foregin
 
 restriction_matrix <- matrix(1, k*p, k)
 
@@ -280,14 +280,14 @@ for(i in 1:p){
   cols <- 1:kf
   restriction_matrix[rows, cols] <- 0
 }
-
+print(restriction_matrix)
 #block exogeneity for foreign variables
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
 #fit the model
 bvar_obj <- fit(bvar_obj,
                 H = 12,
-                d_pred = cbind(rep(1, 12), 0),
+                d_pred = cbind(rep(1, 12), 0), #future d_t values
                 iter = 10000,
                 warmup = 2500,
                 chains = 2,
@@ -296,19 +296,23 @@ bvar_obj <- fit(bvar_obj,
 #posterior summaries
 summary(bvar_obj , stat = "mean")
 
+#you can look at the stanfit object directly
+stan_fit <- bvar_obj$fit$stan
+print(stan_fit)
+
 #unconditional forecasts
 #see last forecasts in Figures 1-3 in Villani (2009)
 fcst <- forecast(bvar_obj,
                  pi = 0.95,
                  fcst_type = "mean",
-                 growth_rate_idx = c(4,5), #annual inflation/real GDP growth instead of QoQ
+                 growth_rate_idx = c(4,5), #convert QoQ forecasts to YoY
                  plot_idx = c(4,5,6))
 
 #conditional forecasts
 conditions <- data.frame(
               var     = rep(6,12),
               horizon = rep(1:12),
-              value   = seq(2, 8, length.out = 12)) #toy scenario
+              value   = seq(2, 8, length.out = 12)) #some toy scenario
               
 cond_fcst <- conditional_forecast(bvar_obj,
                     conditions,
@@ -317,6 +321,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
                     plot_idx = c(4,6),
                     growth_rate_idx = c(4))
 
+#impulse response analysis
 irf <- IRF(bvar_obj,
            H=20,
            response=5,#inflation
@@ -324,7 +329,7 @@ irf <- IRF(bvar_obj,
            type="median",
            method="OIRF",
            ci=0.68,
-           growth_rate_idx=5) #annual inflation instead of QoQ
+           growth_rate_idx=5) #YoY inflation instead of QoQ
 ```
 
 ## References

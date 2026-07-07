@@ -24,7 +24,7 @@
 #' This is how the likelihood is written in the Stan code. The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u}.
 #' 
 #' For the innovations to the model, in the case of the homoscedastic steady-state BVAR, they are \eqn{u_t \sim \mathrm{N_k}(0,\Sigma_u)}.
-#' However, for models with stochastic volatility, there is instead a time-varying innovation covariance matrix \eqn{u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})}.
+#' However, for models with stochastic volatility, there is instead a time-varying covariance matrix \eqn{u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})}.
 #' The innovations then take the form
 #' 
 #' \deqn{\begin{aligned} u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
@@ -35,8 +35,8 @@
 #' 
 #' \deqn{\Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})}
 #' 
-#' contains the time-varying variances (log volatilities) of conditionally Gaussian shocks.
-#' For the \code{AR1} stochastic volatility specification, the log volatilities follow AR(1) processes
+#' contains the time-varying volatilities.
+#' For the \code{AR1} stochastic volatility specification, the (log) volatilities follow AR(1) processes
 #' 
 #' \deqn{\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k}
 #' 
@@ -59,7 +59,7 @@
 #' 
 #' For details on the homoscedastic steady-state BVAR model, see Villani (2009).
 #' For the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
-#' For details regarding AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).
+#' For details regarding BVAR models with AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).
 #' 
 #'
 #' @param data A numeric matrix or time series of data where each column is a
