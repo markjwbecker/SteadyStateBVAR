@@ -67,6 +67,12 @@ restriction_matrix <- matrix(1, k*p, k)
 
 restriction_matrix[1, 1] <- 0
 restriction_matrix[4, 2] <- 0
+print(restriction_matrix)
+#>      [,1] [,2]
+#> [1,]    0    1
+#> [2,]    1    1
+#> [3,]    1    1
+#> [4,]    1    0
 
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 ```

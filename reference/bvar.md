@@ -56,7 +56,7 @@ written in the Stan code. The goal is to estimate \\\beta, \Psi\\, and
 For the innovations to the model, in the case of the homoscedastic
 steady-state BVAR, they are \\u_t \sim \mathrm{N_k}(0,\Sigma_u)\\.
 However, for models with stochastic volatility, there is instead a
-time-varying innovation covariance matrix \\u_t \sim
+time-varying covariance matrix \\u_t \sim
 \mathrm{N_k}(0,\Sigma\_{u,t})\\. The innovations then take the form
 
 \$\$\begin{aligned} u_t &= A^{-1} \Lambda^{0.5}\_t \epsilon_t \\
@@ -68,9 +68,8 @@ and
 
 \$\$\Lambda_t = \mathrm{diag}(\lambda\_{1,t},\dots,\lambda\_{k,t})\$\$
 
-contains the time-varying variances (log volatilities) of conditionally
-Gaussian shocks. For the `AR1` stochastic volatility specification, the
-log volatilities follow AR(1) processes
+contains the time-varying volatilities. For the `AR1` stochastic
+volatility specification, the (log) volatilities follow AR(1) processes
 
 \$\$\ln \lambda\_{i,t} = \gamma\_{0,i} + \gamma\_{1,i} \ln
 \lambda\_{i,t-1} + \nu\_{i,t}, \\ i=1,\dots,k\$\$
@@ -99,8 +98,8 @@ time-varying covariance matrix is
 
 For details on the homoscedastic steady-state BVAR model, see Villani
 (2009). For the Random Walk stochastic volatility steady-state BVAR
-model, see Clark (2011). For details regarding AR(1) stochastic
-volatility, see Carriero, Clark and Marcellino (2024).
+model, see Clark (2011). For details regarding BVAR models with AR(1)
+stochastic volatility, see Carriero, Clark and Marcellino (2024).
 
 ## References
 

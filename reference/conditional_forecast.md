@@ -89,7 +89,7 @@ bvar_obj <- priors(bvar_obj,
                    first_own_lag_prior_mean = rep(1,2),
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2),
-                   Jeffrey = TRUE,
+                   Jeffreys = TRUE,
                    SV = FALSE,
                    SV_type = NULL,
                    SV_priors = NULL)
@@ -100,13 +100,12 @@ bvar_obj <- fit(bvar_obj,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
-                cores = 1,
-                verbose = FALSE)
+                cores = 1)
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 8.9e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.89 seconds.
+#> Chain 1: Gradient evaluation took 6.9e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.69 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -131,9 +130,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.034 seconds (Warm-up)
-#> Chain 1:                0.099 seconds (Sampling)
-#> Chain 1:                0.133 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.033 seconds (Warm-up)
+#> Chain 1:                0.107 seconds (Sampling)
+#> Chain 1:                0.14 seconds (Total)
 #> Chain 1: 
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
 #> Running the chains for more iterations may help. See

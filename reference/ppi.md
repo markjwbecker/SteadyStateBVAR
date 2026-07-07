@@ -54,8 +54,7 @@ steady-state inflation lies between 1.7 and 2.3 with 95% probability
 (mean 2). On the quarterly scale used by `x`, this corresponds to a 95%
 interval of 0.425 to 0.575 (mean 0.5). Since it is typically more
 natural to elicit a prior on the annualized scale, the
-`annualized_growthrate` argument performs this conversion automatically.
-See
+`annualized_growthrate` argument performs this conversion. See
 [`vignette("Homoscedastic-steady-state-BVAR")`](https://markjwbecker.github.io/SteadyStateBVAR/articles/Homoscedastic-steady-state-BVAR.md)
 for usage in practice.
 

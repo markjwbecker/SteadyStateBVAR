@@ -108,6 +108,12 @@ $$\beta=\begin{bmatrix}\Pi'_1 \\ \vdots  \\\Pi'_p\end{bmatrix}$$.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">restriction_matrix</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
 <span class="r-in"><span><span class="va">restriction_matrix</span><span class="op">[</span><span class="fl">4</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">restriction_matrix</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      [,1] [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]    0    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,]    1    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,]    1    1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,]    1    0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu">restrict_beta</span><span class="op">(</span><span class="va">bvar_obj</span>, <span class="va">restriction_matrix</span><span class="op">)</span></span></span>
 </code></pre></div>

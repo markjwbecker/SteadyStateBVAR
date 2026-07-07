@@ -78,7 +78,7 @@ bvar_obj <- priors(bvar_obj,
                    first_own_lag_prior_mean = rep(1,2),
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2),
-                   Jeffrey = TRUE,
+                   Jeffreys = TRUE,
                    SV = FALSE,
                    SV_type = NULL,
                    SV_priors = NULL)
@@ -89,13 +89,12 @@ bvar_obj <- fit(bvar_obj,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
-                cores = 1,
-                verbose = FALSE)
+                cores = 1)
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6.6e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.66 seconds.
+#> Chain 1: Gradient evaluation took 8.8e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.88 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -120,11 +119,11 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.033 seconds (Warm-up)
-#> Chain 1:                0.087 seconds (Sampling)
-#> Chain 1:                0.12 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.026 seconds (Warm-up)
+#> Chain 1:                0.079 seconds (Sampling)
+#> Chain 1:                0.105 seconds (Total)
 #> Chain 1: 
-#> Warning: The largest R-hat is 1.05, indicating chains have not mixed.
+#> Warning: The largest R-hat is 1.08, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#r-hat
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.

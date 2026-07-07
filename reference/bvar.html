@@ -91,15 +91,15 @@ and \(q_t'=(d_{t-1}',\dots,d_{t-p}')\) is a \(qp\)-dimensional vector of lagged 
 \(I_p\) is the \((p \times p)\) identity matrix and \(\otimes\) denotes the Kronecker product.
 This is how the likelihood is written in the Stan code. The goal is to estimate \(\beta, \Psi\), and \(\Sigma_u\).</p>
 <p>For the innovations to the model, in the case of the homoscedastic steady-state BVAR, they are \(u_t \sim \mathrm{N_k}(0,\Sigma_u)\).
-However, for models with stochastic volatility, there is instead a time-varying innovation covariance matrix \(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\).
+However, for models with stochastic volatility, there is instead a time-varying covariance matrix \(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\).
 The innovations then take the form</p>
 <p>$$\begin{aligned} u_t &amp;= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \epsilon_t &amp;\sim \mathrm{N}(0, \mathrm{I}_k)\end{aligned}$$</p>
 <p>where \(A\) is a lower triangular matrix with ones on the diagonal that describes
 the contemporaneous interaction of the endogenous variables, and</p>
 <p>$$\Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})$$</p>
-<p>contains the time-varying variances (log volatilities) of conditionally Gaussian shocks.
-For the <code>AR1</code> stochastic volatility specification, the log volatilities follow AR(1) processes</p>
+<p>contains the time-varying volatilities.
+For the <code>AR1</code> stochastic volatility specification, the (log) volatilities follow AR(1) processes</p>
 <p>$$\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k$$</p>
 <p>where the log volatility AR(1) processes are restricted to the stationary region, i.e. \(|\gamma_{1,i}|&lt;1 \ \forall i\).
 For the <code>RW</code> stochastic volatility specification, the log volatilities follow Random Walk processes</p>
@@ -113,7 +113,7 @@ with variances \(\phi_i\) for \(i=1,\dots,k\).</p>
 <p>$$\Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'$$</p>
 <p>For details on the homoscedastic steady-state BVAR model, see Villani (2009).
 For the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
-For details regarding AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).</p>
+For details regarding BVAR models with AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
