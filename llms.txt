@@ -87,9 +87,10 @@ vector of lagged endogenous variables and
 lagged deterministic (exogenous) variables, \\I_p\\ is the \\(p \times
 p)\\ identity matrix and \\\otimes\\ denotes the Kronecker product. This
 is how the likelihood is written in the Stan code. The goal is to
-estimate \\\beta, \Psi\\, and \\\Sigma_u\\, so priors are needed. First,
-prior independence between \\\beta, \Psi\\ and \\\Sigma_u\\ is assumed.
-Starting with \\\beta\\, we use the Minnesota prior
+estimate \\\beta, \Psi\\, and \\\Sigma_u\\, and as such priors are
+needed. First, prior independence between \\\beta, \Psi\\ and
+\\\Sigma_u\\ is assumed. Starting with \\\beta\\, the Minnesota prior is
+used
 
 \\\mathrm{vec}(\beta) \sim \mathrm{N}\_{kpk}
 \left\[\theta\_\beta,\Omega\_\beta\right\]\\
@@ -138,7 +139,7 @@ tightness and the lag decay rate. Furthermore, \\\sigma_i^2\\ is the
 replace with an estimate. In this package, it is replaced by the least
 squares residual variance from a univariate autoregression for variable
 \\i\\ with \\p\\ lags (including the constant and dummy/trend variable
-if applicable). Moving on to \\\Psi\\, the prior we use is
+if applicable). Moving on to \\\Psi\\, the prior is
 
 \\\mathrm{vec}(\Psi) \sim
 \mathrm{N}\_{kq}\left\[\theta\_\Psi,\Omega\_\Psi\right\]\\
@@ -152,20 +153,15 @@ prior
 
 \\p(\Sigma_u) \propto\left\|\Sigma_u \right\|^{-(k+1)/2}\\
 
-However, if the user wants, an inverse Wishart prior can be used instead
+Alternatively, a proper inverse-Wishart prior can be used (Karlsson,
+2013)
 
 \\\Sigma_u \sim \mathrm{IW}(V_0,m_0)\\
 
 where \\V_0\\ is the scale matrix and \\m_0\geq k+2\\ is the number of
-degrees of freedom. An uninformative prior can be (and is in this
-package) specified by setting \\V_0=(m_0-k-1)\hat{\Sigma}\_u\\ where
-\\\hat{\Sigma}\_u\\ is the least squares estimate from the VAR(\\p\\)
-(including the constant and dummy/trend variable if applicable), and
-\\m_0=k+2\\.
-
-This package also allows for stochastic volatility (Random Walk or AR1
-specifications), where we let the covariance matrix of the innovations
-vary over time, i.e. we have \\\Sigma\_{u,t}\\ (see
+degrees of freedom. This package also allows for stochastic volatility
+(Random Walk or AR1 specifications), where we let the covariance matrix
+of the innovations vary over time, i.e. we have \\\Sigma\_{u,t}\\ (see
 [`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
 for more details).
 
