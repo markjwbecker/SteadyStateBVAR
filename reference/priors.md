@@ -225,8 +225,10 @@ squares estimate from the VAR(\\p\\) (including the constant and
 dummy/trend variable if applicable), and \\m=k+2\\. For the stochastic
 volatility specifications, the innovation covariance matrix is now
 time-varying \\\Sigma\_{u,t}\\. Therefore, stochastic volatility priors
-are needed, see ?bvar for more details. For the Random Walk (`RW`)
-stochastic volatility specification, the following priors are used
+are needed, see
+[bvar](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
+for more details. For the Random Walk (`RW`) stochastic volatility
+specification, the following priors are used
 
 \$\$\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\ \ln
 \lambda\_{i,0} &\sim \mathrm{N}(\mu\_{\ln \lambda\_{i,0}},
