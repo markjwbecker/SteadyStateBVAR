@@ -54,9 +54,9 @@ written in the Stan code. The goal is to estimate \\\beta, \Psi\\, and
 \\\Sigma_u\\.
 
 For the innovations to the model, in the case of the homoscedastic
-steady-state BVAR, they are \\u_t \sim \mathrm{N_k}(0,\Sigma_u)\\.
-However, for models with stochastic volatility, there is instead a
-time-varying covariance matrix \\u_t \sim
+steady-state BVAR, they are \\u_t \overset{\text{iid}}{\sim}
+\mathrm{N_k}(0,\Sigma_u)\\. However, for models with stochastic
+volatility, there is instead a time-varying covariance matrix \\u_t \sim
 \mathrm{N_k}(0,\Sigma\_{u,t})\\. The innovations then take the form
 
 \$\$\begin{aligned} u_t &= A^{-1} \Lambda^{0.5}\_t \epsilon_t \\
@@ -104,19 +104,19 @@ stochastic volatility, see Carriero, Clark and Marcellino (2024).
 ## References
 
 Carriero, A., Clark, T. E., and Marcellino, M. (2024). Capturing
-Macro‐Economic Tail Risks with Bayesian Vector *Journal of Money, Credit
-and Banking*. 56(5), pp. 1099–1127.
+macro-economic tail risks with Bayesian vector autoregressions. *Journal
+of Money, Credit and Banking*, 56(5), pp. 1099–1127.
 
-Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector
-Autoregressions with Stochastic Volatility. *Journal of Business &
-Economic Statistics*. 29(3), pp. 327–341.
+Clark, T. E. (2011). Real-time density forecasts from Bayesian vector
+autoregressions with stochastic volatility. *Journal of Business \\
+Economic Statistics*, 29(3), pp. 327-341.
 
-Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
-In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic
+Karlsson, S. (2013). Forecasting with Bayesian vector autoregression.
+In: Elliott, G. and Timmermann, A. (eds) *Handbook of Economic
 Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
-Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
-*Journal of Applied Econometrics*. 24(4), pp. 630–649.
+Villani, M. (2009). Steady-state priors for vector autoregressions.
+*Journal of Applied Econometrics*, 24(4), pp. 630-650.
 
 ## Examples
 

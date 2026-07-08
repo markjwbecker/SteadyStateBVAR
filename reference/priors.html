@@ -179,7 +179,7 @@ The list must contain the following named elements depending on <code>SV_type</c
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The goal is to estimate \(\beta, \Psi\), and \(\Sigma_u\), so priors are needed.
-First, prior independence between \(\beta, \Psi\) and \(\Sigma_u\) is assumed. Starting with \(\beta\),
+Following Villani (2009), prior independence between \(\beta, \Psi\) and \(\Sigma_u\) is assumed. For \(\beta\),
 the Minnesota prior is used</p>
 <p>$$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]$$</p>
 <p>The prior means (the elements of \(\theta_\beta\)) are set to</p>
@@ -216,7 +216,7 @@ the overall tightness, the cross-equation tightness and the lag decay rate. Furt
 \(\sigma_i^2\) is the \((i,i)\):th element of \(\Sigma_u\), which is unknown and therefore
 replaced with an estimate. In this package, it is replaced by the least squares residual variance
 from a univariate autoregression for variable \(i\) with \(p\) lags
-(including the constant and dummy/trend variable if applicable). Moving on to \(\Psi\), the
+(including the constant and dummy/trend variable if applicable). Moving on to \(\Psi\), the steady-state parameter matrix,the
 prior is</p>
 <p>$$\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]$$</p>
 <p>This is the core of the steady-state BVAR model.
@@ -248,6 +248,11 @@ Furthermore, \(\phi_i\) are the log volatility innovation variances. For the AR(
 and \(\ln \lambda_0\) are the time \(t=0\) values (initial conditions) of \(\ln \lambda_{t}\).
 Furthermore, \(\gamma_{0}\) are the log volatility intercepts, \(\gamma_{1}\) are the log volatility
 slopes, and \(\Phi\) is the log volatility innovation covariance matrix.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Villani, M. (2009). Steady-state priors for vector autoregressions.
+<em>Journal of Applied Econometrics</em>, 24(4), pp. 630-650.</p>
     </div>
 
     <div class="section level2">

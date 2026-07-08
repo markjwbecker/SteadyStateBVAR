@@ -150,9 +150,9 @@ containing:
 ## Details
 
 The goal is to estimate \\\beta, \Psi\\, and \\\Sigma_u\\, so priors are
-needed. First, prior independence between \\\beta, \Psi\\ and
-\\\Sigma_u\\ is assumed. Starting with \\\beta\\, the Minnesota prior is
-used
+needed. Following Villani (2009), prior independence between \\\beta,
+\Psi\\ and \\\Sigma_u\\ is assumed. For \\\beta\\, the Minnesota prior
+is used
 
 \$\$\mathrm{vec}(\beta) \sim \mathrm{N}\_{kpk}
 \left\[\theta\_\beta,\Omega\_\beta\right\]\$\$
@@ -201,7 +201,8 @@ tightness and the lag decay rate. Furthermore, \\\sigma_i^2\\ is the
 replaced with an estimate. In this package, it is replaced by the least
 squares residual variance from a univariate autoregression for variable
 \\i\\ with \\p\\ lags (including the constant and dummy/trend variable
-if applicable). Moving on to \\\Psi\\, the prior is
+if applicable). Moving on to \\\Psi\\, the steady-state parameter
+matrix,the prior is
 
 \$\$\mathrm{vec}(\Psi) \sim
 \mathrm{N}\_{kq}\left\[\theta\_\Psi,\Omega\_\Psi\right\]\$\$
@@ -255,6 +256,11 @@ time \\t=0\\ values (initial conditions) of \\\ln \lambda\_{t}\\.
 Furthermore, \\\gamma\_{0}\\ are the log volatility intercepts,
 \\\gamma\_{1}\\ are the log volatility slopes, and \\\Phi\\ is the log
 volatility innovation covariance matrix.
+
+## References
+
+Villani, M. (2009). Steady-state priors for vector autoregressions.
+*Journal of Applied Econometrics*, 24(4), pp. 630-650.
 
 ## Examples
 
