@@ -94,18 +94,18 @@ This is how the likelihood is written in the Stan code. The goal is to estimate 
 However, for models with stochastic volatility, there is instead a time-varying covariance matrix \(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\).
 The innovations then take the form</p>
 <p>$$\begin{aligned} u_t &amp;= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &amp;\sim \mathrm{N}(0, \mathrm{I}_k)\end{aligned}$$</p>
+\epsilon_t &amp;\overset{\text{iid}}{\sim} \mathrm{N}(0, \mathrm{I}_k)\end{aligned}$$</p>
 <p>where \(A\) is a lower triangular matrix with ones on the diagonal that describes
 the contemporaneous interaction of the endogenous variables, and</p>
 <p>$$\Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})$$</p>
 <p>contains the time-varying volatilities.
-For the <code>AR1</code> stochastic volatility specification, the (log) volatilities follow AR(1) processes</p>
+For the <code>AR1</code> stochastic volatility specification, the log volatilities follow AR(1) processes</p>
 <p>$$\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k$$</p>
 <p>where the log volatility AR(1) processes are restricted to the stationary region, i.e. \(|\gamma_{1,i}|&lt;1 \ \forall i\).
 For the <code>RW</code> stochastic volatility specification, the log volatilities follow Random Walk processes</p>
 <p>$$\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \forall i$$</p>
 <p>The innovations to the log volatilities follow in the <code>AR1</code> case</p>
-<p>$$\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \mathrm{N}(0, \Phi)$$</p>
+<p>$$\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\overset{\text{iid}}{\sim} \mathrm{N}(0, \Phi)$$</p>
 <p>where \(\Phi\) is <strong>not</strong> diagonal and as such the innovations to the log
 volatilities are allowed to be correlated across variables. For the <code>RW</code> case, \(\Phi\) is diagonal
 with variances \(\phi_i\) for \(i=1,\dots,k\).</p>
@@ -121,7 +121,7 @@ For details regarding BVAR models with AR(1) stochastic volatility, see Carriero
 Capturing macro-economic tail risks with Bayesian vector autoregressions.
 <em>Journal of Money, Credit and Banking</em>, 56(5), pp. 1099–1127.</p>
 <p>Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions
-with stochastic volatility. <em>Journal of Business \&amp; Economic Statistics</em>, 29(3), pp. 327-341.</p>
+with stochastic volatility. <em>Journal of Business &amp; Economic Statistics</em>, 29(3), pp. 327-341.</p>
 <p>Karlsson, S. (2013). Forecasting with Bayesian vector autoregression.
 In: Elliott, G. and Timmermann, A. (eds) <em>Handbook of Economic Forecasting</em>.
 Elsevier B.V. Vol 2, Part B., pp. 791-897.</p>
@@ -145,7 +145,7 @@ Elsevier B.V. Vol 2, Part B., pp. 791-897.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer></div>

@@ -65,11 +65,11 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>With this package, the user can estimate the steady-state BVAR(<span class="math inline">\(p\)</span>) model of Villani (2009). The steady-state BVAR is simply a BVAR rewritten in mean-adjusted form. The benefit of the mean-adjusted parametrization is that it allows the user to specify prior beliefs about the unconditional mean, or <em>steady state</em> of the VAR system.The model has proven very useful for forecasting of macroeconomic variables, and is routinely used in many central banks and other finanicial institutions (Gustafsson and Villani, 2025).</p>
+<p>With this package, the user can estimate the steady-state BVAR model of Villani (2009). The steady-state BVAR is simply a BVAR rewritten in mean-adjusted form. The benefit of the mean-adjusted parametrization is that it allows the user to specify prior beliefs about the unconditional mean, or <em>steady state</em> of the VAR system. The model has proven very useful for forecasting of macroeconomic variables, and is routinely used in many central banks and other finanicial institutions (Gustafsson and Villani, 2025).</p>
 <p>After estimation, the user can produce forecasts (unconditional and conditional) and impulse response functions (orthogonalized and generalized). The goal of <code>SteadyStateBVAR</code> is to use modern Bayesian tools (Stan) to: i) estimate the model as specified in the original paper, and ii) extend the model in different ways. Previously, extensions of the model seemed to be limited by what Mattias Villani had time to derive.</p>
 <p>See for example Clark (2011), which extends the steady-state BVAR model to include Random Walk stochastic volatility: “<em>In a methodological sense, this paper extends the estimator of Villani (2009) to include stochastic volatility.</em>” Later on, he writes: “<em>(Special thanks are due to Mattias Villani for providing the formulas for posterior means and variances of</em> <span class="math inline">\(\Pi\)</span> <em>and</em> <span class="math inline">\(\Psi\)</span><em>, which generalize the constant-variance formulas of Villani 2009.)</em>”</p>
 <p>Another example is Dieppe, Legrand, and van Roye (2016): “<em>Villani (2009) only provides derivation in the case of the normal-diffuse prior distribution, so the incoming analysis will be restricted to this case.</em>”</p>
-<p>Times are different now, and with the help of Stan, we are essentially limited only by our imagination. At the time of writing, the package provides three versions of the steady-state BVAR model: i) the homoscedastic model, i.e. the original model (Villani, 2009), ii) the Random Walk stochastic volatility model (Clark, 2011), and iii) an AR(1) stochastic volatility model.</p>
+<p>Times are different now, and with the help of Stan, we are essentially limited only by our imagination. At the time of writing, the package provides three versions of the steady-state BVAR model: i) the homoscedastic model, i.e. the original model in Villani (2009), ii) the Random Walk stochastic volatility model, i.e. the one in Clark (2011), and iii) an AR(1) stochastic volatility model.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -86,7 +86,7 @@
 </h2>
 <p>The steady-state BVAR(<span class="math inline">\(p\)</span>) model (Villani, 2009) is</p>
 <p><span class="math display">\[y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t\]</span></p>
-<p>where <span class="math inline">\(y_t\)</span> is a <span class="math inline">\(k\)</span>-dimensional vector of endogenous variables (time series) at time <span class="math inline">\(t\)</span>, <span class="math inline">\(d_t\)</span> is a <span class="math inline">\(q\)</span>-dimensional vector of deterministic (exogenous) variables at time <span class="math inline">\(t\)</span>, and the (reduced-form) innovations are <span class="math inline">\(u_t \sim N_k(0,\Sigma_u)\)</span> with independence between time periods. Here <span class="math inline">\(\Pi_\ell\)</span> for <span class="math inline">\(\ell=1,\dots,p\)</span> is a <span class="math inline">\((k \times k)\)</span> matrix, and <span class="math inline">\(\Psi\)</span> is a <span class="math inline">\((k \times q)\)</span> matrix. Now</p>
+<p>where <span class="math inline">\(y_t\)</span> is a <span class="math inline">\(k\)</span>-dimensional vector of endogenous variables (time series) at time <span class="math inline">\(t\)</span>, <span class="math inline">\(d_t\)</span> is a <span class="math inline">\(q\)</span>-dimensional vector of deterministic (exogenous) variables at time <span class="math inline">\(t\)</span>, and the (reduced-form) innovations are <span class="math inline">\(u_t \sim N_k(0,\Sigma_u)\)</span> with independence between time periods. Here <span class="math inline">\(\Pi_\ell\)</span> for <span class="math inline">\(\ell=1,\dots,p\)</span> is a <span class="math inline">\((k \times k)\)</span> autoregressive parameter matrix, and <span class="math inline">\(\Psi\)</span> is a <span class="math inline">\((k \times q)\)</span> steady-state parameter matrix. Now</p>
 <p><span class="math display">\[\mathrm{E}(y_t)=\mu_t=\Psi d_t\]</span></p>
 <p>is the unconditional mean, or the <strong>steady state</strong>, of the process. Since long-horizon forecasts from stationary VARs converge to the unconditional mean (steady state), it is naturally very important from a forecasting perspective to obtain precise inference on <span class="math inline">\(\Psi\)</span>. Note that the current version of this package only allows for <span class="math inline">\(d_t\)</span> to contain either a constant, a constant and a dummy variable, or a constant and a time trend.</p>
 <p>We may stack the (transposed) <span class="math inline">\(\Pi_i\)</span> matrices in the <span class="math inline">\((kp \times k)\)</span> matrix <span class="math inline">\(\beta\)</span></p>
@@ -125,7 +125,7 @@
 <p><span class="math display">\[p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}\]</span></p>
 <p>Alternatively, a proper inverse-Wishart prior can be used (Karlsson, 2013)</p>
 <p><span class="math display">\[\Sigma_u \sim \mathrm{IW}(V,m)\]</span></p>
-<p>where <span class="math inline">\(V\)</span> is the scale matrix and <span class="math inline">\(m\geq k+2\)</span> is the number of degrees of freedom. This package also allows for stochastic volatility (Random Walk or AR1 specifications), where the covariance matrix varies over time, i.e. we have <span class="math inline">\(\Sigma_{u,t}\)</span> (see <code><a href="reference/bvar.html">?bvar</a></code> for more details).</p>
+<p>where <span class="math inline">\(V\)</span> is the scale matrix and <span class="math inline">\(m\geq k+2\)</span> is the number of degrees of freedom. As mentioned, this package also allows for stochastic volatility (Random Walk or AR(1) specifications), where the covariance matrix varies over time, i.e. we have <span class="math inline">\(\Sigma_{u,t}\)</span> (see <code><a href="reference/bvar.html">?bvar</a></code> for more details).</p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -166,12 +166,12 @@
 <span>         <span class="fl">0.9</span>  <span class="co">#q</span></span>
 <span>         <span class="op">)</span></span>
 <span></span>
-<span><span class="co">#psi_1 = Psi col 1</span></span>
-<span><span class="co">#psi_2 = Psi col 2</span></span>
-<span></span>
 <span><span class="co">#95% prior probability intervals (normal distribution)</span></span>
 <span><span class="co">#See Table I in Villani (2009)</span></span>
 <span><span class="co">#These are the "steady-state priors"</span></span>
+<span><span class="co">#psi_1 = Psi col 1</span></span>
+<span><span class="co">#psi_2 = Psi col 2</span></span>
+<span></span>
 <span><span class="va">theta_Psi</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
 <span>  <span class="fu"><a href="reference/ppi.html">ppi</a></span><span class="op">(</span> <span class="fl">2.00</span>,  <span class="fl">3.00</span>,  annualized_growthrate<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span>,   <span class="co">#psi_1: delta y_f</span></span>
@@ -221,7 +221,7 @@
 <span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">p</span></span>
 <span><span class="va">k</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">k</span></span>
-<span><span class="va">kf</span> <span class="op">&lt;-</span> <span class="fl">3</span> <span class="co">#first three variables in yt are foregin</span></span>
+<span><span class="va">kf</span> <span class="op">&lt;-</span> <span class="fl">3</span> <span class="co">#first three variables in yt are foreign</span></span>
 <span></span>
 <span><span class="va">restriction_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">k</span><span class="op">*</span><span class="va">p</span>, <span class="va">k</span><span class="op">)</span></span>
 <span></span>
@@ -234,10 +234,14 @@
 <span><span class="co">#block exogeneity for foreign variables</span></span>
 <span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/restrict_beta.html">restrict_beta</a></span><span class="op">(</span><span class="va">bvar_obj</span>, <span class="va">restriction_matrix</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">H</span> <span class="op">&lt;-</span> <span class="fl">12</span> <span class="co">#forecast horizon</span></span>
+<span><span class="op">(</span><span class="va">d_pred</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">12</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="co">#future d_t values</span></span>
+<span></span>
+<span></span>
 <span><span class="co">#fit the model</span></span>
 <span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
-<span>                H <span class="op">=</span> <span class="fl">12</span>,</span>
-<span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">12</span><span class="op">)</span>, <span class="fl">0</span><span class="op">)</span>, <span class="co">#future d_t values</span></span>
+<span>                H <span class="op">=</span> <span class="va">H</span>,</span>
+<span>                d_pred <span class="op">=</span> <span class="va">d_pred</span>,</span>
 <span>                iter <span class="op">=</span> <span class="fl">10000</span>,</span>
 <span>                warmup <span class="op">=</span> <span class="fl">2500</span>,</span>
 <span>                chains <span class="op">=</span> <span class="fl">2</span>,</span>
@@ -269,7 +273,7 @@
 <span>                    pi<span class="op">=</span><span class="fl">0.68</span>,</span>
 <span>                    fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                    plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>,</span>
-<span>                    growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
+<span>                    growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="co">#convert QoQ forecasts to YoY</span></span>
 <span></span>
 <span><span class="co">#impulse response analysis</span></span>
 <span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
@@ -338,7 +342,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

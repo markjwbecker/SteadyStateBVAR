@@ -60,7 +60,8 @@ volatility, there is instead a time-varying covariance matrix \\u_t \sim
 \mathrm{N_k}(0,\Sigma\_{u,t})\\. The innovations then take the form
 
 \$\$\begin{aligned} u_t &= A^{-1} \Lambda^{0.5}\_t \epsilon_t \\
-\epsilon_t &\sim \mathrm{N}(0, \mathrm{I}\_k)\end{aligned}\$\$
+\epsilon_t &\overset{\text{iid}}{\sim} \mathrm{N}(0,
+\mathrm{I}\_k)\end{aligned}\$\$
 
 where \\A\\ is a lower triangular matrix with ones on the diagonal that
 describes the contemporaneous interaction of the endogenous variables,
@@ -69,7 +70,7 @@ and
 \$\$\Lambda_t = \mathrm{diag}(\lambda\_{1,t},\dots,\lambda\_{k,t})\$\$
 
 contains the time-varying volatilities. For the `AR1` stochastic
-volatility specification, the (log) volatilities follow AR(1) processes
+volatility specification, the log volatilities follow AR(1) processes
 
 \$\$\ln \lambda\_{i,t} = \gamma\_{0,i} + \gamma\_{1,i} \ln
 \lambda\_{i,t-1} + \nu\_{i,t}, \\ i=1,\dots,k\$\$
@@ -83,8 +84,8 @@ Random Walk processes
 
 The innovations to the log volatilities follow in the `AR1` case
 
-\$\$\nu\_{t} = (\nu\_{1,t},\dots,\nu\_{k,t})'\sim \mathrm{N}(0,
-\Phi)\$\$
+\$\$\nu\_{t} = (\nu\_{1,t},\dots,\nu\_{k,t})'\overset{\text{iid}}{\sim}
+\mathrm{N}(0, \Phi)\$\$
 
 where \\\Phi\\ is **not** diagonal and as such the innovations to the
 log volatilities are allowed to be correlated across variables. For the
@@ -108,7 +109,7 @@ macro-economic tail risks with Bayesian vector autoregressions. *Journal
 of Money, Credit and Banking*, 56(5), pp. 1099–1127.
 
 Clark, T. E. (2011). Real-time density forecasts from Bayesian vector
-autoregressions with stochastic volatility. *Journal of Business \\
+autoregressions with stochastic volatility. *Journal of Business &
 Economic Statistics*, 29(3), pp. 327-341.
 
 Karlsson, S. (2013). Forecasting with Bayesian vector autoregression.

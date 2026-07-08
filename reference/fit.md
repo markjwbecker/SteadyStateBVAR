@@ -32,7 +32,7 @@ fit(x, H = 1, d_pred = NULL, ...)
 - ...:
 
   Additional arguments passed directly to
-  [`sampling`](https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html)
+  [`rstan::sampling`](https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html)
   (e.g. `iter`, `warmup`, `chains`, `cores`, `control`, `seed`, `init`,
   `thin`, `algorithm`, `pars`, `include`, `refresh`, `verbose`,
   `save_warmup`, `sample_file`, `diagnostic_file`). If `pars`/`include`
@@ -167,9 +167,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.023 seconds (Warm-up)
-#> Chain 1:                0.061 seconds (Sampling)
-#> Chain 1:                0.084 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.02 seconds (Warm-up)
+#> Chain 1:                0.052 seconds (Sampling)
+#> Chain 1:                0.072 seconds (Total)
 #> Chain 1: 
 #> Warning: The largest R-hat is 1.05, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
@@ -231,8 +231,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_inverse_wishart_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 4.4e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.44 seconds.
+#> Chain 1: Gradient evaluation took 3.3e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.33 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -257,9 +257,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.021 seconds (Warm-up)
-#> Chain 1:                0.048 seconds (Sampling)
-#> Chain 1:                0.069 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.016 seconds (Warm-up)
+#> Chain 1:                0.037 seconds (Sampling)
+#> Chain 1:                0.053 seconds (Total)
 #> Chain 1: 
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
 #> Running the chains for more iterations may help. See
@@ -281,12 +281,12 @@ k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
 
 SV_priors_RW <- list(
-theta_A             =  rep(0, n_free_params_A),
-Omega_A             =  diag(1000, n_free_params_A),
-mu_log_lambda_0     =  rep(0, k),
-sigma2_log_lambda_0 =  rep(1000, k),
-alpha_phi           =  rep(5, k),
-beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
+theta_A              =  rep(0, n_free_params_A),
+Omega_A              =  diag(1000, n_free_params_A),
+mu_log_lambda_0      =  rep(0, k),
+sigma2_log_lambda_0  =  rep(1000, k),
+alpha_phi            =  rep(5, k),
+beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 )
 
 bvar_obj <- priors(bvar_obj,
@@ -312,8 +312,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 8.1e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.81 seconds.
+#> Chain 1: Gradient evaluation took 5.2e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.52 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -338,9 +338,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.02 seconds (Warm-up)
-#> Chain 1:                0.038 seconds (Sampling)
-#> Chain 1:                0.058 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.01 seconds (Warm-up)
+#> Chain 1:                0.03 seconds (Sampling)
+#> Chain 1:                0.04 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low
@@ -367,17 +367,17 @@ bvar_obj <- setup(bvar_obj, p=1, deterministic = "constant")
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
 
-SV_priors_AR <- list(
-theta_A            =  rep(0, n_free_params_A),
-Omega_A            =  diag(1000, n_free_params_A),
-theta_gamma_0      =  rep(0.1, k),
-Omega_gamma_0      =  diag(1000, k),
-theta_gamma_1      =  rep(0.9, k),
-Omega_gamma_1      =  diag(10, k),
-theta_log_lambda_0 =  rep(0.1, k)/(1-rep(0.9, k)),
-Omega_log_lambda_0 =  diag(1000, k),
-V_Phi              = (10 - k - 1) * diag(k),
-m_Phi              =  10
+SV_priors_AR1 <- list(
+theta_A               =  rep(0, n_free_params_A),
+Omega_A               =  diag(1000, n_free_params_A),
+theta_gamma_0         =  rep(0.1, k),
+Omega_gamma_0         =  diag(1000, k),
+theta_gamma_1         =  rep(0.9, k),
+Omega_gamma_1         =  diag(10, k),
+theta_log_lambda_0    =  rep(0.1, k)/(1-rep(0.9, k)),
+Omega_log_lambda_0    =  diag(1000, k),
+V_Phi                 = (10 - k - 1) * diag(k),
+m_Phi                 =  10
 )
 
 bvar_obj <- priors(bvar_obj,
@@ -390,6 +390,7 @@ bvar_obj <- priors(bvar_obj,
                    SV = TRUE,
                    SV_type = "AR1",
                    SV_priors = SV_priors_AR)
+#> Error: object 'SV_priors_AR' not found
 
 bvar_obj <- fit(bvar_obj,
                 H = 8,
@@ -400,54 +401,6 @@ bvar_obj <- fit(bvar_obj,
                 cores = 1,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
-#> 
-#> SAMPLING FOR MODEL 'steady_state_bvar_AR1_stochastic_volatility' NOW (CHAIN 1).
-#> Chain 1: Rejecting initial value:
-#> Chain 1:   Error evaluating the log probability at the initial value.
-#> Chain 1: Exception: multi_normal_lpdf: LDLT_Factor of covariance parameter is not positive definite.  last conditional variance is -1.69407e-21. (in 'steady_state_bvar_AR1_stochastic_volatility', line 102, column 6 to column 54)
-#> Chain 1: 
-#> Chain 1: Gradient evaluation took 7e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.7 seconds.
-#> Chain 1: Adjust your expectations accordingly!
-#> Chain 1: 
-#> Chain 1: 
-#> Chain 1: WARNING: There aren't enough warmup iterations to fit the
-#> Chain 1:          three stages of adaptation as currently configured.
-#> Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
-#> Chain 1:          the given number of warmup iterations:
-#> Chain 1:            init_buffer = 7
-#> Chain 1:            adapt_window = 38
-#> Chain 1:            term_buffer = 5
-#> Chain 1: 
-#> Chain 1: Iteration:   1 / 200 [  0%]  (Warmup)
-#> Chain 1: Iteration:  20 / 200 [ 10%]  (Warmup)
-#> Chain 1: Iteration:  40 / 200 [ 20%]  (Warmup)
-#> Chain 1: Iteration:  51 / 200 [ 25%]  (Sampling)
-#> Chain 1: Iteration:  70 / 200 [ 35%]  (Sampling)
-#> Chain 1: Iteration:  90 / 200 [ 45%]  (Sampling)
-#> Chain 1: Iteration: 110 / 200 [ 55%]  (Sampling)
-#> Chain 1: Iteration: 130 / 200 [ 65%]  (Sampling)
-#> Chain 1: Iteration: 150 / 200 [ 75%]  (Sampling)
-#> Chain 1: Iteration: 170 / 200 [ 85%]  (Sampling)
-#> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
-#> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
-#> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.565 seconds (Warm-up)
-#> Chain 1:                1.784 seconds (Sampling)
-#> Chain 1:                2.349 seconds (Total)
-#> Chain 1: 
-#> Warning: There were 57 divergent transitions after warmup. See
-#> https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-#> to find out why this is a problem and how to eliminate them.
-#> Warning: Examine the pairs() plot to diagnose sampling problems
-#> Warning: The largest R-hat is NA, indicating chains have not mixed.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#r-hat
-#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#bulk-ess
-#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#tail-ess
+#> Error in fit(bvar_obj, H = 8, d_pred = matrix(rep(1, 8)), iter = 200,     warmup = 50, chains = 1, cores = 1, control = list(max_treedepth = 12,         adapt_delta = 0.85)): must be passed through priors
 # }
 ```

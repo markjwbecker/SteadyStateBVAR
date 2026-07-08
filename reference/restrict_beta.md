@@ -43,7 +43,7 @@ time \\t\\, and \\d_t\\ is a \\q\\-dimensional vector of deterministic
 parameters, and \\\Psi\\ is a \\(k \times q)\\ matrix of steady-state
 parameters. One can stack the (transposed) \\\Pi_i\\ matrices in the
 \\(kp \times k)\\ matrix \\\beta\\ \$\$\beta=\begin{bmatrix}\Pi'\_1 \\
-\vdots \\\Pi'\_p\end{bmatrix}\$\$.
+\vdots \\\Pi'\_p\end{bmatrix}\$\$
 
 This function puts zero restrictions on the elements of \\\beta\\.
 
@@ -63,16 +63,19 @@ bvar_obj <- priors(bvar_obj,
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
 
-restriction_matrix <- matrix(1, k*p, k)
+restriction_matrix <- matrix(1,k*p,k, dimnames=list(NULL,c("y1","y2")))
 
-restriction_matrix[1, 1] <- 0
-restriction_matrix[4, 2] <- 0
+#restrict beta so y2 does not granger-cause y1
+
+restriction_matrix[1, 2] <- 0
+restriction_matrix[3, 2] <- 0
+
 print(restriction_matrix)
-#>      [,1] [,2]
-#> [1,]    0    1
-#> [2,]    1    1
-#> [3,]    1    1
-#> [4,]    1    0
+#>      y1 y2
+#> [1,]  1  0
+#> [2,]  1  1
+#> [3,]  1  0
+#> [4,]  1  1
 
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 ```

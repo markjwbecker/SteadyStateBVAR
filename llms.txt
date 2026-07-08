@@ -1,13 +1,13 @@
 # SteadyStateBVAR
 
-With this package, the user can estimate the steady-state BVAR(\\p\\)
-model of Villani (2009). The steady-state BVAR is simply a BVAR
-rewritten in mean-adjusted form. The benefit of the mean-adjusted
-parametrization is that it allows the user to specify prior beliefs
-about the unconditional mean, or *steady state* of the VAR system.The
-model has proven very useful for forecasting of macroeconomic variables,
-and is routinely used in many central banks and other finanicial
-institutions (Gustafsson and Villani, 2025).
+With this package, the user can estimate the steady-state BVAR model of
+Villani (2009). The steady-state BVAR is simply a BVAR rewritten in
+mean-adjusted form. The benefit of the mean-adjusted parametrization is
+that it allows the user to specify prior beliefs about the unconditional
+mean, or *steady state* of the VAR system. The model has proven very
+useful for forecasting of macroeconomic variables, and is routinely used
+in many central banks and other finanicial institutions (Gustafsson and
+Villani, 2025).
 
 After estimation, the user can produce forecasts (unconditional and
 conditional) and impulse response functions (orthogonalized and
@@ -33,9 +33,9 @@ case.*”
 Times are different now, and with the help of Stan, we are essentially
 limited only by our imagination. At the time of writing, the package
 provides three versions of the steady-state BVAR model: i) the
-homoscedastic model, i.e. the original model (Villani, 2009), ii) the
-Random Walk stochastic volatility model (Clark, 2011), and iii) an AR(1)
-stochastic volatility model.
+homoscedastic model, i.e. the original model in Villani (2009), ii) the
+Random Walk stochastic volatility model, i.e. the one in Clark (2011),
+and iii) an AR(1) stochastic volatility model.
 
 ## Installation
 
@@ -67,8 +67,9 @@ where \\y_t\\ is a \\k\\-dimensional vector of endogenous variables
 deterministic (exogenous) variables at time \\t\\, and the
 (reduced-form) innovations are \\u_t \sim N_k(0,\Sigma_u)\\ with
 independence between time periods. Here \\\Pi\_\ell\\ for
-\\\ell=1,\dots,p\\ is a \\(k \times k)\\ matrix, and \\\Psi\\ is a \\(k
-\times q)\\ matrix. Now
+\\\ell=1,\dots,p\\ is a \\(k \times k)\\ autoregressive parameter
+matrix, and \\\Psi\\ is a \\(k \times q)\\ steady-state parameter
+matrix. Now
 
 \\\mathrm{E}(y_t)=\mu_t=\Psi d_t\\
 
@@ -168,9 +169,9 @@ Alternatively, a proper inverse-Wishart prior can be used (Karlsson,
 \\\Sigma_u \sim \mathrm{IW}(V,m)\\
 
 where \\V\\ is the scale matrix and \\m\geq k+2\\ is the number of
-degrees of freedom. This package also allows for stochastic volatility
-(Random Walk or AR1 specifications), where the covariance matrix varies
-over time, i.e. we have \\\Sigma\_{u,t}\\ (see
+degrees of freedom. As mentioned, this package also allows for
+stochastic volatility (Random Walk or AR(1) specifications), where the
+covariance matrix varies over time, i.e. we have \\\Sigma\_{u,t}\\ (see
 [`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
 for more details).
 
@@ -216,12 +217,12 @@ fol_pm=c(0,   #delta y_f
          0.9  #q
          )
 
-#psi_1 = Psi col 1
-#psi_2 = Psi col 2
-
 #95% prior probability intervals (normal distribution)
 #See Table I in Villani (2009)
 #These are the "steady-state priors"
+#psi_1 = Psi col 1
+#psi_2 = Psi col 2
+
 theta_Psi <- 
   c(
   ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
@@ -271,7 +272,7 @@ bvar_obj <- priors(bvar_obj,
 
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
-kf <- 3 #first three variables in yt are foregin
+kf <- 3 #first three variables in yt are foreign
 
 restriction_matrix <- matrix(1, k*p, k)
 
@@ -284,10 +285,14 @@ print(restriction_matrix)
 #block exogeneity for foreign variables
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
+H <- 12 #forecast horizon
+(d_pred <- cbind(rep(1, 12), 0)) #future d_t values
+
+
 #fit the model
 bvar_obj <- fit(bvar_obj,
-                H = 12,
-                d_pred = cbind(rep(1, 12), 0), #future d_t values
+                H = H,
+                d_pred = d_pred,
                 iter = 10000,
                 warmup = 2500,
                 chains = 2,
@@ -319,7 +324,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
                     pi=0.68,
                     fcst_type = "mean",
                     plot_idx = c(4,6),
-                    growth_rate_idx = c(4))
+                    growth_rate_idx = c(4)) #convert QoQ forecasts to YoY
 
 #impulse response analysis
 irf <- IRF(bvar_obj,
