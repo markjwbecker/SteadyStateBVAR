@@ -42,7 +42,7 @@ However, for models with stochastic volatility, there is instead a time-varying 
 The innovations then take the form
 
 \deqn{\begin{aligned} u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
-\epsilon_t &\sim \mathrm{N}(0, \mathrm{I}_k)\end{aligned}}
+\epsilon_t &\overset{\text{iid}}{\sim} \mathrm{N}(0, \mathrm{I}_k)\end{aligned}}
 
 where \eqn{A} is a lower triangular matrix with ones on the diagonal that describes
 the contemporaneous interaction of the endogenous variables, and
@@ -50,7 +50,7 @@ the contemporaneous interaction of the endogenous variables, and
 \deqn{\Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})}
 
 contains the time-varying volatilities.
-For the \code{AR1} stochastic volatility specification, the (log) volatilities follow AR(1) processes
+For the \code{AR1} stochastic volatility specification, the log volatilities follow AR(1) processes
 
 \deqn{\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k}
 
@@ -61,7 +61,7 @@ For the \code{RW} stochastic volatility specification, the log volatilities foll
 
 The innovations to the log volatilities follow in the \code{AR1} case
 
-\deqn{\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\sim \mathrm{N}(0, \Phi)}
+\deqn{\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\overset{\text{iid}}{\sim} \mathrm{N}(0, \Phi)}
 
 where \eqn{\Phi} is \strong{not} diagonal and as such the innovations to the log
 volatilities are allowed to be correlated across variables. For the \code{RW} case, \eqn{\Phi} is diagonal
@@ -86,7 +86,7 @@ Capturing macro-economic tail risks with Bayesian vector autoregressions.
 \emph{Journal of Money, Credit and Banking}, 56(5), pp. 1099–1127.
 
 Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions
-with stochastic volatility. \emph{Journal of Business \& Economic Statistics}, 29(3), pp. 327-341.
+with stochastic volatility. \emph{Journal of Business & Economic Statistics}, 29(3), pp. 327-341.
 
 Karlsson, S. (2013). Forecasting with Bayesian vector autoregression.
 In: Elliott, G. and Timmermann, A. (eds) \emph{Handbook of Economic Forecasting}.

@@ -31,7 +31,7 @@ a \eqn{q}-dimensional vector of deterministic (exogenous) variables at time \eqn
 Here \eqn{\Pi_\ell} for \eqn{\ell=1,\dots,p} is a \eqn{(k \times k)} matrix of autoregressive parameters,
 and \eqn{\Psi} is a \eqn{(k \times q)} matrix of steady-state parameters.
 One can stack the (transposed) \eqn{\Pi_i} matrices in the \eqn{(kp \times k)} matrix \eqn{\beta}
-\deqn{\beta=\begin{bmatrix}\Pi'_1 \\ \vdots  \\\Pi'_p\end{bmatrix}}.
+\deqn{\beta=\begin{bmatrix}\Pi'_1 \\ \vdots  \\\Pi'_p\end{bmatrix}}
 
 This function puts zero restrictions on the elements of \eqn{\beta}.
 }
@@ -49,10 +49,13 @@ bvar_obj <- priors(bvar_obj,
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
 
-restriction_matrix <- matrix(1, k*p, k)
+restriction_matrix <- matrix(1,k*p,k, dimnames=list(NULL,c("y1","y2")))
 
-restriction_matrix[1, 1] <- 0
-restriction_matrix[4, 2] <- 0
+#restrict beta so y2 does not granger-cause y1
+
+restriction_matrix[1, 2] <- 0
+restriction_matrix[3, 2] <- 0
+
 print(restriction_matrix)
 
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
