@@ -10,14 +10,22 @@ coverage](https://codecov.io/gh/markjwbecker/steady_state_bvar/graph/badge.svg)]
 [![R-CMD-check](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-With this package, the user can estimate the steady-state BVAR(p) model
-(Villani, 2009). After estimation, the user can produce forecasts
-(unconditional and conditional) and impulse response functions
-(orthogonalized and generalized). The goal of `SteadyStateBVAR` is to
-use modern Bayesian tools (Stan) to: i) estimate the model as specified
-in the original paper, and ii) extend the model in different ways.
-Previously, extensions of the model seemed to be limited by what Mattias
-Villani had time to derive.
+With this package, the user can estimate the steady-state BVAR($p$)
+model of Villani (2009). The steady-state BVAR is simply a BVAR
+rewritten in mean-adjusted form. The benefit of the mean-adjusted
+parametrization is that it allows the user to specify prior beliefs
+about the unconditional mean, or *steady state* of the VAR system.The
+model has proven very useful for forecasting of macroeconomic variables,
+and is routinely used in many central banks and other finanicial
+institutions (Gustafsson and Villani, 2025).
+
+After estimation, the user can produce forecasts (unconditional and
+conditional) and impulse response functions (orthogonalized and
+generalized). The goal of `SteadyStateBVAR` is to use modern Bayesian
+tools (Stan) to: i) estimate the model as specified in the original
+paper, and ii) extend the model in different ways. Previously,
+extensions of the model seemed to be limited by what Mattias Villani had
+time to derive.
 
 See for example Clark (2011), which extends the steady-state BVAR model
 to include Random Walk stochastic volatility: “*In a methodological
@@ -73,12 +81,13 @@ $$\mathrm{E}(y_t)=\mu_t=\Psi d_t$$
 is the unconditional mean, or the **steady state**, of the process.
 Since long-horizon forecasts from stationary VARs converge to the
 unconditional mean (steady state), it is naturally very important from a
-forecasting perspective to obtain precise inference on $\Psi$.
+forecasting perspective to obtain precise inference on $\Psi$. Note that
+the current version of this package only allows for $d_t$ to contain
+either a constant, a constant and a dummy variable, or a constant and a
+time trend.
 
-Note that the current version of this package only allows for $d_t$ to
-contain either a constant, a constant and a dummy variable, or a
-constant and a time trend. We can stack the (transposed) $\Pi_i$
-matrices in the $(kp \times k)$ matrix $\beta$
+We may stack the (transposed) $\Pi_i$ matrices in the $(kp \times k)$
+matrix $\beta$
 
 $$\beta=
 \begin{bmatrix}
@@ -97,9 +106,9 @@ $qp$-dimensional vector of lagged deterministic (exogenous) variables,
 $I_p$ is the $(p \times p)$ identity matrix and $\otimes$ denotes the
 Kronecker product. This is how the likelihood is written in the Stan
 code. The goal is to estimate $\beta, \Psi$, and $\Sigma_u$, and as such
-priors are needed. First, prior independence between $\beta, \Psi$ and
-$\Sigma_u$ is assumed. Starting with $\beta$, the Minnesota prior is
-used
+priors are needed. Following Villani (2009), prior independence between
+$\beta, \Psi$ and $\Sigma_u$ is assumed. For $\beta$, the Minnesota
+prior is used
 
 $$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]$$
 
@@ -152,16 +161,16 @@ $(i,i)$:th element of $\Sigma_u$, which we do not know and therefore
 replace with an estimate. In this package, it is replaced by the least
 squares residual variance from a univariate autoregression for variable
 $i$ with $p$ lags (including the constant and dummy/trend variable if
-applicable). Moving on to $\Psi$, the prior is
+applicable). Moving on to $\Psi$, which contains the steady-state
+parameters, the prior is
 
 $$\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]$$
 
-This is really the core of the steady-state BVAR model. In
-$\theta_\Psi$, we specify our prior beliefs about the location of the
-steady state, and in $\Omega_\Psi$, which we assume to be a diagonal
-matrix, we specify our degree of certainty in those prior beliefs.
-Finally, the prior for $\Sigma_u$ is the usual non-informative Jeffreys
-prior
+This is the core of the steady-state BVAR model. In $\theta_\Psi$, we
+specify our prior beliefs about the location of the steady state, and in
+$\Omega_\Psi$, which we assume to be a diagonal matrix, we specify our
+degree of certainty in those prior beliefs. Finally, the prior for
+$\Sigma_u$ is the usual non-informative Jeffreys prior
 
 $$p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}$$
 
@@ -334,16 +343,20 @@ irf <- IRF(bvar_obj,
 
 ## References
 
-Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector
-Autoregressions with Stochastic Volatility. *Journal of Business &
-Economic Statistics*. 29(3), pp. 327–341.
+Clark, T. E. (2011). Real-time density forecasts from Bayesian vector
+autoregressions with stochastic volatility. *Journal of Business &
+Economic Statistics*, 29(3), pp. 327-341.
 
-Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox.
+Dieppe, A., Legrand, R., and van Roye, B. (2016). The BEAR toolbox.
 *Working Paper Series*, No. 1934. European Central Bank.
 
-Karlsson, S. (2013). Forecasting with Bayesian Vector Autoregression.
-In: Elliott, G. and Timmerman, A. (eds) *Handbook of Economic
+Karlsson, S. (2013). Forecasting with Bayesian vector autoregression.
+In: Elliott, G. and Timmermann, A. (eds) *Handbook of Economic
 Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
-Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
-*Journal of Applied Econometrics*. 24(4), pp. 630-650.
+Gustafsson, O., and Villani, M. (2025). Variational inference for
+steady-state BVARs. \[Preprint\]. arXiv:2506.09271. Available at:
+<https://arxiv.org/abs/2506.09271> (Accessed: 08 July 2026).
+
+Villani, M. (2009). Steady-state priors for vector autoregressions.
+*Journal of Applied Econometrics*, 24(4), pp. 630-650.

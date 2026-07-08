@@ -79,7 +79,7 @@ Optionally enables stochastic volatility where the covariance matrix varies over
 }
 \details{
 The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u}, so priors are needed.
-First, prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed. Starting with \eqn{\beta},
+Following Villani (2009), prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed. For \eqn{\beta},
 the Minnesota prior is used
 
 \deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]}
@@ -122,7 +122,7 @@ the overall tightness, the cross-equation tightness and the lag decay rate. Furt
 \eqn{\sigma_i^2} is the \eqn{(i,i)}:th element of \eqn{\Sigma_u}, which is unknown and therefore
 replaced with an estimate. In this package, it is replaced by the least squares residual variance
 from a univariate autoregression for variable \eqn{i} with \eqn{p} lags
-(including the constant and dummy/trend variable if applicable). Moving on to \eqn{\Psi}, the
+(including the constant and dummy/trend variable if applicable). Moving on to \eqn{\Psi}, the steady-state parameter matrix,the
 prior is
 
 \deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]}
@@ -249,4 +249,8 @@ bvar_obj <- priors(bvar_obj,
                    SV_type = "AR1",
                    SV_priors = SV_priors_AR)
 
+}
+\references{
+Villani, M. (2009). Steady-state priors for vector autoregressions.
+\emph{Journal of Applied Econometrics}, 24(4), pp. 630-650.
 }

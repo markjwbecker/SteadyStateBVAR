@@ -1,6 +1,6 @@
 bibentry(
   bibtype = "Manual",
-  title = "Bayesian Vector Autoregression Models with Steady-State Priors via 'Stan'",
+  title = "Bayesian Vector Autoregressions with Steady-State Priors",
   author = person("Mark", "Becker", email = "mark.jw.becker@gmail.com"),
   year = 2026,
   url = "https://github.com/markjwbecker/SteadyStateBVAR"

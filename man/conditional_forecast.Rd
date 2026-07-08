@@ -90,6 +90,6 @@ cond_fcst <- conditional_forecast(bvar_obj,
 }
 }
 \references{
-Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox. \emph{Working Paper Series}, No. 1934.
-European Central Bank.
+Dieppe, A., Legrand, R., and van Roye, B. (2016).
+The BEAR toolbox. \emph{Working Paper Series}, No. 1934. European Central Bank.
 }

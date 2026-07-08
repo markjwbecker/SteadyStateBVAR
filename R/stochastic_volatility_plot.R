@@ -37,7 +37,7 @@
 #' @details
 #' The function supports two volatility representations:
 #' \itemize{
-#'   \item \code{"log_lambda"}: log-volatility states
+#'   \item \code{"log_lambda"}: log variances
 #'   \item \code{"sd"}: implied standard deviations
 #' }
 #'
