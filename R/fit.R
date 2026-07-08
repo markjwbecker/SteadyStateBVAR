@@ -203,7 +203,7 @@
 #'                    Omega_Psi = diag(0.1, 2, 2),
 #'                    SV = TRUE,
 #'                    SV_type = "AR1",
-#'                    SV_priors = SV_priors_AR)
+#'                    SV_priors = SV_priors_AR1)
 #'
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
