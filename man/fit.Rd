@@ -15,7 +15,7 @@ Default is \code{1}.}
 
 \item{d_pred}{Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL}, must be provided by the user.}
 
-\item{...}{Additional arguments passed directly to \code{\link[rstan]{rstan::sampling}}
+\item{...}{Additional arguments passed directly to the \code{rstan} function \code{\link[rstan]{sampling}}
 (e.g. \code{iter}, \code{warmup}, \code{chains}, \code{cores}, \code{control},
 \code{seed}, \code{init}, \code{thin}, \code{algorithm}, \code{pars},
 \code{include}, \code{refresh}, \code{verbose}, \code{save_warmup},
