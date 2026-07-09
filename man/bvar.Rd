@@ -63,8 +63,8 @@ The innovations to the log volatilities follow in the \code{AR1} case
 
 \deqn{\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\overset{\text{iid}}{\sim} \mathrm{N}(0, \Phi)}
 
-where \eqn{\Phi} is \strong{not} diagonal and as such the innovations to the log
-volatilities are allowed to be correlated across variables. For the \code{RW} case, \eqn{\Phi} is diagonal
+where \eqn{\Phi} \emph{is not diagonal} and as such the innovations to the log
+volatilities are allowed to be correlated across variables. For the \code{RW} case, \eqn{\Phi} \emph{is diagonal}
 with variances \eqn{\phi_i} for \eqn{i=1,\dots,k}.
 
 Note that under both stochastic volatility specifications, the time-varying covariance matrix is
@@ -72,8 +72,9 @@ Note that under both stochastic volatility specifications, the time-varying cova
 \deqn{\Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'}
 
 For details on the homoscedastic steady-state BVAR model, see Villani (2009).
-For the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
-For details regarding BVAR models with AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).
+For details on the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
+See Carriero, Clark, and Marcellino (2024) for the above-mentioned AR(1) stochastic volatility
+specification applied to a conventional BVAR.
 }
 \examples{
 yt <- matrix(rnorm(50), 25, 2)

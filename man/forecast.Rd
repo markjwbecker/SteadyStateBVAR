@@ -24,12 +24,13 @@ as the point forecast. Default \code{"mean"}.}
 \item{growth_rate_idx}{Integer vector. Indices of variables of which to convert forecasts to
 annual growth rates \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
 the frequency of the data (4 for quarterly, 12 for monthly).
-Suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
+Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
 \code{diff(log(x))} or \code{100*diff(log(x))}.
 Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.}
 
 \item{plot_idx}{Integer vector. Indices of variables to plot. If \code{NULL}
-(default), all variables are plotted.}
+(default), all variables are plotted. Forecasts are always computed and
+returned for all variables, regardless of \code{plot_idx}.}
 
 \item{show_all}{Logical. If \code{FALSE} (default), only the last two years
 of history are shown alongside the forecast. If \code{TRUE}, the full
@@ -41,8 +42,8 @@ Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
 forecast horizon and \code{k} is the number of variables.
 }
 \description{
-Computes and plots forecasts from a fitted \code{bvar} object. Posterior
-predictive draws from Stan are used to construct point forecasts and
+Computes and plots forecasts from a fitted \code{bvar} object. Draws from the
+joint predictive distribution are used to construct point forecasts and
 prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 rates for selected variables.
 }
@@ -75,6 +76,6 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1,
                 cores = 1)
 
-forecast(bvar_obj, pi = 0.90, show_all = TRUE)
+(fcst <- forecast(bvar_obj, pi = 0.90, show_all = TRUE))
 }
 }

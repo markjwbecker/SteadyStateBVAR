@@ -15,13 +15,13 @@ A multivariate time series object with 104 rows and 7 columns:
 \item{delta y}{domestic GDP growth}
 \item{pi}{domestic CPI inflation}
 \item{i}{domestic 3-month interest rate}
-\item{q}{level of the real exchange rate defined as q = s + p_f - p, where p_f and p
-are the foreign and domestic CPI levels in logs and s is the log of the trade-weighted nominal exchange rate}
+\item{q}{level of the real exchange rate defined as \eqn{q = s + p_f - p}, where \eqn{p_f} and \eqn{p}
+are the foreign and domestic CPI levels in logs and \eqn{s} is the log of the trade-weighted nominal exchange rate}
 }
 }
 }
 \source{
-Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
+Villani, M. (2009). Steady-state priors for vector autoregressions.
 \emph{Journal of Applied Econometrics}, 24(4), pp. 630-650.
 }
 \usage{

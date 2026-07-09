@@ -37,7 +37,7 @@ the OLS estimates are used.}
 \item{Omega_Psi}{Numeric matrix. Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters. If \code{NULL} (default),
 a diagonal matrix with variances \code{1000} is used.}
 
-\item{Jeffreys}{Logical. If \code{TRUE} (default), uses a Jeffreys prior for the innovation covariance matrix.
+\item{Jeffreys}{Logical. If \code{TRUE} (default), uses Jeffreys prior for the innovation covariance matrix.
 If \code{FALSE}, uses an uninformative inverse-Wishart prior. Only considered if \code{SV=FALSE}.}
 
 \item{SV}{Logical. If \code{TRUE}, enables stochastic volatility specification.
@@ -75,11 +75,11 @@ This function prepares the priors. The Minnesota prior is used for the autoregre
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables stochastic volatility where the covariance matrix varies over time (random walk or AR(1)).
+Optionally enables stochastic volatility where the covariance matrix varies over time.
 }
 \details{
 The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u}, so priors are needed.
-Following Villani (2009), prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed. For \eqn{\beta},
+Following Villani (2009), prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed. For \eqn{\beta}, i.e. the autoregressive parameter matrix,
 the Minnesota prior is used
 
 \deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]}
@@ -122,7 +122,7 @@ the overall tightness, the cross-equation tightness and the lag decay rate. Furt
 \eqn{\sigma_i^2} is the \eqn{(i,i)}:th element of \eqn{\Sigma_u}, which is unknown and therefore
 replaced with an estimate. In this package, it is replaced by the least squares residual variance
 from a univariate autoregression for variable \eqn{i} with \eqn{p} lags
-(including the constant and dummy/trend variable if applicable). Moving on to \eqn{\Psi}, the steady-state parameter matrix,the
+(including the constant and dummy/trend variable if applicable). Moving on to \eqn{\Psi}, the steady-state parameter matrix, the
 prior is
 
 \deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]}

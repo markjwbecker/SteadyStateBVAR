@@ -113,7 +113,7 @@ fol_pm=c(0,   #delta y_f
 
 Now moving on to $\Psi$ for the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $z$ which is on a quarterly frequency, the quarterly growth rate is $100[ \ln (z_t) - \ln (z_{t-1})]$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400 [\ln (z_t) - \ln (z_{t-1})]$.
 
-The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`. So now we do this for all steady-state coefficients. Again, see Table I in Villani (2009) for the 95% prior probability intervals. The default argument for `ppi()` is 'interval=0.95', but if we wanted for example 68\% prior probability intervals we could just set `interval=0.68`.
+The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`.
 
 ```{r}
 #psi_1 = Psi col 1
@@ -158,7 +158,7 @@ Omega_Psi <-
   )
 ```
 
-Finally for $\Sigma_u$ we will use the noninformative Jeffreys prior $\left|\Sigma_u \right|^{-(k+1)/2}$, as done in Villani (2009). We simply pass everything to the `priors()` function.
+Finally for $\Sigma_u$ we will use the noninformative Jeffreys prior $\left|\Sigma_u \right|^{-(k+1)/2}$, as done in Villani (2009). Now we simply pass everything to the `priors()` function.
 
 
 ```{r}
@@ -188,7 +188,7 @@ for(i in 1:p){
 }
 restriction_matrix
 ```
-We can look at the restriction matrix for $\beta$ to see which elements we restrict to zero. Since the prior means for these elements are zero, we do the restriction by setting the relevant prior variances in $\Omega_\beta$ to be very small. We simply pass our $(kp \times k)$ restriction matrix to the `restrict_beta()` function:
+We can look at the restriction matrix for $\beta$ to see which elements we restrict to zero. Now we simply pass our $(kp \times k)$ restriction matrix to the `restrict_beta()` function:
 
 ```{r}
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
@@ -234,11 +234,15 @@ summary(bvar_obj)
 
 We can access the posterior means or medians with `bvar_obj$fit$posterior_means`/`bvar_obj$fit$posterior_medians` if needed. 
 
-Note that `bvar_obj$fit$stan` is an object of class `stanfit`. So we can do the usual `rstan` inference on our fitted model. Let's look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean to 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to obtain the annualized rate).
+Note that `bvar_obj$fit$stan` is an object of class `stanfit`.
+
+```{r}
+(stanfit <- bvar_obj$fit$stan)
+```
+
+As such, we can do the usual `rstan` inference on our fitted model. Let's look at some examples for i) the first own lag of the domestic interest rate (for which we set the prior mean to 0.9) and ii) the post-crisis steady-state coefficient of inflation (multiply the steady-state coefficient by 4 to obtain the annualized rate).
 
 ```{r HOMO-2, fig.width=8, fig.height=8}
-stanfit <- bvar_obj$fit$stan
-
 rstan::plot(stanfit,
             pars=c("beta[6,6]", "Psi[5,1]"),
             plotfun="hist")
@@ -256,44 +260,47 @@ rstan::plot(stanfit,
             fill_color = "blue")
 ```
 
-So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (z_t) - \ln (z_{t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
+So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval ("pi") and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100 [ \ln (y_{i,t}) - \ln (y_{i,t-4})]$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
 ```{r HOMO-4}
 fcst <- forecast(bvar_obj,
-                 ci = 0.68,
+                 pi = 0.68,
                  fcst_type = "mean",
                  growth_rate_idx = c(4,5),
                  plot_idx = c(4,5,6))
 ```
 
-We can also perform conditional forecasting by following Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2016). Note that for the structural shocks, identification is based on the Cholesky factorisation.
+We can also perform conditional forecasting by following Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2016). Note that for the structural shocks, identification is based on the Cholesky factorisation. Also, please note the limitations of this method, see the detailed discussion in Section 5.4 of Dieppe, Legrand, and van Roye (2016).
 
-Now suppose we are interested in the forecasts of the domestic GDP growth $\Delta y$ conditional on a scenario for the three-month domestic interest rate $i$.
+Now suppose we are interested in the forecasts of the domestic interest rate $i$ conditional on a scenario where domestic inflation $\pi$ gets really high (COVID-19 type scenario). Economic theory says the short-interest rate should rise.
 
-First we set up our conditions/scenarios, i.e., which variables, which horizons, and which values the variables will take during those horizons. Our conditions are that $i$ will follow a specified path, from 2 to 8 (toy example), at forecast horizons $h=1,\dots,H=12$.
+First we set up our conditions/scenarios, i.e., which variables, which horizons, and which values the variables will take during those horizons. Our conditions are that $\pi$ will follow a specified path, at forecast horizons $h=1,\dots,H=12$.
 
 ```{r}
 conditions <- data.frame(
-              var     = rep(6,12),
-              horizon = rep(1:12),
-              value   = seq(2, 8, length.out = 12)
+              var        = rep(5,12),
+              horizon    = rep(1:12),
+              value      = c(1.0,1.5,2.0,1.8, #Note: QoQ scale for inflation here
+                             1.5,1.2,1.0,1.0,
+                             rep(0.5,4))
               )
 ```
 
-We then do the conditional forecasting. We again select a 68\% CI and the mean of the predictive distribution as the point forecast.
+We then do the conditional forecasting. We again select a 68\% PI (prediction interval) and the mean of the predictive distribution as the point forecast.
 
 ```{r HOMO-5}
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   ci=0.68,
                                   fcst_type = "mean",
-                                  plot_idx = c(4,6),
-                                  growth_rate_idx = c(4))
+                                  plot_idx = c(5,6),
+                                  growth_rate_idx = c(5))
 ```
 
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to forecasting, we can choose either the mean or the median (the default is the median), and we can also transform the IRFs for the quarter-on-quarter growth rate variables to the annual/yearly scale.
+
 
 ```{r HOMO-6, fig.width=8, fig.height=8}
 par(mfrow=c(2,2))
@@ -307,6 +314,6 @@ irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,
 
 ## References
 
-Dieppe, A., van Roye, B., and Legrand, R. (2016). The BEAR toolbox. *Working Paper Series*, No. 1934. European Central Bank.
+Dieppe, A., Legrand, R., and van Roye, B. (2016). The BEAR toolbox. *Working Paper Series*, No. 1934. European Central Bank.
 
-Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*. 24(4), pp. 630-650. 
+Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630-650. 

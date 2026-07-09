@@ -1,8 +1,8 @@
 #' Conditional forecasts from a fitted steady-state BVAR model
 #'
 #' Computes and plots conditional forecasts from a fitted steady-state \code{bvar} object.
-#' Conditions are imposed on specific variables at specific horizons using the
-#' method of Dieppe, Legrand, and van Roye (2016). Both conditional and unconditional
+#' Conditions are imposed on specific variables at specific horizons using Algorithm 3.3.1
+#' from Dieppe, Legrand, and van Roye (2016). Both conditional and unconditional
 #' forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
 #' is only enabled for the homoscedastic steady-state BVAR, i.e. when \code{SV=FALSE} in \code{priors()}.
 #'
@@ -19,15 +19,20 @@
 #' @param growth_rate_idx Integer vector. Indices of variables of which to convert forecasts to
 #'   annual growth rates \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
 #'   the frequency of the data (4 for quarterly, 12 for monthly).
-#'   Suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
+#'   Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
 #'   \code{diff(log(x))} or \code{100*diff(log(x))}.
 #'   Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.
 #' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
-#'   (default), all variables are plotted.
+#'   (default), all variables are plotted. Forecasts are always computed and
+#'   returned for all variables, regardless of \code{plot_idx}.
 #'
 #' @return Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
-#'   \code{upper}, each of dimension \code{H x k}, as well as \code{cond_draws},
-#'   an array of all posterior conditional forecast draws.
+#'   \code{upper}, each of dimension \code{H x k}.
+#'   
+#' @details
+#' See Section 5.3 of Dieppe, Legrand, and van Roye (2016) for more details.
+#' Please note the limitations of this method, see the detailed discussion in Section 5.4 of Dieppe, Legrand, and van Roye (2016).
+#' 
 #' @export
 #'
 #' @references
@@ -67,10 +72,10 @@
 #'                          horizon = rep(1:8),
 #'                          value   = rep(1,8))
 #'                          
-#' cond_fcst <- conditional_forecast(bvar_obj,
+#' (cond_fcst <- conditional_forecast(bvar_obj,
 #'                                   conditions,
 #'                                   pi=0.68,
-#'                                   fcst_type = "mean")
+#'                                   fcst_type = "mean"))
 #' }
 conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
                                  fcst_type = c("mean", "median"),
@@ -193,7 +198,7 @@ conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
   colnames(lower_ret)    <- colnames(data_Y)
   colnames(upper_ret)    <- colnames(data_Y)
   
-  for (i in plot_idx) {
+  for (i in 1:m) {
     smply      <- data_Y[, i]
     fcst_m     <- cond_point[, i]
     fcst_lower <- cond_lower[, i]
@@ -226,44 +231,58 @@ conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
       forecast_ret[, i] <- annual_fcst
       lower_ret[, i]    <- annual_lower
       upper_ret[, i]    <- annual_upper
-      time_full   <- c(tail(time_hist, 1), time_fore)
-      m_full      <- c(tail(annual_hist, 1), annual_fcst)
-      lower_full  <- c(tail(annual_hist, 1), annual_lower)
-      upper_full  <- c(tail(annual_hist, 1), annual_upper)
-      uncond_full <- c(tail(annual_hist, 1), annual_fcst_uncond)
-      plot.ts(annual_hist, main = paste(colnames(data_Y)[i], "(annual)"),
-              xlab = "Time", ylab = NULL, col = "black", lwd = 2,
-              xlim = c(head(time_hist, 1), tail(time_fore, 1)),
-              ylim = range(upper_full, lower_full, annual_hist, uncond_full, na.rm = TRUE))
+      
+      if (i %in% plot_idx) {
+        time_full   <- c(tail(time_hist, 1), time_fore)
+        m_full      <- c(tail(annual_hist, 1), annual_fcst)
+        lower_full  <- c(tail(annual_hist, 1), annual_lower)
+        upper_full  <- c(tail(annual_hist, 1), annual_upper)
+        uncond_full <- c(tail(annual_hist, 1), annual_fcst_uncond)
+        plot.ts(annual_hist, main = paste(colnames(data_Y)[i], "(annual)"),
+                xlab = "Time", ylab = NULL, col = "black", lwd = 2,
+                xlim = c(head(time_hist, 1), tail(time_fore, 1)),
+                ylim = range(upper_full, lower_full, annual_hist, uncond_full, na.rm = TRUE))
+        polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
+                col = rgb(0, 0, 1, 0.2), border = NA)
+        lines(time_full, m_full,      col = "blue", lwd = 2)
+        lines(time_full, uncond_full, col = "red",  lwd = 1, lty = 1)
+        legend("bottomleft",
+               legend = c("Conditional forecast", "Unconditional forecast"),
+               col    = c("blue", "red"),
+               lwd    = 2,
+               bty    = "n")
+      }
     } else {
       forecast_ret[, i] <- fcst_m
       lower_ret[, i]    <- fcst_lower
       upper_ret[, i]    <- fcst_upper
-      time_full   <- c(tail(time_hist, 1), time_fore)
-      m_full      <- c(tail(smply, 1), fcst_m)
-      lower_full  <- c(tail(smply, 1), fcst_lower)
-      upper_full  <- c(tail(smply, 1), fcst_upper)
-      uncond_full <- c(tail(smply, 1), uncond_m)
-      plot.ts(smply, main = colnames(data_Y)[i], xlab = "Time", ylab = NULL,
-              col = "black", lwd = 2,
-              xlim = c(head(time_hist, 1), tail(time_fore, 1)),
-              ylim = range(upper_full, lower_full, smply, uncond_full))
+      
+      if (i %in% plot_idx) {
+        time_full   <- c(tail(time_hist, 1), time_fore)
+        m_full      <- c(tail(smply, 1), fcst_m)
+        lower_full  <- c(tail(smply, 1), fcst_lower)
+        upper_full  <- c(tail(smply, 1), fcst_upper)
+        uncond_full <- c(tail(smply, 1), uncond_m)
+        plot.ts(smply, main = colnames(data_Y)[i], xlab = "Time", ylab = NULL,
+                col = "black", lwd = 2,
+                xlim = c(head(time_hist, 1), tail(time_fore, 1)),
+                ylim = range(upper_full, lower_full, smply, uncond_full))
+        polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
+                col = rgb(0, 0, 1, 0.2), border = NA)
+        lines(time_full, m_full,      col = "blue", lwd = 2)
+        lines(time_full, uncond_full, col = "red",  lwd = 1, lty = 1)
+        legend("bottomleft",
+               legend = c("Conditional forecast", "Unconditional forecast"),
+               col    = c("blue", "red"),
+               lwd    = 2,
+               bty    = "n")
+      }
     }
-    polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
-            col = rgb(0, 0, 1, 0.2), border = NA)
-    lines(time_full, m_full,      col = "blue", lwd = 2)
-    lines(time_full, uncond_full, col = "red",  lwd = 1, lty = 1)
-    legend("bottomleft",
-           legend = c("Conditional forecast", "Unconditional forecast"),
-           col    = c("blue", "red"),
-           lwd    = 2,
-           bty    = "n")
   }
   
   invisible(list(
     forecast   = forecast_ret,
     lower      = lower_ret,
-    upper      = upper_ret,
-    cond_draws = cond_forecast_array
+    upper      = upper_ret
   ))
 }

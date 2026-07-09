@@ -31,24 +31,28 @@ as the point forecast. Default \code{"mean"}.}
 \item{growth_rate_idx}{Integer vector. Indices of variables of which to convert forecasts to
 annual growth rates \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
 the frequency of the data (4 for quarterly, 12 for monthly).
-Suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
+Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
 \code{diff(log(x))} or \code{100*diff(log(x))}.
 Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.}
 
 \item{plot_idx}{Integer vector. Indices of variables to plot. If \code{NULL}
-(default), all variables are plotted.}
+(default), all variables are plotted. Forecasts are always computed and
+returned for all variables, regardless of \code{plot_idx}.}
 }
 \value{
 Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
-\code{upper}, each of dimension \code{H x k}, as well as \code{cond_draws},
-an array of all posterior conditional forecast draws.
+\code{upper}, each of dimension \code{H x k}.
 }
 \description{
 Computes and plots conditional forecasts from a fitted steady-state \code{bvar} object.
-Conditions are imposed on specific variables at specific horizons using the
-method of Dieppe, Legrand, and van Roye (2016). Both conditional and unconditional
+Conditions are imposed on specific variables at specific horizons using Algorithm 3.3.1
+from Dieppe, Legrand, and van Roye (2016). Both conditional and unconditional
 forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
 is only enabled for the homoscedastic steady-state BVAR, i.e. when \code{SV=FALSE} in \code{priors()}.
+}
+\details{
+See Section 5.3 of Dieppe, Legrand, and van Roye (2016) for more details.
+Please note the limitations of this method, see the detailed discussion in Section 5.4 of Dieppe, Legrand, and van Roye (2016).
 }
 \examples{
 \donttest{
@@ -83,10 +87,10 @@ conditions <- data.frame(var = rep(2,8),
                          horizon = rep(1:8),
                          value   = rep(1,8))
                          
-cond_fcst <- conditional_forecast(bvar_obj,
+(cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   pi=0.68,
-                                  fcst_type = "mean")
+                                  fcst_type = "mean"))
 }
 }
 \references{

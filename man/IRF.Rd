@@ -41,7 +41,7 @@ volatility models. If \code{NULL} (default), the last time \code{t} is used.}
 \item{growth_rate_idx}{Integer vector. Indices of variables of which to convert forecasts to
 annual growth rates \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
 the frequency of the data (4 for quarterly, 12 for monthly).
-Suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
+Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
 \code{diff(log(x))} or \code{100*diff(log(x))}.
 Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.}
 }
@@ -83,6 +83,6 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1,
                 cores = 1)
                 
-IRF(bvar_obj)
+(IRF(bvar_obj))
 }
 }

@@ -9,8 +9,8 @@
 #'   \item{u}{unemployment rate (seasonally adjusted civilian unemployment rate, all civilian workers aged 16 years or older)}
 #'   \item{r}{interest rate (yield on the three-month Treasury bill rate)}
 #' }
-#' @source Koop, G. and Korobilis, D. (2010). Bayesian Multivariate Time Series
-#'  Methods for Empirical Macroeconomics. \emph{Foundations and Trends in Econometrics}. 3(4), pp. 267-358.
+#' @source Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series
+#'  methods for empirical macroeconomics. \emph{Foundations and Trends in Econometrics}, 3(4), pp. 267-358.
 "KoopKorobilis2010"
 
 #' Villani (2009) dataset
@@ -26,9 +26,9 @@
 #'   \item{delta y}{domestic GDP growth}
 #'   \item{pi}{domestic CPI inflation}
 #'   \item{i}{domestic 3-month interest rate}
-#'   \item{q}{level of the real exchange rate defined as q = s + p_f - p, where p_f and p
-#'   are the foreign and domestic CPI levels in logs and s is the log of the trade-weighted nominal exchange rate}
+#'   \item{q}{level of the real exchange rate defined as \eqn{q = s + p_f - p}, where \eqn{p_f} and \eqn{p}
+#'   are the foreign and domestic CPI levels in logs and \eqn{s} is the log of the trade-weighted nominal exchange rate}
 #' }
-#' @source Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
+#' @source Villani, M. (2009). Steady-state priors for vector autoregressions.
 #'   \emph{Journal of Applied Econometrics}, 24(4), pp. 630-650.
 "Villani2009"
