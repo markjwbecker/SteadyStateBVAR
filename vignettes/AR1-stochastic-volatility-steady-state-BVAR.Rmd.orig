@@ -147,7 +147,7 @@ print(bvar_obj$fit$stan)
 We can forecast
 
 ```{r AR(1)-2, fig.width=8, fig.height=6}
-forecast(bvar_obj, ci = 0.68, show_all = TRUE)
+forecast(bvar_obj, pi = 0.68, show_all = TRUE)
 ```
 
 Let us plot the log volatility estimates and predictions

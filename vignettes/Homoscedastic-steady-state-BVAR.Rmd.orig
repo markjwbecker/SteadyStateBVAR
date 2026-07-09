@@ -292,7 +292,7 @@ We then do the conditional forecasting. We again select a 68\% PI (prediction in
 ```{r HOMO-5}
 cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
-                                  ci=0.68,
+                                  pi=0.68,
                                   fcst_type = "mean",
                                   plot_idx = c(5,6),
                                   growth_rate_idx = c(5))

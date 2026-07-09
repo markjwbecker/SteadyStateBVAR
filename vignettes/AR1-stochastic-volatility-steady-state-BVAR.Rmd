@@ -1,21 +1,15 @@
 ---
-title: "Random Walk stochastic volatility steady-state BVAR (Clark, 2011)"
+title: "AR(1) stochastic volatility steady-state BVAR"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Random Walk stochastic volatility steady-state BVAR (Clark, 2011)}
+  %\VignetteIndexEntry{AR(1) stochastic volatility steady-state BVAR}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  fig.cap = NULL
-)
-```
 
-Here we estimate the steady-state BVAR model with Random Walk stochastic volatility from Clark (2011), which is an extension of the original homoscedastic steady-state BVAR model (Villani, 2009). See `?bvar` for details.
+
+Here we estimate a steady-state BVAR model with AR(1) stochastic volatility, see `?bvar` for details.
 
 We will estimate the model on a quarterly US data set from Koop and Korobilis (2010) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all civilian workers aged 16 years or older) and the interest rate $r_t$ (yield on the three-month Treasury bill rate). The sample is 1953Q1-2006Q3 and we have the data vector
 
@@ -29,22 +23,27 @@ $$
 
 First, let's load the package, then import and plot the data.
 
-```{r RW-1, message=FALSE, warning=FALSE, fig.width=8, fig.height=8}
+
+``` r
 library(SteadyStateBVAR)
 data("KoopKorobilis2010")
 yt <- KoopKorobilis2010
 plot.ts(yt)
 ```
 
+![plot of chunk AR(1)-1](figure/AR(1)-1-1.png)
+
 Let's create the bvar object which we will use throughout here.
 
-```{r}
+
+``` r
 bvar_obj <- bvar(data = yt)
 ```
 
 We choose 2 lags and only a constant as the deterministic variable.
 
-```{r, fig.width=8, fig.height=8}
+
+``` r
 bvar_obj <- setup(bvar_obj,
                   p=2,
                   deterministic = "constant")
@@ -53,7 +52,8 @@ bvar_obj <- setup(bvar_obj,
 We set the overall tightness to $\lambda_1 = 0.20$, cross-equation tightness to $\lambda_2 = 0.50$ and the lag decay rate to $\lambda_3 = 1.00$. For the prior means on the first own lags, we set them to $0.6$ for $\Delta \pi_t$ and $0.9$ for $u_t$ and $r_t$. Note that the prior mean on the first own lag of inflation is set to $0.6$ instead of $0$ to reflect some degree of persistence in the series (even though it is a growth rate variable).
 
 
-```{r, fig.width=8, fig.height=8}
+
+``` r
 lambda_1 <- 0.20
 lambda_2 <- 0.50
 lambda_3 <- 1.00
@@ -66,7 +66,8 @@ fol_pm=c(0.6, # delta pi
 Now, for the steady-state coefficients we use some toy values (let us pretend that they are expert based).
 Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1=\Psi$. Since $d_t = 1 \ \forall \ t$, we have $\Psi d_t = \mu_t$ which simplifies to $\Psi = \mu$ and as such we can directly interpret $\Psi$ as the unconditional mean.
 
-```{r, fig.width=8, fig.height=8}
+
+``` r
 theta_Psi <- 
   c(
   ppi(1.90, 2.10, interval=0.95)$mean,   #Psi: delta pi
@@ -86,23 +87,29 @@ Omega_Psi <-
 
 Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification.
 
-```{r, fig.width=8, fig.height=8}
+
+``` r
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
 
-SV_priors_RW <- list(
-                     theta_A             =  rep(0, n_free_params_A),
-                     Omega_A             =  diag(10, n_free_params_A),
-                     mu_log_lambda_0     =  rep(0, k),
-                     sigma2_log_lambda_0 =  rep(10, k),
-                     alpha_phi           =  rep(5, k),
-                     beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
-                    )
+SV_priors_AR1 <- list(
+                      theta_A            =  rep(0, n_free_params_A),
+                      Omega_A            =  diag(10, n_free_params_A),
+                      theta_gamma_0      =  rep(0, k),
+                      Omega_gamma_0      =  diag(10, k),
+                      theta_gamma_1      =  rep(0.9, k),
+                      Omega_gamma_1      =  diag(1, k),
+                      theta_log_lambda_0 =  rep(0, k),
+                      Omega_log_lambda_0 =  diag(10, k),
+                      V_0                = (5 - k - 1) * 0.1 * diag(k),
+                      m_0                =  5
+                     )
 ```
 
 Let's put everything into the `priors()` function.
 
-```{r, fig.width=8, fig.height=8}
+
+``` r
 bvar_obj <- priors(bvar_obj,
                    lambda_1 = lambda_1,
                    lambda_2 = lambda_2,
@@ -111,13 +118,16 @@ bvar_obj <- priors(bvar_obj,
                    theta_Psi = theta_Psi,
                    Omega_Psi = Omega_Psi,
                    SV = TRUE,
-                   SV_type = "RW",
-                   SV_priors = SV_priors_RW)
+                   SV_type = "AR1",
+                   SV_priors = SV_priors_AR1)
+#> Error in `priors()`:
+#> ! SV_priors is missing elements: m_Phi, V_Phi
 ```
 
 Now we can fit the model. Note that we can use arguments from `rstan::sampling()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
 
-```{r, fig.width=8, fig.height=8}
+
+``` r
 bvar_obj <- fit(bvar_obj,
                 H = 40,
                 d_pred = matrix(rep(1, 40)),
@@ -125,50 +135,66 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 1000,
                 chains = 2,
                 cores = 2,
-                control = list(max_treedepth = 14, adapt_delta = 0.95))
+                control = list(max_treedepth = 12, adapt_delta = 0.999))
+#> Error in `fit()`:
+#> ! must be passed through priors
 ```
 
-Now let's see the posterior means
+Now lets see the posterior means
 
-```{r, fig.width=8, fig.height=8}
+
+``` r
 summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
+#> Error in `summary.bvar()`:
+#> ! object must be passed through priors() first
 ```
 
 Note that you can always look at the `stanfit` object `bvar_obj$fit$stan` directly if you want
 
-```{r, fig.width=8, fig.height=8}
+
+``` r
 print(bvar_obj$fit$stan)
+#> NULL
 ```
 
 We can forecast
 
-```{r RW-2, fig.width=8, fig.height=6}
+
+``` r
 forecast(bvar_obj, pi = 0.68, show_all = TRUE)
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
 
 Let us plot the log volatility estimates and predictions
 
-```{r RW-3, fig.width=8, fig.height=6}
+
+``` r
 stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
 
 Let us plot the estimates and predictions of the implied innovation standard deviations
 
-```{r RW-4, fig.width=8, fig.height=6}
+
+``` r
 stochastic_volatility_plot(bvar_obj, vol = "sd")
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
 
 We can also produce orthogonalized IRFs
 
-```{r RW-5, fig.width=10, fig.height=10}
+
+``` r
 IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
 
 
 ## References
-
-Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions
-with stochastic volatility. *Journal of Business \& Economic Statistics*, 29(3), pp. 327-341.
 
 Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series methods for empirical macroeconomics.
 *Foundations and Trends in Econometrics*, 3(4), pp. 267-358. 
