@@ -2,10 +2,9 @@ pandoc: 3.8.3
 pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
-  AR1-stochastic-volatility-steady-state-BVAR: AR1-stochastic-volatility-steady-state-BVAR.html
   Homoscedastic-steady-state-BVAR: Homoscedastic-steady-state-BVAR.html
   RW-stochastic-volatility-steady-state-BVAR: RW-stochastic-volatility-steady-state-BVAR.html
-last_built: 2026-07-09T02:07Z
+last_built: 2026-07-09T03:17Z
 urls:
   reference: https://markjwbecker.github.io/SteadyStateBVAR/reference
   article: https://markjwbecker.github.io/SteadyStateBVAR/articles
