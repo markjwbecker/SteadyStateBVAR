@@ -106,14 +106,15 @@ For the <code>RW</code> stochastic volatility specification, the log volatilitie
 <p>$$\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \forall i$$</p>
 <p>The innovations to the log volatilities follow in the <code>AR1</code> case</p>
 <p>$$\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\overset{\text{iid}}{\sim} \mathrm{N}(0, \Phi)$$</p>
-<p>where \(\Phi\) is <strong>not</strong> diagonal and as such the innovations to the log
-volatilities are allowed to be correlated across variables. For the <code>RW</code> case, \(\Phi\) is diagonal
+<p>where \(\Phi\) <em>is not diagonal</em> and as such the innovations to the log
+volatilities are allowed to be correlated across variables. For the <code>RW</code> case, \(\Phi\) <em>is diagonal</em>
 with variances \(\phi_i\) for \(i=1,\dots,k\).</p>
 <p>Note that under both stochastic volatility specifications, the time-varying covariance matrix is</p>
 <p>$$\Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'$$</p>
 <p>For details on the homoscedastic steady-state BVAR model, see Villani (2009).
-For the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
-For details regarding BVAR models with AR(1) stochastic volatility, see Carriero, Clark and Marcellino (2024).</p>
+For details on the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
+See Carriero, Clark, and Marcellino (2024) for the above-mentioned AR(1) stochastic volatility
+specification applied to a conventional BVAR.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

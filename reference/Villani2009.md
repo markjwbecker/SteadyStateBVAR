@@ -41,11 +41,11 @@ A multivariate time series object with 104 rows and 7 columns:
 
 - q:
 
-  level of the real exchange rate defined as q = s + p_f - p, where p_f
-  and p are the foreign and domestic CPI levels in logs and s is the log
-  of the trade-weighted nominal exchange rate
+  level of the real exchange rate defined as \\q = s + p_f - p\\, where
+  \\p_f\\ and \\p\\ are the foreign and domestic CPI levels in logs and
+  \\s\\ is the log of the trade-weighted nominal exchange rate
 
 ## Source
 
-Villani, M. (2009). Steady-State Priors for Vector Autoregressions.
+Villani, M. (2009). Steady-state priors for vector autoregressions.
 *Journal of Applied Econometrics*, 24(4), pp. 630-650.

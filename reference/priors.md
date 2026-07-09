@@ -6,8 +6,7 @@ cross-equation tightness, and the lag decay rate. For the steady-state
 parameters, a normal prior is used. For the covariance matrix of the
 innovations, the user can choose between Jeffreys prior or an
 uninformative inverse-Wishart prior. Optionally enables stochastic
-volatility where the covariance matrix varies over time (random walk or
-AR(1)).
+volatility where the covariance matrix varies over time.
 
 ## Usage
 
@@ -66,7 +65,7 @@ priors(
 
 - Jeffreys:
 
-  Logical. If `TRUE` (default), uses a Jeffreys prior for the innovation
+  Logical. If `TRUE` (default), uses Jeffreys prior for the innovation
   covariance matrix. If `FALSE`, uses an uninformative inverse-Wishart
   prior. Only considered if `SV=FALSE`.
 
@@ -151,8 +150,8 @@ containing:
 
 The goal is to estimate \\\beta, \Psi\\, and \\\Sigma_u\\, so priors are
 needed. Following Villani (2009), prior independence between \\\beta,
-\Psi\\ and \\\Sigma_u\\ is assumed. For \\\beta\\, the Minnesota prior
-is used
+\Psi\\ and \\\Sigma_u\\ is assumed. For \\\beta\\, i.e. the
+autoregressive parameter matrix, the Minnesota prior is used
 
 \$\$\mathrm{vec}(\beta) \sim \mathrm{N}\_{kpk}
 \left\[\theta\_\beta,\Omega\_\beta\right\]\$\$
@@ -202,7 +201,7 @@ replaced with an estimate. In this package, it is replaced by the least
 squares residual variance from a univariate autoregression for variable
 \\i\\ with \\p\\ lags (including the constant and dummy/trend variable
 if applicable). Moving on to \\\Psi\\, the steady-state parameter
-matrix,the prior is
+matrix, the prior is
 
 \$\$\mathrm{vec}(\Psi) \sim
 \mathrm{N}\_{kq}\left\[\theta\_\Psi,\Omega\_\Psi\right\]\$\$

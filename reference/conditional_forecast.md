@@ -2,10 +2,11 @@
 
 Computes and plots conditional forecasts from a fitted steady-state
 `bvar` object. Conditions are imposed on specific variables at specific
-horizons using the method of Dieppe, Legrand, and van Roye (2016). Both
-conditional and unconditional forecasts are plotted for comparison.
-Please note that for the moment, conditional forecasting is only enabled
-for the homoscedastic steady-state BVAR, i.e. when `SV=FALSE` in
+horizons using Algorithm 3.3.1 from Dieppe, Legrand, and van Roye
+(2016). Both conditional and unconditional forecasts are plotted for
+comparison. Please note that for the moment, conditional forecasting is
+only enabled for the homoscedastic steady-state BVAR, i.e. when
+`SV=FALSE` in
 [`priors()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md).
 
 ## Usage
@@ -50,21 +51,27 @@ conditional_forecast(
 
   Integer vector. Indices of variables of which to convert forecasts to
   annual growth rates \\\ln x\_{t} - \ln x\_{t-f}\\, where \\f\\ is the
-  frequency of the data (4 for quarterly, 12 for monthly). Suitable for
-  variables specified as \\\ln x\_{t} - \ln x\_{t-1}\\, i.e.
+  frequency of the data (4 for quarterly, 12 for monthly). Only suitable
+  for variables specified as \\\ln x\_{t} - \ln x\_{t-1}\\, i.e.
   `diff(log(x))` or `100*diff(log(x))`. Computed by summing up to \\f\\
   log first differences. Default is `NULL`.
 
 - plot_idx:
 
   Integer vector. Indices of variables to plot. If `NULL` (default), all
-  variables are plotted.
+  variables are plotted. Forecasts are always computed and returned for
+  all variables, regardless of `plot_idx`.
 
 ## Value
 
 Invisibly returns a list with three matrices: `forecast`, `lower`, and
-`upper`, each of dimension `H x k`, as well as `cond_draws`, an array of
-all posterior conditional forecast draws.
+`upper`, each of dimension `H x k`.
+
+## Details
+
+See Section 5.3 of Dieppe, Legrand, and van Roye (2016) for more
+details. Please note the limitations of this method, see the detailed
+discussion in Section 5.4 of Dieppe, Legrand, and van Roye (2016).
 
 ## References
 
@@ -104,8 +111,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 7.8e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.78 seconds.
+#> Chain 1: Gradient evaluation took 7.5e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.75 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -130,9 +137,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.034 seconds (Warm-up)
-#> Chain 1:                0.099 seconds (Sampling)
-#> Chain 1:                0.133 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.033 seconds (Warm-up)
+#> Chain 1:                0.098 seconds (Sampling)
+#> Chain 1:                0.131 seconds (Total)
 #> Chain 1: 
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
 #> Running the chains for more iterations may help. See
@@ -145,11 +152,44 @@ conditions <- data.frame(var = rep(2,8),
                          horizon = rep(1:8),
                          value   = rep(1,8))
                          
-cond_fcst <- conditional_forecast(bvar_obj,
+(cond_fcst <- conditional_forecast(bvar_obj,
                                   conditions,
                                   pi=0.68,
-                                  fcst_type = "mean")
+                                  fcst_type = "mean"))
 
 
+#> $forecast
+#>             [,1] [,2]
+#> [1,]  0.14441447    1
+#> [2,] -0.12757620    1
+#> [3,]  0.10365391    1
+#> [4,]  0.04508464    1
+#> [5,] -0.12616706    1
+#> [6,] -0.01333035    1
+#> [7,] -0.06550231    1
+#> [8,] -0.26327988    1
+#> 
+#> $lower
+#>           [,1] [,2]
+#> [1,] -1.283297    1
+#> [2,] -1.594437    1
+#> [3,] -1.220475    1
+#> [4,] -1.333708    1
+#> [5,] -1.497314    1
+#> [6,] -1.494692    1
+#> [7,] -1.538898    1
+#> [8,] -1.795598    1
+#> 
+#> $upper
+#>          [,1] [,2]
+#> [1,] 1.553397    1
+#> [2,] 1.202902    1
+#> [3,] 1.624368    1
+#> [4,] 1.453796    1
+#> [5,] 1.414222    1
+#> [6,] 1.431886    1
+#> [7,] 1.554301    1
+#> [8,] 1.269970    1
+#> 
 # }
 ```

@@ -86,7 +86,7 @@
 </h2>
 <p>The steady-state BVAR(<span class="math inline">\(p\)</span>) model (Villani, 2009) is</p>
 <p><span class="math display">\[y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t\]</span></p>
-<p>where <span class="math inline">\(y_t\)</span> is a <span class="math inline">\(k\)</span>-dimensional vector of endogenous variables (time series) at time <span class="math inline">\(t\)</span>, <span class="math inline">\(d_t\)</span> is a <span class="math inline">\(q\)</span>-dimensional vector of deterministic (exogenous) variables at time <span class="math inline">\(t\)</span>, and the (reduced-form) innovations are <span class="math inline">\(u_t \sim N_k(0,\Sigma_u)\)</span> with independence between time periods. Here <span class="math inline">\(\Pi_\ell\)</span> for <span class="math inline">\(\ell=1,\dots,p\)</span> is a <span class="math inline">\((k \times k)\)</span> autoregressive parameter matrix, and <span class="math inline">\(\Psi\)</span> is a <span class="math inline">\((k \times q)\)</span> steady-state parameter matrix. Now</p>
+<p>where <span class="math inline">\(y_t\)</span> is a <span class="math inline">\(k\)</span>-dimensional vector of endogenous variables (time series) at time <span class="math inline">\(t\)</span>, <span class="math inline">\(d_t\)</span> is a <span class="math inline">\(q\)</span>-dimensional vector of deterministic (exogenous) variables at time <span class="math inline">\(t\)</span>, and the (reduced-form) innovations are <span class="math inline">\(u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)\)</span>. Here <span class="math inline">\(\Pi_\ell\)</span> for <span class="math inline">\(\ell=1,\dots,p\)</span> is a <span class="math inline">\((k \times k)\)</span> autoregressive parameter matrix, and <span class="math inline">\(\Psi\)</span> is a <span class="math inline">\((k \times q)\)</span> steady-state parameter matrix. Now</p>
 <p><span class="math display">\[\mathrm{E}(y_t)=\mu_t=\Psi d_t\]</span></p>
 <p>is the unconditional mean, or the <strong>steady state</strong>, of the process. Since long-horizon forecasts from stationary VARs converge to the unconditional mean (steady state), it is naturally very important from a forecasting perspective to obtain precise inference on <span class="math inline">\(\Psi\)</span>. Note that the current version of this package only allows for <span class="math inline">\(d_t\)</span> to contain either a constant, a constant and a dummy variable, or a constant and a time trend.</p>
 <p>We may stack the (transposed) <span class="math inline">\(\Pi_i\)</span> matrices in the <span class="math inline">\((kp \times k)\)</span> matrix <span class="math inline">\(\beta\)</span></p>
@@ -257,23 +257,28 @@
 <span><span class="co">#unconditional forecasts</span></span>
 <span><span class="co">#see last forecasts in Figures 1-3 in Villani (2009)</span></span>
 <span><span class="va">fcst</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
-<span>                 pi <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>                 pi <span class="op">=</span> <span class="fl">0.95</span>, <span class="co">#pi = prediction interval</span></span>
 <span>                 fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>                 growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span>, <span class="co">#convert QoQ forecasts to YoY</span></span>
 <span>                 plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#conditional forecasts</span></span>
+<span><span class="co">#Toy scenario: inflation gets really high</span></span>
+<span><span class="co">#What will happen to domestic interest rate?</span></span>
 <span><span class="va">conditions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span>
-<span>              var     <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">12</span><span class="op">)</span>,</span>
-<span>              horizon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span>,</span>
-<span>              value   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">8</span>, length.out <span class="op">=</span> <span class="fl">12</span><span class="op">)</span><span class="op">)</span> <span class="co">#some toy scenario</span></span>
+<span>              var        <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">12</span><span class="op">)</span>,</span>
+<span>              horizon    <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">)</span>,</span>
+<span>              value      <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1.0</span>,<span class="fl">1.5</span>,<span class="fl">2.0</span>,<span class="fl">1.8</span>,</span>
+<span>                             <span class="fl">1.5</span>,<span class="fl">1.2</span>,<span class="fl">1.0</span>,<span class="fl">1.0</span>,</span>
+<span>                             <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="co">#QoQ scale for inflation here</span></span>
+<span>              <span class="op">)</span></span>
 <span>              </span>
 <span><span class="va">cond_fcst</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/conditional_forecast.html">conditional_forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
 <span>                    <span class="va">conditions</span>,</span>
 <span>                    pi<span class="op">=</span><span class="fl">0.68</span>,</span>
 <span>                    fcst_type <span class="op">=</span> <span class="st">"mean"</span>,</span>
-<span>                    plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">6</span><span class="op">)</span>,</span>
-<span>                    growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span><span class="op">)</span> <span class="co">#convert QoQ forecasts to YoY</span></span>
+<span>                    plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>,</span>
+<span>                    growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span> <span class="co">#convert QoQ forecasts to YoY</span></span>
 <span></span>
 <span><span class="co">#impulse response analysis</span></span>
 <span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
@@ -291,7 +296,7 @@
 <p>Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions with stochastic volatility. <em>Journal of Business &amp; Economic Statistics</em>, 29(3), pp. 327-341.</p>
 <p>Dieppe, A., Legrand, R., and van Roye, B. (2016). The BEAR toolbox. <em>Working Paper Series</em>, No. 1934. European Central Bank.</p>
 <p>Karlsson, S. (2013). Forecasting with Bayesian vector autoregression. In: Elliott, G. and Timmermann, A. (eds) <em>Handbook of Economic Forecasting</em>. Elsevier B.V. Vol 2, Part B., pp. 791-897.</p>
-<p>Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. [Preprint]. arXiv:2506.09271. Available at: <a href="https://arxiv.org/abs/2506.09271" class="external-link uri">https://arxiv.org/abs/2506.09271</a> (Accessed: 08 July 2026).</p>
+<p>Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. arXiv preprint arXiv:2506.09271</p>
 <p>Villani, M. (2009). Steady-state priors for vector autoregressions. <em>Journal of Applied Econometrics</em>, 24(4), pp. 630-650.</p>
 </div>
 </div>

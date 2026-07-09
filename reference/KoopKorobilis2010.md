@@ -31,6 +31,6 @@ A multivariate time series object with 215 rows and 3 columns:
 
 ## Source
 
-Koop, G. and Korobilis, D. (2010). Bayesian Multivariate Time Series
-Methods for Empirical Macroeconomics. *Foundations and Trends in
-Econometrics*. 3(4), pp. 267-358.
+Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series
+methods for empirical macroeconomics. *Foundations and Trends in
+Econometrics*, 3(4), pp. 267-358.

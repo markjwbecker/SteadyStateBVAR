@@ -67,15 +67,15 @@ restriction_matrix <- matrix(1,k*p,k, dimnames=list(NULL,c("y1","y2")))
 
 #restrict beta so y2 does not granger-cause y1
 
-restriction_matrix[1, 2] <- 0
-restriction_matrix[3, 2] <- 0
+restriction_matrix[2, 1] <- 0
+restriction_matrix[4, 1] <- 0
 
 print(restriction_matrix)
 #>      y1 y2
-#> [1,]  1  0
-#> [2,]  1  1
-#> [3,]  1  0
-#> [4,]  1  1
+#> [1,]  1  1
+#> [2,]  0  1
+#> [3,]  1  1
+#> [4,]  0  1
 
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 ```

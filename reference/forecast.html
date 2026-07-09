@@ -5,11 +5,11 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Forecast from a fitted steady-state BVAR model — forecast"><meta name="description" content="Computes and plots forecasts from a fitted bvar object. Posterior
-predictive draws from Stan are used to construct point forecasts and
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Forecast from a fitted steady-state BVAR model — forecast"><meta name="description" content="Computes and plots forecasts from a fitted bvar object. Draws from the
+joint predictive distribution are used to construct point forecasts and
 prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
-rates for selected variables."><meta property="og:description" content="Computes and plots forecasts from a fitted bvar object. Posterior
-predictive draws from Stan are used to construct point forecasts and
+rates for selected variables."><meta property="og:description" content="Computes and plots forecasts from a fitted bvar object. Draws from the
+joint predictive distribution are used to construct point forecasts and
 prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 rates for selected variables."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -52,8 +52,8 @@ rates for selected variables."></head><body>
     </div>
 
     <div class="ref-description section level2">
-    <p>Computes and plots forecasts from a fitted <code>bvar</code> object. Posterior
-predictive draws from Stan are used to construct point forecasts and
+    <p>Computes and plots forecasts from a fitted <code>bvar</code> object. Draws from the
+joint predictive distribution are used to construct point forecasts and
 prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 rates for selected variables.</p>
     </div>
@@ -91,14 +91,15 @@ as the point forecast. Default <code>"mean"</code>.</p></dd>
 <dd><p>Integer vector. Indices of variables of which to convert forecasts to
 annual growth rates \(\ln x_{t} - \ln x_{t-f}\), where \(f\) is
 the frequency of the data (4 for quarterly, 12 for monthly).
-Suitable for variables specified as \(\ln x_{t} - \ln x_{t-1}\), i.e.
+Only suitable for variables specified as \(\ln x_{t} - \ln x_{t-1}\), i.e.
 <code>diff(log(x))</code> or <code>100*diff(log(x))</code>.
 Computed by summing up to \(f\) log first differences. Default is <code>NULL</code>.</p></dd>
 
 
 <dt id="arg-plot-idx">plot_idx<a class="anchor" aria-label="anchor" href="#arg-plot-idx"></a></dt>
 <dd><p>Integer vector. Indices of variables to plot. If <code>NULL</code>
-(default), all variables are plotted.</p></dd>
+(default), all variables are plotted. Forecasts are always computed and
+returned for all variables, regardless of <code>plot_idx</code>.</p></dd>
 
 
 <dt id="arg-show-all">show_all<a class="anchor" aria-label="anchor" href="#arg-show-all"></a></dt>
@@ -146,8 +147,8 @@ forecast horizon and <code>k</code> is the number of variables.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Gradient evaluation took 7.7e-05 seconds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.77 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Gradient evaluation took 7.2e-05 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.72 seconds.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Adjust your expectations accordingly!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
@@ -186,9 +187,42 @@ forecast horizon and <code>k</code> is the number of variables.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Running the chains for more iterations may help. See</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> https://mc-stan.org/misc/warnings.html#tail-ess</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">forecast</span><span class="op">(</span><span class="va">bvar_obj</span>, pi <span class="op">=</span> <span class="fl">0.90</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">fcst</span> <span class="op">&lt;-</span> <span class="fu">forecast</span><span class="op">(</span><span class="va">bvar_obj</span>, pi <span class="op">=</span> <span class="fl">0.90</span>, show_all <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="forecast-1.png" alt="" width="700" height="433"></span>
 <span class="r-plt img"><img src="forecast-2.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $forecast</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -1.5507742  0.009340416</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.9838015  0.075657629</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -0.7285100  0.086311839</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] -0.2984426  0.037254121</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] -0.3410332 -0.073507585</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -0.4102036 -0.045218146</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7,] -0.5068994 -0.137687275</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [8,] -0.5921016 -0.150132450</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -3.717534 -2.199458</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -3.347816 -2.069477</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] -3.266988 -2.503793</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] -3.546320 -2.391206</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] -3.647156 -2.777127</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] -3.619673 -2.700129</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7,] -3.735963 -2.504099</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [8,] -4.095228 -2.313835</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]     [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.5650957 2.083305</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 1.5304052 2.124948</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3,] 1.9997609 2.445404</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [4,] 2.7482622 2.831531</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [5,] 2.7041119 2.432656</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [6,] 2.5230543 2.368828</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [7,] 2.2344466 2.264161</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [8,] 2.0876712 2.077583</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

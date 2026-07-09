@@ -9,11 +9,11 @@
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables stochastic volatility where the covariance matrix varies over time (random walk or AR(1))."><meta property="og:description" content="This function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
+Optionally enables stochastic volatility where the covariance matrix varies over time."><meta property="og:description" content="This function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables stochastic volatility where the covariance matrix varies over time (random walk or AR(1))."></head><body>
+Optionally enables stochastic volatility where the covariance matrix varies over time."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -58,7 +58,7 @@ Optionally enables stochastic volatility where the covariance matrix varies over
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-Optionally enables stochastic volatility where the covariance matrix varies over time (random walk or AR(1)).</p>
+Optionally enables stochastic volatility where the covariance matrix varies over time.</p>
     </div>
 
     <div class="section level2">
@@ -115,7 +115,7 @@ a diagonal matrix with variances <code>1000</code> is used.</p></dd>
 
 
 <dt id="arg-jeffreys">Jeffreys<a class="anchor" aria-label="anchor" href="#arg-jeffreys"></a></dt>
-<dd><p>Logical. If <code>TRUE</code> (default), uses a Jeffreys prior for the innovation covariance matrix.
+<dd><p>Logical. If <code>TRUE</code> (default), uses Jeffreys prior for the innovation covariance matrix.
 If <code>FALSE</code>, uses an uninformative inverse-Wishart prior. Only considered if <code>SV=FALSE</code>.</p></dd>
 
 
@@ -179,7 +179,7 @@ The list must contain the following named elements depending on <code>SV_type</c
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The goal is to estimate \(\beta, \Psi\), and \(\Sigma_u\), so priors are needed.
-Following Villani (2009), prior independence between \(\beta, \Psi\) and \(\Sigma_u\) is assumed. For \(\beta\),
+Following Villani (2009), prior independence between \(\beta, \Psi\) and \(\Sigma_u\) is assumed. For \(\beta\), i.e. the autoregressive parameter matrix,
 the Minnesota prior is used</p>
 <p>$$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]$$</p>
 <p>The prior means (the elements of \(\theta_\beta\)) are set to</p>
@@ -216,7 +216,7 @@ the overall tightness, the cross-equation tightness and the lag decay rate. Furt
 \(\sigma_i^2\) is the \((i,i)\):th element of \(\Sigma_u\), which is unknown and therefore
 replaced with an estimate. In this package, it is replaced by the least squares residual variance
 from a univariate autoregression for variable \(i\) with \(p\) lags
-(including the constant and dummy/trend variable if applicable). Moving on to \(\Psi\), the steady-state parameter matrix,the
+(including the constant and dummy/trend variable if applicable). Moving on to \(\Psi\), the steady-state parameter matrix, the
 prior is</p>
 <p>$$\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]$$</p>
 <p>This is the core of the steady-state BVAR model.

@@ -115,7 +115,7 @@ volatility models. If <code>NULL</code> (default), the last time <code>t</code> 
 <dd><p>Integer vector. Indices of variables of which to convert forecasts to
 annual growth rates \(\ln x_{t} - \ln x_{t-f}\), where \(f\) is
 the frequency of the data (4 for quarterly, 12 for monthly).
-Suitable for variables specified as \(\ln x_{t} - \ln x_{t-1}\), i.e.
+Only suitable for variables specified as \(\ln x_{t} - \ln x_{t-1}\), i.e.
 <code>diff(log(x))</code> or <code>100*diff(log(x))</code>.
 Computed by summing up to \(f\) log first differences. Default is <code>NULL</code>.</p></dd>
 
@@ -158,8 +158,8 @@ Computed by summing up to \(f\) log first differences. Default is <code>NULL</co
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Gradient evaluation took 0.000153 seconds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.53 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Gradient evaluation took 0.00011 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.1 seconds.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Adjust your expectations accordingly!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
@@ -185,8 +185,8 @@ Computed by summing up to \(f\) log first differences. Default is <code>NULL</co
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:  Elapsed Time: 0.035 seconds (Warm-up)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.085 seconds (Sampling)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.12 seconds (Total)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.084 seconds (Sampling)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.119 seconds (Total)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Running the chains for more iterations may help. See</span>
@@ -195,8 +195,320 @@ Computed by summing up to \(f\) log first differences. Default is <code>NULL</co
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Running the chains for more iterations may help. See</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> https://mc-stan.org/misc/warnings.html#tail-ess</span>
 <span class="r-in"><span>                </span></span>
-<span class="r-in"><span><span class="fu">IRF</span><span class="op">(</span><span class="va">bvar_obj</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="fu">IRF</span><span class="op">(</span><span class="va">bvar_obj</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="IRF-1.png" alt="" width="700" height="433"></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $median_irf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]     [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  1.46192096 0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.00172196 1.206163</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.83918684 -0.0319003</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.01503758  0.8321868</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.47550176 -0.03670799</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.01008044  0.56180269</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.27071675 -0.03443883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.01099643  0.38494122</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.155277920 -0.02834319</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.009901752  0.26888653</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.091996119 -0.0203872</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.006070829  0.1776566</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.056442674 -0.0124966</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.004587836  0.1196212</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.034480438 -0.00690474</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.003021792  0.07956163</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.020989191 -0.003775322</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.001950373  0.053207054</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.012273960 -0.002194483</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.001219304  0.036465721</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.0065319762 -0.001423404</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.0007462871  0.023823474</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               [,1]          [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.0036778576 -0.0007980241</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.0004501086  0.0161092088</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               [,1]          [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.0023648404 -0.0004328076</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.0002503679  0.0108162092</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               [,1]          [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  1.578874e-03 -0.0002252567</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -7.482414e-05  0.0063916802</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               [,1]          [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  1.194699e-03 -0.0002222521</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -3.162116e-05  0.0043391202</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               [,1]          [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  7.618632e-04 -0.0002309927</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -1.965334e-05  0.0029523692</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>               [,1]          [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  4.640262e-04 -0.0001081337</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -9.491287e-06  0.0019239194</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $lower</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  1.0707622 0.0000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.6686813 0.8014603</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.3347423 -0.2876796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.5719690  0.2822722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.1068138 -0.3714979</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.6184775  0.0796729</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.03138235 -0.46490868</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.81237838  0.02723198</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  0.005330795 -0.50633636</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.874706346  0.00746849</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.002504324 -0.533787814</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.933664145  0.002360275</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.02250002 -0.585682115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -0.99625177 -0.005080609</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.03996368 -0.651884740</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -1.06859996 -0.009358407</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.0334267 -0.719012835</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -1.1565645 -0.009966814</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.04019535 -0.78999129</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -1.26611362 -0.01225547</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.03212359 -0.86797326</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -1.38925249 -0.01066854</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.02802113 -0.95644754</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -1.50432546 -0.01028149</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.02433876 -1.059352215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -1.63983660 -0.008571817</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.01867863 -1.181204309</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -1.80601991 -0.006480311</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             [,1]        [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.01387714 -1.32725174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -2.04016300 -0.00621083</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.0113278 -1.503653743</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -2.3063265 -0.005893544</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              [,1]         [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] -0.009134826 -1.717696370</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] -2.609320346 -0.005213065</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $upper</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>          [,1]    [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.997478 0.00000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.523475 1.69452</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.6670168 0.2068235</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5244501 1.4922021</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.5125693 0.2648089</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5608019 1.5737126</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.4012647 0.3093817</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5783903 1.5699856</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]     [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.3227968 0.360725</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5720551 1.621630</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.2591571 0.3723103</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5188606 1.7512005</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.1929721 0.3717744</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.5102253 1.9163306</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.1125797 0.3986562</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4996484 2.1733524</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.0384364 0.4060361</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4878854 2.5230883</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.9701940 0.4872215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4754788 2.9539133</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]     [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.9074863 0.521348</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4542901 3.481796</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 0.9136274 0.5353846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4249452 4.1268625</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.0292011 0.5275165</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4172975 4.9143100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.1701312 0.5201342</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.4060617 5.8755763</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.2553516 0.5135174</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.3875314 7.0498202</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]      [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.3248850 0.5025517</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.3861735 8.4857904</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> , , 17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]       [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1,] 1.4115900  0.4844836</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2,] 0.3919669 10.2441792</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

@@ -65,11 +65,10 @@ d\_{t-1})+\dots+\Pi_p(y\_{t-p}-\Psi d\_{t-p})+u_t\\
 where \\y_t\\ is a \\k\\-dimensional vector of endogenous variables
 (time series) at time \\t\\, \\d_t\\ is a \\q\\-dimensional vector of
 deterministic (exogenous) variables at time \\t\\, and the
-(reduced-form) innovations are \\u_t \sim N_k(0,\Sigma_u)\\ with
-independence between time periods. Here \\\Pi\_\ell\\ for
-\\\ell=1,\dots,p\\ is a \\(k \times k)\\ autoregressive parameter
-matrix, and \\\Psi\\ is a \\(k \times q)\\ steady-state parameter
-matrix. Now
+(reduced-form) innovations are \\u_t \overset{\text{iid}}{\sim}
+\mathrm{N_k}(0,\Sigma_u)\\. Here \\\Pi\_\ell\\ for \\\ell=1,\dots,p\\ is
+a \\(k \times k)\\ autoregressive parameter matrix, and \\\Psi\\ is a
+\\(k \times q)\\ steady-state parameter matrix. Now
 
 \\\mathrm{E}(y_t)=\mu_t=\Psi d_t\\
 
@@ -308,23 +307,28 @@ print(stan_fit)
 #unconditional forecasts
 #see last forecasts in Figures 1-3 in Villani (2009)
 fcst <- forecast(bvar_obj,
-                 pi = 0.95,
+                 pi = 0.95, #pi = prediction interval
                  fcst_type = "mean",
                  growth_rate_idx = c(4,5), #convert QoQ forecasts to YoY
                  plot_idx = c(4,5,6))
 
 #conditional forecasts
+#Toy scenario: inflation gets really high
+#What will happen to domestic interest rate?
 conditions <- data.frame(
-              var     = rep(6,12),
-              horizon = rep(1:12),
-              value   = seq(2, 8, length.out = 12)) #some toy scenario
+              var        = rep(5,12),
+              horizon    = rep(1:12),
+              value      = c(1.0,1.5,2.0,1.8,
+                             1.5,1.2,1.0,1.0,
+                             rep(0.5,4)) #QoQ scale for inflation here
+              )
               
 cond_fcst <- conditional_forecast(bvar_obj,
                     conditions,
                     pi=0.68,
                     fcst_type = "mean",
-                    plot_idx = c(4,6),
-                    growth_rate_idx = c(4)) #convert QoQ forecasts to YoY
+                    plot_idx = c(5,6),
+                    growth_rate_idx = c(5)) #convert QoQ forecasts to YoY
 
 #impulse response analysis
 irf <- IRF(bvar_obj,
@@ -351,8 +355,7 @@ In: Elliott, G. and Timmermann, A. (eds) *Handbook of Economic
 Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
 
 Gustafsson, O., and Villani, M. (2025). Variational inference for
-steady-state BVARs. \[Preprint\]. arXiv:2506.09271. Available at:
-<https://arxiv.org/abs/2506.09271> (Accessed: 08 July 2026).
+steady-state BVARs. arXiv preprint arXiv:2506.09271
 
 Villani, M. (2009). Steady-state priors for vector autoregressions.
 *Journal of Applied Econometrics*, 24(4), pp. 630-650.
