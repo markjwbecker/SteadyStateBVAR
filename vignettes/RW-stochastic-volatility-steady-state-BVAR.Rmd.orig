@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 Here we estimate the steady-state BVAR model with Random Walk stochastic volatility from Clark (2011), which is an extension of the original homoscedastic steady-state BVAR model (Villani, 2009). See `?bvar` for details.
 
-We will use a quarterly US data set from Koop and Korobilis (2010) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all civilian workers aged 16 years or older) and the interest rate $r_t$ (yield on the three-month Treasury bill rate). The sample is 1953Q1-2006Q3 and we have
+We will estimate the model on a quarterly US data set from Koop and Korobilis (2010) on the inflation rate $\Delta \pi_t$ (the annual percentage change in a chain-weighted GDP price index), the unemployment rate $u_t$ (seasonally adjusted civilian unemployment rate, all civilian workers aged 16 years or older) and the interest rate $r_t$ (yield on the three-month Treasury bill rate). The sample is 1953Q1-2006Q3 and we have the data vector
 
 $$
 y_t = 
@@ -63,7 +63,7 @@ fol_pm=c(0.6, # delta pi
          0.9)  #R
 ```
 
-Now, for the steady-state coefficients we use some toy values (lets pretend that they are expert based).
+Now, for the steady-state coefficients we use some toy values (let us pretend that they are expert based).
 Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1=\Psi$. Since $d_t = 1 \ \forall \ t$, we have $\Psi d_t = \mu_t$ which simplifies to $\Psi = \mu$ and as such we can directly interpret $\Psi$ as the unconditional mean.
 
 ```{r, fig.width=8, fig.height=8}
@@ -115,7 +115,7 @@ bvar_obj <- priors(bvar_obj,
                    SV_priors = SV_priors_RW)
 ```
 
-Now we can fit the model. Note that we can use arguments from `rstan::stan()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
+Now we can fit the model. Note that we can use arguments from `rstan::sampling()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- fit(bvar_obj,
@@ -128,7 +128,7 @@ bvar_obj <- fit(bvar_obj,
                 control = list(max_treedepth = 14, adapt_delta = 0.95))
 ```
 
-Now lets see the posterior means
+Now let's see the posterior means
 
 ```{r, fig.width=8, fig.height=8}
 summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
@@ -137,7 +137,7 @@ summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 Note that you can always look at the `stanfit` object `bvar_obj$fit$stan` directly if you want
 
 ```{r, fig.width=8, fig.height=8}
-rstan::summary(bvar_obj$fit$stan, pars="Psi")$summary #steady-state parameters
+print(bvar_obj$fit$stan)
 ```
 
 We can forecast
@@ -167,9 +167,10 @@ IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 
 ## References
 
-Clark, T. E. (2011). Real-Time Density Forecasts from Bayesian Vector Autoregressions
-with Stochastic Volatility. *Journal of Business \& Economic Statistics*. 29(3), pp. 327–341.
+Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions
+with stochastic volatility. *Journal of Business \& Economic Statistics*, 29(3), pp. 327-341.
 
-Koop, G. and Korobilis, D. (2010). Bayesian Multivariate Time Series Methods for Empirical Macroeconomics. *Foundations and Trends in Econometrics*. 3(4), pp. 267-358. 
+Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series methods for empirical macroeconomics.
+*Foundations and Trends in Econometrics*, 3(4), pp. 267-358. 
 
-Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*. 24(4), pp. 630-650. 
+Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630-650. 
