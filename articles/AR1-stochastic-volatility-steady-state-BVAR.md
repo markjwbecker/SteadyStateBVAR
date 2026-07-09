@@ -5,12 +5,13 @@ volatility, see
 [`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
 for details.
 
-We will use a quarterly US data set from Koop and Korobilis (2010) on
-the inflation rate \\\Delta \pi_t\\ (the annual percentage change in a
-chain-weighted GDP price index), the unemployment rate \\u_t\\
-(seasonally adjusted civilian unemployment rate, all civilian workers
-aged 16 years or older) and the interest rate \\r_t\\ (yield on the
-three-month Treasury bill rate). The sample is 1953Q1-2006Q3 and we have
+We will estimate the model on a quarterly US data set from Koop and
+Korobilis (2010) on the inflation rate \\\Delta \pi_t\\ (the annual
+percentage change in a chain-weighted GDP price index), the unemployment
+rate \\u_t\\ (seasonally adjusted civilian unemployment rate, all
+civilian workers aged 16 years or older) and the interest rate \\r_t\\
+(yield on the three-month Treasury bill rate). The sample is
+1953Q1-2006Q3 and we have the data vector
 
 \\ y_t = \begin{pmatrix} \Delta \pi_t \\ u_t \\ r_t \end{pmatrix} \\
 
@@ -63,7 +64,7 @@ fol_pm=c(0.6, # delta pi
          0.9)  #R
 ```
 
-Now, for the steady-state coefficients we use some toy values (lets
+Now, for the steady-state coefficients we use some toy values (let us
 pretend that they are expert based). Remember that we only have a
 constant now, so \\q=1\\ and therefore \\\Psi\\ only has one column
 \\\psi_1=\Psi\\. Since \\d_t = 1 \\ \forall \\ t\\, we have \\\Psi d_t =
@@ -128,11 +129,13 @@ bvar_obj <- priors(bvar_obj,
                    SV = TRUE,
                    SV_type = "AR1",
                    SV_priors = SV_priors_AR1)
+#> Error in `priors()`:
+#> ! SV_priors is missing elements: m_Phi, V_Phi
 ```
 
 Now we can fit the model. Note that we can use arguments from
-[`rstan::stan()`](https://mc-stan.org/rstan/reference/stan.html) such as
-`control` where we can tweak `max_treedepth` and `adapt_delta`.
+[`rstan::sampling()`](https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html)
+such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
 
 ``` r
 
@@ -144,6 +147,8 @@ bvar_obj <- fit(bvar_obj,
                 chains = 2,
                 cores = 2,
                 control = list(max_treedepth = 12, adapt_delta = 0.999))
+#> Error in `fit()`:
+#> ! must be passed through priors
 ```
 
 Now lets see the posterior means
@@ -151,70 +156,8 @@ Now lets see the posterior means
 ``` r
 
 summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
-#> Posterior mean estimates
-#> ------------------------
-#> 
-#> 
-#> beta
-#> --------------------------------------------------------------------------------             
-#>               delta pi     u     r
-#>   delta pi.l1     1.27  0.02  0.17
-#>   u.l1           -0.09  1.16 -0.15
-#>   r.l1            0.00 -0.01  1.04
-#>   delta pi.l2    -0.28  0.01 -0.11
-#>   u.l2            0.07 -0.22  0.17
-#>   r.l2           -0.01  0.03 -0.11
-#> --------------------------------------------------------------------------------
-#> 
-#> 
-#> Psi
-#> --------------------------------------------------------------------------------          
-#>            [,1]
-#>   delta pi 2.00
-#>   u        4.27
-#>   r        3.50
-#> --------------------------------------------------------------------------------
-#> 
-#> 
-#> Sigma_u,t (t = 215)
-#> --------------------------------------------------------------------------------
-#>          delta pi     u     r
-#> delta pi     0.07 -0.01  0.02
-#> u           -0.01  0.03 -0.02
-#> r            0.02 -0.02  0.18
-#> --------------------------------------------------------------------------------
-#> 
-#> 
-#> A
-#> --------------------------------------------------------------------------------          
-#>            delta pi    u r
-#>   delta pi     1.00 0.00 0
-#>   u            0.13 1.00 0
-#>   r           -0.24 0.42 1
-#> --------------------------------------------------------------------------------
-#> 
-#> 
-#> gamma_0
-#> --------------------------------------------------------------------------------
-#> delta pi        u        r 
-#>    -0.17    -0.19    -0.12 
-#> --------------------------------------------------------------------------------
-#> 
-#> 
-#> gamma_1
-#> --------------------------------------------------------------------------------
-#> delta pi        u        r 
-#>     0.94     0.94     0.92 
-#> --------------------------------------------------------------------------------
-#> 
-#> 
-#> Phi
-#> --------------------------------------------------------------------------------          
-#>            delta pi    u    r
-#>   delta pi     0.08 0.05 0.09
-#>   u            0.05 0.10 0.10
-#>   r            0.09 0.10 0.20
-#> --------------------------------------------------------------------------------
+#> Error in `summary.bvar()`:
+#> ! object must be passed through priors() first
 ```
 
 Note that you can always look at the `stanfit` object
@@ -222,38 +165,27 @@ Note that you can always look at the `stanfit` object
 
 ``` r
 
-rstan::summary(bvar_obj$fit$stan, pars="Psi")$summary #steady-state parameters
-#>              mean     se_mean         sd     2.5%      25%      50%      75%
-#> Psi[1,1] 1.995011 0.000477527 0.05027294 1.895153 1.961089 1.995275 2.029316
-#> Psi[2,1] 4.270307 0.001796891 0.17600323 3.926752 4.149507 4.269818 4.391082
-#> Psi[3,1] 3.504518 0.003869865 0.33419304 2.839858 3.279355 3.508558 3.734335
-#>             97.5%     n_eff      Rhat
-#> Psi[1,1] 2.092983 11083.390 1.0001377
-#> Psi[2,1] 4.614236  9593.956 0.9997044
-#> Psi[3,1] 4.153442  7457.670 0.9997675
+print(bvar_obj$fit$stan)
+#> NULL
 ```
 
 We can forecast
 
 ``` r
 
-forecast(bvar_obj, ci = 0.68, show_all = TRUE)
+forecast(bvar_obj, pi = 0.68, show_all = TRUE)
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
-
-![plot of chunk AR(1)-2](figure/AR(1)-2-1.png)![plot of chunk
-AR(1)-2](figure/AR(1)-2-2.png)![plot of chunk
-AR(1)-2](figure/AR(1)-2-3.png)
 
 Let us plot the log volatility estimates and predictions
 
 ``` r
 
 stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
-
-![plot of chunk AR(1)-3](figure/AR(1)-3-1.png)![plot of chunk
-AR(1)-3](figure/AR(1)-3-2.png)![plot of chunk
-AR(1)-3](figure/AR(1)-3-3.png)
 
 Let us plot the estimates and predictions of the implied innovation
 standard deviations
@@ -261,28 +193,24 @@ standard deviations
 ``` r
 
 stochastic_volatility_plot(bvar_obj, vol = "sd")
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
-
-![plot of chunk AR(1)-4](figure/AR(1)-4-1.png)![plot of chunk
-AR(1)-4](figure/AR(1)-4-2.png)![plot of chunk
-AR(1)-4](figure/AR(1)-4-3.png)
 
 We can also produce orthogonalized IRFs
 
 ``` r
 
 IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
-
-![plot of chunk AR(1)-5](figure/AR(1)-5%20-1.png)
-
-plot of chunk AR(1)-5
 
 ## References
 
-Koop, G. and Korobilis, D. (2010). Bayesian Multivariate Time Series
-Methods for Empirical Macroeconomics. *Foundations and Trends in
-Econometrics*. 3(4), pp. 267-358.
+Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series
+methods for empirical macroeconomics. *Foundations and Trends in
+Econometrics*, 3(4), pp. 267-358.
 
 Villani, M. (2009). Steady-state priors for vector autoregressions.
-*Journal of Applied Econometrics*. 24(4), pp. 630-650.
+*Journal of Applied Econometrics*, 24(4), pp. 630-650.
