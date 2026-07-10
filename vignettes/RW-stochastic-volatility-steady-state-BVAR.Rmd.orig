@@ -133,8 +133,9 @@ Now let's see the posterior means
 ```{r, fig.width=8, fig.height=8}
 summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 ```
-
-Note that you can always look at the `stanfit` object `bvar_obj$fit$stan` directly if you want
+You can always look at the `stanfit` object `bvar_obj$fit$stan` directly if you want. Note that
+the `z`'s below are not parameters per se, they are simply used in a reparameterization trick to sample
+the log volatilities more efficiently.
 
 ```{r, fig.width=8, fig.height=8}
 print(bvar_obj$fit$stan)

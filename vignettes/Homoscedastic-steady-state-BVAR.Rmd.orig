@@ -93,7 +93,7 @@ bvar_obj <- setup(bvar_obj,
                   dummy = dum_var)
 ```
 
-Now let us specify the priors. We first consider $\beta$ (Minnesota prior). We choose the same values for the hyperparameters as in Villani (2009), i.e. an overall tightness of $\lambda_1=0.2$, a cross-equation tightness of $\lambda_2=0.5$, and a lag decay rate of $\lambda_3=1$. We then specify the prior means for the first own lags of the variables. We follow Villani (2009), and as such for variables in growth rates, we set the prior mean to $0$, for variables in levels, we set the prior mean to $0.9$.
+Now let us specify the priors. We first consider $\beta$ (Minnesota prior). We choose the same values for the hyperparameters as in Villani (2009), i.e. an overall tightness of $\lambda_1=0.2$, a cross-equation tightness of $\lambda_2=0.5$, and a lag decay rate of $\lambda_3=1$. We then specify the prior means for the first own lags of the variables. We follow Villani (2009), and as such for variables in growth rates, we set the prior mean to $0$. For variables in levels, we set the prior mean to $0.9$.
 
 ```{r}
 lambda_1 <- 0.2
@@ -111,7 +111,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$ for the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $z$ which is on a quarterly frequency, the quarterly growth rate is $100[ \ln (z_t) - \ln (z_{t-1})]$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400 [\ln (z_t) - \ln (z_{t-1})]$.
+Now moving on to $\Psi$, i.r. the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $z$ which is on a quarterly frequency, the quarterly growth rate is $100[ \ln (z_t) - \ln (z_{t-1})]$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400 [\ln (z_t) - \ln (z_{t-1})]$.
 
 The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`.
 
