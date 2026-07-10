@@ -273,7 +273,7 @@ fcst <- forecast(bvar_obj,
 
 We can also perform conditional forecasting by following Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2016). Note that for the structural shocks, identification is based on the Cholesky factorisation. Also, please note the limitations of this method, see the detailed discussion in Section 5.4 of Dieppe, Legrand, and van Roye (2016).
 
-Now suppose we are interested in the forecasts of the domestic interest rate $i$ conditional on a scenario where domestic inflation $\pi$ gets really high (COVID-19 type scenario). Economic theory says the short-interest rate should rise.
+Now suppose we are interested in the forecasts of the domestic interest rate $i$ conditional on a scenario where domestic inflation $\pi$ gets really high (post COVID type scenario). Economic theory says the short interest rate should rise.
 
 First we set up our conditions/scenarios, i.e., which variables, which horizons, and which values the variables will take during those horizons. Our conditions are that $\pi$ will follow a specified path, at forecast horizons $h=1,\dots,H=12$.
 
@@ -298,16 +298,13 @@ cond_fcst <- conditional_forecast(bvar_obj,
                                   growth_rate_idx = c(5))
 ```
 
+The short interest rate rises more dramatically compared to the unconditional case. Makes sense.  
 
 Now for some impulse response analysis. We can choose between the orthogonalized impulse response function (OIRF) and the generalized impulse response function (GIRF). Similar to forecasting, we can choose either the mean or the median (the default is the median), and we can also transform the IRFs for the quarter-on-quarter growth rate variables to the annual/yearly scale.
 
 
 ```{r HOMO-6, fig.width=8, fig.height=8}
-par(mfrow=c(2,2))
-
 irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=4)
-irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=4)
-irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=5)
 irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=5)
 ```
 

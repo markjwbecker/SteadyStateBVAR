@@ -99,8 +99,8 @@ SV_priors_AR1 <- list(
                       Omega_gamma_1      =  diag(1, k),
                       theta_log_lambda_0 =  rep(0, k),
                       Omega_log_lambda_0 =  diag(10, k),
-                      V_0                = (5 - k - 1) * 0.1 * diag(k),
-                      m_0                =  5
+                      V_Phi              = (5 - k - 1) * 0.1 * diag(k),
+                      m_Phi              =  5
                      )
 ```
 
@@ -138,7 +138,9 @@ Now lets see the posterior means
 summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
 ```
 
-Note that you can always look at the `stanfit` object `bvar_obj$fit$stan` directly if you want
+You can always look at the `stanfit` object `bvar_obj$fit$stan` directly if you want. Note that
+the `z`'s below are not parameters per se, they are simply used in a reparameterization trick to sample
+the log volatilities more efficiently.
 
 ```{r, fig.width=8, fig.height=8}
 print(bvar_obj$fit$stan)
