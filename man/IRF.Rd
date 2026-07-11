@@ -38,12 +38,14 @@ or \code{"GIRF"} for generalized impulse responses. Default \code{"OIRF"}.}
 \item{t}{Integer. Time index for the covariance matrix when using stochastic
 volatility models. If \code{NULL} (default), the last time \code{t} is used.}
 
-\item{growth_rate_idx}{Integer vector. Indices of variables of which to convert forecasts to
-annual growth rates \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
+\item{growth_rate_idx}{Integer vector. Indices of variables for which the impulse
+response is converted from a quarterly or monthly log first difference to an
+annual growth rate response, i.e. \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
 the frequency of the data (4 for quarterly, 12 for monthly).
 Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
-\code{diff(log(x))} or \code{100*diff(log(x))}.
-Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.}
+\code{diff(log(x))} or \code{100*diff(log(x))}. Computed by summing up to
+\eqn{f} periods of the impulse response, treating the response in periods
+prior to the shock as zero. Default is \code{NULL}.}
 }
 \value{
 Invisibly returns a list with three arrays: the point estimate IRF, \code{lower}, and
