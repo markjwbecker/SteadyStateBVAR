@@ -68,7 +68,7 @@ pretend that they are expert based). Remember that we only have a
 constant now, so \\q=1\\ and therefore \\\Psi\\ only has one column
 \\\psi_1=\Psi\\. Since \\d_t = 1 \\ \forall \\ t\\, we have \\\Psi d_t =
 \mu_t\\ which simplifies to \\\Psi = \mu\\ and as such we can directly
-interpret \\\Psi\\ as the unconditional mean.
+interpret \\\Psi\\ as the unconditional mean, i.e. the steady state.
 
 ``` r
 
