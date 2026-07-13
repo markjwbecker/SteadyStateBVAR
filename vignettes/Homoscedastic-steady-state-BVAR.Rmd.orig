@@ -169,7 +169,7 @@ bvar_obj <- priors(bvar_obj,
                    fol_pm,
                    theta_Psi,
                    Omega_Psi,
-                   Jeffrey=TRUE)
+                   Jeffreys=TRUE)
 ```
 
 As in Villani (2009), we incorporate the assumption that Sweden is a small economy and therefore unlikely to affect the foreign economy by restricting the upper-right submatrix of $\Pi_\ell$ for $\ell =1,\dots,p$ or equivalently restricting the bottom-left submatrix of $\Pi_\ell'$ to the zero matrix. This technique is called "block exogeneity" (Dieppe, Legrand, and van Roye, 2016). In essence we treat the foreign economy as exogenous to the domestic economy, although it is not exogenous in the strict sense (Karlsson, 2013).
@@ -270,6 +270,13 @@ fcst <- forecast(bvar_obj,
                  growth_rate_idx = c(4,5),
                  plot_idx = c(4,5,6))
 ```
+
+For further inspection, we can print the point forecasts
+
+```{r}
+print(fcst$forecast)
+```
+
 
 We can also perform conditional forecasting by following Algorithm 3.3.1 in Dieppe, Legrand, and van Roye (2016). Note that for the structural shocks, identification is based on the Cholesky factorisation. Also, please note the limitations of this method, see the detailed discussion in Section 5.4 of Dieppe, Legrand, and van Roye (2016).
 
