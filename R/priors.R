@@ -108,7 +108,7 @@
 #' 
 #' \deqn{\Sigma_u \sim \mathrm{IW}(V,m)}
 #' 
-#' where \eqn{V} is the scale matrix and \eqn{m\geq k+2} is the number of degrees of freedom.
+#' where \eqn{V} is the scale matrix and \eqn{m} is the number of degrees of freedom.
 #' An uninformative prior is specified by setting
 #' \eqn{V=(m-k-1)\hat{\Sigma}_u} where \eqn{\hat{\Sigma}_u} is the least squares estimate
 #' from the VAR(\eqn{p}) (including the constant and dummy/trend variable if applicable), and \eqn{m=k+2}.
