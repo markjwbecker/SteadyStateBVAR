@@ -167,10 +167,10 @@ Alternatively, a proper inverse-Wishart prior can be used (Karlsson,
 
 \\\Sigma_u \sim \mathrm{IW}(V,m)\\
 
-where \\V\\ is the scale matrix and \\m\geq k+2\\ is the number of
-degrees of freedom. As mentioned, this package also allows for
-stochastic volatility (Random Walk or AR(1) specifications), where the
-covariance matrix varies over time, i.e. we have \\\Sigma\_{u,t}\\ (see
+where \\V\\ is the scale matrix and \\m\\ is the number of degrees of
+freedom. As mentioned, this package also allows for stochastic
+volatility (Random Walk or AR(1) specifications), where the covariance
+matrix varies over time, i.e. we have \\\Sigma\_{u,t}\\ (see
 [`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
 for more details).
 

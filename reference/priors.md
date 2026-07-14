@@ -218,8 +218,8 @@ or a proper uninformative inverse-Wishart prior
 
 \$\$\Sigma_u \sim \mathrm{IW}(V,m)\$\$
 
-where \\V\\ is the scale matrix and \\m\geq k+2\\ is the number of
-degrees of freedom. An uninformative prior is specified by setting
+where \\V\\ is the scale matrix and \\m\\ is the number of degrees of
+freedom. An uninformative prior is specified by setting
 \\V=(m-k-1)\hat{\Sigma}\_u\\ where \\\hat{\Sigma}\_u\\ is the least
 squares estimate from the VAR(\\p\\) (including the constant and
 dummy/trend variable if applicable), and \\m=k+2\\. For the stochastic
