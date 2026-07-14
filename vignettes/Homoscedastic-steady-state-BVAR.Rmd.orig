@@ -220,8 +220,8 @@ We can now fit the model
 bvar_obj <- fit(bvar_obj,
                 H = H,
                 d_pred = d_pred,
-                iter = 5000,
-                warmup = 2500,
+                iter = 15000,
+                warmup = 5000,
                 chains = 4,
                 cores = 4)
 ```
