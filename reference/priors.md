@@ -237,10 +237,10 @@ specification, the following priors are used
 
 Here \\a\\ is a \\k(k-1)/2\\ vector that collects the free parameters in
 \\A\\ in row-major order, and \\\ln \lambda\_{i,1}\\ are the time
-\\t=1\\ values (initial conditions) of \\\ln \lambda\_{i,t}\\.
-Furthermore, \\\phi_i\\ are the log volatility innovation variances. For
-the AR(1) (`AR1`) stochastic volatility specification, the following
-priors are used
+\\t=1\\ values (initial conditions) of \\\ln \lambda\_{i,t},
+i=1,\dots,k\\. Furthermore, \\\phi_i , i=1,\dots,k\\ are the log
+volatility innovation variances. For the AR(1) (`AR1`) stochastic
+volatility specification, the following priors are used
 
 \$\$\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\ \gamma\_{0}
 &\sim \mathrm{N}(\theta\_{\gamma_0}, \Omega\_{\gamma_0}) \\ \gamma\_{1}
