@@ -235,9 +235,9 @@ specification, the following priors are used
 \sigma^2\_{\ln \lambda\_{i,1}}) \\ \phi_i &\sim
 \mathrm{IG}(\alpha\_{\phi_i},\beta\_{\phi_i})\end{aligned}\$\$
 
-Here \\a\\ is a \\k(k-1)/2\\ vector that collects the free parameters in
-\\A\\ in row-major order, and \\\ln \lambda\_{i,1}\\ are the time
-\\t=1\\ values (initial conditions) of \\\ln \lambda\_{i,t},
+Here \\a\\ is a \\k(k-1)/2\\-dimensional vector that collects the free
+parameters in \\A\\ in row-major order, and \\\ln \lambda\_{i,1}\\ are
+the time \\t=1\\ values (initial conditions) of \\\ln \lambda\_{i,t},
 i=1,\dots,k\\. Furthermore, \\\phi_i , i=1,\dots,k\\ are the log
 volatility innovation variances. For the AR(1) (`AR1`) stochastic
 volatility specification, the following priors are used
@@ -249,12 +249,14 @@ volatility specification, the following priors are used
 \lambda\_{1}}) \\ \Phi &\sim
 \mathrm{IW}(V\_{\Phi},m\_{\Phi})\end{aligned}\$\$
 
-Here \\a\\ is again the \\k(k-1)/2\\ vector that collects the free
-parameters in \\A\\ in row-major order, and \\\ln \lambda_1\\ are the
-time \\t=1\\ values (initial conditions) of \\\ln \lambda\_{t}\\.
-Furthermore, \\\gamma\_{0}\\ are the log volatility intercepts,
-\\\gamma\_{1}\\ are the log volatility slopes, and \\\Phi\\ is the log
-volatility innovation covariance matrix.
+Here \\a\\ is again the \\k(k-1)/2\\-dimensional vector that collects
+the free parameters in \\A\\ in row-major order, and \\\ln \lambda_1\\
+is a \\k\\-dimensional vector containing the time \\t=1\\ values
+(initial conditions) of \\\ln \lambda\_{t}\\. Furthermore,
+\\\gamma\_{0}\\ is a \\k\\-dimensional vector of log volatility
+intercepts, \\\gamma\_{1}\\ is a \\k\\-dimensional vector of log
+volatility slopes, and \\\Phi\\ is the \\k \times k\\ log volatility
+innovation covariance matrix.
 
 For details on the homoscedastic steady-state BVAR model, see Villani
 (2009). For details on the Random Walk stochastic volatility
