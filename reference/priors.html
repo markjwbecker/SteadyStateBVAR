@@ -131,11 +131,11 @@ Required if <code>SV = TRUE</code>.</p></dd>
 
 <dt id="arg-sv-priors">SV_priors<a class="anchor" aria-label="anchor" href="#arg-sv-priors"></a></dt>
 <dd><p>List. User-supplied stochastic volatility priors. Required when <code>SV = TRUE</code>.
-The list must contain the following named elements depending on <code>SV_type</code>:</p><ul><li><p>For <code>"RW"</code>: <code>theta_A</code>, <code>Omega_A</code>, <code>mu_log_lambda_0</code>,
-<code>sigma2_log_lambda_0</code>, <code>alpha_phi</code>, <code>beta_phi</code>.</p></li>
+The list must contain the following named elements depending on <code>SV_type</code>:</p><ul><li><p>For <code>"RW"</code>: <code>theta_A</code>, <code>Omega_A</code>, <code>mu_log_lambda_1</code>,
+<code>sigma2_log_lambda_1</code>, <code>alpha_phi</code>, <code>beta_phi</code>.</p></li>
 <li><p>For <code>"AR1"</code>: <code>theta_A</code>, <code>Omega_A</code>, <code>theta_gamma_0</code>,
 <code>Omega_gamma_0</code>, <code>theta_gamma_1</code>, <code>Omega_gamma_1</code>,
-<code>theta_log_lambda_0</code>, <code>Omega_log_lambda_0</code>, <code>V_Phi</code>, <code>m_Phi</code>.</p></li>
+<code>theta_log_lambda_1</code>, <code>Omega_log_lambda_1</code>, <code>V_Phi</code>, <code>m_Phi</code>.</p></li>
 </ul></dd>
 
 </dl></div>
@@ -234,18 +234,18 @@ For the stochastic volatility specifications, the innovation covariance matrix i
 Therefore, stochastic volatility priors are needed, see <a href="bvar.html">bvar</a> for more details. For the Random Walk
 (<code>RW</code>) stochastic volatility specification, the following priors are used</p>
 <p>$$\begin{aligned}a &amp;\sim \mathrm{N}(\theta_A, \Omega_A) \\
-\ln \lambda_{i,0} &amp;\sim \mathrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
+\ln \lambda_{i,1} &amp;\sim \mathrm{N}(\mu_{\ln \lambda_{i,1}}, \sigma^2_{\ln \lambda_{i,1}}) \\
 \phi_i &amp;\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}$$</p>
 <p>Here \(a\) is a \(k(k-1)/2\) vector that collects the free parameters in \(A\) in row-major order,
-and \(\ln \lambda_{i,0}\) are the time \(t=0\) values (initial conditions) of \(\ln \lambda_{i,t}\).
+and \(\ln \lambda_{i,1}\) are the time \(t=1\) values (initial conditions) of \(\ln \lambda_{i,t}\).
 Furthermore, \(\phi_i\) are the log volatility innovation variances. For the AR(1) (<code>AR1</code>) stochastic volatility specification, the following priors are used</p>
 <p>$$\begin{aligned}a &amp;\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &amp;\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &amp;\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
-\ln \lambda_{0} &amp;\sim \mathrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
+\ln \lambda_{1} &amp;\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
 \Phi &amp;\sim \mathrm{IW}(V_{\Phi},m_{\Phi})\end{aligned}$$</p>
 <p>Here \(a\) is again the \(k(k-1)/2\) vector that collects the free parameters in \(A\) in row-major order,
-and \(\ln \lambda_0\) are the time \(t=0\) values (initial conditions) of \(\ln \lambda_{t}\).
+and \(\ln \lambda_1\) are the time \(t=1\) values (initial conditions) of \(\ln \lambda_{t}\).
 Furthermore, \(\gamma_{0}\) are the log volatility intercepts, \(\gamma_{1}\) are the log volatility
 slopes, and \(\Phi\) is the log volatility innovation covariance matrix.</p>
     </div>
@@ -289,8 +289,8 @@ slopes, and \(\Phi\) is the log volatility innovation covariance matrix.</p>
 <span class="r-in"><span><span class="va">SV_priors_RW</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>theta_A              <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">n_free_params_A</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>Omega_A              <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">n_free_params_A</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>mu_log_lambda_0      <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>sigma2_log_lambda_0  <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>mu_log_lambda_1      <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>sigma2_log_lambda_1  <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>alpha_phi            <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>beta_phi             <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">k</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
@@ -323,8 +323,8 @@ slopes, and \(\Phi\) is the log volatility innovation covariance matrix.</p>
 <span class="r-in"><span>Omega_gamma_0         <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>theta_gamma_1         <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>Omega_gamma_1         <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">10</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>theta_log_lambda_0    <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">k</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>Omega_log_lambda_0    <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>theta_log_lambda_1    <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">k</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.9</span>, <span class="va">k</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>Omega_log_lambda_1    <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>V_Phi                 <span class="op">=</span> <span class="op">(</span><span class="fl">10</span> <span class="op">-</span> <span class="va">k</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>m_Phi                 <span class="op">=</span>  <span class="fl">10</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>

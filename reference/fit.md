@@ -141,8 +141,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6.9e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.69 seconds.
+#> Chain 1: Gradient evaluation took 4e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.4 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -231,8 +231,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_inverse_wishart_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 3.9e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.39 seconds.
+#> Chain 1: Gradient evaluation took 3.5e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.35 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -258,8 +258,8 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
 #> Chain 1:  Elapsed Time: 0.022 seconds (Warm-up)
-#> Chain 1:                0.05 seconds (Sampling)
-#> Chain 1:                0.072 seconds (Total)
+#> Chain 1:                0.049 seconds (Sampling)
+#> Chain 1:                0.071 seconds (Total)
 #> Chain 1: 
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
 #> Running the chains for more iterations may help. See
@@ -283,8 +283,8 @@ n_free_params_A <- bvar_obj$setup$n_free_params_A
 SV_priors_RW <- list(
 theta_A              =  rep(0, n_free_params_A),
 Omega_A              =  diag(1000, n_free_params_A),
-mu_log_lambda_0      =  rep(0, k),
-sigma2_log_lambda_0  =  rep(1000, k),
+mu_log_lambda_1      =  rep(0, k),
+sigma2_log_lambda_1  =  rep(1000, k),
 alpha_phi            =  rep(5, k),
 beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 )
@@ -312,8 +312,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 5.9e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.59 seconds.
+#> Chain 1: Gradient evaluation took 5.1e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.51 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -339,8 +339,8 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
 #> Chain 1:  Elapsed Time: 0.019 seconds (Warm-up)
-#> Chain 1:                0.043 seconds (Sampling)
-#> Chain 1:                0.062 seconds (Total)
+#> Chain 1:                0.04 seconds (Sampling)
+#> Chain 1:                0.059 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low
@@ -374,8 +374,8 @@ theta_gamma_0         =  rep(0.1, k),
 Omega_gamma_0         =  diag(1000, k),
 theta_gamma_1         =  rep(0.9, k),
 Omega_gamma_1         =  diag(10, k),
-theta_log_lambda_0    =  rep(0.1, k)/(1-rep(0.9, k)),
-Omega_log_lambda_0    =  diag(1000, k),
+theta_log_lambda_1    =  rep(0.1, k)/(1-rep(0.9, k)),
+Omega_log_lambda_1    =  diag(1000, k),
 V_Phi                 = (10 - k - 1) * diag(k),
 m_Phi                 =  10
 )
@@ -432,9 +432,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.602 seconds (Warm-up)
-#> Chain 1:                1.899 seconds (Sampling)
-#> Chain 1:                2.501 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.591 seconds (Warm-up)
+#> Chain 1:                1.866 seconds (Sampling)
+#> Chain 1:                2.457 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 57 divergent transitions after warmup. See
 #> https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup

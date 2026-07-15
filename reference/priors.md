@@ -85,12 +85,12 @@ priors(
   `SV = TRUE`. The list must contain the following named elements
   depending on `SV_type`:
 
-  - For `"RW"`: `theta_A`, `Omega_A`, `mu_log_lambda_0`,
-    `sigma2_log_lambda_0`, `alpha_phi`, `beta_phi`.
+  - For `"RW"`: `theta_A`, `Omega_A`, `mu_log_lambda_1`,
+    `sigma2_log_lambda_1`, `alpha_phi`, `beta_phi`.
 
   - For `"AR1"`: `theta_A`, `Omega_A`, `theta_gamma_0`, `Omega_gamma_0`,
-    `theta_gamma_1`, `Omega_gamma_1`, `theta_log_lambda_0`,
-    `Omega_log_lambda_0`, `V_Phi`, `m_Phi`.
+    `theta_gamma_1`, `Omega_gamma_1`, `theta_log_lambda_1`,
+    `Omega_log_lambda_1`, `V_Phi`, `m_Phi`.
 
 ## Value
 
@@ -231,13 +231,13 @@ for more details. For the Random Walk (`RW`) stochastic volatility
 specification, the following priors are used
 
 \$\$\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\ \ln
-\lambda\_{i,0} &\sim \mathrm{N}(\mu\_{\ln \lambda\_{i,0}},
-\sigma^2\_{\ln \lambda\_{i,0}}) \\ \phi_i &\sim
+\lambda\_{i,1} &\sim \mathrm{N}(\mu\_{\ln \lambda\_{i,1}},
+\sigma^2\_{\ln \lambda\_{i,1}}) \\ \phi_i &\sim
 \mathrm{IG}(\alpha\_{\phi_i},\beta\_{\phi_i})\end{aligned}\$\$
 
 Here \\a\\ is a \\k(k-1)/2\\ vector that collects the free parameters in
-\\A\\ in row-major order, and \\\ln \lambda\_{i,0}\\ are the time
-\\t=0\\ values (initial conditions) of \\\ln \lambda\_{i,t}\\.
+\\A\\ in row-major order, and \\\ln \lambda\_{i,1}\\ are the time
+\\t=1\\ values (initial conditions) of \\\ln \lambda\_{i,t}\\.
 Furthermore, \\\phi_i\\ are the log volatility innovation variances. For
 the AR(1) (`AR1`) stochastic volatility specification, the following
 priors are used
@@ -245,13 +245,13 @@ priors are used
 \$\$\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\ \gamma\_{0}
 &\sim \mathrm{N}(\theta\_{\gamma_0}, \Omega\_{\gamma_0}) \\ \gamma\_{1}
 &\sim \mathrm{N}(\theta\_{\gamma_1}, \Omega\_{\gamma_1}) \\ \ln
-\lambda\_{0} &\sim \mathrm{N}(\theta\_{\ln \lambda\_{0}}, \Omega\_{\ln
-\lambda\_{0}}) \\ \Phi &\sim
+\lambda\_{1} &\sim \mathrm{N}(\theta\_{\ln \lambda\_{1}}, \Omega\_{\ln
+\lambda\_{1}}) \\ \Phi &\sim
 \mathrm{IW}(V\_{\Phi},m\_{\Phi})\end{aligned}\$\$
 
 Here \\a\\ is again the \\k(k-1)/2\\ vector that collects the free
-parameters in \\A\\ in row-major order, and \\\ln \lambda_0\\ are the
-time \\t=0\\ values (initial conditions) of \\\ln \lambda\_{t}\\.
+parameters in \\A\\ in row-major order, and \\\ln \lambda_1\\ are the
+time \\t=1\\ values (initial conditions) of \\\ln \lambda\_{t}\\.
 Furthermore, \\\gamma\_{0}\\ are the log volatility intercepts,
 \\\gamma\_{1}\\ are the log volatility slopes, and \\\Phi\\ is the log
 volatility innovation covariance matrix.
@@ -296,8 +296,8 @@ n_free_params_A <- bvar_obj$setup$n_free_params_A
 SV_priors_RW <- list(
 theta_A              =  rep(0, n_free_params_A),
 Omega_A              =  diag(1000, n_free_params_A),
-mu_log_lambda_0      =  rep(0, k),
-sigma2_log_lambda_0  =  rep(1000, k),
+mu_log_lambda_1      =  rep(0, k),
+sigma2_log_lambda_1  =  rep(1000, k),
 alpha_phi            =  rep(5, k),
 beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 )
@@ -330,8 +330,8 @@ theta_gamma_0         =  rep(0.1, k),
 Omega_gamma_0         =  diag(1000, k),
 theta_gamma_1         =  rep(0.9, k),
 Omega_gamma_1         =  diag(10, k),
-theta_log_lambda_0    =  rep(0.1, k)/(1-rep(0.9, k)),
-Omega_log_lambda_0    =  diag(1000, k),
+theta_log_lambda_1    =  rep(0.1, k)/(1-rep(0.9, k)),
+Omega_log_lambda_1    =  diag(1000, k),
 V_Phi                 = (10 - k - 1) * diag(k),
 m_Phi                 =  10
 )

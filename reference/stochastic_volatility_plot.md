@@ -119,6 +119,7 @@ bvar_obj <- priors(bvar_obj,
                    SV = TRUE,
                    SV_type = "RW",
                    SV_priors = SV_priors)
+#> Error in priors(bvar_obj, theta_Psi = rep(0, 2), Omega_Psi = diag(0.1,     2, 2), SV = TRUE, SV_type = "RW", SV_priors = SV_priors): SV_priors is missing elements: mu_log_lambda_1, sigma2_log_lambda_1
 
 bvar_obj <- fit(bvar_obj,
                 H = 8,
@@ -128,56 +129,9 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1,
                 cores = 1,
                 verbose = FALSE)
-#> 
-#> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).
-#> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000128 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.28 seconds.
-#> Chain 1: Adjust your expectations accordingly!
-#> Chain 1: 
-#> Chain 1: 
-#> Chain 1: WARNING: There aren't enough warmup iterations to fit the
-#> Chain 1:          three stages of adaptation as currently configured.
-#> Chain 1:          Reducing each adaptation stage to 15%/75%/10% of
-#> Chain 1:          the given number of warmup iterations:
-#> Chain 1:            init_buffer = 7
-#> Chain 1:            adapt_window = 38
-#> Chain 1:            term_buffer = 5
-#> Chain 1: 
-#> Chain 1: Iteration:   1 / 200 [  0%]  (Warmup)
-#> Chain 1: Iteration:  20 / 200 [ 10%]  (Warmup)
-#> Chain 1: Iteration:  40 / 200 [ 20%]  (Warmup)
-#> Chain 1: Iteration:  51 / 200 [ 25%]  (Sampling)
-#> Chain 1: Iteration:  70 / 200 [ 35%]  (Sampling)
-#> Chain 1: Iteration:  90 / 200 [ 45%]  (Sampling)
-#> Chain 1: Iteration: 110 / 200 [ 55%]  (Sampling)
-#> Chain 1: Iteration: 130 / 200 [ 65%]  (Sampling)
-#> Chain 1: Iteration: 150 / 200 [ 75%]  (Sampling)
-#> Chain 1: Iteration: 170 / 200 [ 85%]  (Sampling)
-#> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
-#> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
-#> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.033 seconds (Warm-up)
-#> Chain 1:                1.97 seconds (Sampling)
-#> Chain 1:                2.003 seconds (Total)
-#> Chain 1: 
-#> Warning: There were 1 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
-#> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded
-#> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
-#> https://mc-stan.org/misc/warnings.html#bfmi-low
-#> Warning: Examine the pairs() plot to diagnose sampling problems
-#> Warning: The largest R-hat is NA, indicating chains have not mixed.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#r-hat
-#> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#bulk-ess
-#> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
-#> Running the chains for more iterations may help. See
-#> https://mc-stan.org/misc/warnings.html#tail-ess
+#> Error in fit(bvar_obj, H = 8, d_pred = matrix(rep(1, 8)), iter = 200,     warmup = 50, chains = 1, cores = 1, verbose = FALSE): must be passed through priors
 
 stochastic_volatility_plot(bvar_obj, ci = 0.95)
-
-
+#> Error: unable to find an inherited method for function ‘extract’ for signature ‘object = "NULL"’
 # }
 ```
