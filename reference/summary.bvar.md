@@ -95,8 +95,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 4.4e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.44 seconds.
+#> Chain 1: Gradient evaluation took 5.2e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.52 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -121,11 +121,11 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 90 / 100 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 100 / 100 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.023 seconds (Warm-up)
-#> Chain 1:                0.019 seconds (Sampling)
-#> Chain 1:                0.042 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.017 seconds (Warm-up)
+#> Chain 1:                0.015 seconds (Sampling)
+#> Chain 1:                0.032 seconds (Total)
 #> Chain 1: 
-#> Warning: The largest R-hat is 1.05, indicating chains have not mixed.
+#> Warning: The largest R-hat is 1.22, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#r-hat
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -142,25 +142,25 @@ summary(bvar_obj)
 #> 
 #> beta
 #> --------------------------------------------------------------------------------         
-#>            Var1  Var2
-#>   Var1.l1 -0.03 -0.10
-#>   Var2.l1  0.00 -0.04
+#>           Var1  Var2
+#>   Var1.l1 0.01 -0.01
+#>   Var2.l1 0.03  0.05
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Psi
 #> --------------------------------------------------------------------------------      
-#>         [,1]
-#>   Var1  0.04
-#>   Var2 -0.13
+#>        [,1]
+#>   Var1 0.03
+#>   Var2 0.00
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Sigma_u
 #> --------------------------------------------------------------------------------      
 #>        Var1 Var2
-#>   Var1 0.69 0.59
-#>   Var2 0.59 1.29
+#>   Var1 3.59 0.09
+#>   Var2 0.09 1.32
 #> --------------------------------------------------------------------------------
 #> 
 # }
