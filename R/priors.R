@@ -135,7 +135,19 @@
 #' Furthermore, \eqn{\gamma_{0}} are the log volatility intercepts, \eqn{\gamma_{1}} are the log volatility
 #' slopes, and \eqn{\Phi} is the log volatility innovation covariance matrix.
 #' 
+#' For details on the homoscedastic steady-state BVAR model, see Villani (2009).
+#' For details on the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
+#' See Carriero, Clark, and Marcellino (2024) for the AR(1) stochastic volatility
+#' specification applied to a conventional BVAR.
+#' 
 #' @references
+#' Carriero, A., Clark, T. E., and Marcellino, M. (2024).
+#' Capturing macro-economic tail risks with Bayesian vector autoregressions. 
+#' \emph{Journal of Money, Credit and Banking}, 56(5), pp. 1099–1127.
+#' 
+#' Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions
+#' with stochastic volatility. \emph{Journal of Business & Economic Statistics}, 29(3), pp. 327-341.
+#' 
 #' Villani, M. (2009). Steady-state priors for vector autoregressions.
 #' \emph{Journal of Applied Econometrics}, 24(4), pp. 630-650. 
 #' 

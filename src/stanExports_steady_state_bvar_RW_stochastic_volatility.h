@@ -311,8 +311,8 @@ private:
   Eigen::Matrix<double,-1,-1> Omega_Psi_data__;
   Eigen::Matrix<double,-1,1> theta_A_data__;
   Eigen::Matrix<double,-1,-1> Omega_A_data__;
-  Eigen::Matrix<double,-1,1> mu_log_lambda_0_data__;
-  Eigen::Matrix<double,-1,1> sigma2_log_lambda_0_data__;
+  Eigen::Matrix<double,-1,1> mu_log_lambda_1_data__;
+  Eigen::Matrix<double,-1,1> sigma2_log_lambda_1_data__;
   Eigen::Matrix<double,-1,1> alpha_phi_data__;
   Eigen::Matrix<double,-1,1> beta_phi_data__;
   int H;
@@ -330,8 +330,8 @@ private:
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Omega_Psi{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> theta_A{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Omega_A{nullptr, 0, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,1>> mu_log_lambda_0{nullptr, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,1>> sigma2_log_lambda_0{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> mu_log_lambda_1{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> sigma2_log_lambda_1{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> alpha_phi{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> beta_phi{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> d_pred{nullptr, 0, 0};
@@ -692,61 +692,61 @@ public:
         }
       }
       current_statement__ = 116;
-      stan::math::validate_non_negative_index("mu_log_lambda_0", "k", k);
+      stan::math::validate_non_negative_index("mu_log_lambda_1", "k", k);
       current_statement__ = 117;
-      context__.validate_dims("data initialization", "mu_log_lambda_0",
+      context__.validate_dims("data initialization", "mu_log_lambda_1",
         "double", std::vector<size_t>{static_cast<size_t>(k)});
-      mu_log_lambda_0_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
+      mu_log_lambda_1_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
                                  std::numeric_limits<double>::quiet_NaN());
-      new (&mu_log_lambda_0)
-        Eigen::Map<Eigen::Matrix<double,-1,1>>(mu_log_lambda_0_data__.data(),
+      new (&mu_log_lambda_1)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(mu_log_lambda_1_data__.data(),
         k);
       {
-        std::vector<local_scalar_t__> mu_log_lambda_0_flat__;
+        std::vector<local_scalar_t__> mu_log_lambda_1_flat__;
         current_statement__ = 117;
-        mu_log_lambda_0_flat__ = context__.vals_r("mu_log_lambda_0");
+        mu_log_lambda_1_flat__ = context__.vals_r("mu_log_lambda_1");
         current_statement__ = 117;
         pos__ = 1;
         current_statement__ = 117;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
           current_statement__ = 117;
-          stan::model::assign(mu_log_lambda_0, mu_log_lambda_0_flat__[(pos__
-            - 1)], "assigning variable mu_log_lambda_0",
+          stan::model::assign(mu_log_lambda_1, mu_log_lambda_1_flat__[(pos__
+            - 1)], "assigning variable mu_log_lambda_1",
             stan::model::index_uni(sym1__));
           current_statement__ = 117;
           pos__ = (pos__ + 1);
         }
       }
       current_statement__ = 118;
-      stan::math::validate_non_negative_index("sigma2_log_lambda_0", "k", k);
+      stan::math::validate_non_negative_index("sigma2_log_lambda_1", "k", k);
       current_statement__ = 119;
-      context__.validate_dims("data initialization", "sigma2_log_lambda_0",
+      context__.validate_dims("data initialization", "sigma2_log_lambda_1",
         "double", std::vector<size_t>{static_cast<size_t>(k)});
-      sigma2_log_lambda_0_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
+      sigma2_log_lambda_1_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
                                      std::numeric_limits<double>::quiet_NaN());
-      new (&sigma2_log_lambda_0)
-        Eigen::Map<Eigen::Matrix<double,-1,1>>(sigma2_log_lambda_0_data__.data(),
+      new (&sigma2_log_lambda_1)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(sigma2_log_lambda_1_data__.data(),
         k);
       {
-        std::vector<local_scalar_t__> sigma2_log_lambda_0_flat__;
+        std::vector<local_scalar_t__> sigma2_log_lambda_1_flat__;
         current_statement__ = 119;
-        sigma2_log_lambda_0_flat__ = context__.vals_r("sigma2_log_lambda_0");
+        sigma2_log_lambda_1_flat__ = context__.vals_r("sigma2_log_lambda_1");
         current_statement__ = 119;
         pos__ = 1;
         current_statement__ = 119;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
           current_statement__ = 119;
-          stan::model::assign(sigma2_log_lambda_0,
-            sigma2_log_lambda_0_flat__[(pos__ - 1)],
-            "assigning variable sigma2_log_lambda_0",
+          stan::model::assign(sigma2_log_lambda_1,
+            sigma2_log_lambda_1_flat__[(pos__ - 1)],
+            "assigning variable sigma2_log_lambda_1",
             stan::model::index_uni(sym1__));
           current_statement__ = 119;
           pos__ = (pos__ + 1);
         }
       }
       current_statement__ = 119;
-      stan::math::check_greater_or_equal(function__, "sigma2_log_lambda_0",
-        sigma2_log_lambda_0, 0);
+      stan::math::check_greater_or_equal(function__, "sigma2_log_lambda_1",
+        sigma2_log_lambda_1, 0);
       current_statement__ = 120;
       stan::math::validate_non_negative_index("alpha_phi", "k", k);
       current_statement__ = 121;
@@ -1007,10 +1007,10 @@ public:
       for (int i = 1; i <= k; ++i) {
         current_statement__ = 24;
         stan::model::assign(log_lambda,
-          (stan::model::rvalue(mu_log_lambda_0, "mu_log_lambda_0",
+          (stan::model::rvalue(mu_log_lambda_1, "mu_log_lambda_1",
              stan::model::index_uni(i)) +
           (stan::math::sqrt(
-             stan::model::rvalue(sigma2_log_lambda_0, "sigma2_log_lambda_0",
+             stan::model::rvalue(sigma2_log_lambda_1, "sigma2_log_lambda_1",
                stan::model::index_uni(i))) *
           stan::model::rvalue(z, "z", stan::model::index_uni(1),
             stan::model::index_uni(i)))), "assigning variable log_lambda",
@@ -1222,10 +1222,10 @@ public:
       for (int i = 1; i <= k; ++i) {
         current_statement__ = 24;
         stan::model::assign(log_lambda,
-          (stan::model::rvalue(mu_log_lambda_0, "mu_log_lambda_0",
+          (stan::model::rvalue(mu_log_lambda_1, "mu_log_lambda_1",
              stan::model::index_uni(i)) +
           (stan::math::sqrt(
-             stan::model::rvalue(sigma2_log_lambda_0, "sigma2_log_lambda_0",
+             stan::model::rvalue(sigma2_log_lambda_1, "sigma2_log_lambda_1",
                stan::model::index_uni(i))) *
           stan::model::rvalue(z, "z", stan::model::index_uni(1),
             stan::model::index_uni(i)))), "assigning variable log_lambda",

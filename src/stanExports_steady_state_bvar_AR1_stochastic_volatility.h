@@ -337,14 +337,14 @@ private:
   Eigen::Matrix<double,-1,-1> Omega_gamma_0_data__;
   Eigen::Matrix<double,-1,1> theta_gamma_1_data__;
   Eigen::Matrix<double,-1,-1> Omega_gamma_1_data__;
-  Eigen::Matrix<double,-1,1> theta_log_lambda_0_data__;
-  Eigen::Matrix<double,-1,-1> Omega_log_lambda_0_data__;
+  Eigen::Matrix<double,-1,1> theta_log_lambda_1_data__;
+  Eigen::Matrix<double,-1,-1> Omega_log_lambda_1_data__;
   int m_Phi;
   Eigen::Matrix<double,-1,-1> V_Phi_data__;
   int H;
   Eigen::Matrix<double,-1,-1> d_pred_data__;
   Eigen::Matrix<double,-1,-1> I_p_data__;
-  Eigen::Matrix<double,-1,-1> L_0_data__;
+  Eigen::Matrix<double,-1,-1> L_1_data__;
   int beta_1dim__;
   int a_1dim__;
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Y{nullptr, 0, 0};
@@ -361,12 +361,12 @@ private:
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Omega_gamma_0{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,1>> theta_gamma_1{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Omega_gamma_1{nullptr, 0, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,1>> theta_log_lambda_0{nullptr, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,-1>> Omega_log_lambda_0{nullptr, 0, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> theta_log_lambda_1{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,-1>> Omega_log_lambda_1{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> V_Phi{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> d_pred{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> I_p{nullptr, 0, 0};
-  Eigen::Map<Eigen::Matrix<double,-1,-1>> L_0{nullptr, 0, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,-1>> L_1{nullptr, 0, 0};
 public:
   ~model_steady_state_bvar_AR1_stochastic_volatility() {}
   model_steady_state_bvar_AR1_stochastic_volatility(stan::io::var_context&
@@ -839,49 +839,49 @@ public:
         }
       }
       current_statement__ = 129;
-      stan::math::validate_non_negative_index("theta_log_lambda_0", "k", k);
+      stan::math::validate_non_negative_index("theta_log_lambda_1", "k", k);
       current_statement__ = 130;
-      context__.validate_dims("data initialization", "theta_log_lambda_0",
+      context__.validate_dims("data initialization", "theta_log_lambda_1",
         "double", std::vector<size_t>{static_cast<size_t>(k)});
-      theta_log_lambda_0_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
+      theta_log_lambda_1_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
                                     std::numeric_limits<double>::quiet_NaN());
-      new (&theta_log_lambda_0)
-        Eigen::Map<Eigen::Matrix<double,-1,1>>(theta_log_lambda_0_data__.data(),
+      new (&theta_log_lambda_1)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(theta_log_lambda_1_data__.data(),
         k);
       {
-        std::vector<local_scalar_t__> theta_log_lambda_0_flat__;
+        std::vector<local_scalar_t__> theta_log_lambda_1_flat__;
         current_statement__ = 130;
-        theta_log_lambda_0_flat__ = context__.vals_r("theta_log_lambda_0");
+        theta_log_lambda_1_flat__ = context__.vals_r("theta_log_lambda_1");
         current_statement__ = 130;
         pos__ = 1;
         current_statement__ = 130;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
           current_statement__ = 130;
-          stan::model::assign(theta_log_lambda_0,
-            theta_log_lambda_0_flat__[(pos__ - 1)],
-            "assigning variable theta_log_lambda_0",
+          stan::model::assign(theta_log_lambda_1,
+            theta_log_lambda_1_flat__[(pos__ - 1)],
+            "assigning variable theta_log_lambda_1",
             stan::model::index_uni(sym1__));
           current_statement__ = 130;
           pos__ = (pos__ + 1);
         }
       }
       current_statement__ = 131;
-      stan::math::validate_non_negative_index("Omega_log_lambda_0", "k", k);
+      stan::math::validate_non_negative_index("Omega_log_lambda_1", "k", k);
       current_statement__ = 132;
-      stan::math::validate_non_negative_index("Omega_log_lambda_0", "k", k);
+      stan::math::validate_non_negative_index("Omega_log_lambda_1", "k", k);
       current_statement__ = 133;
-      context__.validate_dims("data initialization", "Omega_log_lambda_0",
+      context__.validate_dims("data initialization", "Omega_log_lambda_1",
         "double",
         std::vector<size_t>{static_cast<size_t>(k), static_cast<size_t>(k)});
-      Omega_log_lambda_0_data__ = Eigen::Matrix<double,-1,-1>::Constant(k, k,
+      Omega_log_lambda_1_data__ = Eigen::Matrix<double,-1,-1>::Constant(k, k,
                                     std::numeric_limits<double>::quiet_NaN());
-      new (&Omega_log_lambda_0)
-        Eigen::Map<Eigen::Matrix<double,-1,-1>>(Omega_log_lambda_0_data__.data(),
+      new (&Omega_log_lambda_1)
+        Eigen::Map<Eigen::Matrix<double,-1,-1>>(Omega_log_lambda_1_data__.data(),
         k, k);
       {
-        std::vector<local_scalar_t__> Omega_log_lambda_0_flat__;
+        std::vector<local_scalar_t__> Omega_log_lambda_1_flat__;
         current_statement__ = 133;
-        Omega_log_lambda_0_flat__ = context__.vals_r("Omega_log_lambda_0");
+        Omega_log_lambda_1_flat__ = context__.vals_r("Omega_log_lambda_1");
         current_statement__ = 133;
         pos__ = 1;
         current_statement__ = 133;
@@ -889,9 +889,9 @@ public:
           current_statement__ = 133;
           for (int sym2__ = 1; sym2__ <= k; ++sym2__) {
             current_statement__ = 133;
-            stan::model::assign(Omega_log_lambda_0,
-              Omega_log_lambda_0_flat__[(pos__ - 1)],
-              "assigning variable Omega_log_lambda_0",
+            stan::model::assign(Omega_log_lambda_1,
+              Omega_log_lambda_1_flat__[(pos__ - 1)],
+              "assigning variable Omega_log_lambda_1",
               stan::model::index_uni(sym2__), stan::model::index_uni(sym1__));
             current_statement__ = 133;
             pos__ = (pos__ + 1);
@@ -988,18 +988,18 @@ public:
         stan::math::diag_matrix(stan::math::rep_vector(1, p)),
         "assigning variable I_p");
       current_statement__ = 145;
-      stan::math::validate_non_negative_index("L_0", "k", k);
+      stan::math::validate_non_negative_index("L_1", "k", k);
       current_statement__ = 146;
-      stan::math::validate_non_negative_index("L_0", "k", k);
+      stan::math::validate_non_negative_index("L_1", "k", k);
       current_statement__ = 147;
-      L_0_data__ = Eigen::Matrix<double,-1,-1>::Constant(k, k,
+      L_1_data__ = Eigen::Matrix<double,-1,-1>::Constant(k, k,
                      std::numeric_limits<double>::quiet_NaN());
-      new (&L_0) Eigen::Map<Eigen::Matrix<double,-1,-1>>(L_0_data__.data(),
+      new (&L_1) Eigen::Map<Eigen::Matrix<double,-1,-1>>(L_1_data__.data(),
         k, k);
       current_statement__ = 147;
-      stan::model::assign(L_0,
-        stan::math::cholesky_decompose(Omega_log_lambda_0),
-        "assigning variable L_0");
+      stan::model::assign(L_1,
+        stan::math::cholesky_decompose(Omega_log_lambda_1),
+        "assigning variable L_1");
       current_statement__ = 148;
       beta_1dim__ = std::numeric_limits<int>::min();
       current_statement__ = 148;
@@ -1183,8 +1183,8 @@ public:
       current_statement__ = 29;
       stan::model::assign(log_lambda,
         stan::math::transpose(
-          stan::math::add(theta_log_lambda_0,
-            stan::math::multiply(L_0,
+          stan::math::add(theta_log_lambda_1,
+            stan::math::multiply(L_1,
               stan::math::transpose(
                 stan::model::rvalue(z, "z", stan::model::index_uni(1)))))),
         "assigning variable log_lambda", stan::model::index_uni(1));
@@ -1413,8 +1413,8 @@ public:
       current_statement__ = 29;
       stan::model::assign(log_lambda,
         stan::math::transpose(
-          stan::math::add(theta_log_lambda_0,
-            stan::math::multiply(L_0,
+          stan::math::add(theta_log_lambda_1,
+            stan::math::multiply(L_1,
               stan::math::transpose(
                 stan::model::rvalue(z, "z", stan::model::index_uni(1)))))),
         "assigning variable log_lambda", stan::model::index_uni(1));
