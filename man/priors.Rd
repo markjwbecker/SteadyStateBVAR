@@ -49,11 +49,11 @@ Required if \code{SV = TRUE}.}
 \item{SV_priors}{List. User-supplied stochastic volatility priors. Required when \code{SV = TRUE}.
 The list must contain the following named elements depending on \code{SV_type}:
 \itemize{
-\item For \code{"RW"}: \code{theta_A}, \code{Omega_A}, \code{mu_log_lambda_0},
-\code{sigma2_log_lambda_0}, \code{alpha_phi}, \code{beta_phi}.
+\item For \code{"RW"}: \code{theta_A}, \code{Omega_A}, \code{mu_log_lambda_1},
+\code{sigma2_log_lambda_1}, \code{alpha_phi}, \code{beta_phi}.
 \item For \code{"AR1"}: \code{theta_A}, \code{Omega_A}, \code{theta_gamma_0},
 \code{Omega_gamma_0}, \code{theta_gamma_1}, \code{Omega_gamma_1},
-\code{theta_log_lambda_0}, \code{Omega_log_lambda_0}, \code{V_Phi}, \code{m_Phi}.
+\code{theta_log_lambda_1}, \code{Omega_log_lambda_1}, \code{V_Phi}, \code{m_Phi}.
 }}
 }
 \value{
@@ -147,21 +147,21 @@ Therefore, stochastic volatility priors are needed, see \link{bvar} for more det
 (\code{RW}) stochastic volatility specification, the following priors are used
 
 \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
-\ln \lambda_{i,0} &\sim \mathrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
+\ln \lambda_{i,1} &\sim \mathrm{N}(\mu_{\ln \lambda_{i,1}}, \sigma^2_{\ln \lambda_{i,1}}) \\
 \phi_i &\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}}
 
 Here \eqn{a} is a \eqn{k(k-1)/2} vector that collects the free parameters in \eqn{A} in row-major order,
-and \eqn{\ln \lambda_{i,0}} are the time \eqn{t=0} values (initial conditions) of \eqn{\ln \lambda_{i,t}}.
+and \eqn{\ln \lambda_{i,1}} are the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{i,t}}.
 Furthermore, \eqn{\phi_i} are the log volatility innovation variances. For the AR(1) (\code{AR1}) stochastic volatility specification, the following priors are used
 
 \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
-\ln \lambda_{0} &\sim \mathrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
+\ln \lambda_{1} &\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
 \Phi &\sim \mathrm{IW}(V_{\Phi},m_{\Phi})\end{aligned}}
 
 Here \eqn{a} is again the \eqn{k(k-1)/2} vector that collects the free parameters in \eqn{A} in row-major order,
-and \eqn{\ln \lambda_0} are the time \eqn{t=0} values (initial conditions) of \eqn{\ln \lambda_{t}}.
+and \eqn{\ln \lambda_1} are the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{t}}.
 Furthermore, \eqn{\gamma_{0}} are the log volatility intercepts, \eqn{\gamma_{1}} are the log volatility
 slopes, and \eqn{\Phi} is the log volatility innovation covariance matrix.
 }
@@ -198,8 +198,8 @@ n_free_params_A <- bvar_obj$setup$n_free_params_A
 SV_priors_RW <- list(
 theta_A              =  rep(0, n_free_params_A),
 Omega_A              =  diag(1000, n_free_params_A),
-mu_log_lambda_0      =  rep(0, k),
-sigma2_log_lambda_0  =  rep(1000, k),
+mu_log_lambda_1      =  rep(0, k),
+sigma2_log_lambda_1  =  rep(1000, k),
 alpha_phi            =  rep(5, k),
 beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 )
@@ -232,8 +232,8 @@ theta_gamma_0         =  rep(0.1, k),
 Omega_gamma_0         =  diag(1000, k),
 theta_gamma_1         =  rep(0.9, k),
 Omega_gamma_1         =  diag(10, k),
-theta_log_lambda_0    =  rep(0.1, k)/(1-rep(0.9, k)),
-Omega_log_lambda_0    =  diag(1000, k),
+theta_log_lambda_1    =  rep(0.1, k)/(1-rep(0.9, k)),
+Omega_log_lambda_1    =  diag(1000, k),
 V_Phi                 = (10 - k - 1) * diag(k),
 m_Phi                 =  10
 )

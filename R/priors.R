@@ -26,11 +26,11 @@
 #' @param SV_priors List. User-supplied stochastic volatility priors. Required when \code{SV = TRUE}.
 #'   The list must contain the following named elements depending on \code{SV_type}:
 #'   \itemize{
-#'     \item For \code{"RW"}: \code{theta_A}, \code{Omega_A}, \code{mu_log_lambda_0},
-#'       \code{sigma2_log_lambda_0}, \code{alpha_phi}, \code{beta_phi}.
+#'     \item For \code{"RW"}: \code{theta_A}, \code{Omega_A}, \code{mu_log_lambda_1},
+#'       \code{sigma2_log_lambda_1}, \code{alpha_phi}, \code{beta_phi}.
 #'     \item For \code{"AR1"}: \code{theta_A}, \code{Omega_A}, \code{theta_gamma_0},
 #'       \code{Omega_gamma_0}, \code{theta_gamma_1}, \code{Omega_gamma_1},
-#'       \code{theta_log_lambda_0}, \code{Omega_log_lambda_0}, \code{V_Phi}, \code{m_Phi}.
+#'       \code{theta_log_lambda_1}, \code{Omega_log_lambda_1}, \code{V_Phi}, \code{m_Phi}.
 #'   }
 #'
 #' @return The steady-state \code{bvar} object with an appended \code{priors} list containing:
@@ -117,21 +117,21 @@
 #' (\code{RW}) stochastic volatility specification, the following priors are used
 #' 
 #' \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
-#' \ln \lambda_{i,0} &\sim \mathrm{N}(\mu_{\ln \lambda_{i,0}}, \sigma^2_{\ln \lambda_{i,0}}) \\
+#' \ln \lambda_{i,1} &\sim \mathrm{N}(\mu_{\ln \lambda_{i,1}}, \sigma^2_{\ln \lambda_{i,1}}) \\
 #' \phi_i &\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}}
 #' 
 #' Here \eqn{a} is a \eqn{k(k-1)/2} vector that collects the free parameters in \eqn{A} in row-major order,
-#' and \eqn{\ln \lambda_{i,0}} are the time \eqn{t=0} values (initial conditions) of \eqn{\ln \lambda_{i,t}}.
+#' and \eqn{\ln \lambda_{i,1}} are the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{i,t}}.
 #' Furthermore, \eqn{\phi_i} are the log volatility innovation variances. For the AR(1) (\code{AR1}) stochastic volatility specification, the following priors are used
 #' 
 #' \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 #' \gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 #' \gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
-#' \ln \lambda_{0} &\sim \mathrm{N}(\theta_{\ln \lambda_{0}}, \Omega_{\ln \lambda_{0}}) \\
+#' \ln \lambda_{1} &\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
 #' \Phi &\sim \mathrm{IW}(V_{\Phi},m_{\Phi})\end{aligned}}
 #' 
 #' Here \eqn{a} is again the \eqn{k(k-1)/2} vector that collects the free parameters in \eqn{A} in row-major order,
-#' and \eqn{\ln \lambda_0} are the time \eqn{t=0} values (initial conditions) of \eqn{\ln \lambda_{t}}.
+#' and \eqn{\ln \lambda_1} are the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{t}}.
 #' Furthermore, \eqn{\gamma_{0}} are the log volatility intercepts, \eqn{\gamma_{1}} are the log volatility
 #' slopes, and \eqn{\Phi} is the log volatility innovation covariance matrix.
 #' 
@@ -174,8 +174,8 @@
 #' SV_priors_RW <- list(
 #' theta_A              =  rep(0, n_free_params_A),
 #' Omega_A              =  diag(1000, n_free_params_A),
-#' mu_log_lambda_0      =  rep(0, k),
-#' sigma2_log_lambda_0  =  rep(1000, k),
+#' mu_log_lambda_1      =  rep(0, k),
+#' sigma2_log_lambda_1  =  rep(1000, k),
 #' alpha_phi            =  rep(5, k),
 #' beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 #' )
@@ -208,8 +208,8 @@
 #' Omega_gamma_0         =  diag(1000, k),
 #' theta_gamma_1         =  rep(0.9, k),
 #' Omega_gamma_1         =  diag(10, k),
-#' theta_log_lambda_0    =  rep(0.1, k)/(1-rep(0.9, k)),
-#' Omega_log_lambda_0    =  diag(1000, k),
+#' theta_log_lambda_1    =  rep(0.1, k)/(1-rep(0.9, k)),
+#' Omega_log_lambda_1    =  diag(1000, k),
 #' V_Phi                 = (10 - k - 1) * diag(k),
 #' m_Phi                 =  10
 #' )
@@ -270,8 +270,8 @@ priors<- function(x,
     n_free <- x$setup$n_free_params_A
     
     if (SV_type == "RW") {
-      required_names <- c("theta_A", "Omega_A", "mu_log_lambda_0",
-                          "sigma2_log_lambda_0", "alpha_phi", "beta_phi")
+      required_names <- c("theta_A", "Omega_A", "mu_log_lambda_1",
+                          "sigma2_log_lambda_1", "alpha_phi", "beta_phi")
       missing_names <- setdiff(required_names, names(SV_priors))
       if (length(missing_names) > 0)
         stop(paste("SV_priors is missing elements:", paste(missing_names, collapse = ", ")))
@@ -280,12 +280,12 @@ priors<- function(x,
         stop(paste("theta_A must be a vector of length k*(k-1)/2 =", n_free))
       if (!all(dim(SV_priors$Omega_A) == n_free))
         stop(paste("Omega_A must be a", n_free, "x", n_free, "matrix"))
-      if (length(SV_priors$mu_log_lambda_0) != k)
-        stop(paste("mu_log_lambda_0 must be a vector of length k =", k))
-      if (length(SV_priors$sigma2_log_lambda_0) != k)
-        stop(paste("sigma2_log_lambda_0 must be a vector of length k =", k))
-      if (any(SV_priors$sigma2_log_lambda_0 <= 0))
-        stop("sigma2_log_lambda_0 must be strictly positive")
+      if (length(SV_priors$mu_log_lambda_1) != k)
+        stop(paste("mu_log_lambda_1 must be a vector of length k =", k))
+      if (length(SV_priors$sigma2_log_lambda_1) != k)
+        stop(paste("sigma2_log_lambda_1 must be a vector of length k =", k))
+      if (any(SV_priors$sigma2_log_lambda_1 <= 0))
+        stop("sigma2_log_lambda_1 must be strictly positive")
       if (length(SV_priors$alpha_phi) != k)
         stop(paste("alpha_phi must be a vector of length k =", k))
       if (any(SV_priors$alpha_phi <= 0))
@@ -297,8 +297,8 @@ priors<- function(x,
       
     } else if (SV_type == "AR1") {
       required_names <- c("theta_A", "Omega_A", "theta_gamma_0", "Omega_gamma_0",
-                          "theta_gamma_1", "Omega_gamma_1", "theta_log_lambda_0",
-                          "Omega_log_lambda_0", "m_Phi", "V_Phi")
+                          "theta_gamma_1", "Omega_gamma_1", "theta_log_lambda_1",
+                          "Omega_log_lambda_1", "m_Phi", "V_Phi")
       missing_names <- setdiff(required_names, names(SV_priors))
       if (length(missing_names) > 0)
         stop(paste("SV_priors is missing elements:", paste(missing_names, collapse = ", ")))
@@ -315,10 +315,10 @@ priors<- function(x,
         stop(paste("theta_gamma_1 must be a vector of length k =", k))
       if (!all(dim(SV_priors$Omega_gamma_1) == k))
         stop(paste("Omega_gamma_1 must be a", k, "x", k, "matrix"))
-      if (length(SV_priors$theta_log_lambda_0) != k)
-        stop(paste("theta_log_lambda_0 must be a vector of length k =", k))
-      if (!all(dim(SV_priors$Omega_log_lambda_0) == k))
-        stop(paste("Omega_log_lambda_0 must be a", k, "x", k, "matrix"))
+      if (length(SV_priors$theta_log_lambda_1) != k)
+        stop(paste("theta_log_lambda_1 must be a vector of length k =", k))
+      if (!all(dim(SV_priors$Omega_log_lambda_1) == k))
+        stop(paste("Omega_log_lambda_1 must be a", k, "x", k, "matrix"))
       if (!is.numeric(SV_priors$m_Phi) || length(SV_priors$m_Phi) != 1 || SV_priors$m_Phi < k)
         stop(paste("m_Phi must be a scalar integer >= k =", k))
       if (!all(dim(SV_priors$V_Phi) == k))

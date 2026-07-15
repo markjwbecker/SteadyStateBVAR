@@ -97,8 +97,8 @@ SV_priors_AR1 <- list(
                       Omega_gamma_0      =  diag(10, k),
                       theta_gamma_1      =  rep(0.9, k),
                       Omega_gamma_1      =  diag(1, k),
-                      theta_log_lambda_0 =  rep(0, k),
-                      Omega_log_lambda_0 =  diag(10, k),
+                      theta_log_lambda_1 =  rep(0, k),
+                      Omega_log_lambda_1 =  diag(10, k),
                       V_Phi              = (5 - k - 1) * 0.1 * diag(k),
                       m_Phi              =  5
                      )

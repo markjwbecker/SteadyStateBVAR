@@ -41,8 +41,8 @@ data {
   matrix[k*q, k*q] Omega_Psi; //vec_Psi prior covariance matrix
   vector[k*(k-1)/2] theta_A; //a prior mean
   matrix[k*(k-1)/2, k*(k-1)/2] Omega_A; //a prior covariance matrix
-  vector[k] mu_log_lambda_0;        // log lambda initial condition prior means
-  vector<lower=0>[k] sigma2_log_lambda_0; // log lambda initial condition prior variances
+  vector[k] mu_log_lambda_1;        // log lambda initial condition prior means
+  vector<lower=0>[k] sigma2_log_lambda_1; // log lambda initial condition prior variances
   vector<lower=0>[k] alpha_phi;     // phi prior shapes
   vector<lower=0>[k] beta_phi;      // phi prior scales
   int<lower=1> H; // Forecast horizon
@@ -80,7 +80,7 @@ transformed parameters {
   Ainv = inverse(A);
   
   for (i in 1:k) {
-    log_lambda[1, i] = mu_log_lambda_0[i] + sqrt(sigma2_log_lambda_0[i]) * z[1, i];
+    log_lambda[1, i] = mu_log_lambda_1[i] + sqrt(sigma2_log_lambda_1[i]) * z[1, i];
   }
   for (t in 2:N) {
     for (i in 1:k) {

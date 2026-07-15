@@ -142,8 +142,8 @@
 #' SV_priors_RW <- list(
 #' theta_A              =  rep(0, n_free_params_A),
 #' Omega_A              =  diag(1000, n_free_params_A),
-#' mu_log_lambda_0      =  rep(0, k),
-#' sigma2_log_lambda_0  =  rep(1000, k),
+#' mu_log_lambda_1      =  rep(0, k),
+#' sigma2_log_lambda_1  =  rep(1000, k),
 #' alpha_phi            =  rep(5, k),
 #' beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 #' )
@@ -188,8 +188,8 @@
 #' Omega_gamma_0         =  diag(1000, k),
 #' theta_gamma_1         =  rep(0.9, k),
 #' Omega_gamma_1         =  diag(10, k),
-#' theta_log_lambda_0    =  rep(0.1, k)/(1-rep(0.9, k)),
-#' Omega_log_lambda_0    =  diag(1000, k),
+#' theta_log_lambda_1    =  rep(0.1, k)/(1-rep(0.9, k)),
+#' Omega_log_lambda_1    =  diag(1000, k),
 #' V_Phi                 = (10 - k - 1) * diag(k),
 #' m_Phi                 =  10
 #' )
@@ -241,7 +241,7 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
   
   stan_data <- c(setup, list(H = H, d_pred = d_pred), priors)
   
-  model_name <- if (isFALSE(priors$Jeffrey)) {
+  model_name <- if (isFALSE(priors$Jeffreys)) {
     "steady_state_bvar_homoscedastic_inverse_wishart_prior"
   } else {
     "steady_state_bvar_homoscedastic_jeffreys_prior"

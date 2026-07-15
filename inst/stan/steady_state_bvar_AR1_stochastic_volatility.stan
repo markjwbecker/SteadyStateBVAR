@@ -45,8 +45,8 @@ data {
   matrix[k, k] Omega_gamma_0; //gamma_0 prior covariance matrix
   vector[k] theta_gamma_1; //gamma_1 prior mean
   matrix[k, k] Omega_gamma_1; //gamma_1 prior covariance matrix
-  vector[k] theta_log_lambda_0; //log lambda initial condition prior mean
-  matrix[k, k] Omega_log_lambda_0; //log lambda initial condition prior covariance matrix
+  vector[k] theta_log_lambda_1; //log lambda initial condition prior mean
+  matrix[k, k] Omega_log_lambda_1; //log lambda initial condition prior covariance matrix
   int<lower=k> m_Phi; //Phi prior degrees of freedom
   matrix[k,k] V_Phi; //Phi prior scale matrix
   int<lower=1> H; // Forecast horizon
@@ -55,7 +55,7 @@ data {
 
 transformed data {
     matrix[p, p] I_p = diag_matrix(rep_vector(1, p)); // Identity matrix
-    matrix[k, k] L_0 = cholesky_decompose(Omega_log_lambda_0);
+    matrix[k, k] L_1 = cholesky_decompose(Omega_log_lambda_1);
 }
 
 parameters {
@@ -89,7 +89,7 @@ transformed parameters {
   Ainv = inverse(A);
   L_Phi = cholesky_decompose(Phi);
   
-  log_lambda[1] = (theta_log_lambda_0 + L_0 * z[1]')';
+  log_lambda[1] = (theta_log_lambda_1 + L_1 * z[1]')';
   for (t in 2:N) {
     log_lambda[t] = (gamma_0 + gamma_1 .* log_lambda[t-1]' + L_Phi * z[t]')';
   }

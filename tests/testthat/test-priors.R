@@ -128,7 +128,7 @@ test_that("RW SV_priors validates required names", {
   sv <- list(
     theta_A = rep(0, n_free),
     Omega_A = diag(n_free)
-    # missing: mu_log_lambda_0, sigma2_log_lambda_0, alpha_phi, beta_phi
+    # missing: mu_log_lambda_1, sigma2_log_lambda_1, alpha_phi, beta_phi
   )
   
   expect_error(
@@ -148,8 +148,8 @@ test_that("RW SV_priors validates theta_A length", {
   sv <- list(
     theta_A             = rep(0, n_free + 1), # wrong length
     Omega_A             = diag(n_free),
-    mu_log_lambda_0     = rep(0, k),
-    sigma2_log_lambda_0 = rep(1, k),
+    mu_log_lambda_1     = rep(0, k),
+    sigma2_log_lambda_1 = rep(1, k),
     alpha_phi           = rep(1, k),
     beta_phi            = rep(1, k)
   )
@@ -171,8 +171,8 @@ test_that("RW SV_priors validates Omega_A dimensions", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free + 1), # wrong dimensions
-    mu_log_lambda_0     = rep(0, k),
-    sigma2_log_lambda_0 = rep(1, k),
+    mu_log_lambda_1     = rep(0, k),
+    sigma2_log_lambda_1 = rep(1, k),
     alpha_phi           = rep(1, k),
     beta_phi            = rep(1, k)
   )
@@ -183,7 +183,7 @@ test_that("RW SV_priors validates Omega_A dimensions", {
   )
 })
 
-test_that("RW SV_priors validates sigma2_log_lambda_0 positivity", {
+test_that("RW SV_priors validates sigma2_log_lambda_1 positivity", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
   model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
@@ -194,15 +194,15 @@ test_that("RW SV_priors validates sigma2_log_lambda_0 positivity", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free),
-    mu_log_lambda_0     = rep(0, k),
-    sigma2_log_lambda_0 = rep(-1, k), # must be positive
+    mu_log_lambda_1     = rep(0, k),
+    sigma2_log_lambda_1 = rep(-1, k), # must be positive
     alpha_phi           = rep(1, k),
     beta_phi            = rep(1, k)
   )
   
   expect_error(
     priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
-    "sigma2_log_lambda_0 must be strictly positive"
+    "sigma2_log_lambda_1 must be strictly positive"
   )
 })
 
@@ -217,8 +217,8 @@ test_that("RW SV_priors validates alpha_phi positivity", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free),
-    mu_log_lambda_0     = rep(0, k),
-    sigma2_log_lambda_0 = rep(1, k),
+    mu_log_lambda_1     = rep(0, k),
+    sigma2_log_lambda_1 = rep(1, k),
     alpha_phi           = rep(-1, k), # must be positive
     beta_phi            = rep(1, k)
   )
@@ -240,8 +240,8 @@ test_that("RW SV_priors validates beta_phi positivity", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free),
-    mu_log_lambda_0     = rep(0, k),
-    sigma2_log_lambda_0 = rep(1, k),
+    mu_log_lambda_1     = rep(0, k),
+    sigma2_log_lambda_1 = rep(1, k),
     alpha_phi           = rep(1, k),
     beta_phi            = rep(-1, k) # must be positive
   )
@@ -263,8 +263,8 @@ test_that("RW SV attaches correctly with valid priors", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free),
-    mu_log_lambda_0     = rep(0, k),
-    sigma2_log_lambda_0 = rep(1, k),
+    mu_log_lambda_1     = rep(0, k),
+    sigma2_log_lambda_1 = rep(1, k),
     alpha_phi           = rep(5, k),
     beta_phi            = rep(0.4, k)
   )
@@ -311,8 +311,8 @@ test_that("AR1 SV_priors validates Omega_gamma_0 dimensions", {
     Omega_gamma_0      = diag(k + 1), # wrong dimensions
     theta_gamma_1      = rep(0, k),
     Omega_gamma_1      = diag(k),
-    theta_log_lambda_0 = rep(0, k),
-    Omega_log_lambda_0 = diag(k),
+    theta_log_lambda_1 = rep(0, k),
+    Omega_log_lambda_1 = diag(k),
     m_Phi              = k + 2,
     V_Phi              = diag(k)
   )
@@ -338,8 +338,8 @@ test_that("AR1 SV_priors validates m_Phi >= k", {
     Omega_gamma_0      = diag(k),
     theta_gamma_1      = rep(0, k),
     Omega_gamma_1      = diag(k),
-    theta_log_lambda_0 = rep(0, k),
-    Omega_log_lambda_0 = diag(k),
+    theta_log_lambda_1 = rep(0, k),
+    Omega_log_lambda_1 = diag(k),
     m_Phi              = k - 1, # too small
     V_Phi              = diag(k)
   )
@@ -365,8 +365,8 @@ test_that("AR1 SV_priors validates V_Phi dimensions", {
     Omega_gamma_0      = diag(k),
     theta_gamma_1      = rep(0, k),
     Omega_gamma_1      = diag(k),
-    theta_log_lambda_0 = rep(0, k),
-    Omega_log_lambda_0 = diag(k),
+    theta_log_lambda_1 = rep(0, k),
+    Omega_log_lambda_1 = diag(k),
     m_Phi              = k + 2,
     V_Phi              = diag(k + 1) # wrong dimensions
   )
@@ -392,8 +392,8 @@ test_that("AR1 SV attaches correctly with valid priors", {
     Omega_gamma_0      = diag(k),
     theta_gamma_1      = rep(0.9, k),
     Omega_gamma_1      = diag(k),
-    theta_log_lambda_0 = rep(0, k),
-    Omega_log_lambda_0 = diag(k),
+    theta_log_lambda_1 = rep(0, k),
+    Omega_log_lambda_1 = diag(k),
     m_Phi              = k + 2,
     V_Phi              = diag(k)
   )
