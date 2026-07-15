@@ -151,8 +151,8 @@ Therefore, stochastic volatility priors are needed, see \link{bvar} for more det
 \phi_i &\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}}
 
 Here \eqn{a} is a \eqn{k(k-1)/2} vector that collects the free parameters in \eqn{A} in row-major order,
-and \eqn{\ln \lambda_{i,1}} are the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{i,t}}.
-Furthermore, \eqn{\phi_i} are the log volatility innovation variances. For the AR(1) (\code{AR1}) stochastic volatility specification, the following priors are used
+and \eqn{\ln \lambda_{i,1}} are the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{i,t}, i=1,\dots,k}.
+Furthermore, \eqn{\phi_i , i=1,\dots,k} are the log volatility innovation variances. For the AR(1) (\code{AR1}) stochastic volatility specification, the following priors are used
 
 \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
