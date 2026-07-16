@@ -87,12 +87,12 @@ Capturing macro-economic tail risks with Bayesian vector autoregressions.
 \emph{Journal of Money, Credit and Banking}, 56(5), pp. 1099–1127.
 
 Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions
-with stochastic volatility. \emph{Journal of Business & Economic Statistics}, 29(3), pp. 327-341.
+with stochastic volatility. \emph{Journal of Business & Economic Statistics}, 29(3), pp. 327–341.
 
 Karlsson, S. (2013). Forecasting with Bayesian vector autoregression.
-In: Elliott, G. and Timmermann, A. (eds) \emph{Handbook of Economic Forecasting}.
-Elsevier B.V. Vol 2, Part B., pp. 791-897.
+In: Elliott, G. and Timmermann, A. (eds), \emph{Handbook of Economic Forecasting}.
+Elsevier B.V., Vol. 2, Part B, pp. 791–897.
 
 Villani, M. (2009). Steady-state priors for vector autoregressions.
-\emph{Journal of Applied Econometrics}, 24(4), pp. 630-650.
+\emph{Journal of Applied Econometrics}, 24(4), pp. 630–650.
 }

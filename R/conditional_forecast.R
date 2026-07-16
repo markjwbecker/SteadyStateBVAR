@@ -37,7 +37,7 @@
 #'
 #' @references
 #' Dieppe, A., Legrand, R., and van Roye, B. (2016).
-#' The BEAR toolbox. \emph{Working Paper Series}, No. 1934. European Central Bank.
+#' The BEAR toolbox. Working Paper Series, No. 1934. European Central Bank.
 #'
 #' @examples
 #' \donttest{

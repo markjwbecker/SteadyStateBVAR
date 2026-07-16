@@ -356,17 +356,17 @@ irf <- IRF(bvar_obj,
 
 Clark, T. E. (2011). Real-time density forecasts from Bayesian vector
 autoregressions with stochastic volatility. *Journal of Business &
-Economic Statistics*, 29(3), pp. 327-341.
+Economic Statistics*, 29(3), pp. 327–341.
 
 Dieppe, A., Legrand, R., and van Roye, B. (2016). The BEAR toolbox.
-*Working Paper Series*, No. 1934. European Central Bank.
-
-Karlsson, S. (2013). Forecasting with Bayesian vector autoregression.
-In: Elliott, G. and Timmermann, A. (eds) *Handbook of Economic
-Forecasting*. Elsevier B.V. Vol 2, Part B., pp. 791-897.
+Working Paper Series, No. 1934. European Central Bank.
 
 Gustafsson, O., and Villani, M. (2025). Variational inference for
-steady-state BVARs. arXiv preprint arXiv:2506.09271
+steady-state BVARs. arXiv preprint arXiv:2506.09271.
+
+Karlsson, S. (2013). Forecasting with Bayesian vector autoregression.
+In: Elliott, G. and Timmermann, A. (eds), *Handbook of Economic
+Forecasting*. Elsevier B.V., Vol. 2, Part B, pp. 791–897.
 
 Villani, M. (2009). Steady-state priors for vector autoregressions.
-*Journal of Applied Econometrics*, 24(4), pp. 630-650.
+*Journal of Applied Econometrics*, 24(4), pp. 630–650.

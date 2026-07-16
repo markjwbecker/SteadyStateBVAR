@@ -349,9 +349,9 @@ IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 ## References
 
 Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions
-with stochastic volatility. *Journal of Business \& Economic Statistics*, 29(3), pp. 327-341.
+with stochastic volatility. *Journal of Business \& Economic Statistics*, 29(3), pp. 327–341.
 
 Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series methods for empirical macroeconomics.
-*Foundations and Trends in Econometrics*, 3(4), pp. 267-358. 
+*Foundations and Trends in Econometrics*, 3(4), pp. 267–358. 
 
-Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630-650. 
+Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630–650.

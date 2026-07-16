@@ -84,7 +84,7 @@ Omega_Psi <-
   )
 ```
 
-Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification. Below I take some inspiration from Carriero, Clark, and Marcellino (2024), which uses the exact same AR(1) stochastic volatility specification, but for an conventional BVAR.
+Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification. Below I take some inspiration from Carriero, Clark, and Marcellino (2024), which uses the exact same AR(1) stochastic volatility specification, but for a conventional BVAR.
 
 ```{r, fig.width=8, fig.height=8}
 k <- bvar_obj$setup$k
@@ -181,6 +181,6 @@ Capturing macro-economic tail risks with Bayesian vector autoregressions.
 *Journal of Money, Credit and Banking*, 56(5), pp. 1099–1127.
 
 Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series methods for empirical macroeconomics.
-*Foundations and Trends in Econometrics*, 3(4), pp. 267-358. 
+*Foundations and Trends in Econometrics*, 3(4), pp. 267–358. 
 
-Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630-650. 
+Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630–650.
