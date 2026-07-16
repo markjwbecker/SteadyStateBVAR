@@ -6,7 +6,7 @@
 \alias{SteadyStateBVAR-package}
 \title{SteadyStateBVAR: Bayesian Vector Autoregressions with Steady-State Priors}
 \description{
-Provides estimation of Bayesian vector autoregression (BVAR) models with steady-state priors via 'Stan', along with functions for unconditional and conditional forecasting and impulse response analysis. For details on the steady-state BVAR model see Villani (2009) \doi{10.1002/jae.1065}.
+Provides estimation of Bayesian vector autoregression (BVAR) models with steady-state priors via 'Stan', along with functions for unconditional and conditional forecasting, as well as impulse response analysis. For details on the steady-state BVAR model see Villani (2009) \doi{10.1002/jae.1065}.
 }
 \seealso{
 Useful links:
