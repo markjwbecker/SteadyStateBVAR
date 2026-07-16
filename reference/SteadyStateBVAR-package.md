@@ -14,6 +14,9 @@ Useful links:
 
 - <https://markjwbecker.github.io/SteadyStateBVAR/>
 
+- Report bugs at
+  <https://github.com/markjwbecker/SteadyStateBVAR/issues>
+
 ## Author
 
 **Maintainer**: Mark Becker <mark.jw.becker@gmail.com> \[copyright
