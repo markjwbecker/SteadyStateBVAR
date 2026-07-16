@@ -13,6 +13,7 @@ Useful links:
 \itemize{
   \item \url{https://github.com/markjwbecker/SteadyStateBVAR}
   \item \url{https://markjwbecker.github.io/SteadyStateBVAR/}
+  \item Report bugs at \url{https://github.com/markjwbecker/SteadyStateBVAR/issues}
 }
 
 }
