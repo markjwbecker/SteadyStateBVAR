@@ -84,21 +84,24 @@ Omega_Psi <-
   )
 ```
 
-Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification.
+Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification. I take some inspiration from Clark (2011) below.
 
 ```{r, fig.width=8, fig.height=8}
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
+sigma2 <- diag(bvar_obj$setup$Sigma_AR)
 
 SV_priors_RW <- list(
                      theta_A             =  rep(0, n_free_params_A),
                      Omega_A             =  diag(10, n_free_params_A),
-                     mu_log_lambda_1     =  rep(0, k),
-                     sigma2_log_lambda_1 =  rep(10, k),
+                     mu_log_lambda_1     =  log(sigma2),
+                     sigma2_log_lambda_1 =  rep(4, k),
                      alpha_phi           =  rep(5, k),
                      beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
                     )
 ```
+
+Here `sigma2` contains the residual variances from AR($p$) models (the same ones we used in the Minnesota prior).
 
 Let's put everything into the `priors()` function.
 

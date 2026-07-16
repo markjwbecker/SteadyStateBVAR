@@ -84,25 +84,28 @@ Omega_Psi <-
   )
 ```
 
-Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification.
+Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification. Below I take some inspiration from Carriero, Clark, and Marcellino (2024), which uses the exact same AR(1) stochastic volatility specification, but for an conventional BVAR.
 
 ```{r, fig.width=8, fig.height=8}
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
+sigma2 <- diag(bvar_obj$setup$Sigma_AR)
 
 SV_priors_AR1 <- list(
                       theta_A            =  rep(0, n_free_params_A),
                       Omega_A            =  diag(10, n_free_params_A),
-                      theta_gamma_0      =  rep(0, k),
-                      Omega_gamma_0      =  diag(10, k),
+                      theta_gamma_0      =  0.1 * log(sigma2),
+                      Omega_gamma_0      =  diag(2, k),
                       theta_gamma_1      =  rep(0.9, k),
-                      Omega_gamma_1      =  diag(1, k),
-                      theta_log_lambda_1 =  rep(0, k),
-                      Omega_log_lambda_1 =  diag(10, k),
+                      Omega_gamma_1      =  diag(0.04, k),
+                      theta_log_lambda_1 =  log(sigma2),
+                      Omega_log_lambda_1 =  diag(2, k),
                       V_Phi              = (5 - k - 1) * 0.1 * diag(k),
                       m_Phi              =  5
                      )
 ```
+
+Here `sigma2` contains the residual variances from AR($p$) models (the same ones we used in the Minnesota prior).
 
 Let's put everything into the `priors()` function.
 
@@ -172,6 +175,10 @@ IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 
 
 ## References
+
+Carriero, A., Clark, T. E., and Marcellino, M. (2024).
+Capturing macro-economic tail risks with Bayesian vector autoregressions. 
+*Journal of Money, Credit and Banking*, 56(5), pp. 1099–1127.
 
 Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series methods for empirical macroeconomics.
 *Foundations and Trends in Econometrics*, 3(4), pp. 267-358. 
