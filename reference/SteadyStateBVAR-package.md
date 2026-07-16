@@ -1,9 +1,9 @@
 # SteadyStateBVAR: Bayesian Vector Autoregressions with Steady-State Priors
 
-Provides estimation of Bayesian Vector Autoregression (BVAR) models with
+Provides estimation of Bayesian vector autoregression (BVAR) models with
 steady-state priors via 'Stan', along with functions for unconditional
-and conditional forecasting, and impulse response analysis. For more
-details on the steady-state BVAR model see Villani (2009)
+and conditional forecasting and impulse response analysis. For details
+on the steady-state BVAR model see Villani (2009)
 [doi:10.1002/jae.1065](https://doi.org/10.1002/jae.1065) .
 
 ## See also
