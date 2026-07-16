@@ -232,13 +232,13 @@ An uninformative prior is specified by setting
 from the VAR(\(p\)) (including the constant and dummy/trend variable if applicable), and \(m=k+2\).
 For the stochastic volatility specifications, the innovation covariance matrix is now time-varying \(\Sigma_{u,t}\).
 Therefore, stochastic volatility priors are needed, see <a href="bvar.html">bvar</a> for more details. For the Random Walk
-(<code>RW</code>) stochastic volatility specification, the following priors are used</p>
+(<code>"RW"</code>) stochastic volatility specification, the following priors are used</p>
 <p>$$\begin{aligned}a &amp;\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \ln \lambda_{i,1} &amp;\sim \mathrm{N}(\mu_{\ln \lambda_{i,1}}, \sigma^2_{\ln \lambda_{i,1}}) \\
 \phi_i &amp;\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}$$</p>
 <p>Here \(a\) is a \(k(k-1)/2\)-dimensional vector that collects the free parameters in \(A\) in row-major order,
-and \(\ln \lambda_{i,1}\) are the time \(t=1\) values (initial conditions) of \(\ln \lambda_{i,t}, i=1,\dots,k\).
-Furthermore, \(\phi_i , i=1,\dots,k\) are the log volatility innovation variances. For the AR(1) (<code>AR1</code>) stochastic volatility specification, the following priors are used</p>
+and \(\ln \lambda_{i,1}\) are the time \(t=1\) values (initial conditions) of \(\ln \lambda_{i,t}\) for \(i=1,\dots,k\).
+Furthermore, \(\phi_i\) for \(i=1,\dots,k\) are the log volatility innovation variances. For the AR(1) (<code>"AR1"</code>) stochastic volatility specification, the following priors are used</p>
 <p>$$\begin{aligned}a &amp;\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &amp;\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
 \gamma_{1} &amp;\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\

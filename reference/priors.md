@@ -227,7 +227,7 @@ volatility specifications, the innovation covariance matrix is now
 time-varying \\\Sigma\_{u,t}\\. Therefore, stochastic volatility priors
 are needed, see
 [bvar](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
-for more details. For the Random Walk (`RW`) stochastic volatility
+for more details. For the Random Walk (`"RW"`) stochastic volatility
 specification, the following priors are used
 
 \$\$\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\ \ln
@@ -237,9 +237,9 @@ specification, the following priors are used
 
 Here \\a\\ is a \\k(k-1)/2\\-dimensional vector that collects the free
 parameters in \\A\\ in row-major order, and \\\ln \lambda\_{i,1}\\ are
-the time \\t=1\\ values (initial conditions) of \\\ln \lambda\_{i,t},
-i=1,\dots,k\\. Furthermore, \\\phi_i , i=1,\dots,k\\ are the log
-volatility innovation variances. For the AR(1) (`AR1`) stochastic
+the time \\t=1\\ values (initial conditions) of \\\ln \lambda\_{i,t}\\
+for \\i=1,\dots,k\\. Furthermore, \\\phi_i\\ for \\i=1,\dots,k\\ are the
+log volatility innovation variances. For the AR(1) (`"AR1"`) stochastic
 volatility specification, the following priors are used
 
 \$\$\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\ \gamma\_{0}
