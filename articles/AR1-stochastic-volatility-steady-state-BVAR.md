@@ -389,7 +389,7 @@ of Money, Credit and Banking*, 56(5), pp. 1099–1127.
 
 Koop, G. and Korobilis, D. (2010). Bayesian multivariate time series
 methods for empirical macroeconomics. *Foundations and Trends in
-Econometrics*, 3(4), pp. 267-358.
+Econometrics*, 3(4), pp. 267–358.
 
 Villani, M. (2009). Steady-state priors for vector autoregressions.
-*Journal of Applied Econometrics*, 24(4), pp. 630-650.
+*Journal of Applied Econometrics*, 24(4), pp. 630–650.

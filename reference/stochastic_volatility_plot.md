@@ -131,8 +131,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000137 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.37 seconds.
+#> Chain 1: Gradient evaluation took 0.000174 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.74 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -157,9 +157,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.021 seconds (Warm-up)
-#> Chain 1:                1.462 seconds (Sampling)
-#> Chain 1:                1.483 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.032 seconds (Warm-up)
+#> Chain 1:                1.86 seconds (Sampling)
+#> Chain 1:                1.892 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 1 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
 #> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded
