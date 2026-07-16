@@ -92,7 +92,7 @@ Now we need to specify our stochastic volatility priors. See
 [`?priors`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md)
 for more information about the prior specification. Below I take some
 inspiration from Carriero, Clark, and Marcellino (2024), which uses the
-exact same AR(1) stochastic volatility specification, but for an
+exact same AR(1) stochastic volatility specification, but for a
 conventional BVAR.
 
 ``` r
