@@ -64,7 +64,7 @@ parameters {
 transformed parameters {
   matrix[k,k] A;
   matrix[k,k] Ainv;
-  matrix[k,k] Sigma_u[N]; //time varying covariance matrix of reduced form errors u_t
+  array[N] matrix[k,k] Sigma_u; //time varying covariance matrix of reduced form errors u_t
   matrix[N, k] log_lambda; //log volatilities
   // construct A (1's on diagonal, and then free parameters on lower triangular)
   A = diag_matrix(rep_vector(1,k));
@@ -113,14 +113,14 @@ model {
 
 generated quantities {
 
-  matrix[k, k] Pi[p];
+  array[p] matrix[k, k] Pi;
   for (i in 1:p) {
     Pi[i] = (beta[((i - 1) * k + 1):(i * k), :])'; //extract Pi_1, ..., Pi_p
   }
   
   matrix[H,k] y_pred;
   matrix[H,k] log_lambda_pred;
-  matrix[k,k] Sigma_u_pred[H];
+  array[H] matrix[k,k] Sigma_u_pred;
 
   
   for (i in 1:k) {
