@@ -20,7 +20,7 @@ jobs:
       matrix:
         config:
           - {os: macos-latest,   r: 'release'}
-          - {os: windows-latest, r: 'release'}
+          - {os: windows-2022, r: 'release'}
           - {os: ubuntu-latest,   r: 'devel', http-user-agent: 'release'}
           - {os: ubuntu-latest,   r: 'release'}
           - {os: ubuntu-latest,   r: 'oldrel-1'}
@@ -43,14 +43,6 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
           needs: check
-          cache: false
-
-      - name: Check Rtools
-        shell: bash
-        run: |
-          R --version
-          gcc --version
-          g++ --version
 
       - uses: r-lib/actions/check-r-package@v2
         with:
