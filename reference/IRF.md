@@ -110,8 +110,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 0.000108 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.08 seconds.
+#> Chain 1: Gradient evaluation took 0.000103 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.03 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
