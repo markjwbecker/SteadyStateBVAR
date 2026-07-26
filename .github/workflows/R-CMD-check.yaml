@@ -45,6 +45,13 @@ jobs:
           needs: check
           cache: false
 
+      - name: Check Rtools
+        shell: bash
+        run: |
+          R --version
+          gcc --version
+          g++ --version
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
