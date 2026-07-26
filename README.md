@@ -5,9 +5,13 @@
 
 <!-- badges: start -->
 
-[![Codecov test
-coverage](https://codecov.io/gh/markjwbecker/steady_state_bvar/graph/badge.svg)](https://app.codecov.io/gh/markjwbecker/steady_state_bvar)
 [![R-CMD-check](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/SteadyStateBVAR)](https://CRAN.R-project.org/package=SteadyStateBVAR)
+[![CRAN
+downloads](https://cranlogs.r-pkg.org/badges/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
+[![CRAN downloads
+total](https://cranlogs.r-pkg.org/badges/grand-total/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
 <!-- badges: end -->
 
 With this package, the user can estimate the steady-state BVAR model of
@@ -118,13 +122,13 @@ The prior means (the elements of $\theta_\beta$) are set to
 $$\begin{aligned}
 \mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&=
 \begin{cases}
-\kappa & \text{if } \ell = 1 \ \mathrm{and} \ i = j \\
-0 & \mathrm{otherwise}
+\kappa & \text{if } \ell = 1 \ \text{and} \ i = j \\
+0 & \text{otherwise}
 \end{cases}\\
 \kappa&=
 \begin{cases}
-\kappa^{level} & \text{if } \mathrm{variable} \ i \ \mathrm{is in level} \\
-\kappa^{\Delta} & \text{if }\mathrm{variable} \ i \ \mathrm{is in difference}
+\kappa^{level} & \text{if} \  \text{variable} \ i \ \text{is in level} \\
+\kappa^{\Delta} & \text{if} \ \text{variable} \ i \ \text{is in difference}
 \end{cases}\\
 \end{aligned}$$
 
