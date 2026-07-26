@@ -41,12 +41,14 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: |
-            any::rcmdcheck
-            rstan
-            rstantools
-            StanHeaders
+          extra-packages: any::rcmdcheck
           needs: check
+          cache: false
+
+      - name: Find DLL
+        shell: cmd
+        run: |
+          dir /s SteadyStateBVAR.dll
 
       - uses: r-lib/actions/check-r-package@v2
         with:
