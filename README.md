@@ -322,7 +322,7 @@ print(stan_fit)
 #unconditional forecasts
 #see last forecasts in Figures 1-3 in Villani (2009)
 fcst <- forecast(bvar_obj,
-                 pi = 0.95, #pi = prediction interval
+                 pi = 0.68, #pi = prediction interval
                  fcst_type = "mean",
                  growth_rate_idx = c(4,5), #convert QoQ forecasts to YoY
                  plot_idx = c(4,5,6))
