@@ -32,7 +32,7 @@ Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.
 (default), all variables are plotted. Forecasts are always computed and
 returned for all variables, regardless of \code{plot_idx}.}
 
-\item{show_all}{Logical. If \code{FALSE} (default), only the last two years
+\item{show_all}{Logical. If \code{FALSE} (default), the last eight years
 of history are shown alongside the forecast. If \code{TRUE}, the full
 history is shown.}
 }

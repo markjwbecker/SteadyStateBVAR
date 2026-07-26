@@ -18,7 +18,7 @@
 #' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
 #'   (default), all variables are plotted. Forecasts are always computed and
 #'   returned for all variables, regardless of \code{plot_idx}.
-#' @param show_all Logical. If \code{FALSE} (default), only the last two years
+#' @param show_all Logical. If \code{FALSE} (default), the last eight years
 #'   of history are shown alongside the forecast. If \code{TRUE}, the full
 #'   history is shown.
 #'
@@ -130,23 +130,17 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
         upper_full <- c(tail(annual_hist, 1), annual_upper)
         
         if (isFALSE(show_all)) {
-          xlim_vals    <- c(head(time_fore, 1) - (freq * 2), tail(time_fore, 1))
+          xlim_vals    <- c(head(time_fore, 1) - 8, tail(time_fore, 1))
           hist_in_plot <- annual_hist[time_hist >= xlim_vals[1] & time_hist <= xlim_vals[2]]
           ylim         <- range(c(hist_in_plot, annual_lower, annual_upper), na.rm = TRUE)
-          ymin         <- floor(ylim[1] * 2) / 2
-          ymax         <- ceiling(ylim[2] * 2) / 2
-          yticks       <- seq(ymin, ymax, by = 0.5)
           
           plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"),
                   xlab = "Time", ylab = NULL,
-                  xlim = c(head(time_fore, 1) - (freq * 2), tail(time_fore, 1)),
-                  ylim = ylim, col = "black", lwd = 2, yaxt = "n")
-          abline(v = seq(head(time_hist, 1), tail(time_fore, 1), by = 1 / freq),
-                 col = "gray", lty = 2)
-          abline(h = yticks, col = "gray", lty = 2)
-          axis(side = 2, at = yticks, labels = yticks, las = 1)
-          points(as.numeric(time_hist), annual_hist, pch = 16, col = "black")
-          points(time_full[-1], m_full[-1], pch = 16, col = "blue")
+                  xlim = xlim_vals,
+                  ylim = ylim, col = "black", lwd = 2)
+          grid(col = "gray", lty = "dotted") 
+          points(as.numeric(time_hist), annual_hist, pch = 16, col = "black", cex=0.5)
+          points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.5)
         } else {
           plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"),
                   xlab = "Time", ylab = NULL, col = "black", lwd = 2,
@@ -171,22 +165,19 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
         upper_full <- c(tail(smply, 1), fcst_upper)
         
         if (isFALSE(show_all)) {
-          xlim_vals    <- c(head(time_fore, 1) - (freq * 2), tail(time_fore, 1))
+          xlim_vals    <- c(head(time_fore, 1) - 8, tail(time_fore, 1))
           hist_in_plot <- smply[time_hist >= xlim_vals[1] & time_hist <= xlim_vals[2]]
           ylim         <- range(c(hist_in_plot, lower_full, upper_full), na.rm = TRUE)
-          ymin         <- floor(ylim[1] * 2) / 2
-          ymax         <- ceiling(ylim[2] * 2) / 2
-          yticks       <- seq(ymin, ymax, by = 0.5)
+          
+          
+          
           
           plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
-                  xlim = c(head(time_fore, 1) - (freq * 2), tail(time_fore, 1)),
-                  ylim = ylim, col = "black", lwd = 2, yaxt = "n")
-          abline(v = seq(head(time_hist, 1), tail(time_fore, 1), by = 1 / freq),
-                 col = "gray", lty = 2)
-          abline(h = yticks, col = "gray", lty = 2)
-          axis(side = 2, at = yticks, labels = yticks, las = 1)
-          points(as.numeric(time_hist), smply, pch = 16, col = "black")
-          points(time_full[-1], m_full[-1], pch = 16, col = "blue")
+                  xlim = xlim_vals,
+                  ylim = ylim, col = "black", lwd = 2)
+          grid(col = "gray", lty = "dotted") 
+          points(as.numeric(time_hist), smply, pch = 16, col = "black", cex=0.5)
+          points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.5)
         } else {
           plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
                   col = "black", lwd = 2,
