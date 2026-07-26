@@ -14,3 +14,4 @@
 ^vignettes/*\.Rmd\.orig$
 ^doc$
 ^Meta$
+^CRAN-SUBMISSION$
