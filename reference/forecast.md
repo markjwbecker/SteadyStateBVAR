@@ -52,7 +52,7 @@ forecast(
 
 - show_all:
 
-  Logical. If `FALSE` (default), only the last two years of history are
+  Logical. If `FALSE` (default), the last eight years of history are
   shown alongside the forecast. If `TRUE`, the full history is shown.
 
 ## Value
@@ -94,8 +94,8 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 7.1e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.71 seconds.
+#> Chain 1: Gradient evaluation took 7.5e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.75 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -121,8 +121,8 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
 #> Chain 1:  Elapsed Time: 0.027 seconds (Warm-up)
-#> Chain 1:                0.085 seconds (Sampling)
-#> Chain 1:                0.112 seconds (Total)
+#> Chain 1:                0.082 seconds (Sampling)
+#> Chain 1:                0.109 seconds (Total)
 #> Chain 1: 
 #> Warning: The largest R-hat is 1.08, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
