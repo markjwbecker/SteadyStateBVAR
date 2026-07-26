@@ -107,10 +107,10 @@ is used
 The prior means (the elements of \\\theta\_\beta\\) are set to
 
 \\\begin{aligned} \mathrm{E}\left(\Pi\_{\ell}^{(i,j)}\right)&=
-\begin{cases} \kappa & \text{if } \ell = 1 \\ \mathrm{and} \\ i = j \\ 0
-& \mathrm{otherwise} \end{cases}\\ \kappa&= \begin{cases} \kappa^{level}
-& \text{if } \mathrm{variable} \\ i \\ \mathrm{is in level} \\
-\kappa^{\Delta} & \text{if }\mathrm{variable} \\ i \\ \mathrm{is in
+\begin{cases} \kappa & \text{if } \ell = 1 \\ \text{and} \\ i = j \\ 0 &
+\text{otherwise} \end{cases}\\ \kappa&= \begin{cases} \kappa^{level} &
+\text{if} \\ \text{variable} \\ i \\ \text{is in level} \\
+\kappa^{\Delta} & \text{if} \\ \text{variable} \\ i \\ \text{is in
 difference} \end{cases}\\ \end{aligned}\\
 
 Here, the autoregressive coefficient \\\Pi\_{\ell}^{(i,j)}\\ is element

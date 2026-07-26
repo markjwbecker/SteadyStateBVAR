@@ -104,13 +104,13 @@
 <p><span class="math display">\[\begin{aligned}
 \mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&amp;=
 \begin{cases}
-\kappa &amp; \text{if } \ell = 1 \ \mathrm{and} \ i = j \\
-0 &amp; \mathrm{otherwise}
+\kappa &amp; \text{if } \ell = 1 \ \text{and} \ i = j \\
+0 &amp; \text{otherwise}
 \end{cases}\\
 \kappa&amp;=
 \begin{cases}
-\kappa^{level} &amp; \text{if } \mathrm{variable} \ i \ \mathrm{is in level} \\
-\kappa^{\Delta} &amp; \text{if }\mathrm{variable} \ i \ \mathrm{is in difference}
+\kappa^{level} &amp; \text{if} \  \text{variable} \ i \ \text{is in level} \\
+\kappa^{\Delta} &amp; \text{if} \ \text{variable} \ i \ \text{is in difference}
 \end{cases}\\
 \end{aligned}\]</span></p>
 <p>Here, the autoregressive coefficient <span class="math inline">\(\Pi_{\ell}^{(i,j)}\)</span> is element <span class="math inline">\(\left(i,j\right)\)</span> of <span class="math inline">\(\Pi_{\ell}\)</span> for <span class="math inline">\(\ell=1,\dots,p\)</span>. As such, the Minnesota prior sets all prior means for the elements in <span class="math inline">\(\beta\)</span> to <span class="math inline">\(0\)</span>, except for the elements that relate to the first own lags of the variables, which are set to <span class="math inline">\(\kappa\)</span>. If variable <span class="math inline">\(i\)</span> is in level (e.g. nominal interest rate), then <span class="math inline">\(\kappa=\kappa^{level}\)</span>, and typical choices for <span class="math inline">\(\kappa^{level}\)</span> are <span class="math inline">\(1\)</span> or <span class="math inline">\(0.9\)</span>. Evaluating the equations at their prior means, equation <span class="math inline">\(i\)</span> becomes a random walk if <span class="math inline">\(\kappa^{level}=1\)</span> and a persistent stationary AR(1) process if <span class="math inline">\(\kappa^{level}=0.9\)</span>. Since the steady state only exists if the process is stationary, <span class="math inline">\(0.9\)</span> is recommended for the steady-state BVAR. If variable <span class="math inline">\(i\)</span> is in difference (e.g. output growth), then <span class="math inline">\(\kappa=\kappa^{\Delta}\)</span>, and the most common choice for <span class="math inline">\(\kappa^{\Delta}\)</span> is <span class="math inline">\(0\)</span>, i.e. equation <span class="math inline">\(i\)</span> becomes (when evaluating it at its prior means) a random walk expressed in first differences. If a differenced variable still shows some degree of persistence (can be examined with an ACF plot), a suitable value for <span class="math inline">\(\kappa^{\Delta}\)</span> can be (for example) <span class="math inline">\(0.6\)</span> instead of <span class="math inline">\(0\)</span>. Moving on to the prior variances, <span class="math inline">\(\Omega_\beta\)</span> is a diagonal matrix containing the prior variances for the elements in <span class="math inline">\(\beta\)</span>. They are specified as</p>
@@ -335,8 +335,10 @@
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://app.codecov.io/gh/markjwbecker/steady_state_bvar" class="external-link"><img src="https://codecov.io/gh/markjwbecker/steady_state_bvar/graph/badge.svg" alt="Codecov test coverage"></a></li>
 <li><a href="https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://CRAN.R-project.org/package=SteadyStateBVAR" class="external-link"><img src="https://www.r-pkg.org/badges/version/SteadyStateBVAR" alt="CRAN status"></a></li>
+<li><a href="https://cran.r-project.org/package=SteadyStateBVAR" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/SteadyStateBVAR" alt="CRAN downloads"></a></li>
+<li><a href="https://cran.r-project.org/package=SteadyStateBVAR" class="external-link"><img src="https://cranlogs.r-pkg.org/badges/grand-total/SteadyStateBVAR" alt="CRAN downloads total"></a></li>
 </ul>
 </div>
 
