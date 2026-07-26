@@ -65,7 +65,7 @@ model {
 
 generated quantities {
 
-  matrix[k, k] Pi[p];
+  array[p] matrix[k, k] Pi;
   for (i in 1:p) {
     Pi[i] = (beta[((i - 1) * k + 1):(i * k), :])'; //extract Pi_1, ..., Pi_p
   }
