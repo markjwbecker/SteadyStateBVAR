@@ -100,8 +100,8 @@ SV_priors_AR1 <- list(
                       Omega_gamma_1      =  diag(0.04, k),
                       theta_log_lambda_1 =  log(sigma2),
                       Omega_log_lambda_1 =  diag(2, k),
-                      V_Phi              = (5 - k - 1) * 0.1 * diag(k),
-                      m_Phi              =  5
+                      V_Phi              = (7 - k - 1) * 0.5 * diag(k),
+                      m_Phi              =  7
                      )
 ```
 

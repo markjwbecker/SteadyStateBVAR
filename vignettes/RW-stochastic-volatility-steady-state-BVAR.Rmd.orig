@@ -96,8 +96,8 @@ SV_priors_RW <- list(
                      Omega_A             =  diag(10, n_free_params_A),
                      mu_log_lambda_1     =  log(sigma2),
                      sigma2_log_lambda_1 =  rep(4, k),
-                     alpha_phi           =  rep(5, k),
-                     beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
+                     alpha_phi           =  rep(3, k),
+                     beta_phi            =  rep(1, k)
                     )
 ```
 
