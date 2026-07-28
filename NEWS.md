@@ -1,4 +1,4 @@
-# SteadyStateBVAR (development version)
+# SteadyStateBVAR 0.1.1
 
 * Stan code now uses the new array syntax (@andrjohns, #4).
 
