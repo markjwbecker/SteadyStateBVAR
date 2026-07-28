@@ -1,6 +1,12 @@
 # SteadyStateBVAR (development version)
 
+* Stan code now uses the new array syntax (@andrjohns, #4).
+
+* Small rework of plotting in `forecast()` and corrected documentation. 
+
 # SteadyStateBVAR 0.1.0
+
+* Initial CRAN release.
 
 # SteadyStateBVAR 0.0.0.9000
 

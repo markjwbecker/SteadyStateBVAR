@@ -114,7 +114,7 @@ priors are needed. Following Villani (2009), prior independence between
 $\beta, \Psi$ and $\Sigma_u$ is assumed. For $\beta$, the Minnesota
 prior is used
 
-$$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]$$
+$$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)$$
 
 The prior means (the elements of $\theta_\beta$) are set to
 
@@ -168,7 +168,7 @@ $i$ with $p$ lags (including the constant and dummy/trend variable if
 applicable). Moving on to $\Psi$, which contains the steady-state
 parameters, the prior is
 
-$$\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]$$
+$$\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}(\theta_\Psi,\Omega_\Psi)$$
 
 This is the core of the steady-state BVAR model. In $\theta_\Psi$, we
 specify our prior beliefs about the location of the steady state, and in

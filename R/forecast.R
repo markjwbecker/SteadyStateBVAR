@@ -139,8 +139,8 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
                   xlim = xlim_vals,
                   ylim = ylim, col = "black", lwd = 2)
           grid(col = "gray", lty = "dotted") 
-          points(as.numeric(time_hist), annual_hist, pch = 16, col = "black", cex=0.5)
-          points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.5)
+          points(as.numeric(time_hist), annual_hist, pch = 16, col = "black", cex=0.8)
+          points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.8)
         } else {
           plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"),
                   xlab = "Time", ylab = NULL, col = "black", lwd = 2,
@@ -176,8 +176,8 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
                   xlim = xlim_vals,
                   ylim = ylim, col = "black", lwd = 2)
           grid(col = "gray", lty = "dotted") 
-          points(as.numeric(time_hist), smply, pch = 16, col = "black", cex=0.5)
-          points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.5)
+          points(as.numeric(time_hist), smply, pch = 16, col = "black", cex=0.8)
+          points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.8)
         } else {
           plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
                   col = "black", lwd = 2,

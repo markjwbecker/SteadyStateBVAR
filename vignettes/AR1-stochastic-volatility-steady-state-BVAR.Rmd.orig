@@ -84,7 +84,7 @@ Omega_Psi <-
   )
 ```
 
-Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification. Below I take some inspiration from Carriero, Clark, and Marcellino (2024), which uses the exact same AR(1) stochastic volatility specification, but for a conventional BVAR.
+Now we need to specify our stochastic volatility priors. See `?priors` for more information about the prior specification. Below I take inspiration from Carriero, Clark, and Marcellino (2024), which uses the exact same AR(1) stochastic volatility specification, but for a conventional BVAR.
 
 ```{r, fig.width=8, fig.height=8}
 k <- bvar_obj$setup$k
@@ -100,8 +100,8 @@ SV_priors_AR1 <- list(
                       Omega_gamma_1      =  diag(0.04, k),
                       theta_log_lambda_1 =  log(sigma2),
                       Omega_log_lambda_1 =  diag(2, k),
-                      V_Phi              = (7 - k - 1) * 0.5 * diag(k),
-                      m_Phi              =  7
+                      V_Phi              = (10 - k - 1) * 0.03 * diag(k),
+                      m_Phi              =  10
                      )
 ```
 

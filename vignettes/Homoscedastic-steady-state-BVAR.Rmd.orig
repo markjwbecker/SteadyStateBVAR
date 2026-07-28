@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 knitr::opts_chunk$set(fig.cap = NULL)
 ```
 
-Here we estimate the original (homoscedastic - i.e. constant innovation covariance matrix $\Sigma_{u}$) steady-state BVAR model from Section 4.1 of Villani (2009).
+Here we estimate the original (homoscedastic - i.e. constant innovation covariance matrix $\Sigma_{u}$) steady-state BVAR model from Section 4.1 of Villani (2009). See `?bvar` for details on the model.
 
 First, let us attach the package and load the data.
 

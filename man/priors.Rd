@@ -82,7 +82,7 @@ The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u}, so priors are nee
 Following Villani (2009), prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed. For \eqn{\beta}, i.e. the autoregressive parameter matrix,
 the Minnesota prior is used
 
-\deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]}
+\deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)}
 
 The prior means (the elements of \eqn{\theta_\beta}) are set to
 
@@ -125,7 +125,7 @@ from a univariate autoregression for variable \eqn{i} with \eqn{p} lags
 (including the constant and dummy/trend variable if applicable). Moving on to \eqn{\Psi}, the steady-state parameter matrix, the
 prior is
 
-\deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]}
+\deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}(\theta_\Psi,\Omega_\Psi)}
 
 This is the core of the steady-state BVAR model.
 In \eqn{\theta_\Psi}, one specifies the prior beliefs about the location of the steady state,
