@@ -99,7 +99,7 @@
 <p>We can then rewrite the model as a nonlinear regression (Karlsson, 2013)</p>
 <p><span class="math display">\[y_t' =d_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t'\]</span></p>
 <p>where <span class="math inline">\(w_t'=(y_{t-1}',\dots,y_{t-p}')\)</span> is a <span class="math inline">\(kp\)</span>-dimensional vector of lagged endogenous variables and <span class="math inline">\(q_t'=(d_{t-1}',\dots,d_{t-p}')\)</span> is a <span class="math inline">\(qp\)</span>-dimensional vector of lagged deterministic (exogenous) variables, <span class="math inline">\(I_p\)</span> is the <span class="math inline">\((p \times p)\)</span> identity matrix and <span class="math inline">\(\otimes\)</span> denotes the Kronecker product. This is how the likelihood is written in the Stan code. The goal is to estimate <span class="math inline">\(\beta, \Psi\)</span>, and <span class="math inline">\(\Sigma_u\)</span>, and as such priors are needed. Following Villani (2009), prior independence between <span class="math inline">\(\beta, \Psi\)</span> and <span class="math inline">\(\Sigma_u\)</span> is assumed. For <span class="math inline">\(\beta\)</span>, the Minnesota prior is used</p>
-<p><span class="math display">\[\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]\]</span></p>
+<p><span class="math display">\[\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)\]</span></p>
 <p>The prior means (the elements of <span class="math inline">\(\theta_\beta\)</span>) are set to</p>
 <p><span class="math display">\[\begin{aligned}
 \mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&amp;=
@@ -120,7 +120,7 @@
 \left(\frac{\lambda_1 \lambda_2\sigma_i}{\ell^{\lambda_3}\sigma_j}\right)^2&amp; \text{if } i \neq j
 \end{cases}\]</span></p>
 <p>Here <span class="math inline">\(\lambda_1\)</span>, <span class="math inline">\(\lambda_2\)</span>, and <span class="math inline">\(\lambda_3\)</span> are scalar hyperparameters known as the overall tightness, the cross-equation tightness and the lag decay rate. Furthermore, <span class="math inline">\(\sigma_i^2\)</span> is the <span class="math inline">\((i,i)\)</span>:th element of <span class="math inline">\(\Sigma_u\)</span>, which we do not know and therefore replace with an estimate. In this package, it is replaced by the least squares residual variance from a univariate autoregression for variable <span class="math inline">\(i\)</span> with <span class="math inline">\(p\)</span> lags (including the constant and dummy/trend variable if applicable). Moving on to <span class="math inline">\(\Psi\)</span>, which contains the steady-state parameters, the prior is</p>
-<p><span class="math display">\[\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]\]</span></p>
+<p><span class="math display">\[\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}(\theta_\Psi,\Omega_\Psi)\]</span></p>
 <p>This is the core of the steady-state BVAR model. In <span class="math inline">\(\theta_\Psi\)</span>, we specify our prior beliefs about the location of the steady state, and in <span class="math inline">\(\Omega_\Psi\)</span>, which we assume to be a diagonal matrix, we specify our degree of certainty in those prior beliefs. Finally, the prior for <span class="math inline">\(\Sigma_u\)</span> is the usual non-informative Jeffreys prior</p>
 <p><span class="math display">\[p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}\]</span></p>
 <p>Alternatively, a proper inverse-Wishart prior can be used (Karlsson, 2013)</p>

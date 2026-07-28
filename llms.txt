@@ -102,7 +102,7 @@ needed. Following Villani (2009), prior independence between \\\beta,
 is used
 
 \\\mathrm{vec}(\beta) \sim \mathrm{N}\_{kpk}
-\left\[\theta\_\beta,\Omega\_\beta\right\]\\
+(\theta\_\beta,\Omega\_\beta)\\
 
 The prior means (the elements of \\\theta\_\beta\\) are set to
 
@@ -151,8 +151,7 @@ squares residual variance from a univariate autoregression for variable
 if applicable). Moving on to \\\Psi\\, which contains the steady-state
 parameters, the prior is
 
-\\\mathrm{vec}(\Psi) \sim
-\mathrm{N}\_{kq}\left\[\theta\_\Psi,\Omega\_\Psi\right\]\\
+\\\mathrm{vec}(\Psi) \sim \mathrm{N}\_{kq}(\theta\_\Psi,\Omega\_\Psi)\\
 
 This is the core of the steady-state BVAR model. In \\\theta\_\Psi\\, we
 specify our prior beliefs about the location of the steady state, and in

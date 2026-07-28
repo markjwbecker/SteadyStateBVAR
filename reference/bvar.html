@@ -80,8 +80,11 @@ variable and each row is a time period.</p></dd>
 <p>where \(y_t\) is an \(k\)-dimensional vector of endogenous variables at time \(t\), and \(d_t\) is
 a \(q\)-dimensional vector of deterministic (exogenous) variables at time \(t\).
 Here \(\Pi_\ell\) for \(\ell=1,\dots,p\) is a \((k \times k)\) matrix of autoregressive parameters,
-and \(\Psi\) is a \((k \times q)\) matrix of steady-state parameters. Note that
-\(\mathrm{E}(y_t)=\mu_t=\Psi d_t\) is the unconditional mean, or the <strong>steady state</strong> of the process.
+and \(\Psi\) is a \((k \times q)\) matrix of steady-state parameters. Now</p>
+<p>$$\mathrm{E}(y_t)=\mu_t=\Psi d_t$$</p>
+<p>is the unconditional mean, or the <strong>steady state</strong> of the process.
+Note that the current version of this package only allows for \(d_t\) to contain either a constant,
+a constant and a dummy variable, or a constant and a time trend.
 One can stack the (transposed) \(\Pi_i\) matrices in the \((kp \times k)\) matrix \(\beta\)
 $$\beta=\begin{bmatrix}\Pi'_1 \\ \vdots  \\\Pi'_p\end{bmatrix}$$
 Then the model can be rewritten as a nonlinear regression (Karlsson, 2013)

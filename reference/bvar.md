@@ -38,20 +38,25 @@ time \\t\\, and \\d_t\\ is a \\q\\-dimensional vector of deterministic
 (exogenous) variables at time \\t\\. Here \\\Pi\_\ell\\ for
 \\\ell=1,\dots,p\\ is a \\(k \times k)\\ matrix of autoregressive
 parameters, and \\\Psi\\ is a \\(k \times q)\\ matrix of steady-state
-parameters. Note that \\\mathrm{E}(y_t)=\mu_t=\Psi d_t\\ is the
-unconditional mean, or the **steady state** of the process. One can
-stack the (transposed) \\\Pi_i\\ matrices in the \\(kp \times k)\\
-matrix \\\beta\\ \$\$\beta=\begin{bmatrix}\Pi'\_1 \\ \vdots
-\\\Pi'\_p\end{bmatrix}\$\$ Then the model can be rewritten as a
-nonlinear regression (Karlsson, 2013) \$\$y_t' =d_t'\Psi' +
-\left\[w_t'-q_t'(I_p \otimes \Psi') \right\]\beta +u_t'\$\$ where where
-\\w_t'=(y\_{t-1}',\dots,y\_{t-p}')\\ is a \\kp\\-dimensional vector of
-lagged endogenous variables and \\q_t'=(d\_{t-1}',\dots,d\_{t-p}')\\ is
-a \\qp\\-dimensional vector of lagged deterministic (exogenous)
-variables, \\I_p\\ is the \\(p \times p)\\ identity matrix and
-\\\otimes\\ denotes the Kronecker product. This is how the likelihood is
-written in the Stan code. The goal is to estimate \\\beta, \Psi\\, and
-\\\Sigma_u\\.
+parameters. Now
+
+\$\$\mathrm{E}(y_t)=\mu_t=\Psi d_t\$\$
+
+is the unconditional mean, or the **steady state** of the process. Note
+that the current version of this package only allows for \\d_t\\ to
+contain either a constant, a constant and a dummy variable, or a
+constant and a time trend. One can stack the (transposed) \\\Pi_i\\
+matrices in the \\(kp \times k)\\ matrix \\\beta\\
+\$\$\beta=\begin{bmatrix}\Pi'\_1 \\ \vdots \\\Pi'\_p\end{bmatrix}\$\$
+Then the model can be rewritten as a nonlinear regression (Karlsson,
+2013) \$\$y_t' =d_t'\Psi' + \left\[w_t'-q_t'(I_p \otimes \Psi')
+\right\]\beta +u_t'\$\$ where where \\w_t'=(y\_{t-1}',\dots,y\_{t-p}')\\
+is a \\kp\\-dimensional vector of lagged endogenous variables and
+\\q_t'=(d\_{t-1}',\dots,d\_{t-p}')\\ is a \\qp\\-dimensional vector of
+lagged deterministic (exogenous) variables, \\I_p\\ is the \\(p \times
+p)\\ identity matrix and \\\otimes\\ denotes the Kronecker product. This
+is how the likelihood is written in the Stan code. The goal is to
+estimate \\\beta, \Psi\\, and \\\Sigma_u\\.
 
 For the innovations to the model, in the case of the homoscedastic
 steady-state BVAR, they are \\u_t \overset{\text{iid}}{\sim}

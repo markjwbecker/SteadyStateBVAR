@@ -154,7 +154,7 @@ needed. Following Villani (2009), prior independence between \\\beta,
 autoregressive parameter matrix, the Minnesota prior is used
 
 \$\$\mathrm{vec}(\beta) \sim \mathrm{N}\_{kpk}
-\left\[\theta\_\beta,\Omega\_\beta\right\]\$\$
+(\theta\_\beta,\Omega\_\beta)\$\$
 
 The prior means (the elements of \\\theta\_\beta\\) are set to
 
@@ -204,7 +204,7 @@ if applicable). Moving on to \\\Psi\\, the steady-state parameter
 matrix, the prior is
 
 \$\$\mathrm{vec}(\Psi) \sim
-\mathrm{N}\_{kq}\left\[\theta\_\Psi,\Omega\_\Psi\right\]\$\$
+\mathrm{N}\_{kq}(\theta\_\Psi,\Omega\_\Psi)\$\$
 
 This is the core of the steady-state BVAR model. In \\\theta\_\Psi\\,
 one specifies the prior beliefs about the location of the steady state,

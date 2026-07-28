@@ -181,7 +181,7 @@ The list must contain the following named elements depending on <code>SV_type</c
     <p>The goal is to estimate \(\beta, \Psi\), and \(\Sigma_u\), so priors are needed.
 Following Villani (2009), prior independence between \(\beta, \Psi\) and \(\Sigma_u\) is assumed. For \(\beta\), i.e. the autoregressive parameter matrix,
 the Minnesota prior is used</p>
-<p>$$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} \left[\theta_\beta,\Omega_\beta\right]$$</p>
+<p>$$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)$$</p>
 <p>The prior means (the elements of \(\theta_\beta\)) are set to</p>
 <p>$$
 \begin{aligned}
@@ -218,7 +218,7 @@ replaced with an estimate. In this package, it is replaced by the least squares 
 from a univariate autoregression for variable \(i\) with \(p\) lags
 (including the constant and dummy/trend variable if applicable). Moving on to \(\Psi\), the steady-state parameter matrix, the
 prior is</p>
-<p>$$\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}\left[\theta_\Psi,\Omega_\Psi\right]$$</p>
+<p>$$\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}(\theta_\Psi,\Omega_\Psi)$$</p>
 <p>This is the core of the steady-state BVAR model.
 In \(\theta_\Psi\), one specifies the prior beliefs about the location of the steady state,
 and in \(\Omega_\Psi\), which is assumed to be a diagonal matrix, one specifies the degree
