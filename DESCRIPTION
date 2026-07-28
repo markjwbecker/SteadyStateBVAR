@@ -1,6 +1,6 @@
 Package: SteadyStateBVAR
 Title: Bayesian Vector Autoregressions with Steady-State Priors
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R:
     person("Mark", "Becker", email = "mark.jw.becker@gmail.com", role = c("aut", "cre", "cph"))
 Description: Provides estimation of Bayesian vector autoregression
