@@ -9,7 +9,13 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SteadyStateBVAR)](https://CRAN.R-project.org/package=SteadyStateBVAR)
 [![CRAN
-downloads](https://cranlogs.r-pkg.org/badges/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
+checks](https://badges.cranchecks.info/worst/SteadyStateBVAR.svg)](https://cran.r-project.org/web/checks/check_results_SteadyStateBVAR.html)
+[![CRAN
+downloads/day](https://cranlogs.r-pkg.org/badges/last-day/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
+[![CRAN
+downloads/week](https://cranlogs.r-pkg.org/badges/last-week/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
+[![CRAN
+downloads/month](https://cranlogs.r-pkg.org/badges/last-month/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
 [![CRAN downloads
 total](https://cranlogs.r-pkg.org/badges/grand-total/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
 <!-- badges: end -->
