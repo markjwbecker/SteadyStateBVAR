@@ -4,6 +4,8 @@
 
 ## SteadyStateBVAR 0.1.1
 
+CRAN release: 2026-07-28
+
 - Stan code now uses the new array syntax
   ([@andrjohns](https://github.com/andrjohns),
   [\#4](https://github.com/markjwbecker/SteadyStateBVAR/issues/4)).
