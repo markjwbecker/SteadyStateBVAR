@@ -5,19 +5,19 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/SteadyStateBVAR)](https://CRAN.R-project.org/package=SteadyStateBVAR)
 [![CRAN
 checks](https://badges.cranchecks.info/worst/SteadyStateBVAR.svg)](https://cran.r-project.org/web/checks/check_results_SteadyStateBVAR.html)
+[![R-CMD-check](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/markjwbecker/SteadyStateBVAR/actions/workflows/R-CMD-check.yaml)
 [![CRAN
-downloads/day](https://cranlogs.r-pkg.org/badges/last-day/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
+downloads/day](https://cranlogs.r-pkg.org/badges/last-day/SteadyStateBVAR)](https://cranlogs.r-pkg.org/badges/last-day/SteadyStateBVAR)
 [![CRAN
-downloads/week](https://cranlogs.r-pkg.org/badges/last-week/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
+downloads/week](https://cranlogs.r-pkg.org/badges/last-week/SteadyStateBVAR)](https://cranlogs.r-pkg.org/badges/last-week/SteadyStateBVAR)
 [![CRAN
-downloads/month](https://cranlogs.r-pkg.org/badges/last-month/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
+downloads/month](https://cranlogs.r-pkg.org/badges/last-month/SteadyStateBVAR)](https://cranlogs.r-pkg.org/badges/last-month/SteadyStateBVAR)
 [![CRAN downloads
-total](https://cranlogs.r-pkg.org/badges/grand-total/SteadyStateBVAR)](https://cran.r-project.org/package=SteadyStateBVAR)
+total](https://cranlogs.r-pkg.org/badges/grand-total/SteadyStateBVAR)](https://cranlogs.r-pkg.org/badges/grand-total/SteadyStateBVAR)
 <!-- badges: end -->
 
 With this package, the user can estimate the steady-state BVAR model of
