@@ -51,6 +51,9 @@ data {
 
 transformed data {
     matrix[p, p] I_p = diag_matrix(rep_vector(1, p)); // Identity matrix
+    vector[k*p*k] Omega_beta_diag = sqrt(diagonal(Omega_beta));
+    vector[k*q] Omega_psi_diag = sqrt(diagonal(Omega_Psi));
+    vector[k*(k-1)/2] Omega_A_diag = sqrt(diagonal(Omega_A));
 }
 
 parameters {
@@ -65,6 +68,7 @@ transformed parameters {
   matrix[k,k] A;
   matrix[k,k] Ainv;
   array[N] matrix[k,k] Sigma_u; //time varying covariance matrix of reduced form errors u_t
+  array[N] matrix[k,k] L_Sigma_u;
   matrix[N, k] log_lambda; //log volatilities
   // construct A (1's on diagonal, and then free parameters on lower triangular)
   A = diag_matrix(rep_vector(1,k));
@@ -90,22 +94,25 @@ transformed parameters {
   
   for (t in 1:N) {
     matrix[k,k] sqrt_Lambda_t = diag_matrix(sqrt(exp(log_lambda[t]')));
-    Sigma_u[t] = tcrossprod(Ainv * sqrt_Lambda_t);
+    L_Sigma_u[t] = Ainv * sqrt_Lambda_t;
+    Sigma_u[t] = tcrossprod(L_Sigma_u[t]);
   }
 }
 
 model {
   
   to_vector(z) ~ std_normal();
+  
+   matrix[p*q, p*k] Kron_I_p_Psi = kron(I_p, Psi');
+   array[N] vector[k] u;
 
   for(t in 1:N){
-      vector[k] u_t = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
-      u_t ~ multi_normal(rep_vector(0,k), Sigma_u[t]);
+      u[t] = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*Kron_I_p_Psi)*beta))';
+      u[t] ~ multi_normal_cholesky(rep_vector(0,k), L_Sigma_u[t]);
   }
-
-  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
-  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
-  a  ~ multi_normal(theta_A, Omega_A);
+  to_vector(beta) ~ normal(theta_beta, Omega_beta_diag);
+  to_vector(Psi)  ~ normal(theta_Psi,  Omega_psi_diag);
+  a               ~ normal(theta_A,    Omega_A_diag);
   for (i in 1:k) {
   phi[i] ~ inv_gamma(alpha_phi[i], beta_phi[i]);
 }
@@ -138,11 +145,15 @@ generated quantities {
     
     matrix[k,k] sqrt_Lambda;
     sqrt_Lambda = diag_matrix(sqrt(exp(log_lambda_pred[h]')));
+    matrix[k,k] L_Sigma_u_pred_h = Ainv * sqrt_Lambda;
     
-    vector[k] epsilon = multi_normal_rng(rep_vector(0,k), diag_matrix(rep_vector(1, k)));
-    vector[k] u_t = Ainv * sqrt_Lambda * epsilon;
+    vector[k] epsilon;
+    for (i in 1:k) {
+      epsilon[i] = std_normal_rng();
+    }
+    vector[k] u_t = L_Sigma_u_pred_h * epsilon;
     
-    Sigma_u_pred[h] = tcrossprod(Ainv * sqrt_Lambda);
+    Sigma_u_pred[h] = tcrossprod(L_Sigma_u_pred_h);
     
     vector[k] yhat_t = (d_pred[h]*Psi')';
 

@@ -27,92 +27,105 @@ namespace model_steady_state_bvar_RW_stochastic_volatility_namespace {
 using stan::model::model_base_crtp;
 using namespace stan::math;
 stan::math::profile_map profiles__;
-static constexpr std::array<const char*, 184> locations_array__ =
+static constexpr std::array<const char*, 206> locations_array__ =
   {" (found before start of program)",
-  " (in 'string', line 54, column 2 to column 22)",
-  " (in 'string', line 55, column 2 to column 19)",
-  " (in 'string', line 56, column 2 to column 17)",
-  " (in 'string', line 57, column 2 to column 25)",
-  " (in 'string', line 58, column 2 to column 22)",
-  " (in 'string', line 61, column 2 to column 16)",
-  " (in 'string', line 62, column 2 to column 19)",
-  " (in 'string', line 63, column 2 to column 31)",
-  " (in 'string', line 64, column 2 to column 26)",
-  " (in 'string', line 107, column 2 to column 27)",
-  " (in 'string', line 112, column 2 to column 21)",
-  " (in 'string', line 113, column 2 to column 30)",
-  " (in 'string', line 114, column 2 to column 36)",
-  " (in 'string', line 66, column 2 to column 35)",
-  " (in 'string', line 68, column 4 to column 16)",
-  " (in 'string', line 71, column 8 to column 24)",
-  " (in 'string', line 72, column 8 to column 17)",
-  " (in 'string', line 70, column 25 to line 73, column 7)",
-  " (in 'string', line 70, column 6 to line 73, column 7)",
-  " (in 'string', line 69, column 19 to line 74, column 5)",
-  " (in 'string', line 69, column 4 to line 74, column 5)",
-  " (in 'string', line 67, column 2 to line 75, column 3)",
-  " (in 'string', line 76, column 2 to column 20)",
-  " (in 'string', line 79, column 4 to column 83)",
-  " (in 'string', line 78, column 17 to line 80, column 3)",
-  " (in 'string', line 78, column 2 to line 80, column 3)",
-  " (in 'string', line 83, column 6 to column 69)",
-  " (in 'string', line 82, column 19 to line 84, column 5)",
-  " (in 'string', line 82, column 4 to line 84, column 5)",
-  " (in 'string', line 81, column 17 to line 85, column 3)",
-  " (in 'string', line 81, column 2 to line 85, column 3)",
-  " (in 'string', line 88, column 11 to column 12)",
-  " (in 'string', line 88, column 13 to column 14)",
-  " (in 'string', line 88, column 4 to column 71)",
-  " (in 'string', line 89, column 4 to column 50)",
-  " (in 'string', line 87, column 17 to line 90, column 3)",
-  " (in 'string', line 87, column 2 to line 90, column 3)",
-  " (in 'string', line 109, column 4 to column 50)",
-  " (in 'string', line 108, column 17 to line 110, column 3)",
-  " (in 'string', line 108, column 2 to line 110, column 3)",
-  " (in 'string', line 117, column 4 to column 69)",
-  " (in 'string', line 116, column 17 to line 118, column 5)",
-  " (in 'string', line 116, column 2 to line 118, column 5)",
-  " (in 'string', line 122, column 6 to column 78)",
-  " (in 'string', line 121, column 19 to line 123, column 7)",
-  " (in 'string', line 121, column 4 to line 123, column 7)",
-  " (in 'string', line 120, column 17 to line 124, column 5)",
-  " (in 'string', line 120, column 2 to line 124, column 5)",
-  " (in 'string', line 128, column 11 to column 12)",
-  " (in 'string', line 128, column 13 to column 14)",
-  " (in 'string', line 128, column 4 to column 28)",
-  " (in 'string', line 129, column 4 to column 62)",
-  " (in 'string', line 131, column 11 to column 12)",
-  " (in 'string', line 131, column 4 to column 89)",
-  " (in 'string', line 132, column 11 to column 12)",
-  " (in 'string', line 132, column 4 to column 49)",
-  " (in 'string', line 134, column 4 to column 53)",
+  " (in 'string', line 57, column 2 to column 22)",
+  " (in 'string', line 58, column 2 to column 19)",
+  " (in 'string', line 59, column 2 to column 17)",
+  " (in 'string', line 60, column 2 to column 25)",
+  " (in 'string', line 61, column 2 to column 22)",
+  " (in 'string', line 64, column 2 to column 16)",
+  " (in 'string', line 65, column 2 to column 19)",
+  " (in 'string', line 66, column 2 to column 31)",
+  " (in 'string', line 67, column 2 to column 33)",
+  " (in 'string', line 68, column 2 to column 26)",
+  " (in 'string', line 115, column 2 to column 27)",
+  " (in 'string', line 120, column 2 to column 21)",
+  " (in 'string', line 121, column 2 to column 30)",
+  " (in 'string', line 122, column 2 to column 36)",
+  " (in 'string', line 70, column 2 to column 35)",
+  " (in 'string', line 72, column 4 to column 16)",
+  " (in 'string', line 75, column 8 to column 24)",
+  " (in 'string', line 76, column 8 to column 17)",
+  " (in 'string', line 74, column 25 to line 77, column 7)",
+  " (in 'string', line 74, column 6 to line 77, column 7)",
+  " (in 'string', line 73, column 19 to line 78, column 5)",
+  " (in 'string', line 73, column 4 to line 78, column 5)",
+  " (in 'string', line 71, column 2 to line 79, column 3)",
+  " (in 'string', line 80, column 2 to column 20)",
+  " (in 'string', line 83, column 4 to column 83)",
+  " (in 'string', line 82, column 17 to line 84, column 3)",
+  " (in 'string', line 82, column 2 to line 84, column 3)",
+  " (in 'string', line 87, column 6 to column 69)",
+  " (in 'string', line 86, column 19 to line 88, column 5)",
+  " (in 'string', line 86, column 4 to line 88, column 5)",
+  " (in 'string', line 85, column 17 to line 89, column 3)",
+  " (in 'string', line 85, column 2 to line 89, column 3)",
+  " (in 'string', line 92, column 11 to column 12)",
+  " (in 'string', line 92, column 13 to column 14)",
+  " (in 'string', line 92, column 4 to column 71)",
+  " (in 'string', line 93, column 4 to column 40)",
+  " (in 'string', line 94, column 4 to column 42)",
+  " (in 'string', line 91, column 17 to line 95, column 3)",
+  " (in 'string', line 91, column 2 to line 95, column 3)",
+  " (in 'string', line 117, column 4 to column 50)",
+  " (in 'string', line 116, column 17 to line 118, column 3)",
+  " (in 'string', line 116, column 2 to line 118, column 3)",
+  " (in 'string', line 125, column 4 to column 69)",
+  " (in 'string', line 124, column 17 to line 126, column 5)",
+  " (in 'string', line 124, column 2 to line 126, column 5)",
+  " (in 'string', line 130, column 6 to column 78)",
+  " (in 'string', line 129, column 19 to line 131, column 7)",
+  " (in 'string', line 129, column 4 to line 131, column 7)",
+  " (in 'string', line 128, column 17 to line 132, column 5)",
+  " (in 'string', line 128, column 2 to line 132, column 5)",
   " (in 'string', line 136, column 11 to column 12)",
-  " (in 'string', line 136, column 4 to column 41)",
-  " (in 'string', line 139, column 8 to column 71)",
-  " (in 'string', line 138, column 31 to line 140, column 7)",
-  " (in 'string', line 138, column 6 to line 140, column 7)",
-  " (in 'string', line 137, column 15 to line 141, column 5)",
-  " (in 'string', line 137, column 4 to line 141, column 5)",
-  " (in 'string', line 144, column 8 to column 73)",
-  " (in 'string', line 143, column 21 to line 145, column 7)",
-  " (in 'string', line 143, column 6 to line 145, column 7)",
-  " (in 'string', line 142, column 16 to line 146, column 5)",
-  " (in 'string', line 142, column 4 to line 146, column 5)",
-  " (in 'string', line 147, column 4 to column 32)",
-  " (in 'string', line 126, column 17 to line 148, column 3)",
-  " (in 'string', line 126, column 2 to line 148, column 3)",
-  " (in 'string', line 94, column 2 to column 30)",
-  " (in 'string', line 96, column 13 to column 14)",
-  " (in 'string', line 96, column 6 to column 80)",
-  " (in 'string', line 97, column 6 to column 54)",
-  " (in 'string', line 95, column 15 to line 98, column 3)",
-  " (in 'string', line 95, column 2 to line 98, column 3)",
-  " (in 'string', line 99, column 2 to column 57)",
-  " (in 'string', line 100, column 2 to column 54)",
-  " (in 'string', line 101, column 2 to column 38)",
-  " (in 'string', line 103, column 2 to column 48)",
-  " (in 'string', line 102, column 17 to line 104, column 1)",
-  " (in 'string', line 102, column 2 to line 104, column 1)",
+  " (in 'string', line 136, column 13 to column 14)",
+  " (in 'string', line 136, column 4 to column 28)",
+  " (in 'string', line 137, column 4 to column 62)",
+  " (in 'string', line 138, column 11 to column 12)",
+  " (in 'string', line 138, column 13 to column 14)",
+  " (in 'string', line 138, column 4 to column 54)",
+  " (in 'string', line 140, column 11 to column 12)",
+  " (in 'string', line 140, column 4 to column 22)",
+  " (in 'string', line 142, column 6 to column 36)",
+  " (in 'string', line 141, column 19 to line 143, column 5)",
+  " (in 'string', line 141, column 4 to line 143, column 5)",
+  " (in 'string', line 144, column 11 to column 12)",
+  " (in 'string', line 144, column 4 to column 47)",
+  " (in 'string', line 146, column 4 to column 51)",
+  " (in 'string', line 148, column 11 to column 12)",
+  " (in 'string', line 148, column 4 to column 41)",
+  " (in 'string', line 151, column 8 to column 71)",
+  " (in 'string', line 150, column 31 to line 152, column 7)",
+  " (in 'string', line 150, column 6 to line 152, column 7)",
+  " (in 'string', line 149, column 15 to line 153, column 5)",
+  " (in 'string', line 149, column 4 to line 153, column 5)",
+  " (in 'string', line 156, column 8 to column 73)",
+  " (in 'string', line 155, column 21 to line 157, column 7)",
+  " (in 'string', line 155, column 6 to line 157, column 7)",
+  " (in 'string', line 154, column 16 to line 158, column 5)",
+  " (in 'string', line 154, column 4 to line 158, column 5)",
+  " (in 'string', line 159, column 4 to column 32)",
+  " (in 'string', line 134, column 17 to line 160, column 3)",
+  " (in 'string', line 134, column 2 to line 160, column 3)",
+  " (in 'string', line 99, column 2 to column 30)",
+  " (in 'string', line 101, column 10 to column 13)",
+  " (in 'string', line 101, column 15 to column 18)",
+  " (in 'string', line 101, column 3 to column 51)",
+  " (in 'string', line 102, column 9 to column 10)",
+  " (in 'string', line 102, column 19 to column 20)",
+  " (in 'string', line 102, column 3 to column 24)",
+  " (in 'string', line 104, column 6 to column 67)",
+  " (in 'string', line 105, column 6 to column 66)",
+  " (in 'string', line 103, column 15 to line 106, column 3)",
+  " (in 'string', line 103, column 2 to line 106, column 3)",
+  " (in 'string', line 107, column 2 to column 56)",
+  " (in 'string', line 108, column 2 to column 55)",
+  " (in 'string', line 109, column 2 to column 53)",
+  " (in 'string', line 111, column 2 to column 48)",
+  " (in 'string', line 110, column 17 to line 112, column 1)",
+  " (in 'string', line 110, column 2 to line 112, column 1)",
   " (in 'string', line 29, column 2 to column 17)",
   " (in 'string', line 30, column 2 to column 19)",
   " (in 'string', line 31, column 2 to column 17)",
@@ -159,33 +172,42 @@ static constexpr std::array<const char*, 184> locations_array__ =
   " (in 'string', line 51, column 11 to column 12)",
   " (in 'string', line 51, column 14 to column 15)",
   " (in 'string', line 51, column 4 to column 53)",
-  " (in 'string', line 54, column 9 to column 12)",
-  " (in 'string', line 54, column 14 to column 15)",
-  " (in 'string', line 55, column 9 to column 10)",
-  " (in 'string', line 55, column 12 to column 13)",
-  " (in 'string', line 56, column 9 to column 10)",
-  " (in 'string', line 56, column 12 to column 13)",
-  " (in 'string', line 57, column 18 to column 19)",
-  " (in 'string', line 58, column 9 to column 18)",
-  " (in 'string', line 61, column 9 to column 10)",
-  " (in 'string', line 61, column 11 to column 12)",
-  " (in 'string', line 62, column 9 to column 10)",
-  " (in 'string', line 62, column 11 to column 12)",
-  " (in 'string', line 63, column 8 to column 9)",
-  " (in 'string', line 63, column 18 to column 19)",
-  " (in 'string', line 63, column 20 to column 21)",
+  " (in 'string', line 52, column 11 to column 16)",
+  " (in 'string', line 52, column 4 to column 63)",
+  " (in 'string', line 53, column 11 to column 14)",
+  " (in 'string', line 53, column 4 to column 59)",
+  " (in 'string', line 54, column 11 to column 20)",
+  " (in 'string', line 54, column 4 to column 61)",
+  " (in 'string', line 57, column 9 to column 12)",
+  " (in 'string', line 57, column 14 to column 15)",
+  " (in 'string', line 58, column 9 to column 10)",
+  " (in 'string', line 58, column 12 to column 13)",
+  " (in 'string', line 59, column 9 to column 10)",
+  " (in 'string', line 59, column 12 to column 13)",
+  " (in 'string', line 60, column 18 to column 19)",
+  " (in 'string', line 61, column 9 to column 18)",
   " (in 'string', line 64, column 9 to column 10)",
-  " (in 'string', line 64, column 12 to column 13)",
-  " (in 'string', line 107, column 8 to column 9)",
-  " (in 'string', line 107, column 18 to column 19)",
-  " (in 'string', line 107, column 21 to column 22)",
-  " (in 'string', line 112, column 9 to column 10)",
-  " (in 'string', line 112, column 11 to column 12)",
-  " (in 'string', line 113, column 9 to column 10)",
-  " (in 'string', line 113, column 11 to column 12)",
-  " (in 'string', line 114, column 8 to column 9)",
-  " (in 'string', line 114, column 18 to column 19)",
-  " (in 'string', line 114, column 20 to column 21)",
+  " (in 'string', line 64, column 11 to column 12)",
+  " (in 'string', line 65, column 9 to column 10)",
+  " (in 'string', line 65, column 11 to column 12)",
+  " (in 'string', line 66, column 8 to column 9)",
+  " (in 'string', line 66, column 18 to column 19)",
+  " (in 'string', line 66, column 20 to column 21)",
+  " (in 'string', line 67, column 8 to column 9)",
+  " (in 'string', line 67, column 18 to column 19)",
+  " (in 'string', line 67, column 20 to column 21)",
+  " (in 'string', line 68, column 9 to column 10)",
+  " (in 'string', line 68, column 12 to column 13)",
+  " (in 'string', line 115, column 8 to column 9)",
+  " (in 'string', line 115, column 18 to column 19)",
+  " (in 'string', line 115, column 21 to column 22)",
+  " (in 'string', line 120, column 9 to column 10)",
+  " (in 'string', line 120, column 11 to column 12)",
+  " (in 'string', line 121, column 9 to column 10)",
+  " (in 'string', line 121, column 11 to column 12)",
+  " (in 'string', line 122, column 8 to column 9)",
+  " (in 'string', line 122, column 18 to column 19)",
+  " (in 'string', line 122, column 20 to column 21)",
   " (in 'string', line 3, column 9 to column 26)",
   " (in 'string', line 3, column 28 to column 45)",
   " (in 'string', line 3, column 2 to column 49)",
@@ -240,10 +262,10 @@ kron(const T0__& A_arg__, const T1__& B_arg__, std::ostream* pstream__) {
   // suppress unused var warning
   (void) DUMMY_VAR__;
   try {
-    current_statement__ = 158;
+    current_statement__ = 180;
     stan::math::validate_non_negative_index("C", "rows(A) * rows(B)",
       (stan::math::rows(A) * stan::math::rows(B)));
-    current_statement__ = 159;
+    current_statement__ = 181;
     stan::math::validate_non_negative_index("C", "cols(A) * cols(B)",
       (stan::math::cols(A) * stan::math::cols(B)));
     Eigen::Matrix<local_scalar_t__,-1,-1> C =
@@ -254,31 +276,31 @@ kron(const T0__& A_arg__, const T1__& B_arg__, std::ostream* pstream__) {
     int n = std::numeric_limits<int>::min();
     int p = std::numeric_limits<int>::min();
     int q = std::numeric_limits<int>::min();
-    current_statement__ = 165;
+    current_statement__ = 187;
     m = stan::math::rows(A);
-    current_statement__ = 166;
+    current_statement__ = 188;
     n = stan::math::cols(A);
-    current_statement__ = 167;
+    current_statement__ = 189;
     p = stan::math::rows(B);
-    current_statement__ = 168;
+    current_statement__ = 190;
     q = stan::math::cols(B);
-    current_statement__ = 181;
+    current_statement__ = 203;
     for (int i = 1; i <= m; ++i) {
-      current_statement__ = 179;
+      current_statement__ = 201;
       for (int j = 1; j <= n; ++j) {
         int row_start = std::numeric_limits<int>::min();
         int row_end = std::numeric_limits<int>::min();
         int col_start = std::numeric_limits<int>::min();
         int col_end = std::numeric_limits<int>::min();
-        current_statement__ = 173;
+        current_statement__ = 195;
         row_start = (((i - 1) * p) + 1);
-        current_statement__ = 174;
+        current_statement__ = 196;
         row_end = (((i - 1) * p) + p);
-        current_statement__ = 175;
+        current_statement__ = 197;
         col_start = (((j - 1) * q) + 1);
-        current_statement__ = 176;
+        current_statement__ = 198;
         col_end = (((j - 1) * q) + q);
-        current_statement__ = 177;
+        current_statement__ = 199;
         stan::model::assign(C,
           stan::math::multiply(
             stan::model::rvalue(A, "A", stan::model::index_uni(i),
@@ -287,7 +309,7 @@ kron(const T0__& A_arg__, const T1__& B_arg__, std::ostream* pstream__) {
           stan::model::index_min_max(col_start, col_end));
       }
     }
-    current_statement__ = 182;
+    current_statement__ = 204;
     return C;
   } catch (const std::exception& e) {
     stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -318,6 +340,9 @@ private:
   int H;
   Eigen::Matrix<double,-1,-1> d_pred_data__;
   Eigen::Matrix<double,-1,-1> I_p_data__;
+  Eigen::Matrix<double,-1,1> Omega_beta_diag_data__;
+  Eigen::Matrix<double,-1,1> Omega_psi_diag_data__;
+  Eigen::Matrix<double,-1,1> Omega_A_diag_data__;
   int beta_1dim__;
   int a_1dim__;
   Eigen::Map<Eigen::Matrix<double,-1,-1>> Y{nullptr, 0, 0};
@@ -336,6 +361,9 @@ private:
   Eigen::Map<Eigen::Matrix<double,-1,1>> beta_phi{nullptr, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> d_pred{nullptr, 0, 0};
   Eigen::Map<Eigen::Matrix<double,-1,-1>> I_p{nullptr, 0, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> Omega_beta_diag{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> Omega_psi_diag{nullptr, 0};
+  Eigen::Map<Eigen::Matrix<double,-1,1>> Omega_A_diag{nullptr, 0};
 public:
   ~model_steady_state_bvar_RW_stochastic_volatility() {}
   model_steady_state_bvar_RW_stochastic_volatility(stan::io::var_context&
@@ -360,43 +388,43 @@ public:
     try {
       int pos__ = std::numeric_limits<int>::min();
       pos__ = 1;
-      current_statement__ = 85;
+      current_statement__ = 98;
       context__.validate_dims("data initialization", "p", "int",
         std::vector<size_t>{});
       p = std::numeric_limits<int>::min();
-      current_statement__ = 85;
+      current_statement__ = 98;
       p = context__.vals_i("p")[(1 - 1)];
-      current_statement__ = 85;
+      current_statement__ = 98;
       stan::math::check_greater_or_equal(function__, "p", p, 1);
-      current_statement__ = 86;
+      current_statement__ = 99;
       context__.validate_dims("data initialization", "N", "int",
         std::vector<size_t>{});
       N = std::numeric_limits<int>::min();
-      current_statement__ = 86;
+      current_statement__ = 99;
       N = context__.vals_i("N")[(1 - 1)];
-      current_statement__ = 86;
+      current_statement__ = 99;
       stan::math::check_greater_or_equal(function__, "N", N, (p + 1));
-      current_statement__ = 87;
+      current_statement__ = 100;
       context__.validate_dims("data initialization", "k", "int",
         std::vector<size_t>{});
       k = std::numeric_limits<int>::min();
-      current_statement__ = 87;
+      current_statement__ = 100;
       k = context__.vals_i("k")[(1 - 1)];
-      current_statement__ = 87;
+      current_statement__ = 100;
       stan::math::check_greater_or_equal(function__, "k", k, 2);
-      current_statement__ = 88;
+      current_statement__ = 101;
       context__.validate_dims("data initialization", "q", "int",
         std::vector<size_t>{});
       q = std::numeric_limits<int>::min();
-      current_statement__ = 88;
+      current_statement__ = 101;
       q = context__.vals_i("q")[(1 - 1)];
-      current_statement__ = 88;
+      current_statement__ = 101;
       stan::math::check_greater_or_equal(function__, "q", q, 1);
-      current_statement__ = 89;
+      current_statement__ = 102;
       stan::math::validate_non_negative_index("Y", "N", N);
-      current_statement__ = 90;
+      current_statement__ = 103;
       stan::math::validate_non_negative_index("Y", "k", k);
-      current_statement__ = 91;
+      current_statement__ = 104;
       context__.validate_dims("data initialization", "Y", "double",
         std::vector<size_t>{static_cast<size_t>(N), static_cast<size_t>(k)});
       Y_data__ = Eigen::Matrix<double,-1,-1>::Constant(N, k,
@@ -404,28 +432,28 @@ public:
       new (&Y) Eigen::Map<Eigen::Matrix<double,-1,-1>>(Y_data__.data(), N, k);
       {
         std::vector<local_scalar_t__> Y_flat__;
-        current_statement__ = 91;
+        current_statement__ = 104;
         Y_flat__ = context__.vals_r("Y");
-        current_statement__ = 91;
+        current_statement__ = 104;
         pos__ = 1;
-        current_statement__ = 91;
+        current_statement__ = 104;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
-          current_statement__ = 91;
+          current_statement__ = 104;
           for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
-            current_statement__ = 91;
+            current_statement__ = 104;
             stan::model::assign(Y, Y_flat__[(pos__ - 1)],
               "assigning variable Y", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 91;
+            current_statement__ = 104;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 92;
+      current_statement__ = 105;
       stan::math::validate_non_negative_index("D", "N", N);
-      current_statement__ = 93;
+      current_statement__ = 106;
       stan::math::validate_non_negative_index("D", "q", q);
-      current_statement__ = 94;
+      current_statement__ = 107;
       context__.validate_dims("data initialization", "D", "double",
         std::vector<size_t>{static_cast<size_t>(N), static_cast<size_t>(q)});
       D_data__ = Eigen::Matrix<double,-1,-1>::Constant(N, q,
@@ -433,28 +461,28 @@ public:
       new (&D) Eigen::Map<Eigen::Matrix<double,-1,-1>>(D_data__.data(), N, q);
       {
         std::vector<local_scalar_t__> D_flat__;
-        current_statement__ = 94;
+        current_statement__ = 107;
         D_flat__ = context__.vals_r("D");
-        current_statement__ = 94;
+        current_statement__ = 107;
         pos__ = 1;
-        current_statement__ = 94;
+        current_statement__ = 107;
         for (int sym1__ = 1; sym1__ <= q; ++sym1__) {
-          current_statement__ = 94;
+          current_statement__ = 107;
           for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
-            current_statement__ = 94;
+            current_statement__ = 107;
             stan::model::assign(D, D_flat__[(pos__ - 1)],
               "assigning variable D", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 94;
+            current_statement__ = 107;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 95;
+      current_statement__ = 108;
       stan::math::validate_non_negative_index("W", "N", N);
-      current_statement__ = 96;
+      current_statement__ = 109;
       stan::math::validate_non_negative_index("W", "k * p", (k * p));
-      current_statement__ = 97;
+      current_statement__ = 110;
       context__.validate_dims("data initialization", "W", "double",
         std::vector<size_t>{static_cast<size_t>(N),
           static_cast<size_t>((k * p))});
@@ -464,28 +492,28 @@ public:
         * p));
       {
         std::vector<local_scalar_t__> W_flat__;
-        current_statement__ = 97;
+        current_statement__ = 110;
         W_flat__ = context__.vals_r("W");
-        current_statement__ = 97;
+        current_statement__ = 110;
         pos__ = 1;
-        current_statement__ = 97;
+        current_statement__ = 110;
         for (int sym1__ = 1; sym1__ <= (k * p); ++sym1__) {
-          current_statement__ = 97;
+          current_statement__ = 110;
           for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
-            current_statement__ = 97;
+            current_statement__ = 110;
             stan::model::assign(W, W_flat__[(pos__ - 1)],
               "assigning variable W", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 97;
+            current_statement__ = 110;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 98;
+      current_statement__ = 111;
       stan::math::validate_non_negative_index("Q", "N", N);
-      current_statement__ = 99;
+      current_statement__ = 112;
       stan::math::validate_non_negative_index("Q", "q * p", (q * p));
-      current_statement__ = 100;
+      current_statement__ = 113;
       context__.validate_dims("data initialization", "Q", "double",
         std::vector<size_t>{static_cast<size_t>(N),
           static_cast<size_t>((q * p))});
@@ -495,27 +523,27 @@ public:
         * p));
       {
         std::vector<local_scalar_t__> Q_flat__;
-        current_statement__ = 100;
+        current_statement__ = 113;
         Q_flat__ = context__.vals_r("Q");
-        current_statement__ = 100;
+        current_statement__ = 113;
         pos__ = 1;
-        current_statement__ = 100;
+        current_statement__ = 113;
         for (int sym1__ = 1; sym1__ <= (q * p); ++sym1__) {
-          current_statement__ = 100;
+          current_statement__ = 113;
           for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
-            current_statement__ = 100;
+            current_statement__ = 113;
             stan::model::assign(Q, Q_flat__[(pos__ - 1)],
               "assigning variable Q", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 100;
+            current_statement__ = 113;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 101;
+      current_statement__ = 114;
       stan::math::validate_non_negative_index("theta_beta", "k * p * k", ((k
         * p) * k));
-      current_statement__ = 102;
+      current_statement__ = 115;
       context__.validate_dims("data initialization", "theta_beta", "double",
         std::vector<size_t>{static_cast<size_t>(((k * p) * k))});
       theta_beta_data__ = Eigen::Matrix<double,-1,1>::Constant(((k * p) * k),
@@ -525,26 +553,26 @@ public:
         * p) * k));
       {
         std::vector<local_scalar_t__> theta_beta_flat__;
-        current_statement__ = 102;
+        current_statement__ = 115;
         theta_beta_flat__ = context__.vals_r("theta_beta");
-        current_statement__ = 102;
+        current_statement__ = 115;
         pos__ = 1;
-        current_statement__ = 102;
+        current_statement__ = 115;
         for (int sym1__ = 1; sym1__ <= ((k * p) * k); ++sym1__) {
-          current_statement__ = 102;
+          current_statement__ = 115;
           stan::model::assign(theta_beta, theta_beta_flat__[(pos__ - 1)],
             "assigning variable theta_beta", stan::model::index_uni(sym1__));
-          current_statement__ = 102;
+          current_statement__ = 115;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 103;
+      current_statement__ = 116;
       stan::math::validate_non_negative_index("Omega_beta", "k * p * k", ((k
         * p) * k));
-      current_statement__ = 104;
+      current_statement__ = 117;
       stan::math::validate_non_negative_index("Omega_beta", "k * p * k", ((k
         * p) * k));
-      current_statement__ = 105;
+      current_statement__ = 118;
       context__.validate_dims("data initialization", "Omega_beta", "double",
         std::vector<size_t>{static_cast<size_t>(((k * p) * k)),
           static_cast<size_t>(((k * p) * k))});
@@ -556,26 +584,26 @@ public:
         * p) * k), ((k * p) * k));
       {
         std::vector<local_scalar_t__> Omega_beta_flat__;
-        current_statement__ = 105;
+        current_statement__ = 118;
         Omega_beta_flat__ = context__.vals_r("Omega_beta");
-        current_statement__ = 105;
+        current_statement__ = 118;
         pos__ = 1;
-        current_statement__ = 105;
+        current_statement__ = 118;
         for (int sym1__ = 1; sym1__ <= ((k * p) * k); ++sym1__) {
-          current_statement__ = 105;
+          current_statement__ = 118;
           for (int sym2__ = 1; sym2__ <= ((k * p) * k); ++sym2__) {
-            current_statement__ = 105;
+            current_statement__ = 118;
             stan::model::assign(Omega_beta, Omega_beta_flat__[(pos__ - 1)],
               "assigning variable Omega_beta",
               stan::model::index_uni(sym2__), stan::model::index_uni(sym1__));
-            current_statement__ = 105;
+            current_statement__ = 118;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 106;
+      current_statement__ = 119;
       stan::math::validate_non_negative_index("theta_Psi", "k * q", (k * q));
-      current_statement__ = 107;
+      current_statement__ = 120;
       context__.validate_dims("data initialization", "theta_Psi", "double",
         std::vector<size_t>{static_cast<size_t>((k * q))});
       theta_Psi_data__ = Eigen::Matrix<double,-1,1>::Constant((k * q),
@@ -585,24 +613,24 @@ public:
         q));
       {
         std::vector<local_scalar_t__> theta_Psi_flat__;
-        current_statement__ = 107;
+        current_statement__ = 120;
         theta_Psi_flat__ = context__.vals_r("theta_Psi");
-        current_statement__ = 107;
+        current_statement__ = 120;
         pos__ = 1;
-        current_statement__ = 107;
+        current_statement__ = 120;
         for (int sym1__ = 1; sym1__ <= (k * q); ++sym1__) {
-          current_statement__ = 107;
+          current_statement__ = 120;
           stan::model::assign(theta_Psi, theta_Psi_flat__[(pos__ - 1)],
             "assigning variable theta_Psi", stan::model::index_uni(sym1__));
-          current_statement__ = 107;
+          current_statement__ = 120;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 108;
+      current_statement__ = 121;
       stan::math::validate_non_negative_index("Omega_Psi", "k * q", (k * q));
-      current_statement__ = 109;
+      current_statement__ = 122;
       stan::math::validate_non_negative_index("Omega_Psi", "k * q", (k * q));
-      current_statement__ = 110;
+      current_statement__ = 123;
       context__.validate_dims("data initialization", "Omega_Psi", "double",
         std::vector<size_t>{static_cast<size_t>((k * q)),
           static_cast<size_t>((k * q))});
@@ -613,27 +641,27 @@ public:
         q), (k * q));
       {
         std::vector<local_scalar_t__> Omega_Psi_flat__;
-        current_statement__ = 110;
+        current_statement__ = 123;
         Omega_Psi_flat__ = context__.vals_r("Omega_Psi");
-        current_statement__ = 110;
+        current_statement__ = 123;
         pos__ = 1;
-        current_statement__ = 110;
+        current_statement__ = 123;
         for (int sym1__ = 1; sym1__ <= (k * q); ++sym1__) {
-          current_statement__ = 110;
+          current_statement__ = 123;
           for (int sym2__ = 1; sym2__ <= (k * q); ++sym2__) {
-            current_statement__ = 110;
+            current_statement__ = 123;
             stan::model::assign(Omega_Psi, Omega_Psi_flat__[(pos__ - 1)],
               "assigning variable Omega_Psi", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 110;
+            current_statement__ = 123;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 111;
+      current_statement__ = 124;
       stan::math::validate_non_negative_index("theta_A", "k * (k - 1) / 2",
         ((k * (k - 1)) / 2));
-      current_statement__ = 112;
+      current_statement__ = 125;
       context__.validate_dims("data initialization", "theta_A", "double",
         std::vector<size_t>{static_cast<size_t>(((k * (k - 1)) / 2))});
       theta_A_data__ = Eigen::Matrix<double,-1,1>::Constant(((k * (k - 1)) /
@@ -643,26 +671,26 @@ public:
         (k - 1)) / 2));
       {
         std::vector<local_scalar_t__> theta_A_flat__;
-        current_statement__ = 112;
+        current_statement__ = 125;
         theta_A_flat__ = context__.vals_r("theta_A");
-        current_statement__ = 112;
+        current_statement__ = 125;
         pos__ = 1;
-        current_statement__ = 112;
+        current_statement__ = 125;
         for (int sym1__ = 1; sym1__ <= ((k * (k - 1)) / 2); ++sym1__) {
-          current_statement__ = 112;
+          current_statement__ = 125;
           stan::model::assign(theta_A, theta_A_flat__[(pos__ - 1)],
             "assigning variable theta_A", stan::model::index_uni(sym1__));
-          current_statement__ = 112;
+          current_statement__ = 125;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 113;
+      current_statement__ = 126;
       stan::math::validate_non_negative_index("Omega_A", "k * (k - 1) / 2",
         ((k * (k - 1)) / 2));
-      current_statement__ = 114;
+      current_statement__ = 127;
       stan::math::validate_non_negative_index("Omega_A", "k * (k - 1) / 2",
         ((k * (k - 1)) / 2));
-      current_statement__ = 115;
+      current_statement__ = 128;
       context__.validate_dims("data initialization", "Omega_A", "double",
         std::vector<size_t>{static_cast<size_t>(((k * (k - 1)) / 2)),
           static_cast<size_t>(((k * (k - 1)) / 2))});
@@ -674,26 +702,26 @@ public:
         (k - 1)) / 2), ((k * (k - 1)) / 2));
       {
         std::vector<local_scalar_t__> Omega_A_flat__;
-        current_statement__ = 115;
+        current_statement__ = 128;
         Omega_A_flat__ = context__.vals_r("Omega_A");
-        current_statement__ = 115;
+        current_statement__ = 128;
         pos__ = 1;
-        current_statement__ = 115;
+        current_statement__ = 128;
         for (int sym1__ = 1; sym1__ <= ((k * (k - 1)) / 2); ++sym1__) {
-          current_statement__ = 115;
+          current_statement__ = 128;
           for (int sym2__ = 1; sym2__ <= ((k * (k - 1)) / 2); ++sym2__) {
-            current_statement__ = 115;
+            current_statement__ = 128;
             stan::model::assign(Omega_A, Omega_A_flat__[(pos__ - 1)],
               "assigning variable Omega_A", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 115;
+            current_statement__ = 128;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 116;
+      current_statement__ = 129;
       stan::math::validate_non_negative_index("mu_log_lambda_1", "k", k);
-      current_statement__ = 117;
+      current_statement__ = 130;
       context__.validate_dims("data initialization", "mu_log_lambda_1",
         "double", std::vector<size_t>{static_cast<size_t>(k)});
       mu_log_lambda_1_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
@@ -703,23 +731,23 @@ public:
         k);
       {
         std::vector<local_scalar_t__> mu_log_lambda_1_flat__;
-        current_statement__ = 117;
+        current_statement__ = 130;
         mu_log_lambda_1_flat__ = context__.vals_r("mu_log_lambda_1");
-        current_statement__ = 117;
+        current_statement__ = 130;
         pos__ = 1;
-        current_statement__ = 117;
+        current_statement__ = 130;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
-          current_statement__ = 117;
+          current_statement__ = 130;
           stan::model::assign(mu_log_lambda_1, mu_log_lambda_1_flat__[(pos__
             - 1)], "assigning variable mu_log_lambda_1",
             stan::model::index_uni(sym1__));
-          current_statement__ = 117;
+          current_statement__ = 130;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 118;
+      current_statement__ = 131;
       stan::math::validate_non_negative_index("sigma2_log_lambda_1", "k", k);
-      current_statement__ = 119;
+      current_statement__ = 132;
       context__.validate_dims("data initialization", "sigma2_log_lambda_1",
         "double", std::vector<size_t>{static_cast<size_t>(k)});
       sigma2_log_lambda_1_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
@@ -729,27 +757,27 @@ public:
         k);
       {
         std::vector<local_scalar_t__> sigma2_log_lambda_1_flat__;
-        current_statement__ = 119;
+        current_statement__ = 132;
         sigma2_log_lambda_1_flat__ = context__.vals_r("sigma2_log_lambda_1");
-        current_statement__ = 119;
+        current_statement__ = 132;
         pos__ = 1;
-        current_statement__ = 119;
+        current_statement__ = 132;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
-          current_statement__ = 119;
+          current_statement__ = 132;
           stan::model::assign(sigma2_log_lambda_1,
             sigma2_log_lambda_1_flat__[(pos__ - 1)],
             "assigning variable sigma2_log_lambda_1",
             stan::model::index_uni(sym1__));
-          current_statement__ = 119;
+          current_statement__ = 132;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 119;
+      current_statement__ = 132;
       stan::math::check_greater_or_equal(function__, "sigma2_log_lambda_1",
         sigma2_log_lambda_1, 0);
-      current_statement__ = 120;
+      current_statement__ = 133;
       stan::math::validate_non_negative_index("alpha_phi", "k", k);
-      current_statement__ = 121;
+      current_statement__ = 134;
       context__.validate_dims("data initialization", "alpha_phi", "double",
         std::vector<size_t>{static_cast<size_t>(k)});
       alpha_phi_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
@@ -758,25 +786,25 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(alpha_phi_data__.data(), k);
       {
         std::vector<local_scalar_t__> alpha_phi_flat__;
-        current_statement__ = 121;
+        current_statement__ = 134;
         alpha_phi_flat__ = context__.vals_r("alpha_phi");
-        current_statement__ = 121;
+        current_statement__ = 134;
         pos__ = 1;
-        current_statement__ = 121;
+        current_statement__ = 134;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
-          current_statement__ = 121;
+          current_statement__ = 134;
           stan::model::assign(alpha_phi, alpha_phi_flat__[(pos__ - 1)],
             "assigning variable alpha_phi", stan::model::index_uni(sym1__));
-          current_statement__ = 121;
+          current_statement__ = 134;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 121;
+      current_statement__ = 134;
       stan::math::check_greater_or_equal(function__, "alpha_phi", alpha_phi,
         0);
-      current_statement__ = 122;
+      current_statement__ = 135;
       stan::math::validate_non_negative_index("beta_phi", "k", k);
-      current_statement__ = 123;
+      current_statement__ = 136;
       context__.validate_dims("data initialization", "beta_phi", "double",
         std::vector<size_t>{static_cast<size_t>(k)});
       beta_phi_data__ = Eigen::Matrix<double,-1,1>::Constant(k,
@@ -785,34 +813,34 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,1>>(beta_phi_data__.data(), k);
       {
         std::vector<local_scalar_t__> beta_phi_flat__;
-        current_statement__ = 123;
+        current_statement__ = 136;
         beta_phi_flat__ = context__.vals_r("beta_phi");
-        current_statement__ = 123;
+        current_statement__ = 136;
         pos__ = 1;
-        current_statement__ = 123;
+        current_statement__ = 136;
         for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
-          current_statement__ = 123;
+          current_statement__ = 136;
           stan::model::assign(beta_phi, beta_phi_flat__[(pos__ - 1)],
             "assigning variable beta_phi", stan::model::index_uni(sym1__));
-          current_statement__ = 123;
+          current_statement__ = 136;
           pos__ = (pos__ + 1);
         }
       }
-      current_statement__ = 123;
+      current_statement__ = 136;
       stan::math::check_greater_or_equal(function__, "beta_phi", beta_phi, 0);
-      current_statement__ = 124;
+      current_statement__ = 137;
       context__.validate_dims("data initialization", "H", "int",
         std::vector<size_t>{});
       H = std::numeric_limits<int>::min();
-      current_statement__ = 124;
+      current_statement__ = 137;
       H = context__.vals_i("H")[(1 - 1)];
-      current_statement__ = 124;
+      current_statement__ = 137;
       stan::math::check_greater_or_equal(function__, "H", H, 1);
-      current_statement__ = 125;
+      current_statement__ = 138;
       stan::math::validate_non_negative_index("d_pred", "H", H);
-      current_statement__ = 126;
+      current_statement__ = 139;
       stan::math::validate_non_negative_index("d_pred", "q", q);
-      current_statement__ = 127;
+      current_statement__ = 140;
       context__.validate_dims("data initialization", "d_pred", "double",
         std::vector<size_t>{static_cast<size_t>(H), static_cast<size_t>(q)});
       d_pred_data__ = Eigen::Matrix<double,-1,-1>::Constant(H, q,
@@ -821,98 +849,145 @@ public:
         Eigen::Map<Eigen::Matrix<double,-1,-1>>(d_pred_data__.data(), H, q);
       {
         std::vector<local_scalar_t__> d_pred_flat__;
-        current_statement__ = 127;
+        current_statement__ = 140;
         d_pred_flat__ = context__.vals_r("d_pred");
-        current_statement__ = 127;
+        current_statement__ = 140;
         pos__ = 1;
-        current_statement__ = 127;
+        current_statement__ = 140;
         for (int sym1__ = 1; sym1__ <= q; ++sym1__) {
-          current_statement__ = 127;
+          current_statement__ = 140;
           for (int sym2__ = 1; sym2__ <= H; ++sym2__) {
-            current_statement__ = 127;
+            current_statement__ = 140;
             stan::model::assign(d_pred, d_pred_flat__[(pos__ - 1)],
               "assigning variable d_pred", stan::model::index_uni(sym2__),
               stan::model::index_uni(sym1__));
-            current_statement__ = 127;
+            current_statement__ = 140;
             pos__ = (pos__ + 1);
           }
         }
       }
-      current_statement__ = 128;
+      current_statement__ = 141;
       stan::math::validate_non_negative_index("I_p", "p", p);
-      current_statement__ = 129;
+      current_statement__ = 142;
       stan::math::validate_non_negative_index("I_p", "p", p);
-      current_statement__ = 130;
+      current_statement__ = 143;
       I_p_data__ = Eigen::Matrix<double,-1,-1>::Constant(p, p,
                      std::numeric_limits<double>::quiet_NaN());
       new (&I_p) Eigen::Map<Eigen::Matrix<double,-1,-1>>(I_p_data__.data(),
         p, p);
-      current_statement__ = 130;
+      current_statement__ = 143;
       stan::model::assign(I_p,
         stan::math::diag_matrix(stan::math::rep_vector(1, p)),
         "assigning variable I_p");
-      current_statement__ = 131;
+      current_statement__ = 144;
+      stan::math::validate_non_negative_index("Omega_beta_diag", "k * p * k",
+        ((k * p) * k));
+      current_statement__ = 145;
+      Omega_beta_diag_data__ = Eigen::Matrix<double,-1,1>::Constant(((k * p)
+                                 * k),
+                                 std::numeric_limits<double>::quiet_NaN());
+      new (&Omega_beta_diag)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(Omega_beta_diag_data__.data(),
+        ((k * p) * k));
+      current_statement__ = 145;
+      stan::model::assign(Omega_beta_diag,
+        stan::math::sqrt(stan::math::diagonal(Omega_beta)),
+        "assigning variable Omega_beta_diag");
+      current_statement__ = 146;
+      stan::math::validate_non_negative_index("Omega_psi_diag", "k * q", (k *
+        q));
+      current_statement__ = 147;
+      Omega_psi_diag_data__ = Eigen::Matrix<double,-1,1>::Constant((k * q),
+                                std::numeric_limits<double>::quiet_NaN());
+      new (&Omega_psi_diag)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(Omega_psi_diag_data__.data(),
+        (k * q));
+      current_statement__ = 147;
+      stan::model::assign(Omega_psi_diag,
+        stan::math::sqrt(stan::math::diagonal(Omega_Psi)),
+        "assigning variable Omega_psi_diag");
+      current_statement__ = 148;
+      stan::math::validate_non_negative_index("Omega_A_diag",
+        "k * (k - 1) / 2", ((k * (k - 1)) / 2));
+      current_statement__ = 149;
+      Omega_A_diag_data__ = Eigen::Matrix<double,-1,1>::Constant(((k * (k -
+                              1)) / 2),
+                              std::numeric_limits<double>::quiet_NaN());
+      new (&Omega_A_diag)
+        Eigen::Map<Eigen::Matrix<double,-1,1>>(Omega_A_diag_data__.data(),
+        ((k * (k - 1)) / 2));
+      current_statement__ = 149;
+      stan::model::assign(Omega_A_diag,
+        stan::math::sqrt(stan::math::diagonal(Omega_A)),
+        "assigning variable Omega_A_diag");
+      current_statement__ = 150;
       beta_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 131;
+      current_statement__ = 150;
       beta_1dim__ = (k * p);
-      current_statement__ = 131;
+      current_statement__ = 150;
       stan::math::validate_non_negative_index("beta", "k * p", beta_1dim__);
-      current_statement__ = 132;
+      current_statement__ = 151;
       stan::math::validate_non_negative_index("beta", "k", k);
-      current_statement__ = 133;
+      current_statement__ = 152;
       stan::math::validate_non_negative_index("Psi", "k", k);
-      current_statement__ = 134;
+      current_statement__ = 153;
       stan::math::validate_non_negative_index("Psi", "q", q);
-      current_statement__ = 135;
+      current_statement__ = 154;
       stan::math::validate_non_negative_index("z", "N", N);
-      current_statement__ = 136;
+      current_statement__ = 155;
       stan::math::validate_non_negative_index("z", "k", k);
-      current_statement__ = 137;
+      current_statement__ = 156;
       stan::math::validate_non_negative_index("phi", "k", k);
-      current_statement__ = 138;
+      current_statement__ = 157;
       a_1dim__ = std::numeric_limits<int>::min();
-      current_statement__ = 138;
+      current_statement__ = 157;
       a_1dim__ = ((k * (k - 1)) / 2);
-      current_statement__ = 138;
+      current_statement__ = 157;
       stan::math::validate_non_negative_index("a", "k * (k - 1) / 2",
         a_1dim__);
-      current_statement__ = 139;
+      current_statement__ = 158;
       stan::math::validate_non_negative_index("A", "k", k);
-      current_statement__ = 140;
+      current_statement__ = 159;
       stan::math::validate_non_negative_index("A", "k", k);
-      current_statement__ = 141;
+      current_statement__ = 160;
       stan::math::validate_non_negative_index("Ainv", "k", k);
-      current_statement__ = 142;
+      current_statement__ = 161;
       stan::math::validate_non_negative_index("Ainv", "k", k);
-      current_statement__ = 143;
+      current_statement__ = 162;
       stan::math::validate_non_negative_index("Sigma_u", "N", N);
-      current_statement__ = 144;
+      current_statement__ = 163;
       stan::math::validate_non_negative_index("Sigma_u", "k", k);
-      current_statement__ = 145;
+      current_statement__ = 164;
       stan::math::validate_non_negative_index("Sigma_u", "k", k);
-      current_statement__ = 146;
+      current_statement__ = 165;
+      stan::math::validate_non_negative_index("L_Sigma_u", "N", N);
+      current_statement__ = 166;
+      stan::math::validate_non_negative_index("L_Sigma_u", "k", k);
+      current_statement__ = 167;
+      stan::math::validate_non_negative_index("L_Sigma_u", "k", k);
+      current_statement__ = 168;
       stan::math::validate_non_negative_index("log_lambda", "N", N);
-      current_statement__ = 147;
+      current_statement__ = 169;
       stan::math::validate_non_negative_index("log_lambda", "k", k);
-      current_statement__ = 148;
+      current_statement__ = 170;
       stan::math::validate_non_negative_index("Pi", "p", p);
-      current_statement__ = 149;
+      current_statement__ = 171;
       stan::math::validate_non_negative_index("Pi", "k", k);
-      current_statement__ = 150;
+      current_statement__ = 172;
       stan::math::validate_non_negative_index("Pi", "k", k);
-      current_statement__ = 151;
+      current_statement__ = 173;
       stan::math::validate_non_negative_index("y_pred", "H", H);
-      current_statement__ = 152;
+      current_statement__ = 174;
       stan::math::validate_non_negative_index("y_pred", "k", k);
-      current_statement__ = 153;
+      current_statement__ = 175;
       stan::math::validate_non_negative_index("log_lambda_pred", "H", H);
-      current_statement__ = 154;
+      current_statement__ = 176;
       stan::math::validate_non_negative_index("log_lambda_pred", "k", k);
-      current_statement__ = 155;
+      current_statement__ = 177;
       stan::math::validate_non_negative_index("Sigma_u_pred", "H", H);
-      current_statement__ = 156;
+      current_statement__ = 178;
       stan::math::validate_non_negative_index("Sigma_u_pred", "k", k);
-      current_statement__ = 157;
+      current_statement__ = 179;
       stan::math::validate_non_negative_index("Sigma_u_pred", "k", k);
     } catch (const std::exception& e) {
       stan::lang::rethrow_located(e, locations_array__[current_statement__]);
@@ -976,36 +1051,39 @@ public:
       std::vector<Eigen::Matrix<local_scalar_t__,-1,-1>> Sigma_u =
         std::vector<Eigen::Matrix<local_scalar_t__,-1,-1>>(N,
           Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(k, k, DUMMY_VAR__));
+      std::vector<Eigen::Matrix<local_scalar_t__,-1,-1>> L_Sigma_u =
+        std::vector<Eigen::Matrix<local_scalar_t__,-1,-1>>(N,
+          Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(k, k, DUMMY_VAR__));
       Eigen::Matrix<local_scalar_t__,-1,-1> log_lambda =
         Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(N, k, DUMMY_VAR__);
-      current_statement__ = 14;
+      current_statement__ = 15;
       stan::model::assign(A,
         stan::math::diag_matrix(stan::math::rep_vector(1, k)),
         "assigning variable A");
       {
         int idx = std::numeric_limits<int>::min();
-        current_statement__ = 15;
+        current_statement__ = 16;
         idx = 1;
-        current_statement__ = 21;
+        current_statement__ = 22;
         for (int i = 2; i <= k; ++i) {
-          current_statement__ = 19;
+          current_statement__ = 20;
           for (int j = 1; j <= (i - 1); ++j) {
-            current_statement__ = 16;
+            current_statement__ = 17;
             stan::model::assign(A,
               stan::model::rvalue(a, "a", stan::model::index_uni(idx)),
               "assigning variable A", stan::model::index_uni(i),
               stan::model::index_uni(j));
-            current_statement__ = 17;
+            current_statement__ = 18;
             idx = (idx + 1);
           }
         }
       }
-      current_statement__ = 23;
+      current_statement__ = 24;
       stan::model::assign(Ainv, stan::math::inverse(A),
         "assigning variable Ainv");
-      current_statement__ = 26;
+      current_statement__ = 27;
       for (int i = 1; i <= k; ++i) {
-        current_statement__ = 24;
+        current_statement__ = 25;
         stan::model::assign(log_lambda,
           (stan::model::rvalue(mu_log_lambda_1, "mu_log_lambda_1",
              stan::model::index_uni(i)) +
@@ -1016,11 +1094,11 @@ public:
             stan::model::index_uni(i)))), "assigning variable log_lambda",
           stan::model::index_uni(1), stan::model::index_uni(i));
       }
-      current_statement__ = 31;
+      current_statement__ = 32;
       for (int t = 2; t <= N; ++t) {
-        current_statement__ = 29;
+        current_statement__ = 30;
         for (int i = 1; i <= k; ++i) {
-          current_statement__ = 27;
+          current_statement__ = 28;
           stan::model::assign(log_lambda,
             (stan::model::rvalue(log_lambda, "log_lambda",
                stan::model::index_uni((t - 1)), stan::model::index_uni(i)) +
@@ -1031,15 +1109,15 @@ public:
             stan::model::index_uni(t), stan::model::index_uni(i));
         }
       }
-      current_statement__ = 37;
+      current_statement__ = 39;
       for (int t = 1; t <= N; ++t) {
-        current_statement__ = 32;
-        stan::math::validate_non_negative_index("sqrt_Lambda_t", "k", k);
         current_statement__ = 33;
+        stan::math::validate_non_negative_index("sqrt_Lambda_t", "k", k);
+        current_statement__ = 34;
         stan::math::validate_non_negative_index("sqrt_Lambda_t", "k", k);
         Eigen::Matrix<local_scalar_t__,-1,-1> sqrt_Lambda_t =
           Eigen::Matrix<local_scalar_t__,-1,-1>::Constant(k, k, DUMMY_VAR__);
-        current_statement__ = 34;
+        current_statement__ = 35;
         stan::model::assign(sqrt_Lambda_t,
           stan::math::diag_matrix(
             stan::math::sqrt(
@@ -1048,23 +1126,45 @@ public:
                   stan::model::rvalue(log_lambda, "log_lambda",
                     stan::model::index_uni(t)))))),
           "assigning variable sqrt_Lambda_t");
-        current_statement__ = 35;
+        current_statement__ = 36;
+        stan::model::assign(L_Sigma_u,
+          stan::math::multiply(Ainv, sqrt_Lambda_t),
+          "assigning variable L_Sigma_u", stan::model::index_uni(t));
+        current_statement__ = 37;
         stan::model::assign(Sigma_u,
-          stan::math::tcrossprod(stan::math::multiply(Ainv, sqrt_Lambda_t)),
-          "assigning variable Sigma_u", stan::model::index_uni(t));
+          stan::math::tcrossprod(
+            stan::model::rvalue(L_Sigma_u, "L_Sigma_u",
+              stan::model::index_uni(t))), "assigning variable Sigma_u",
+          stan::model::index_uni(t));
       }
       {
-        current_statement__ = 73;
+        current_statement__ = 81;
         lp_accum__.add(stan::math::std_normal_lpdf<propto__>(
                          stan::math::to_vector(z)));
-        current_statement__ = 78;
+        current_statement__ = 82;
+        stan::math::validate_non_negative_index("Kron_I_p_Psi", "p * q", (p *
+          q));
+        current_statement__ = 83;
+        stan::math::validate_non_negative_index("Kron_I_p_Psi", "p * k", (p *
+          k));
+        Eigen::Matrix<local_scalar_t__,-1,-1> Kron_I_p_Psi =
+          Eigen::Matrix<local_scalar_t__,-1,-1>::Constant((p * q), (p * k),
+            DUMMY_VAR__);
+        current_statement__ = 84;
+        stan::model::assign(Kron_I_p_Psi,
+          kron(I_p, stan::math::transpose(Psi), pstream__),
+          "assigning variable Kron_I_p_Psi");
+        current_statement__ = 85;
+        stan::math::validate_non_negative_index("u", "N", N);
+        current_statement__ = 86;
+        stan::math::validate_non_negative_index("u", "k", k);
+        std::vector<Eigen::Matrix<local_scalar_t__,-1,1>> u =
+          std::vector<Eigen::Matrix<local_scalar_t__,-1,1>>(N,
+            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(k, DUMMY_VAR__));
+        current_statement__ = 91;
         for (int t = 1; t <= N; ++t) {
-          current_statement__ = 74;
-          stan::math::validate_non_negative_index("u_t", "k", k);
-          Eigen::Matrix<local_scalar_t__,-1,1> u_t =
-            Eigen::Matrix<local_scalar_t__,-1,1>::Constant(k, DUMMY_VAR__);
-          current_statement__ = 75;
-          stan::model::assign(u_t,
+          current_statement__ = 88;
+          stan::model::assign(u,
             stan::math::transpose(
               stan::math::subtract(
                 stan::model::rvalue(Y, "Y", stan::model::index_uni(t)),
@@ -1077,26 +1177,30 @@ public:
                       stan::model::rvalue(W, "W", stan::model::index_uni(t)),
                       stan::math::multiply(
                         stan::model::rvalue(Q, "Q", stan::model::index_uni(t)),
-                        kron(I_p, stan::math::transpose(Psi), pstream__))),
-                    beta)))), "assigning variable u_t");
-          current_statement__ = 76;
-          lp_accum__.add(stan::math::multi_normal_lpdf<propto__>(u_t,
+                        Kron_I_p_Psi)), beta)))), "assigning variable u",
+            stan::model::index_uni(t));
+          current_statement__ = 89;
+          lp_accum__.add(stan::math::multi_normal_cholesky_lpdf<propto__>(
+                           stan::model::rvalue(u, "u",
+                             stan::model::index_uni(t)),
                            stan::math::rep_vector(0, k),
-                           stan::model::rvalue(Sigma_u, "Sigma_u",
+                           stan::model::rvalue(L_Sigma_u, "L_Sigma_u",
                              stan::model::index_uni(t))));
         }
-        current_statement__ = 79;
-        lp_accum__.add(stan::math::multi_normal_lpdf<propto__>(
-                         stan::math::to_vector(beta), theta_beta, Omega_beta));
-        current_statement__ = 80;
-        lp_accum__.add(stan::math::multi_normal_lpdf<propto__>(
-                         stan::math::to_vector(Psi), theta_Psi, Omega_Psi));
-        current_statement__ = 81;
-        lp_accum__.add(stan::math::multi_normal_lpdf<propto__>(a, theta_A,
-                         Omega_A));
-        current_statement__ = 84;
+        current_statement__ = 92;
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(
+                         stan::math::to_vector(beta), theta_beta,
+                         Omega_beta_diag));
+        current_statement__ = 93;
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(
+                         stan::math::to_vector(Psi), theta_Psi,
+                         Omega_psi_diag));
+        current_statement__ = 94;
+        lp_accum__.add(stan::math::normal_lpdf<propto__>(a, theta_A,
+                         Omega_A_diag));
+        current_statement__ = 97;
         for (int i = 1; i <= k; ++i) {
-          current_statement__ = 82;
+          current_statement__ = 95;
           lp_accum__.add(stan::math::inv_gamma_lpdf<propto__>(
                            stan::model::rvalue(phi, "phi",
                              stan::model::index_uni(i)),
@@ -1180,6 +1284,10 @@ public:
         std::vector<Eigen::Matrix<double,-1,-1>>(N,
           Eigen::Matrix<double,-1,-1>::Constant(k, k,
             std::numeric_limits<double>::quiet_NaN()));
+      std::vector<Eigen::Matrix<double,-1,-1>> L_Sigma_u =
+        std::vector<Eigen::Matrix<double,-1,-1>>(N,
+          Eigen::Matrix<double,-1,-1>::Constant(k, k,
+            std::numeric_limits<double>::quiet_NaN()));
       Eigen::Matrix<double,-1,-1> log_lambda =
         Eigen::Matrix<double,-1,-1>::Constant(N, k,
           std::numeric_limits<double>::quiet_NaN());
@@ -1193,34 +1301,34 @@ public:
             stan::math::primitive_value(emit_generated_quantities__)))) {
         return ;
       }
-      current_statement__ = 14;
+      current_statement__ = 15;
       stan::model::assign(A,
         stan::math::diag_matrix(stan::math::rep_vector(1, k)),
         "assigning variable A");
       {
         int idx = std::numeric_limits<int>::min();
-        current_statement__ = 15;
+        current_statement__ = 16;
         idx = 1;
-        current_statement__ = 21;
+        current_statement__ = 22;
         for (int i = 2; i <= k; ++i) {
-          current_statement__ = 19;
+          current_statement__ = 20;
           for (int j = 1; j <= (i - 1); ++j) {
-            current_statement__ = 16;
+            current_statement__ = 17;
             stan::model::assign(A,
               stan::model::rvalue(a, "a", stan::model::index_uni(idx)),
               "assigning variable A", stan::model::index_uni(i),
               stan::model::index_uni(j));
-            current_statement__ = 17;
+            current_statement__ = 18;
             idx = (idx + 1);
           }
         }
       }
-      current_statement__ = 23;
+      current_statement__ = 24;
       stan::model::assign(Ainv, stan::math::inverse(A),
         "assigning variable Ainv");
-      current_statement__ = 26;
+      current_statement__ = 27;
       for (int i = 1; i <= k; ++i) {
-        current_statement__ = 24;
+        current_statement__ = 25;
         stan::model::assign(log_lambda,
           (stan::model::rvalue(mu_log_lambda_1, "mu_log_lambda_1",
              stan::model::index_uni(i)) +
@@ -1231,11 +1339,11 @@ public:
             stan::model::index_uni(i)))), "assigning variable log_lambda",
           stan::model::index_uni(1), stan::model::index_uni(i));
       }
-      current_statement__ = 31;
+      current_statement__ = 32;
       for (int t = 2; t <= N; ++t) {
-        current_statement__ = 29;
+        current_statement__ = 30;
         for (int i = 1; i <= k; ++i) {
-          current_statement__ = 27;
+          current_statement__ = 28;
           stan::model::assign(log_lambda,
             (stan::model::rvalue(log_lambda, "log_lambda",
                stan::model::index_uni((t - 1)), stan::model::index_uni(i)) +
@@ -1246,16 +1354,16 @@ public:
             stan::model::index_uni(t), stan::model::index_uni(i));
         }
       }
-      current_statement__ = 37;
+      current_statement__ = 39;
       for (int t = 1; t <= N; ++t) {
-        current_statement__ = 32;
-        stan::math::validate_non_negative_index("sqrt_Lambda_t", "k", k);
         current_statement__ = 33;
+        stan::math::validate_non_negative_index("sqrt_Lambda_t", "k", k);
+        current_statement__ = 34;
         stan::math::validate_non_negative_index("sqrt_Lambda_t", "k", k);
         Eigen::Matrix<double,-1,-1> sqrt_Lambda_t =
           Eigen::Matrix<double,-1,-1>::Constant(k, k,
             std::numeric_limits<double>::quiet_NaN());
-        current_statement__ = 34;
+        current_statement__ = 35;
         stan::model::assign(sqrt_Lambda_t,
           stan::math::diag_matrix(
             stan::math::sqrt(
@@ -1264,10 +1372,16 @@ public:
                   stan::model::rvalue(log_lambda, "log_lambda",
                     stan::model::index_uni(t)))))),
           "assigning variable sqrt_Lambda_t");
-        current_statement__ = 35;
+        current_statement__ = 36;
+        stan::model::assign(L_Sigma_u,
+          stan::math::multiply(Ainv, sqrt_Lambda_t),
+          "assigning variable L_Sigma_u", stan::model::index_uni(t));
+        current_statement__ = 37;
         stan::model::assign(Sigma_u,
-          stan::math::tcrossprod(stan::math::multiply(Ainv, sqrt_Lambda_t)),
-          "assigning variable Sigma_u", stan::model::index_uni(t));
+          stan::math::tcrossprod(
+            stan::model::rvalue(L_Sigma_u, "L_Sigma_u",
+              stan::model::index_uni(t))), "assigning variable Sigma_u",
+          stan::model::index_uni(t));
       }
       if (emit_transformed_parameters__) {
         out__.write(A);
@@ -1276,6 +1390,16 @@ public:
           for (int sym2__ = 1; sym2__ <= k; ++sym2__) {
             for (int sym3__ = 1; sym3__ <= N; ++sym3__) {
               out__.write(stan::model::rvalue(Sigma_u, "Sigma_u",
+                            stan::model::index_uni(sym3__),
+                            stan::model::index_uni(sym2__),
+                            stan::model::index_uni(sym1__)));
+            }
+          }
+        }
+        for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
+          for (int sym2__ = 1; sym2__ <= k; ++sym2__) {
+            for (int sym3__ = 1; sym3__ <= N; ++sym3__) {
+              out__.write(stan::model::rvalue(L_Sigma_u, "L_Sigma_u",
                             stan::model::index_uni(sym3__),
                             stan::model::index_uni(sym2__),
                             stan::model::index_uni(sym1__)));
@@ -1291,9 +1415,9 @@ public:
         std::vector<Eigen::Matrix<double,-1,-1>>(p,
           Eigen::Matrix<double,-1,-1>::Constant(k, k,
             std::numeric_limits<double>::quiet_NaN()));
-      current_statement__ = 40;
+      current_statement__ = 42;
       for (int i = 1; i <= p; ++i) {
-        current_statement__ = 38;
+        current_statement__ = 40;
         stan::model::assign(Pi,
           stan::math::transpose(
             stan::model::rvalue(beta, "beta",
@@ -1311,9 +1435,9 @@ public:
         std::vector<Eigen::Matrix<double,-1,-1>>(H,
           Eigen::Matrix<double,-1,-1>::Constant(k, k,
             std::numeric_limits<double>::quiet_NaN()));
-      current_statement__ = 43;
+      current_statement__ = 45;
       for (int i = 1; i <= k; ++i) {
-        current_statement__ = 41;
+        current_statement__ = 43;
         stan::model::assign(log_lambda_pred,
           stan::math::normal_rng(
             stan::model::rvalue(log_lambda, "log_lambda",
@@ -1323,11 +1447,11 @@ public:
             base_rng__), "assigning variable log_lambda_pred",
           stan::model::index_uni(1), stan::model::index_uni(i));
       }
-      current_statement__ = 48;
+      current_statement__ = 50;
       for (int h = 2; h <= H; ++h) {
-        current_statement__ = 46;
+        current_statement__ = 48;
         for (int i = 1; i <= k; ++i) {
-          current_statement__ = 44;
+          current_statement__ = 46;
           stan::model::assign(log_lambda_pred,
             stan::math::normal_rng(
               stan::model::rvalue(log_lambda_pred, "log_lambda_pred",
@@ -1338,16 +1462,16 @@ public:
             stan::model::index_uni(h), stan::model::index_uni(i));
         }
       }
-      current_statement__ = 72;
+      current_statement__ = 80;
       for (int h = 1; h <= H; ++h) {
-        current_statement__ = 49;
+        current_statement__ = 51;
         stan::math::validate_non_negative_index("sqrt_Lambda", "k", k);
-        current_statement__ = 50;
+        current_statement__ = 52;
         stan::math::validate_non_negative_index("sqrt_Lambda", "k", k);
         Eigen::Matrix<double,-1,-1> sqrt_Lambda =
           Eigen::Matrix<double,-1,-1>::Constant(k, k,
             std::numeric_limits<double>::quiet_NaN());
-        current_statement__ = 52;
+        current_statement__ = 54;
         stan::model::assign(sqrt_Lambda,
           stan::math::diag_matrix(
             stan::math::sqrt(
@@ -1356,45 +1480,58 @@ public:
                   stan::model::rvalue(log_lambda_pred, "log_lambda_pred",
                     stan::model::index_uni(h)))))),
           "assigning variable sqrt_Lambda");
-        current_statement__ = 53;
+        current_statement__ = 55;
+        stan::math::validate_non_negative_index("L_Sigma_u_pred_h", "k", k);
+        current_statement__ = 56;
+        stan::math::validate_non_negative_index("L_Sigma_u_pred_h", "k", k);
+        Eigen::Matrix<double,-1,-1> L_Sigma_u_pred_h =
+          Eigen::Matrix<double,-1,-1>::Constant(k, k,
+            std::numeric_limits<double>::quiet_NaN());
+        current_statement__ = 57;
+        stan::model::assign(L_Sigma_u_pred_h,
+          stan::math::multiply(Ainv, sqrt_Lambda),
+          "assigning variable L_Sigma_u_pred_h");
+        current_statement__ = 58;
         stan::math::validate_non_negative_index("epsilon", "k", k);
         Eigen::Matrix<double,-1,1> epsilon =
           Eigen::Matrix<double,-1,1>::Constant(k,
             std::numeric_limits<double>::quiet_NaN());
-        current_statement__ = 54;
-        stan::model::assign(epsilon,
-          stan::math::multi_normal_rng(stan::math::rep_vector(0, k),
-            stan::math::diag_matrix(stan::math::rep_vector(1, k)), base_rng__),
-          "assigning variable epsilon");
-        current_statement__ = 55;
+        current_statement__ = 62;
+        for (int i = 1; i <= k; ++i) {
+          current_statement__ = 60;
+          stan::model::assign(epsilon,
+            stan::math::std_normal_rng(base_rng__),
+            "assigning variable epsilon", stan::model::index_uni(i));
+        }
+        current_statement__ = 63;
         stan::math::validate_non_negative_index("u_t", "k", k);
         Eigen::Matrix<double,-1,1> u_t =
           Eigen::Matrix<double,-1,1>::Constant(k,
             std::numeric_limits<double>::quiet_NaN());
-        current_statement__ = 56;
+        current_statement__ = 64;
         stan::model::assign(u_t,
-          stan::math::multiply(stan::math::multiply(Ainv, sqrt_Lambda),
-            epsilon), "assigning variable u_t");
-        current_statement__ = 57;
+          stan::math::multiply(L_Sigma_u_pred_h, epsilon),
+          "assigning variable u_t");
+        current_statement__ = 65;
         stan::model::assign(Sigma_u_pred,
-          stan::math::tcrossprod(stan::math::multiply(Ainv, sqrt_Lambda)),
+          stan::math::tcrossprod(L_Sigma_u_pred_h),
           "assigning variable Sigma_u_pred", stan::model::index_uni(h));
-        current_statement__ = 58;
+        current_statement__ = 66;
         stan::math::validate_non_negative_index("yhat_t", "k", k);
         Eigen::Matrix<double,-1,1> yhat_t =
           Eigen::Matrix<double,-1,1>::Constant(k,
             std::numeric_limits<double>::quiet_NaN());
-        current_statement__ = 59;
+        current_statement__ = 67;
         stan::model::assign(yhat_t,
           stan::math::transpose(
             stan::math::multiply(
               stan::model::rvalue(d_pred, "d_pred", stan::model::index_uni(h)),
               stan::math::transpose(Psi))), "assigning variable yhat_t");
-        current_statement__ = 64;
+        current_statement__ = 72;
         if (stan::math::logical_gt(h, 1)) {
-          current_statement__ = 62;
+          current_statement__ = 70;
           for (int i = 1; i <= stan::math::min((h - 1), p); ++i) {
-            current_statement__ = 60;
+            current_statement__ = 68;
             stan::model::assign(yhat_t,
               stan::math::add(stan::model::deep_copy(yhat_t),
                 stan::math::to_vector(
@@ -1411,11 +1548,11 @@ public:
               "assigning variable yhat_t");
           }
         }
-        current_statement__ = 69;
+        current_statement__ = 77;
         if (stan::math::logical_lte(h, p)) {
-          current_statement__ = 67;
+          current_statement__ = 75;
           for (int i = h; i <= p; ++i) {
-            current_statement__ = 65;
+            current_statement__ = 73;
             stan::model::assign(yhat_t,
               stan::math::add(stan::model::deep_copy(yhat_t),
                 stan::math::to_vector(
@@ -1432,7 +1569,7 @@ public:
               "assigning variable yhat_t");
           }
         }
-        current_statement__ = 70;
+        current_statement__ = 78;
         stan::model::assign(y_pred,
           stan::math::transpose(stan::math::add(yhat_t, u_t)),
           "assigning variable y_pred", stan::model::index_uni(h));
@@ -1661,7 +1798,8 @@ public:
                   emit_generated_quantities__ = true) const {
     names__ = std::vector<std::string>{"beta", "Psi", "z", "phi", "a"};
     if (emit_transformed_parameters__) {
-      std::vector<std::string> temp{"A", "Ainv", "Sigma_u", "log_lambda"};
+      std::vector<std::string>
+        temp{"A", "Ainv", "Sigma_u", "L_Sigma_u", "log_lambda"};
       names__.reserve(names__.size() + temp.size());
       names__.insert(names__.end(), temp.begin(), temp.end());
     }
@@ -1692,6 +1830,8 @@ public:
                static_cast<size_t>(k)},
              std::vector<size_t>{static_cast<size_t>(k),
                static_cast<size_t>(k)},
+             std::vector<size_t>{static_cast<size_t>(N),
+               static_cast<size_t>(k), static_cast<size_t>(k)},
              std::vector<size_t>{static_cast<size_t>(N),
                static_cast<size_t>(k), static_cast<size_t>(k)},
              std::vector<size_t>{static_cast<size_t>(N),
@@ -1760,6 +1900,15 @@ public:
         for (int sym2__ = 1; sym2__ <= k; ++sym2__) {
           for (int sym3__ = 1; sym3__ <= N; ++sym3__) {
             param_names__.emplace_back(std::string() + "Sigma_u" + '.' +
+              std::to_string(sym3__) + '.' + std::to_string(sym2__) + '.' +
+              std::to_string(sym1__));
+          }
+        }
+      }
+      for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
+        for (int sym2__ = 1; sym2__ <= k; ++sym2__) {
+          for (int sym3__ = 1; sym3__ <= N; ++sym3__) {
+            param_names__.emplace_back(std::string() + "L_Sigma_u" + '.' +
               std::to_string(sym3__) + '.' + std::to_string(sym2__) + '.' +
               std::to_string(sym1__));
           }
@@ -1858,6 +2007,15 @@ public:
         }
       }
       for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
+        for (int sym2__ = 1; sym2__ <= k; ++sym2__) {
+          for (int sym3__ = 1; sym3__ <= N; ++sym3__) {
+            param_names__.emplace_back(std::string() + "L_Sigma_u" + '.' +
+              std::to_string(sym3__) + '.' + std::to_string(sym2__) + '.' +
+              std::to_string(sym1__));
+          }
+        }
+      }
+      for (int sym1__ = 1; sym1__ <= k; ++sym1__) {
         for (int sym2__ = 1; sym2__ <= N; ++sym2__) {
           param_names__.emplace_back(std::string() + "log_lambda" + '.' +
             std::to_string(sym2__) + '.' + std::to_string(sym1__));
@@ -1898,10 +2056,10 @@ public:
     }
   }
   inline std::string get_constrained_sizedtypes() const {
-    return std::string("[{\"name\":\"beta\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(beta_1dim__) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"Psi\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(q) + "},\"block\":\"parameters\"},{\"name\":\"z\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(N) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"a\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(a_1dim__) + "},\"block\":\"parameters\"},{\"name\":\"A\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Ainv\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Sigma_u\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"transformed_parameters\"},{\"name\":\"log_lambda\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(N) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Pi\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(p) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"generated_quantities\"},{\"name\":\"y_pred\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(H) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"generated_quantities\"},{\"name\":\"log_lambda_pred\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(H) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"generated_quantities\"},{\"name\":\"Sigma_u_pred\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(H) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"beta\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(beta_1dim__) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"Psi\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(q) + "},\"block\":\"parameters\"},{\"name\":\"z\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(N) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"a\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(a_1dim__) + "},\"block\":\"parameters\"},{\"name\":\"A\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Ainv\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Sigma_u\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"transformed_parameters\"},{\"name\":\"L_Sigma_u\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"transformed_parameters\"},{\"name\":\"log_lambda\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(N) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Pi\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(p) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"generated_quantities\"},{\"name\":\"y_pred\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(H) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"generated_quantities\"},{\"name\":\"log_lambda_pred\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(H) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"generated_quantities\"},{\"name\":\"Sigma_u_pred\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(H) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"generated_quantities\"}]");
   }
   inline std::string get_unconstrained_sizedtypes() const {
-    return std::string("[{\"name\":\"beta\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(beta_1dim__) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"Psi\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(q) + "},\"block\":\"parameters\"},{\"name\":\"z\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(N) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"a\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(a_1dim__) + "},\"block\":\"parameters\"},{\"name\":\"A\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Ainv\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Sigma_u\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"transformed_parameters\"},{\"name\":\"log_lambda\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(N) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Pi\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(p) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"generated_quantities\"},{\"name\":\"y_pred\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(H) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"generated_quantities\"},{\"name\":\"log_lambda_pred\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(H) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"generated_quantities\"},{\"name\":\"Sigma_u_pred\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(H) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"generated_quantities\"}]");
+    return std::string("[{\"name\":\"beta\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(beta_1dim__) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"Psi\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(q) + "},\"block\":\"parameters\"},{\"name\":\"z\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(N) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"phi\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(k) + "},\"block\":\"parameters\"},{\"name\":\"a\",\"type\":{\"name\":\"vector\",\"length\":" + std::to_string(a_1dim__) + "},\"block\":\"parameters\"},{\"name\":\"A\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Ainv\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Sigma_u\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"transformed_parameters\"},{\"name\":\"L_Sigma_u\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(N) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"transformed_parameters\"},{\"name\":\"log_lambda\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(N) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"transformed_parameters\"},{\"name\":\"Pi\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(p) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"generated_quantities\"},{\"name\":\"y_pred\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(H) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"generated_quantities\"},{\"name\":\"log_lambda_pred\",\"type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(H) + ",\"cols\":" + std::to_string(k) + "},\"block\":\"generated_quantities\"},{\"name\":\"Sigma_u_pred\",\"type\":{\"name\":\"array\",\"length\":" + std::to_string(H) + ",\"element_type\":{\"name\":\"matrix\",\"rows\":" + std::to_string(k) + ",\"cols\":" + std::to_string(k) + "}},\"block\":\"generated_quantities\"}]");
   }
   // Begin method overload boilerplate
   template <typename RNG> inline void
@@ -1912,8 +2070,8 @@ public:
               pstream = nullptr) const {
     const size_t num_params__ = (((((beta_1dim__ * k) + (k * q)) + (N * k)) +
       k) + a_1dim__);
-    const size_t num_transformed = emit_transformed_parameters * (((((k * k)
-      + (k * k)) + ((N * k) * k)) + (N * k)));
+    const size_t num_transformed = emit_transformed_parameters * ((((((k * k)
+      + (k * k)) + ((N * k) * k)) + ((N * k) * k)) + (N * k)));
     const size_t num_gen_quantities = emit_generated_quantities * ((((((p *
       k) * k) + (H * k)) + (H * k)) + ((H * k) * k)));
     const size_t num_to_write = num_params__ + num_transformed +
@@ -1932,8 +2090,8 @@ public:
               pstream = nullptr) const {
     const size_t num_params__ = (((((beta_1dim__ * k) + (k * q)) + (N * k)) +
       k) + a_1dim__);
-    const size_t num_transformed = emit_transformed_parameters * (((((k * k)
-      + (k * k)) + ((N * k) * k)) + (N * k)));
+    const size_t num_transformed = emit_transformed_parameters * ((((((k * k)
+      + (k * k)) + ((N * k) * k)) + ((N * k) * k)) + (N * k)));
     const size_t num_gen_quantities = emit_generated_quantities * ((((((p *
       k) * k) + (H * k)) + (H * k)) + ((H * k) * k)));
     const size_t num_to_write = num_params__ + num_transformed +

@@ -47,6 +47,8 @@ data {
 
 transformed data {
     matrix[p, p] I_p = diag_matrix(rep_vector(1, p)); // Identity matrix
+    vector[k*p*k] Omega_beta_diag = sqrt(diagonal(Omega_beta));
+    vector[k*q] Omega_psi_diag = sqrt(diagonal(Omega_Psi));
 }
 
 parameters {
@@ -56,12 +58,15 @@ parameters {
 }
 
 model {
+   matrix[k, k] L_Sigma_u = cholesky_decompose(Sigma_u);
+   matrix[p*q, p*k] Kron_I_p_Psi = kron(I_p, Psi');
+   array[N] vector[k] u;
   for(t in 1:N){
-      vector[k] u_t = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
-      u_t ~ multi_normal(rep_vector(0,k), Sigma_u);
+      u[t] = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*Kron_I_p_Psi)*beta))';
   }
-  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
-  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
+  u ~ multi_normal_cholesky(rep_vector(0, k), L_Sigma_u);
+  to_vector(beta) ~ normal(theta_beta, Omega_beta_diag);
+  to_vector(Psi)  ~ normal(theta_Psi,  Omega_psi_diag);
   Sigma_u ~ inv_wishart(m, V);
 }
 
@@ -73,10 +78,10 @@ generated quantities {
   }
 
   matrix[H, k] y_pred;
-
+  matrix[k, k] L_Sigma_u = cholesky_decompose(Sigma_u);
   for (h in 1:H) {
 
-    vector[k] u_t = multi_normal_rng(rep_vector(0, k), Sigma_u);
+    vector[k] u_t = multi_normal_cholesky_rng(rep_vector(0, k), L_Sigma_u);
     vector[k] yhat_t = (d_pred[h]*Psi')';
 
     if (h > 1) {
