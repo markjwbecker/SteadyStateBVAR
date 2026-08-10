@@ -26,7 +26,9 @@
 #' where where \eqn{w_t'=(y_{t-1}',\dots,y_{t-p}')} is a \eqn{kp}-dimensional vector of lagged endogenous variables
 #' and \eqn{q_t'=(d_{t-1}',\dots,d_{t-p}')} is a \eqn{qp}-dimensional vector of lagged deterministic (exogenous) variables,
 #' \eqn{I_p} is the \eqn{(p \times p)} identity matrix and \eqn{\otimes} denotes the Kronecker product.
-#' This is how the likelihood is written in the Stan code. The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u}.
+#' This is how the likelihood is written in the Stan code. The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u},
+#' and as such priors are needed. Please see \link{priors} for more details.
+#' 
 #' 
 #' For the innovations to the model, in the case of the homoscedastic steady-state BVAR, they are \eqn{u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)}.
 #' However, for models with stochastic volatility, there is instead a time-varying covariance matrix \eqn{u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})}.

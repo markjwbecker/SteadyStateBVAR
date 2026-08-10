@@ -26,8 +26,8 @@
 #' @param SV_priors List. User-supplied stochastic volatility priors. Required when \code{SV = TRUE}.
 #'   The list must contain the following named elements depending on \code{SV_type}:
 #'   \itemize{
-#'     \item For \code{"RW"}: \code{theta_A}, \code{Omega_A}, \code{mu_log_lambda_1},
-#'       \code{sigma2_log_lambda_1}, \code{alpha_phi}, \code{beta_phi}.
+#'     \item For \code{"RW"}: \code{theta_A}, \code{Omega_A}, \code{theta_log_lambda_1},
+#'       \code{Omega_log_lambda_1}, \code{alpha_phi}, \code{beta_phi}.
 #'     \item For \code{"AR1"}: \code{theta_A}, \code{Omega_A}, \code{theta_gamma_0},
 #'       \code{Omega_gamma_0}, \code{theta_gamma_1}, \code{Omega_gamma_1},
 #'       \code{theta_log_lambda_1}, \code{Omega_log_lambda_1}, \code{V_Phi}, \code{m_Phi}.
@@ -113,20 +113,22 @@
 #' \eqn{V=(m-k-1)\hat{\Sigma}_u} where \eqn{\hat{\Sigma}_u} is the least squares estimate
 #' from the VAR(\eqn{p}) (including the constant and dummy/trend variable if applicable), and \eqn{m=k+2}.
 #' For the stochastic volatility specifications, the innovation covariance matrix is now time-varying \eqn{\Sigma_{u,t}}.
-#' Therefore, stochastic volatility priors are needed, see \link{bvar} for more details. For the Random Walk
-#' (\code{"RW"}) stochastic volatility specification, the following priors are used
+#' Therefore, stochastic volatility priors are needed, see \link{bvar} for more details. Please note that
+#' \eqn{\lambda} below (volatilities) has nothing to do with the \eqn{\lambda} from the Minnesota prior (hyperparameters).
+#' Now, for the Random Walk (\code{"RW"}) stochastic volatility specification, the following priors are used
 #' 
 #' \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
-#' \ln \lambda_{i,1} &\sim \mathrm{N}(\mu_{\ln \lambda_{i,1}}, \sigma^2_{\ln \lambda_{i,1}}) \\
+#' \ln \lambda_{1} &\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
 #' \phi_i &\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}}
 #' 
 #' Here \eqn{a} is a \eqn{k(k-1)/2}-dimensional vector that collects the free parameters in \eqn{A} in row-major order,
-#' and \eqn{\ln \lambda_{i,1}} are the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{i,t}} for \eqn{i=1,\dots,k}.
+#' and \eqn{\ln \lambda_1} is a \eqn{k}-dimensional vector containing the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{t}}.
+#' We assume that \eqn{\Omega_A} and \eqn{\Omega_{\ln \lambda_{1}}} are diagonal matrices.
 #' Furthermore, \eqn{\phi_i} for \eqn{i=1,\dots,k} are the log volatility innovation variances. For the AR(1) (\code{"AR1"}) stochastic volatility specification, the following priors are used
 #' 
 #' \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 #' \gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
-#' \gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
+#' \gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) I(|\gamma_{1,i}| < 1)\\
 #' \ln \lambda_{1} &\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
 #' \Phi &\sim \mathrm{IW}(V_{\Phi},m_{\Phi})\end{aligned}}
 #' 
@@ -134,6 +136,7 @@
 #' and \eqn{\ln \lambda_1} is a \eqn{k}-dimensional vector containing the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{t}}.
 #' Furthermore, \eqn{\gamma_{0}} is a \eqn{k}-dimensional vector of log volatility intercepts, \eqn{\gamma_{1}} is a \eqn{k}-dimensional vector of log volatility
 #' slopes, and \eqn{\Phi} is the \eqn{k \times k} log volatility innovation covariance matrix.
+#' We assume that \eqn{\Omega_A}, \eqn{\Omega_{\gamma_0}}, \eqn{\Omega_{\gamma_1}}, and \eqn{\Omega_{\ln \lambda_{1}}} are diagonal matrices.
 #' 
 #' For details on the homoscedastic steady-state BVAR model, see Villani (2009).
 #' For details on the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
@@ -186,8 +189,8 @@
 #' SV_priors_RW <- list(
 #' theta_A              =  rep(0, n_free_params_A),
 #' Omega_A              =  diag(1000, n_free_params_A),
-#' mu_log_lambda_1      =  rep(0, k),
-#' sigma2_log_lambda_1  =  rep(1000, k),
+#' theta_log_lambda_1   =  rep(0, k),
+#' Omega_log_lambda_1   =  diag(1000, k),
 #' alpha_phi            =  rep(5, k),
 #' beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 #' )
@@ -282,8 +285,8 @@ priors<- function(x,
     n_free <- x$setup$n_free_params_A
     
     if (SV_type == "RW") {
-      required_names <- c("theta_A", "Omega_A", "mu_log_lambda_1",
-                          "sigma2_log_lambda_1", "alpha_phi", "beta_phi")
+      required_names <- c("theta_A", "Omega_A", "theta_log_lambda_1",
+                          "Omega_log_lambda_1", "alpha_phi", "beta_phi")
       missing_names <- setdiff(required_names, names(SV_priors))
       if (length(missing_names) > 0)
         stop(paste("SV_priors is missing elements:", paste(missing_names, collapse = ", ")))
@@ -292,12 +295,10 @@ priors<- function(x,
         stop(paste("theta_A must be a vector of length k*(k-1)/2 =", n_free))
       if (!all(dim(SV_priors$Omega_A) == n_free))
         stop(paste("Omega_A must be a", n_free, "x", n_free, "matrix"))
-      if (length(SV_priors$mu_log_lambda_1) != k)
-        stop(paste("mu_log_lambda_1 must be a vector of length k =", k))
-      if (length(SV_priors$sigma2_log_lambda_1) != k)
-        stop(paste("sigma2_log_lambda_1 must be a vector of length k =", k))
-      if (any(SV_priors$sigma2_log_lambda_1 <= 0))
-        stop("sigma2_log_lambda_1 must be strictly positive")
+      if (length(SV_priors$theta_log_lambda_1) != k)
+        stop(paste("theta_log_lambda_1 must be a vector of length k =", k))
+      if (!all(dim(SV_priors$Omega_log_lambda_1) == k))
+        stop(paste("Omega_log_lambda_1 must be a", k, "x", k, "matrix"))
       if (length(SV_priors$alpha_phi) != k)
         stop(paste("alpha_phi must be a vector of length k =", k))
       if (any(SV_priors$alpha_phi <= 0))

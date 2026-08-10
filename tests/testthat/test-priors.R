@@ -128,7 +128,7 @@ test_that("RW SV_priors validates required names", {
   sv <- list(
     theta_A = rep(0, n_free),
     Omega_A = diag(n_free)
-    # missing: mu_log_lambda_1, sigma2_log_lambda_1, alpha_phi, beta_phi
+    # missing: theta_log_lambda_1, Omega_log_lambda_1, alpha_phi, beta_phi
   )
   
   expect_error(
@@ -148,8 +148,8 @@ test_that("RW SV_priors validates theta_A length", {
   sv <- list(
     theta_A             = rep(0, n_free + 1), # wrong length
     Omega_A             = diag(n_free),
-    mu_log_lambda_1     = rep(0, k),
-    sigma2_log_lambda_1 = rep(1, k),
+    theta_log_lambda_1  = rep(0, k),
+    Omega_log_lambda_1  = diag(k),
     alpha_phi           = rep(1, k),
     beta_phi            = rep(1, k)
   )
@@ -171,8 +171,8 @@ test_that("RW SV_priors validates Omega_A dimensions", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free + 1), # wrong dimensions
-    mu_log_lambda_1     = rep(0, k),
-    sigma2_log_lambda_1 = rep(1, k),
+    theta_log_lambda_1  = rep(0, k),
+    Omega_log_lambda_1  = diag(k),
     alpha_phi           = rep(1, k),
     beta_phi            = rep(1, k)
   )
@@ -183,7 +183,7 @@ test_that("RW SV_priors validates Omega_A dimensions", {
   )
 })
 
-test_that("RW SV_priors validates sigma2_log_lambda_1 positivity", {
+test_that("RW SV_priors validates theta_log_lambda_1 length", {
   data <- matrix(rnorm(300), nrow = 100, ncol = 3)
   model <- bvar(data = data)
   model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
@@ -194,15 +194,38 @@ test_that("RW SV_priors validates sigma2_log_lambda_1 positivity", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free),
-    mu_log_lambda_1     = rep(0, k),
-    sigma2_log_lambda_1 = rep(-1, k), # must be positive
+    theta_log_lambda_1  = rep(0, k + 1), # wrong length
+    Omega_log_lambda_1  = diag(k),
     alpha_phi           = rep(1, k),
     beta_phi            = rep(1, k)
   )
   
   expect_error(
     priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
-    "sigma2_log_lambda_1 must be strictly positive"
+    "theta_log_lambda_1 must be a vector of length"
+  )
+})
+
+test_that("RW SV_priors validates Omega_log_lambda_1 dimensions", {
+  data <- matrix(rnorm(300), nrow = 100, ncol = 3)
+  model <- bvar(data = data)
+  model <- SteadyStateBVAR::setup(model, p = 2, deterministic = "constant")
+  
+  k <- model$setup$k
+  n_free <- model$setup$n_free_params_A
+  
+  sv <- list(
+    theta_A             = rep(0, n_free),
+    Omega_A             = diag(n_free),
+    theta_log_lambda_1  = rep(0, k),
+    Omega_log_lambda_1  = diag(k + 1), # wrong dimensions
+    alpha_phi           = rep(1, k),
+    beta_phi            = rep(1, k)
+  )
+  
+  expect_error(
+    priors(model, SV = TRUE, SV_type = "RW", SV_priors = sv),
+    "Omega_log_lambda_1 must be a"
   )
 })
 
@@ -217,8 +240,8 @@ test_that("RW SV_priors validates alpha_phi positivity", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free),
-    mu_log_lambda_1     = rep(0, k),
-    sigma2_log_lambda_1 = rep(1, k),
+    theta_log_lambda_1  = rep(0, k),
+    Omega_log_lambda_1  = diag(k),
     alpha_phi           = rep(-1, k), # must be positive
     beta_phi            = rep(1, k)
   )
@@ -240,8 +263,8 @@ test_that("RW SV_priors validates beta_phi positivity", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free),
-    mu_log_lambda_1     = rep(0, k),
-    sigma2_log_lambda_1 = rep(1, k),
+    theta_log_lambda_1  = rep(0, k),
+    Omega_log_lambda_1  = diag(k),
     alpha_phi           = rep(1, k),
     beta_phi            = rep(-1, k) # must be positive
   )
@@ -263,8 +286,8 @@ test_that("RW SV attaches correctly with valid priors", {
   sv <- list(
     theta_A             = rep(0, n_free),
     Omega_A             = diag(n_free),
-    mu_log_lambda_1     = rep(0, k),
-    sigma2_log_lambda_1 = rep(1, k),
+    theta_log_lambda_1  = rep(0, k),
+    Omega_log_lambda_1  = diag(k),
     alpha_phi           = rep(5, k),
     beta_phi            = rep(0.4, k)
   )

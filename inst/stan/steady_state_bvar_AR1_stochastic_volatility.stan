@@ -55,7 +55,12 @@ data {
 
 transformed data {
     matrix[p, p] I_p = diag_matrix(rep_vector(1, p)); // Identity matrix
-    matrix[k, k] L_1 = cholesky_decompose(Omega_log_lambda_1);
+    vector[k] Omega_log_lambda_1_sqrt_diag = sqrt(diagonal(Omega_log_lambda_1));
+    vector[k*p*k] Omega_beta_sqrt_diag = sqrt(diagonal(Omega_beta));
+    vector[k*q] Omega_psi_sqrt_diag = sqrt(diagonal(Omega_Psi));
+    vector[k*(k-1)/2] Omega_A_sqrt_diag = sqrt(diagonal(Omega_A));
+    vector[k] Omega_gamma_0_sqrt_diag = sqrt(diagonal(Omega_gamma_0));
+    vector[k] Omega_gamma_1_sqrt_diag = sqrt(diagonal(Omega_gamma_1));
 }
 
 parameters {
@@ -72,6 +77,7 @@ transformed parameters {
   matrix[k,k] A;
   matrix[k,k] Ainv;
   array[N] matrix[k,k] Sigma_u; //time varying covariance matrix of reduced form errors u_t
+  array[N] matrix[k,k] L_Sigma_u;
   matrix[N, k] log_lambda; //log volatilities
   matrix[k,k] L_Phi;
 
@@ -89,7 +95,7 @@ transformed parameters {
   Ainv = inverse(A);
   L_Phi = cholesky_decompose(Phi);
   
-  log_lambda[1] = (theta_log_lambda_1 + L_1 * z[1]')';
+  log_lambda[1] = (theta_log_lambda_1 + Omega_log_lambda_1_sqrt_diag .* z[1]')';
   for (t in 2:N) {
     log_lambda[t] = (gamma_0 + gamma_1 .* log_lambda[t-1]' + L_Phi * z[t]')';
   }
@@ -97,23 +103,25 @@ transformed parameters {
   
   for (t in 1:N) {
     matrix[k,k] sqrt_Lambda_t = diag_matrix(sqrt(exp(log_lambda[t]')));
-    Sigma_u[t] = tcrossprod(Ainv * sqrt_Lambda_t);
+    L_Sigma_u[t] = Ainv * sqrt_Lambda_t;
+    Sigma_u[t] = tcrossprod(L_Sigma_u[t]);
   }
 }
 
 model {
   to_vector(z) ~ std_normal();
 
+  matrix[p*q, p*k] Kron_I_p_Psi = kron(I_p, Psi');
   for(t in 1:N){
-      vector[k] u_t = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
-      u_t ~ multi_normal(rep_vector(0,k), Sigma_u[t]);
+      vector[k] u_t = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*Kron_I_p_Psi)*beta))';
+      u_t ~ multi_normal_cholesky(rep_vector(0,k), L_Sigma_u[t]);
   }
 
-  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
-  to_vector(Psi)  ~ multi_normal(theta_Psi, Omega_Psi);
-  a               ~ multi_normal(theta_A, Omega_A);
-  gamma_0         ~ multi_normal(theta_gamma_0, Omega_gamma_0);
-  gamma_1         ~ multi_normal(theta_gamma_1, Omega_gamma_1);
+  to_vector(beta) ~ normal(theta_beta, Omega_beta_sqrt_diag);
+  to_vector(Psi)  ~ normal(theta_Psi, Omega_psi_sqrt_diag);
+  a               ~ normal(theta_A, Omega_A_sqrt_diag);
+  gamma_0         ~ normal(theta_gamma_0, Omega_gamma_0_sqrt_diag);
+  gamma_1         ~ normal(theta_gamma_1, Omega_gamma_1_sqrt_diag);
   Phi             ~ inv_wishart(m_Phi, V_Phi);
 }
 
@@ -129,14 +137,14 @@ generated quantities {
   array[H] matrix[k,k] Sigma_u_pred;
   vector[k] nu;
   
-  nu = multi_normal_rng(rep_vector(0,k), Phi);
+  nu = multi_normal_cholesky_rng(rep_vector(0,k), L_Phi);
   
   for (i in 1:k) {
     log_lambda_pred[1,i] = (gamma_0[i] + gamma_1[i] * log_lambda[N, i] + nu[i]);
     }
   
   for (h in 2:H) {
-    nu = multi_normal_rng(rep_vector(0,k), Phi);
+    nu = multi_normal_cholesky_rng(rep_vector(0,k), L_Phi);
     for (i in 1:k) {
       log_lambda_pred[h,i] = (gamma_0[i] + gamma_1[i] * log_lambda_pred[h-1, i] + nu[i]);
       }
@@ -147,11 +155,15 @@ generated quantities {
     
     matrix[k,k] sqrt_Lambda;
     sqrt_Lambda = diag_matrix(sqrt(exp(log_lambda_pred[h]')));
+    matrix[k,k] L_Sigma_u_pred_h = Ainv * sqrt_Lambda;
     
-    vector[k] epsilon = multi_normal_rng(rep_vector(0,k), diag_matrix(rep_vector(1, k)));
-    vector[k] u_t = Ainv * sqrt_Lambda * epsilon;
+    vector[k] epsilon;
+    for (i in 1:k) {
+      epsilon[i] = std_normal_rng();
+    }
+    vector[k] u_t = L_Sigma_u_pred_h * epsilon;
     
-    Sigma_u_pred[h] = tcrossprod(Ainv * sqrt_Lambda);
+    Sigma_u_pred[h] = tcrossprod(L_Sigma_u_pred_h);
     
     vector[k] yhat_t = (d_pred[h]*Psi')';
 

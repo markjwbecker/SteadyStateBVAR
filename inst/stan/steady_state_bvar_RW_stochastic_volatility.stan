@@ -41,8 +41,8 @@ data {
   matrix[k*q, k*q] Omega_Psi; //vec_Psi prior covariance matrix
   vector[k*(k-1)/2] theta_A; //a prior mean
   matrix[k*(k-1)/2, k*(k-1)/2] Omega_A; //a prior covariance matrix
-  vector[k] mu_log_lambda_1;        // log lambda initial condition prior means
-  vector<lower=0>[k] sigma2_log_lambda_1; // log lambda initial condition prior variances
+  vector[k] theta_log_lambda_1; //log lambda initial condition prior mean
+  matrix[k, k] Omega_log_lambda_1; //log lambda initial condition prior covariance matrix
   vector<lower=0>[k] alpha_phi;     // phi prior shapes
   vector<lower=0>[k] beta_phi;      // phi prior scales
   int<lower=1> H; // Forecast horizon
@@ -51,6 +51,10 @@ data {
 
 transformed data {
     matrix[p, p] I_p = diag_matrix(rep_vector(1, p)); // Identity matrix
+    vector[k*p*k] Omega_beta_sqrt_diag = sqrt(diagonal(Omega_beta));
+    vector[k*q] Omega_psi_sqrt_diag = sqrt(diagonal(Omega_Psi));
+    vector[k*(k-1)/2] Omega_A_sqrt_diag = sqrt(diagonal(Omega_A));
+    vector[k] Omega_log_lambda_1_sqrt_diag = sqrt(diagonal(Omega_log_lambda_1));
 }
 
 parameters {
@@ -64,7 +68,9 @@ parameters {
 transformed parameters {
   matrix[k,k] A;
   matrix[k,k] Ainv;
+  vector[k] sqrt_phi = sqrt(phi);
   array[N] matrix[k,k] Sigma_u; //time varying covariance matrix of reduced form errors u_t
+  array[N] matrix[k,k] L_Sigma_u;
   matrix[N, k] log_lambda; //log volatilities
   // construct A (1's on diagonal, and then free parameters on lower triangular)
   A = diag_matrix(rep_vector(1,k));
@@ -79,33 +85,33 @@ transformed parameters {
   }
   Ainv = inverse(A);
   
-  for (i in 1:k) {
-    log_lambda[1, i] = mu_log_lambda_1[i] + sqrt(sigma2_log_lambda_1[i]) * z[1, i];
-  }
+  log_lambda[1] = (theta_log_lambda_1 + Omega_log_lambda_1_sqrt_diag .* z[1]')';
+  
   for (t in 2:N) {
-    for (i in 1:k) {
-      log_lambda[t, i] = log_lambda[t-1, i] + sqrt(phi[i]) * z[t, i];
-    }
+    log_lambda[t] = (log_lambda[t-1]' + sqrt_phi .* z[t]')';
   }
   
   for (t in 1:N) {
     matrix[k,k] sqrt_Lambda_t = diag_matrix(sqrt(exp(log_lambda[t]')));
-    Sigma_u[t] = tcrossprod(Ainv * sqrt_Lambda_t);
+    L_Sigma_u[t] = Ainv * sqrt_Lambda_t;
+    Sigma_u[t] = tcrossprod(L_Sigma_u[t]);
   }
 }
 
 model {
   
   to_vector(z) ~ std_normal();
+  
+   matrix[p*q, p*k] Kron_I_p_Psi = kron(I_p, Psi');
+   array[N] vector[k] u;
 
   for(t in 1:N){
-      vector[k] u_t = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*(kron(I_p,Psi')))*beta))';
-      u_t ~ multi_normal(rep_vector(0,k), Sigma_u[t]);
+      u[t] = (Y[t] - (D[t]*Psi' + (W[t]-Q[t]*Kron_I_p_Psi)*beta))';
+      u[t] ~ multi_normal_cholesky(rep_vector(0,k), L_Sigma_u[t]);
   }
-
-  to_vector(beta) ~ multi_normal(theta_beta, Omega_beta);
-  to_vector(Psi) ~ multi_normal(theta_Psi, Omega_Psi);
-  a  ~ multi_normal(theta_A, Omega_A);
+  to_vector(beta) ~ normal(theta_beta, Omega_beta_sqrt_diag);
+  to_vector(Psi)  ~ normal(theta_Psi,  Omega_psi_sqrt_diag);
+  a               ~ normal(theta_A,    Omega_A_sqrt_diag);
   for (i in 1:k) {
   phi[i] ~ inv_gamma(alpha_phi[i], beta_phi[i]);
 }
@@ -124,12 +130,12 @@ generated quantities {
 
   
   for (i in 1:k) {
-    log_lambda_pred[1,i] = normal_rng(log_lambda[N,i], sqrt(phi[i]));
+    log_lambda_pred[1,i] = normal_rng(log_lambda[N,i], sqrt_phi[i]);
     }
   
   for (h in 2:H) {
     for (i in 1:k) {
-      log_lambda_pred[h,i] = normal_rng(log_lambda_pred[h-1,i], sqrt(phi[i]));
+      log_lambda_pred[h,i] = normal_rng(log_lambda_pred[h-1,i], sqrt_phi[i]);
       }
     }
 
@@ -138,11 +144,15 @@ generated quantities {
     
     matrix[k,k] sqrt_Lambda;
     sqrt_Lambda = diag_matrix(sqrt(exp(log_lambda_pred[h]')));
+    matrix[k,k] L_Sigma_u_pred_h = Ainv * sqrt_Lambda;
     
-    vector[k] epsilon = multi_normal_rng(rep_vector(0,k), diag_matrix(rep_vector(1, k)));
-    vector[k] u_t = Ainv * sqrt_Lambda * epsilon;
+    vector[k] epsilon;
+    for (i in 1:k) {
+      epsilon[i] = std_normal_rng();
+    }
+    vector[k] u_t = L_Sigma_u_pred_h * epsilon;
     
-    Sigma_u_pred[h] = tcrossprod(Ainv * sqrt_Lambda);
+    Sigma_u_pred[h] = tcrossprod(L_Sigma_u_pred_h);
     
     vector[k] yhat_t = (d_pred[h]*Psi')';
 
