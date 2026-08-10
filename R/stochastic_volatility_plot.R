@@ -57,13 +57,13 @@
 #' k <- bvar_obj$setup$k
 #' n_free_params_A <- bvar_obj$setup$n_free_params_A
 #' 
-#' SV_priors <- list(
-#' theta_A             =  rep(0, n_free_params_A),
-#' Omega_A             =  diag(1000, n_free_params_A),
-#' mu_log_lambda_1     =  rep(0, k),
-#' sigma2_log_lambda_1 =  rep(1000, k),
-#' alpha_phi           =  rep(5, k),
-#' beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
+#' SV_priors_RW <- list(
+#' theta_A              =  rep(0, n_free_params_A),
+#' Omega_A              =  diag(1000, n_free_params_A),
+#' theta_log_lambda_1   =  rep(0, k),
+#' Omega_log_lambda_1   =  diag(1000, k),
+#' alpha_phi            =  rep(5, k),
+#' beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 #' )
 #'
 #' bvar_obj <- priors(bvar_obj,
@@ -71,7 +71,7 @@
 #'                    Omega_Psi = diag(0.1, 2, 2),
 #'                    SV = TRUE,
 #'                    SV_type = "RW",
-#'                    SV_priors = SV_priors)
+#'                    SV_priors = SV_priors_RW)
 #'
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
