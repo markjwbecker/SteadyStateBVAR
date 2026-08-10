@@ -8,7 +8,7 @@ IRF(
   x,
   H = 16,
   response = NULL,
-  shock = NULL,
+  impulse = NULL,
   type = c("median", "mean"),
   method = c("OIRF", "GIRF"),
   ci = 0.95,
@@ -24,8 +24,8 @@ IRF(
 \item{response}{Integer. Index of the response variable to plot. If
 \code{NULL} (default), all responses are plotted.}
 
-\item{shock}{Integer. Index of the shock variable to plot. If \code{NULL}
-(default), all shocks are plotted.}
+\item{impulse}{Integer. Index of the impulse variable to plot. If \code{NULL}
+(default), all impulses are plotted.}
 
 \item{type}{Character. Whether to use \code{"median"} or \code{"mean"} as
 the point estimate. Default \code{"median"}.}
@@ -45,7 +45,7 @@ the frequency of the data (4 for quarterly, 12 for monthly).
 Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
 \code{diff(log(x))} or \code{100*diff(log(x))}. Computed by summing up to
 \eqn{f} periods of the impulse response, treating the response in periods
-prior to the shock as zero. Default is \code{NULL}.}
+prior to the impulse as zero. Default is \code{NULL}.}
 }
 \value{
 Invisibly returns a list with three arrays: the point estimate IRF, \code{lower}, and

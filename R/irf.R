@@ -8,8 +8,8 @@
 #' @param H Integer. The forecast horizon for the IRF. Default \code{16}.
 #' @param response Integer. Index of the response variable to plot. If
 #'   \code{NULL} (default), all responses are plotted.
-#' @param shock Integer. Index of the shock variable to plot. If \code{NULL}
-#'   (default), all shocks are plotted.
+#' @param impulse Integer. Index of the impulse variable to plot. If \code{NULL}
+#'   (default), all impulses are plotted.
 #' @param type Character. Whether to use \code{"median"} or \code{"mean"} as
 #'   the point estimate. Default \code{"median"}.
 #' @param method Character. The IRF method: \code{"OIRF"} for orthogonalized
@@ -24,7 +24,7 @@
 #'   Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
 #'   \code{diff(log(x))} or \code{100*diff(log(x))}. Computed by summing up to
 #'   \eqn{f} periods of the impulse response, treating the response in periods
-#'   prior to the shock as zero. Default is \code{NULL}.
+#'   prior to the impulse as zero. Default is \code{NULL}.
 #'
 #' @return Invisibly returns a list with three arrays: the point estimate IRF, \code{lower}, and
 #'   \code{upper} credible bounds, each of dimension \code{k x k x (H+1)}.
@@ -61,7 +61,7 @@
 #'                 
 #' (IRF(bvar_obj))
 #' }
-IRF <- function(x, H = 16, response = NULL, shock = NULL,
+IRF <- function(x, H = 16, response = NULL, impulse = NULL,
                 type = c("median", "mean"), method = c("OIRF", "GIRF"),
                 ci = 0.95, t = NULL, growth_rate_idx = NULL) {
   
@@ -197,19 +197,24 @@ IRF <- function(x, H = 16, response = NULL, shock = NULL,
     abline(h = 0, col = "black", lty = 1)
     
     main_title <- if (isTRUE(x$priors$SV)) {
-      paste0("Posterior ", type_label, " ", method, " (", round(ci * 100), "% CI)\nt=", t, "\nShock: ", var_names[j])
+      paste0("Posterior ", type_label, " ", method, " (", round(ci * 100), "% CI)\nt=", t, "\nImpulse: ", var_names[j])
     } else {
-      paste0("Posterior ", type_label, " ", method, " (", round(ci * 100), "% CI)\n\nShock: ", var_names[j])
+      paste0("Posterior ", type_label, " ", method, " (", round(ci * 100), "% CI)\n\nImpulse: ", var_names[j])
     }
     title(main = main_title)
   }
   
-  if (is.null(response) || is.null(shock)) {
+  if (is.null(response) && is.null(impulse)) {
     par(mfrow = c(k, k))
     for (j in 1:k) for (i in 1:k) plot_single(i, j)
-    par(mfrow = c(1, 1))
+  } else if (is.null(response) && !is.null(impulse)) {
+    par(mfrow = c(k, 1))
+    for (i in 1:k) plot_single(i, impulse)
+  } else if (!is.null(response) && is.null(impulse)) {
+    par(mfrow = c(1, k))
+    for (j in 1:k) plot_single(response, j)
   } else {
-    plot_single(response, shock)
+    plot_single(response, impulse)
   }
   
   if (type == "median") {
