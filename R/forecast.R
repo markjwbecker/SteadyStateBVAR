@@ -10,10 +10,9 @@
 #' @param fcst_type Character. Whether to use \code{"mean"} or \code{"median"}
 #'   as the point forecast. Default \code{"mean"}.
 #' @param growth_rate_idx Integer vector. Indices of variables of which to convert forecasts to
-#'   annual growth rates \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
+#'   annual growth rates \eqn{100 (\ln x_{t} - \ln x_{t-f})}, where \eqn{f} is
 #'   the frequency of the data (4 for quarterly, 12 for monthly).
-#'   Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
-#'   \code{diff(log(x))} or \code{100*diff(log(x))}.
+#'   Only suitable for variables specified as \eqn{100 (\ln x_{t} - \ln x_{t-1})}, i.e. \code{100*diff(log(x))}.
 #'   Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.
 #' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
 #'   (default), all variables are plotted. Forecasts are always computed and
@@ -50,7 +49,6 @@
 #'                    
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
-#'                 d_pred = matrix(rep(1,8)),
 #'                 iter = 200,
 #'                 warmup = 50,
 #'                 chains = 1,

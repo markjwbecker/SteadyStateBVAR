@@ -52,7 +52,6 @@
 #'
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 1,
-#'                 d_pred = matrix(1),
 #'                 iter = 100,
 #'                 warmup = 50,
 #'                 chains = 1,

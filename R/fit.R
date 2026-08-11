@@ -8,7 +8,12 @@
 #'   \code{\link{setup}} and \code{\link{priors}}.
 #' @param H Positive Integer. Forecast horizon.
 #'   Default is \code{1}.
-#' @param d_pred Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL}, must be provided by the user.
+#' @param d_pred Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL}. Automatically created.
+#' If \eqn{d_t} contains only a constant, \eqn{d_{t+h}=1 \ \forall \ h}.
+#' If \eqn{d_t} contains a constant and a dummy, it is assumed that the dummy stays at its last observed value for all future forecast periods.
+#' However, if this is not the intention, the user may supply \code{d_pred} themselves. Naturally, the constant is equal to one for all future periods.
+#' If \eqn{d_t} contains a constant and a trend, the trend is extrapolated from its last observed value (i.e. \eqn{trend_{T+h}=trend_{T}+h}).
+#' Naturally, the constant is equal to one for all future periods.
 #' @param ... Additional arguments passed directly to the \code{rstan} function \code{\link[rstan]{sampling}}
 #' (e.g. \code{iter}, \code{warmup}, \code{chains}, \code{cores}, \code{control},
 #' \code{seed}, \code{init}, \code{thin}, \code{algorithm}, \code{pars},
@@ -74,15 +79,9 @@
 #'                    Omega_Psi = diag(0.1, 2, 2),
 #'                    Jeffreys = TRUE)
 #'                    
-#' H <- 8
-#' d_pred <- matrix(rep(1,8))
-#' colnames(d_pred) <- c("constant")
-#' rownames(d_pred) <- paste("Horizon", 1:H)
-#' print(d_pred)
 #' 
 #' bvar_obj <- fit(bvar_obj,
-#'                 H = H,
-#'                 d_pred = d_pred,
+#'                 H = 8,
 #'                 iter = 200,
 #'                 warmup = 50,
 #'                 chains = 1,
@@ -113,15 +112,9 @@
 #'                    Omega_Psi = diag(0.1, k*q, k*q),
 #'                    Jeffreys = FALSE) #inverse-Wishart
 #'
-#' H <- 8
-#' d_pred <- cbind(rep(1, H), rep(0, H))
-#' colnames(d_pred) <- c("constant", "dummy")
-#' rownames(d_pred) <- paste("Horizon", 1:H)
-#' print(d_pred)
 #'
 #' bvar_obj <- fit(bvar_obj,
-#'                 H = H,
-#'                 d_pred = d_pred,
+#'                 H = 8,
 #'                 iter = 200,
 #'                 warmup = 50,
 #'                 chains = 1,
@@ -161,7 +154,6 @@
 #'
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
-#'                 d_pred = matrix(rep(1,8)),
 #'                 iter = 200,
 #'                 warmup = 50,
 #'                 chains = 1,
@@ -207,7 +199,6 @@
 #'
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
-#'                 d_pred = matrix(rep(1,8)),
 #'                 iter = 200,
 #'                 warmup = 50,
 #'                 chains = 1,
@@ -220,19 +211,44 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
   if (!inherits(x, "bvar")) stop("must be a 'bvar' object")
   if (is.null(x$setup)) stop("must be passed through setup")
   if (is.null(x$priors)) stop("must be passed through priors")
-  if (is.null(d_pred)) stop("d_pred must be supplied")
   
   if (!is.numeric(H) || length(H) != 1 || !is.finite(H) || H < 1 || H != floor(H)) {
     stop("H must be a positive integer")
   }
+  
+  if (is.null(d_pred)) {
+    
+    last_row <- x$setup$dt[nrow(x$setup$dt), , drop = FALSE]
+    d_pred <- matrix(rep(last_row, each = H), nrow = H, ncol = x$setup$q)
+    
+    if (identical(x$setup$deterministic, "constant_and_trend")) {
+      d_pred[, 2] <- last_row[2] + seq_len(H)
+    } else if (identical(x$setup$deterministic, "constant_and_dummy")) {
+      message("d_pred not supplied: assuming the dummy stays at its last observed value (",
+              last_row[2], ") for all ", H, " forecast periods.")
+    }
+  }
+  
   if (!is.matrix(d_pred)) stop("d_pred must be a matrix")
   if (nrow(d_pred) != H) stop("nrow(d_pred) must equal H")
   if (!is.null(x$setup$q) && ncol(d_pred) != x$setup$q) {
     stop("ncol(d_pred) must equal q")
   }
   
+  rownames(d_pred) <- paste0("h=", 1:H)
+  colnames(d_pred) <- if (x$setup$q == 1) {
+    "constant"
+  } else if (identical(x$setup$deterministic, "constant_and_dummy")) {
+    c("constant", "dummy")
+  } else if (identical(x$setup$deterministic, "constant_and_trend")) {
+    c("constant", "trend")
+  }
+  
   x$predict$H <- H
   x$predict$d_pred <- d_pred
+  cat("Future deterministic variables (d_pred):\n")
+  print(d_pred)
+  cat("\n")
   
   setup <- x$setup
   priors <- x$priors
@@ -261,6 +277,9 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
       stan_data$theta_A <- as.array(priors$SV_priors$theta_A[1])
     }
   }
+  
+  cat("Estimating stan model:\n", model_name)
+  cat("\n\n")
   
   x$fit$stan <- rstan::sampling(stanmodels[[model_name]], data = stan_data, ...)
   

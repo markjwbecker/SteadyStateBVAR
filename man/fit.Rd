@@ -13,7 +13,12 @@ fit(x, H = 1, d_pred = NULL, ...)
 \item{H}{Positive Integer. Forecast horizon.
 Default is \code{1}.}
 
-\item{d_pred}{Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL}, must be provided by the user.}
+\item{d_pred}{Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL}. Automatically created.
+If \eqn{d_t} contains only a constant, \eqn{d_{t+h}=1 \ \forall \ h}.
+If \eqn{d_t} contains a constant and a dummy, it is assumed that the dummy stays at its last observed value for all future forecast periods.
+However, if this is not the intention, the user may supply \code{d_pred} themselves. Naturally, the constant is equal to one for all future periods.
+If \eqn{d_t} contains a constant and a trend, the trend is extrapolated from its last observed value (i.e. \eqn{trend_{T+h}=trend_{T}+h}).
+Naturally, the constant is equal to one for all future periods.}
 
 \item{...}{Additional arguments passed directly to the \code{rstan} function \code{\link[rstan]{sampling}}
 (e.g. \code{iter}, \code{warmup}, \code{chains}, \code{cores}, \code{control},
@@ -85,15 +90,9 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi = diag(0.1, 2, 2),
                    Jeffreys = TRUE)
                    
-H <- 8
-d_pred <- matrix(rep(1,8))
-colnames(d_pred) <- c("constant")
-rownames(d_pred) <- paste("Horizon", 1:H)
-print(d_pred)
 
 bvar_obj <- fit(bvar_obj,
-                H = H,
-                d_pred = d_pred,
+                H = 8,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
@@ -124,15 +123,9 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi = diag(0.1, k*q, k*q),
                    Jeffreys = FALSE) #inverse-Wishart
 
-H <- 8
-d_pred <- cbind(rep(1, H), rep(0, H))
-colnames(d_pred) <- c("constant", "dummy")
-rownames(d_pred) <- paste("Horizon", 1:H)
-print(d_pred)
 
 bvar_obj <- fit(bvar_obj,
-                H = H,
-                d_pred = d_pred,
+                H = 8,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
@@ -172,7 +165,6 @@ bvar_obj <- priors(bvar_obj,
 
 bvar_obj <- fit(bvar_obj,
                 H = 8,
-                d_pred = matrix(rep(1,8)),
                 iter = 200,
                 warmup = 50,
                 chains = 1,
@@ -218,7 +210,6 @@ bvar_obj <- priors(bvar_obj,
 
 bvar_obj <- fit(bvar_obj,
                 H = 8,
-                d_pred = matrix(rep(1,8)),
                 iter = 200,
                 warmup = 50,
                 chains = 1,

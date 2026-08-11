@@ -40,12 +40,11 @@ volatility models. If \code{NULL} (default), the last time \code{t} is used.}
 
 \item{growth_rate_idx}{Integer vector. Indices of variables for which the impulse
 response is converted from a quarterly or monthly log first difference to an
-annual growth rate response, i.e. \eqn{\ln x_{t} - \ln x_{t-f}}, where \eqn{f} is
+annual growth rate response, i.e. \eqn{100 (\ln x_{t} - \ln x_{t-f})}, where \eqn{f} is
 the frequency of the data (4 for quarterly, 12 for monthly).
-Only suitable for variables specified as \eqn{\ln x_{t} - \ln x_{t-1}}, i.e.
-\code{diff(log(x))} or \code{100*diff(log(x))}. Computed by summing up to
-\eqn{f} periods of the impulse response, treating the response in periods
-prior to the impulse as zero. Default is \code{NULL}.}
+Only suitable for variables specified as \eqn{100 (\ln x_{t} - \ln x_{t-1})}, i.e.
+\code{100*diff(log(x))}. Computed by summing up to \eqn{f} periods of the impulse response,
+treating the response in periods prior to the impulse as zero. Default is \code{NULL}.}
 }
 \value{
 Invisibly returns a list with three arrays: the point estimate IRF, \code{lower}, and
@@ -79,7 +78,6 @@ bvar_obj <- priors(bvar_obj,
                    
 bvar_obj <- fit(bvar_obj,
                 H = 8,
-                d_pred = matrix(rep(1,8)),
                 iter = 200,
                 warmup = 50,
                 chains = 1,

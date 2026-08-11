@@ -135,6 +135,7 @@ setup <- function(x, p = 1, deterministic=c("constant", "constant_and_dummy", "c
                   dt=dt,
                   D=X,
                   n_free_params_A=n_free_params_A,
-                  Sigma_AR = Sigma_AR)
+                  Sigma_AR = Sigma_AR,
+                  deterministic=deterministic)
   return(x)
 }
