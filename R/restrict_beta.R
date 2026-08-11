@@ -47,8 +47,6 @@
 #' restriction_matrix[2, 1] <- 0
 #' restriction_matrix[4, 1] <- 0
 #' 
-#' print(restriction_matrix)
-#' 
 #' bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 restrict_beta <- function(x, restriction_matrix) {
   
@@ -75,6 +73,9 @@ restrict_beta <- function(x, restriction_matrix) {
   
   if (!is.null(x$priors$Omega_beta)) {
     diag(x$priors$Omega_beta)[zero_indices] <- 0.0000001
+    cat("Restrictions applied using restriction matrix:\n\n",sep="")
+    print(restriction_matrix)
+    cat("\n1 indicates that the parameter is free\n0 indicates that the parameter is restricted to zero\n")
   } else {
     warning("Omega_beta not found in priors: restriction applied but Omega_beta not updated")
   }

@@ -59,7 +59,7 @@ and iii) an AR(1) stochastic volatility model.
 
 ## Installation
 
-You can install SteadyStateBVAR with:
+You can install SteadyStateBVAR (version 0.1.1) from CRAN with:
 
 ``` r
 install.packages("SteadyStateBVAR")
@@ -123,18 +123,14 @@ prior is used
 
 $$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)$$
 
-The prior means (the elements of $\theta_\beta$) are set to
+The prior means (the elements of $\theta_\beta$) are specified according
+to
 
 $$\begin{aligned}
 \mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&=
-\begin{cases}
-\kappa & \text{if } \ell = 1 \ \text{and} \ i = j \\
-0 & \text{otherwise}
-\end{cases}\\
-\kappa&=
-\begin{cases}
-\kappa^{level} & \text{if} \  \text{variable} \ i \ \text{is in level} \\
-\kappa^{\Delta} & \text{if} \ \text{variable} \ i \ \text{is in difference}
+\begin{cases}\kappa & \text{if } \ell = 1 \ \text{and} \ i = j \\0 & \text{otherwise}\end{cases}\\
+\kappa&=\begin{cases}\kappa^{level} & \text{if } \text{variable} \ i \ \text{is in levels} \\
+\kappa^{\Delta} & \text{if } \text{variable} \ i \ \text{is differenced}
 \end{cases}\\
 \end{aligned}$$
 
@@ -149,15 +145,15 @@ at their prior means, equation $i$ becomes a random walk if
 $\kappa^{level}=1$ and a persistent stationary AR(1) process if
 $\kappa^{level}=0.9$. Since the steady state only exists if the process
 is stationary, $0.9$ is recommended for the steady-state BVAR. If
-variable $i$ is in difference (e.g. output growth), then
+variable $i$ is differenced (e.g. GDP growth), then
 $\kappa=\kappa^{\Delta}$, and the most common choice for
 $\kappa^{\Delta}$ is $0$, i.e. equation $i$ becomes (when evaluating it
-at its prior means) a random walk expressed in first differences. If a
-differenced variable still shows some degree of persistence (can be
-examined with an ACF plot), a suitable value for $\kappa^{\Delta}$ can
-be (for example) $0.6$ instead of $0$. Moving on to the prior variances,
-$\Omega_\beta$ is a diagonal matrix containing the prior variances for
-the elements in $\beta$. They are specified as
+at its prior means) a random walk expressed in first differences (white
+noise process). If a differenced variable still shows some degree of
+persistence (can be examined with an ACF plot), a suitable value for
+$\kappa^{\Delta}$ can be (for example) $0.6$ instead of $0$. Moving on
+to the prior variances, $\Omega_\beta$ is a diagonal matrix containing
+the prior variances for the elements in $\beta$. They are specified as
 
 $$\mathrm{Var}\left(\Pi_{\ell}^{(i,j)}\right)=
 \begin{cases}

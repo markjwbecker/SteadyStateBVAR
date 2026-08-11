@@ -14,7 +14,7 @@
 #'   bounds on the annualized steady-state growth rate and calculates the implied mean
 #'   and variance on the corresponding quarterly/monthly scale. Useful if you are working with
 #'   a variable specified as \code{100*diff(log(x))}. Default \code{FALSE}.
-#' @param freq Integer. The data frequency (e.g. \code{4} for quarterly).
+#' @param freq Integer. The data frequency (e.g. \code{4} for quarterly, \code{12} for monthly).
 #'   Only used when \code{annualized_growthrate = TRUE}. Default \code{NULL}.
 #'
 #' @return A list with two elements: \code{mean} and \code{var}, giving the
@@ -34,7 +34,7 @@
 #' @examples
 #' ppi(l = 1.7, u = 2.3, interval = 0.95)
 #' ppi(l = 1.7, u = 2.3, interval = 0.95, annualized_growthrate = TRUE, freq = 4)
-ppi <- function(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4) {
+ppi <- function(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = NULL) {
   
   if (l >= u) {
     stop("lower bound must be less than upper bound")
@@ -44,8 +44,13 @@ ppi <- function(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4) 
     stop("interval must be between 0 and 1")
   }
   
-  if (annualized_growthrate && freq <= 0) {
-    stop("freq must be positive")
+  if (annualized_growthrate) {
+    if (is.null(freq)) {
+      stop("freq must be specified when annualized_growthrate = TRUE")
+    }
+    if (freq <= 0) {
+      stop("freq must be positive")
+    }
   }
   
   alpha <- 1 - interval

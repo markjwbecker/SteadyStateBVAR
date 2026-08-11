@@ -109,3 +109,8 @@ test_that("ppi realistic growth rate prior annualized", {
   
   expect_equal(result$mean, 0.75)
 })
+
+test_that("ppi requires freq when annualized_growthrate = TRUE", {
+  expect_error(ppi(l = 1, u = 3, annualized_growthrate = TRUE), 
+               "freq must be specified")
+})

@@ -4,7 +4,7 @@
 \alias{ppi}
 \title{Prior Probability Interval for a Normal Distribution}
 \usage{
-ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4)
+ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = NULL)
 }
 \arguments{
 \item{l}{Numeric. The lower bound of the prior probability interval.}
@@ -19,7 +19,7 @@ bounds on the annualized steady-state growth rate and calculates the implied mea
 and variance on the corresponding quarterly/monthly scale. Useful if you are working with
 a variable specified as \code{100*diff(log(x))}. Default \code{FALSE}.}
 
-\item{freq}{Integer. The data frequency (e.g. \code{4} for quarterly).
+\item{freq}{Integer. The data frequency (e.g. \code{4} for quarterly, \code{12} for monthly).
 Only used when \code{annualized_growthrate = TRUE}. Default \code{NULL}.}
 }
 \value{

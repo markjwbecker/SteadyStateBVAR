@@ -206,10 +206,10 @@ IRF <- function(x, H = 16, response = NULL, impulse = NULL,
     par(mfrow = c(k, k))
     for (j in 1:k) for (i in 1:k) plot_single(i, j)
   } else if (is.null(response) && !is.null(impulse)) {
-    par(mfrow = c(k, 1))
+    par(mfrow = c(1, 1))
     for (i in 1:k) plot_single(i, impulse)
   } else if (!is.null(response) && is.null(impulse)) {
-    par(mfrow = c(1, k))
+    par(mfrow = c(1, 1))
     for (j in 1:k) plot_single(response, j)
   } else {
     plot_single(response, impulse)
