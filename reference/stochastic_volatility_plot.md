@@ -104,13 +104,13 @@ bvar_obj <- setup(bvar_obj, p = 1, deterministic = "constant")
 k <- bvar_obj$setup$k
 n_free_params_A <- bvar_obj$setup$n_free_params_A
 
-SV_priors_RW <- list(
-theta_A              =  rep(0, n_free_params_A),
-Omega_A              =  diag(1000, n_free_params_A),
-theta_log_lambda_1   =  rep(0, k),
-Omega_log_lambda_1   =  diag(1000, k),
-alpha_phi            =  rep(5, k),
-beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
+SV_priors <- list(
+theta_A             =  rep(0, n_free_params_A),
+Omega_A             =  diag(1000, n_free_params_A),
+mu_log_lambda_1     =  rep(0, k),
+sigma2_log_lambda_1 =  rep(1000, k),
+alpha_phi           =  rep(5, k),
+beta_phi            = (rep(5, k) - 1) * rep(0.1, k)
 )
 
 bvar_obj <- priors(bvar_obj,
@@ -118,40 +118,21 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi = diag(0.1, 2, 2),
                    SV = TRUE,
                    SV_type = "RW",
-                   SV_priors = SV_priors_RW)
+                   SV_priors = SV_priors)
 
 bvar_obj <- fit(bvar_obj,
                 H = 8,
+                d_pred = matrix(rep(1, 8)),
                 iter = 200,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
                 verbose = FALSE)
-#> ------------------------------------------------------------
-#> Estimating Stan model:
-#> steady_state_bvar_RW_stochastic_volatility
-#> 
-#> Also generating draws from the joint predictive distribution
-#> 
-#> Forecast horizon:
-#> 8
-#> 
-#> Future deterministic variables (d_pred):
-#>     constant
-#> h=1        1
-#> h=2        1
-#> h=3        1
-#> h=4        1
-#> h=5        1
-#> h=6        1
-#> h=7        1
-#> h=8        1
-#> ------------------------------------------------------------
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 8.4e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.84 seconds.
+#> Chain 1: Gradient evaluation took 0.000105 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.05 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -176,9 +157,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.014 seconds (Warm-up)
-#> Chain 1:                1.247 seconds (Sampling)
-#> Chain 1:                1.261 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.033 seconds (Warm-up)
+#> Chain 1:                1.86 seconds (Sampling)
+#> Chain 1:                1.893 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 1 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See
 #> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded

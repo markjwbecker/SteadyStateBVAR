@@ -49,7 +49,7 @@ Optionally enables stochastic volatility where the covariance matrix varies over
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Specify priors for the steady-state BVAR model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/markjwbecker/SteadyStateBVAR/blob/test/R/priors.R" class="external-link"><code>R/priors.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/markjwbecker/SteadyStateBVAR/blob/main/R/priors.R" class="external-link"><code>R/priors.R</code></a></small>
       <div class="d-none name"><code>priors.Rd</code></div>
     </div>
 
@@ -131,8 +131,8 @@ Required if <code>SV = TRUE</code>.</p></dd>
 
 <dt id="arg-sv-priors">SV_priors<a class="anchor" aria-label="anchor" href="#arg-sv-priors"></a></dt>
 <dd><p>List. User-supplied stochastic volatility priors. Required when <code>SV = TRUE</code>.
-The list must contain the following named elements depending on <code>SV_type</code>:</p><ul><li><p>For <code>"RW"</code>: <code>theta_A</code>, <code>Omega_A</code>, <code>theta_log_lambda_1</code>,
-<code>Omega_log_lambda_1</code>, <code>alpha_phi</code>, <code>beta_phi</code>.</p></li>
+The list must contain the following named elements depending on <code>SV_type</code>:</p><ul><li><p>For <code>"RW"</code>: <code>theta_A</code>, <code>Omega_A</code>, <code>mu_log_lambda_1</code>,
+<code>sigma2_log_lambda_1</code>, <code>alpha_phi</code>, <code>beta_phi</code>.</p></li>
 <li><p>For <code>"AR1"</code>: <code>theta_A</code>, <code>Omega_A</code>, <code>theta_gamma_0</code>,
 <code>Omega_gamma_0</code>, <code>theta_gamma_1</code>, <code>Omega_gamma_1</code>,
 <code>theta_log_lambda_1</code>, <code>Omega_log_lambda_1</code>, <code>V_Phi</code>, <code>m_Phi</code>.</p></li>
@@ -182,28 +182,28 @@ The list must contain the following named elements depending on <code>SV_type</c
 Following Villani (2009), prior independence between \(\beta, \Psi\) and \(\Sigma_u\) is assumed. For \(\beta\), i.e. the autoregressive parameter matrix,
 the Minnesota prior is used</p>
 <p>$$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)$$</p>
-<p>The prior means (the elements of \(\theta_\beta\)) are specified according to</p>
+<p>The prior means (the elements of \(\theta_\beta\)) are set to</p>
 <p>$$
 \begin{aligned}
 \mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&amp;=
 \begin{cases}\kappa &amp; \text{if } \ell = 1 \ \text{and} \ i = j \\0 &amp; \text{otherwise}\end{cases}\\
-\kappa&amp;=\begin{cases}\kappa^{level} &amp; \text{if } \text{variable} \ i \ \text{is in levels} \\
-\kappa^{\Delta} &amp; \text{if } \text{variable} \ i \ \text{is differenced}
+\kappa&amp;=\begin{cases}\kappa^{level} &amp; \text{if } \text{variable} \ i \ \text{is in level} \\
+\kappa^{\Delta} &amp; \text{if } \text{variable} \ i \ \text{is in difference}
 \end{cases}\\
 \end{aligned}
 $$</p>
 <p>Here, the autoregressive coefficient \(\Pi_{\ell}^{(i,j)}\) is element \(\left(i,j\right)\)
 of \(\Pi_{\ell}\) for \(\ell=1,\dots,p\). As such, the Minnesota prior sets all prior means
 for the elements in \(\beta\) to \(0\), except for the elements that relate to the first
-own lags of the variables, which are set to \(\kappa\). If variable \(i\) is in levels
+own lags of the variables, which are set to \(\kappa\). If variable \(i\) is in level
 (e.g. nominal interest rate), then \(\kappa=\kappa^{level}\), and typical choices for
 \(\kappa^{level}\) are \(1\) or \(0.9\). Evaluating the equations at their prior means,
 equation \(i\) becomes a random walk if \(\kappa^{level}=1\) and a persistent stationary
 AR(1) process if \(\kappa^{level}=0.9\). Since the steady state only exists if the process
-is stationary, \(0.9\) is recommended for the steady-state BVAR. If variable \(i\) is differenced
-(e.g. GDP growth), then \(\kappa=\kappa^{\Delta}\), and the most common choice for
+is stationary, \(0.9\) is recommended for the steady-state BVAR. If variable \(i\) is in difference
+(e.g. output growth), then \(\kappa=\kappa^{\Delta}\), and the most common choice for
 \(\kappa^{\Delta}\) is \(0\), i.e. equation \(i\) becomes (when evaluating it at its prior means)
-a random walk expressed in first differences (i.e. white noise process). If a differenced variable still shows some degree
+a random walk expressed in first differences. If a differenced variable still shows some degree
 of persistence (can be examined with an ACF plot), a suitable value for \(\kappa^{\Delta}\) can
 be (for example) \(0.6\) instead of \(0\). Moving on to the prior variances, \(\Omega_\beta\) is a
 diagonal matrix containing the prior variances for the elements in \(\beta\). They are specified as</p>
@@ -214,7 +214,7 @@ diagonal matrix containing the prior variances for the elements in \(\beta\). Th
 <p>Here \(\lambda_1\), \(\lambda_2\), and \(\lambda_3\) are scalar hyperparameters known as
 the overall tightness, the cross-equation tightness and the lag decay rate. Furthermore,
 \(\sigma_i^2\) is the \((i,i)\):th element of \(\Sigma_u\), which is unknown and therefore
-needs to be replaced with an estimate. In this package, it is replaced by the least squares residual variance
+replaced with an estimate. In this package, it is replaced by the least squares residual variance
 from a univariate autoregression for variable \(i\) with \(p\) lags
 (including the constant and dummy/trend variable if applicable). Moving on to \(\Psi\), the steady-state parameter matrix, the
 prior is</p>
@@ -231,26 +231,23 @@ An uninformative prior is specified by setting
 \(V=(m-k-1)\hat{\Sigma}_u\) where \(\hat{\Sigma}_u\) is the least squares estimate
 from the VAR(\(p\)) (including the constant and dummy/trend variable if applicable), and \(m=k+2\).
 For the stochastic volatility specifications, the innovation covariance matrix is now time-varying \(\Sigma_{u,t}\).
-Therefore, stochastic volatility priors are needed, see <a href="bvar.html">bvar</a> for more details. Please note that
-\(\lambda\) below (volatilities) has nothing to do with the \(\lambda\) from the Minnesota prior (hyperparameters).
-Now, for the Random Walk (<code>"RW"</code>) stochastic volatility specification, the following priors are used</p>
+Therefore, stochastic volatility priors are needed, see <a href="bvar.html">bvar</a> for more details. For the Random Walk
+(<code>"RW"</code>) stochastic volatility specification, the following priors are used</p>
 <p>$$\begin{aligned}a &amp;\sim \mathrm{N}(\theta_A, \Omega_A) \\
-\ln \lambda_{1} &amp;\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
+\ln \lambda_{i,1} &amp;\sim \mathrm{N}(\mu_{\ln \lambda_{i,1}}, \sigma^2_{\ln \lambda_{i,1}}) \\
 \phi_i &amp;\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}$$</p>
 <p>Here \(a\) is a \(k(k-1)/2\)-dimensional vector that collects the free parameters in \(A\) in row-major order,
-and \(\ln \lambda_1\) is a \(k\)-dimensional vector containing the time \(t=1\) values (initial conditions) of \(\ln \lambda_{t}\).
-We assume that \(\Omega_A\) and \(\Omega_{\ln \lambda_{1}}\) are diagonal matrices.
+and \(\ln \lambda_{i,1}\) are the time \(t=1\) values (initial conditions) of \(\ln \lambda_{i,t}\) for \(i=1,\dots,k\).
 Furthermore, \(\phi_i\) for \(i=1,\dots,k\) are the log volatility innovation variances. For the AR(1) (<code>"AR1"</code>) stochastic volatility specification, the following priors are used</p>
 <p>$$\begin{aligned}a &amp;\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &amp;\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
-\gamma_{1} &amp;\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \ I(|\gamma_{1,i}| &lt; 1)\\
+\gamma_{1} &amp;\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \\
 \ln \lambda_{1} &amp;\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
 \Phi &amp;\sim \mathrm{IW}(V_{\Phi},m_{\Phi})\end{aligned}$$</p>
 <p>Here \(a\) is again the \(k(k-1)/2\)-dimensional vector that collects the free parameters in \(A\) in row-major order,
 and \(\ln \lambda_1\) is a \(k\)-dimensional vector containing the time \(t=1\) values (initial conditions) of \(\ln \lambda_{t}\).
 Furthermore, \(\gamma_{0}\) is a \(k\)-dimensional vector of log volatility intercepts, \(\gamma_{1}\) is a \(k\)-dimensional vector of log volatility
-slopes, and \(\Phi\) is the \(k \times k\) log volatility innovation covariance matrix.
-We assume that \(\Omega_A\), \(\Omega_{\gamma_0}\), \(\Omega_{\gamma_1}\), and \(\Omega_{\ln \lambda_{1}}\) are diagonal matrices.</p>
+slopes, and \(\Phi\) is the \(k \times k\) log volatility innovation covariance matrix.</p>
 <p>For details on the homoscedastic steady-state BVAR model, see Villani (2009).
 For details on the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
 See Carriero, Clark, and Marcellino (2024) for the AR(1) stochastic volatility
@@ -301,8 +298,8 @@ with stochastic volatility. <em>Journal of Business &amp; Economic Statistics</e
 <span class="r-in"><span><span class="va">SV_priors_RW</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>theta_A              <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">n_free_params_A</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>Omega_A              <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">n_free_params_A</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>theta_log_lambda_1   <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>Omega_log_lambda_1   <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>mu_log_lambda_1      <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>sigma2_log_lambda_1  <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>alpha_phi            <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>beta_phi             <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">k</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>

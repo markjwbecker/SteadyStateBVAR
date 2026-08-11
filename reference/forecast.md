@@ -38,10 +38,10 @@ forecast(
 - growth_rate_idx:
 
   Integer vector. Indices of variables of which to convert forecasts to
-  annual growth rates \\100 (\ln x\_{t} - \ln x\_{t-f})\\, where \\f\\
-  is the frequency of the data (4 for quarterly, 12 for monthly). Only
-  suitable for variables specified as \\100 (\ln x\_{t} - \ln
-  x\_{t-1})\\, i.e. `100*diff(log(x))`. Computed by summing up to \\f\\
+  annual growth rates \\\ln x\_{t} - \ln x\_{t-f}\\, where \\f\\ is the
+  frequency of the data (4 for quarterly, 12 for monthly). Only suitable
+  for variables specified as \\\ln x\_{t} - \ln x\_{t-1}\\, i.e.
+  `diff(log(x))` or `100*diff(log(x))`. Computed by summing up to \\f\\
   log first differences. Default is `NULL`.
 
 - plot_idx:
@@ -86,35 +86,16 @@ bvar_obj <- priors(bvar_obj,
                    
 bvar_obj <- fit(bvar_obj,
                 H = 8,
+                d_pred = matrix(rep(1,8)),
                 iter = 200,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
-#> ------------------------------------------------------------
-#> Estimating Stan model:
-#> steady_state_bvar_homoscedastic_jeffreys_prior
-#> 
-#> Also generating draws from the joint predictive distribution
-#> 
-#> Forecast horizon:
-#> 8
-#> 
-#> Future deterministic variables (d_pred):
-#>     constant
-#> h=1        1
-#> h=2        1
-#> h=3        1
-#> h=4        1
-#> h=5        1
-#> h=6        1
-#> h=7        1
-#> h=8        1
-#> ------------------------------------------------------------
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 5.7e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.57 seconds.
+#> Chain 1: Gradient evaluation took 7.5e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.75 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -139,11 +120,11 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.01 seconds (Warm-up)
-#> Chain 1:                0.033 seconds (Sampling)
-#> Chain 1:                0.043 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.026 seconds (Warm-up)
+#> Chain 1:                0.081 seconds (Sampling)
+#> Chain 1:                0.107 seconds (Total)
 #> Chain 1: 
-#> Warning: The largest R-hat is NA, indicating chains have not mixed.
+#> Warning: The largest R-hat is 1.08, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#r-hat
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.

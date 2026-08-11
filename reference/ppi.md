@@ -9,7 +9,7 @@ of \\\Psi\\).
 ## Usage
 
 ``` r
-ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = NULL)
+ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = 4)
 ```
 
 ## Arguments
@@ -32,14 +32,13 @@ ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = NULL)
   Logical. If `TRUE`, treats `l` and `u` as bounds on the annualized
   steady-state growth rate and calculates the implied mean and variance
   on the corresponding quarterly/monthly scale. Useful if you are
-  working with a variable specified as `100*diff(log(x))`. Default
-  `FALSE`.
+  working with a variable `diff(log(x))` (which may be scaled by 100).
+  Default `FALSE`.
 
 - freq:
 
-  Integer. The data frequency (e.g. `4` for quarterly, `12` for
-  monthly). Only used when `annualized_growthrate = TRUE`. Default
-  `NULL`.
+  Integer. The data frequency (e.g. `4` for quarterly). Only used when
+  `annualized_growthrate = TRUE`. Default `4`.
 
 ## Value
 

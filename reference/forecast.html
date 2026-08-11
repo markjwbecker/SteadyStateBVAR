@@ -47,7 +47,7 @@ rates for selected variables."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Forecast from a fitted steady-state BVAR model</h1>
-      <small class="dont-index">Source: <a href="https://github.com/markjwbecker/SteadyStateBVAR/blob/test/R/forecast.R" class="external-link"><code>R/forecast.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/markjwbecker/SteadyStateBVAR/blob/main/R/forecast.R" class="external-link"><code>R/forecast.R</code></a></small>
       <div class="d-none name"><code>forecast.Rd</code></div>
     </div>
 
@@ -89,9 +89,10 @@ as the point forecast. Default <code>"mean"</code>.</p></dd>
 
 <dt id="arg-growth-rate-idx">growth_rate_idx<a class="anchor" aria-label="anchor" href="#arg-growth-rate-idx"></a></dt>
 <dd><p>Integer vector. Indices of variables of which to convert forecasts to
-annual growth rates \(100 (\ln x_{t} - \ln x_{t-f})\), where \(f\) is
+annual growth rates \(\ln x_{t} - \ln x_{t-f}\), where \(f\) is
 the frequency of the data (4 for quarterly, 12 for monthly).
-Only suitable for variables specified as \(100 (\ln x_{t} - \ln x_{t-1})\), i.e. <code>100*diff(log(x))</code>.
+Only suitable for variables specified as \(\ln x_{t} - \ln x_{t-1}\), i.e.
+<code>diff(log(x))</code> or <code>100*diff(log(x))</code>.
 Computed by summing up to \(f\) log first differences. Default is <code>NULL</code>.</p></dd>
 
 
@@ -138,35 +139,16 @@ forecast horizon and <code>k</code> is the number of variables.</p>
 <span class="r-in"><span>                   </span></span>
 <span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>
 <span class="r-in"><span>                H <span class="op">=</span> <span class="fl">8</span>,</span></span>
+<span class="r-in"><span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">8</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                iter <span class="op">=</span> <span class="fl">200</span>,</span></span>
 <span class="r-in"><span>                warmup <span class="op">=</span> <span class="fl">50</span>,</span></span>
 <span class="r-in"><span>                chains <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                cores <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Estimating Stan model:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> steady_state_bvar_homoscedastic_jeffreys_prior</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Also generating draws from the joint predictive distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Forecast horizon:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Future deterministic variables (d_pred):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     constant</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> h=1        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> h=2        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> h=3        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> h=4        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> h=5        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> h=6        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> h=7        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> h=8        1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Gradient evaluation took 5.7e-05 seconds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.57 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Gradient evaluation took 7.5e-05 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.75 seconds.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Adjust your expectations accordingly!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
@@ -191,11 +173,11 @@ forecast horizon and <code>k</code> is the number of variables.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:  Elapsed Time: 0.01 seconds (Warm-up)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.033 seconds (Sampling)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.043 seconds (Total)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:  Elapsed Time: 0.026 seconds (Warm-up)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.081 seconds (Sampling)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.107 seconds (Total)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The largest R-hat is NA, indicating chains have not mixed.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The largest R-hat is 1.08, indicating chains have not mixed.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Running the chains for more iterations may help. See</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> https://mc-stan.org/misc/warnings.html#r-hat</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.</span>
