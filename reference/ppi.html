@@ -49,7 +49,7 @@ on the steady-state parameters (elements of \(\Psi\))."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Prior Probability Interval for a Normal Distribution</h1>
-      <small class="dont-index">Source: <a href="https://github.com/markjwbecker/SteadyStateBVAR/blob/main/R/ppi.R" class="external-link"><code>R/ppi.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/markjwbecker/SteadyStateBVAR/blob/test/R/ppi.R" class="external-link"><code>R/ppi.R</code></a></small>
       <div class="d-none name"><code>ppi.Rd</code></div>
     </div>
 
@@ -63,7 +63,7 @@ on the steady-state parameters (elements of \(\Psi\)).</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ppi</span><span class="op">(</span><span class="va">l</span>, <span class="va">u</span>, interval <span class="op">=</span> <span class="fl">0.95</span>, annualized_growthrate <span class="op">=</span> <span class="cn">FALSE</span>, freq <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">ppi</span><span class="op">(</span><span class="va">l</span>, <span class="va">u</span>, interval <span class="op">=</span> <span class="fl">0.95</span>, annualized_growthrate <span class="op">=</span> <span class="cn">FALSE</span>, freq <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -87,12 +87,12 @@ Default <code>0.95</code>, i.e. 95%.</p></dd>
 <dd><p>Logical. If <code>TRUE</code>, treats <code>l</code> and <code>u</code> as
 bounds on the annualized steady-state growth rate and calculates the implied mean
 and variance on the corresponding quarterly/monthly scale. Useful if you are working with
-a variable <code>diff(log(x))</code> (which may be scaled by 100). Default <code>FALSE</code>.</p></dd>
+a variable specified as <code>100*diff(log(x))</code>. Default <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-freq">freq<a class="anchor" aria-label="anchor" href="#arg-freq"></a></dt>
-<dd><p>Integer. The data frequency (e.g. <code>4</code> for quarterly).
-Only used when <code>annualized_growthrate = TRUE</code>. Default <code>4</code>.</p></dd>
+<dd><p>Integer. The data frequency (e.g. <code>4</code> for quarterly, <code>12</code> for monthly).
+Only used when <code>annualized_growthrate = TRUE</code>. Default <code>NULL</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

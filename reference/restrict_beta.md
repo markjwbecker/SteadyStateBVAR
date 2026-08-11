@@ -63,19 +63,22 @@ bvar_obj <- priors(bvar_obj,
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
 
-restriction_matrix <- matrix(1,k*p,k, dimnames=list(NULL,c("y1","y2")))
+restriction_matrix <- matrix(1,k*p,k)
 
 #restrict beta so y2 does not granger-cause y1
 
 restriction_matrix[2, 1] <- 0
 restriction_matrix[4, 1] <- 0
 
-print(restriction_matrix)
-#>      y1 y2
-#> [1,]  1  1
-#> [2,]  0  1
-#> [3,]  1  1
-#> [4,]  0  1
-
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
+#> Restrictions applied using restriction matrix:
+#> 
+#>         Var1 Var2
+#> Var1.l1    1    1
+#> Var2.l1    0    1
+#> Var1.l2    1    1
+#> Var2.l2    0    1
+#> 
+#> 1 indicates that the parameter is free
+#> 0 indicates that the parameter is restricted to zero
 ```

@@ -12,7 +12,7 @@ IRF(
   x,
   H = 16,
   response = NULL,
-  shock = NULL,
+  impulse = NULL,
   type = c("median", "mean"),
   method = c("OIRF", "GIRF"),
   ci = 0.95,
@@ -37,10 +37,10 @@ IRF(
   Integer. Index of the response variable to plot. If `NULL` (default),
   all responses are plotted.
 
-- shock:
+- impulse:
 
-  Integer. Index of the shock variable to plot. If `NULL` (default), all
-  shocks are plotted.
+  Integer. Index of the impulse variable to plot. If `NULL` (default),
+  all impulses are plotted.
 
 - type:
 
@@ -65,12 +65,12 @@ IRF(
 
   Integer vector. Indices of variables for which the impulse response is
   converted from a quarterly or monthly log first difference to an
-  annual growth rate response, i.e. \\\ln x\_{t} - \ln x\_{t-f}\\, where
-  \\f\\ is the frequency of the data (4 for quarterly, 12 for monthly).
-  Only suitable for variables specified as \\\ln x\_{t} - \ln
-  x\_{t-1}\\, i.e. `diff(log(x))` or `100*diff(log(x))`. Computed by
-  summing up to \\f\\ periods of the impulse response, treating the
-  response in periods prior to the shock as zero. Default is `NULL`.
+  annual growth rate response, i.e. \\100 (\ln x\_{t} - \ln x\_{t-f})\\,
+  where \\f\\ is the frequency of the data (4 for quarterly, 12 for
+  monthly). Only suitable for variables specified as \\100 (\ln x\_{t} -
+  \ln x\_{t-1})\\, i.e. `100*diff(log(x))`. Computed by summing up to
+  \\f\\ periods of the impulse response, treating the response in
+  periods prior to the impulse as zero. Default is `NULL`.
 
 ## Value
 
@@ -102,16 +102,35 @@ bvar_obj <- priors(bvar_obj,
                    
 bvar_obj <- fit(bvar_obj,
                 H = 8,
-                d_pred = matrix(rep(1,8)),
                 iter = 200,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
+#> ------------------------------------------------------------
+#> Estimating Stan model:
+#> steady_state_bvar_homoscedastic_jeffreys_prior
+#> 
+#> Also generating draws from the joint predictive distribution
+#> 
+#> Forecast horizon:
+#> 8
+#> 
+#> Future deterministic variables (d_pred):
+#>     constant
+#> h=1        1
+#> h=2        1
+#> h=3        1
+#> h=4        1
+#> h=5        1
+#> h=6        1
+#> h=7        1
+#> h=8        1
+#> ------------------------------------------------------------
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 8.5e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.85 seconds.
+#> Chain 1: Gradient evaluation took 6.2e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.62 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -136,9 +155,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.036 seconds (Warm-up)
-#> Chain 1:                0.087 seconds (Sampling)
-#> Chain 1:                0.123 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.014 seconds (Warm-up)
+#> Chain 1:                0.034 seconds (Sampling)
+#> Chain 1:                0.048 seconds (Total)
 #> Chain 1: 
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
 #> Running the chains for more iterations may help. See
@@ -166,7 +185,7 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #>             [,1]        [,2]
 #> [1,]  0.47550176 -0.03670799
-#> [2,] -0.01008044  0.56180269
+#> [2,] -0.01008044  0.56180268
 #> 
 #> , , 4
 #> 
@@ -183,13 +202,13 @@ bvar_obj <- fit(bvar_obj,
 #> , , 6
 #> 
 #>              [,1]       [,2]
-#> [1,]  0.091996119 -0.0203872
+#> [1,]  0.091996118 -0.0203872
 #> [2,] -0.006070829  0.1776566
 #> 
 #> , , 7
 #> 
 #>              [,1]       [,2]
-#> [1,]  0.056442674 -0.0124966
+#> [1,]  0.056442673 -0.0124966
 #> [2,] -0.004587836  0.1196212
 #> 
 #> , , 8
@@ -213,7 +232,7 @@ bvar_obj <- fit(bvar_obj,
 #> , , 11
 #> 
 #>               [,1]         [,2]
-#> [1,]  0.0065319762 -0.001423404
+#> [1,]  0.0065319763 -0.001423404
 #> [2,] -0.0007462871  0.023823474
 #> 
 #> , , 12
@@ -225,7 +244,7 @@ bvar_obj <- fit(bvar_obj,
 #> , , 13
 #> 
 #>               [,1]          [,2]
-#> [1,]  0.0023648404 -0.0004328076
+#> [1,]  0.0023648403 -0.0004328076
 #> [2,] -0.0002503679  0.0108162092
 #> 
 #> , , 14
@@ -306,7 +325,7 @@ bvar_obj <- fit(bvar_obj,
 #> 
 #>            [,1]         [,2]
 #> [1,] -0.0334267 -0.719012835
-#> [2,] -1.1565645 -0.009966814
+#> [2,] -1.1565645 -0.009966815
 #> 
 #> , , 10
 #> 
@@ -335,26 +354,26 @@ bvar_obj <- fit(bvar_obj,
 #> , , 14
 #> 
 #>             [,1]         [,2]
-#> [1,] -0.01867863 -1.181204309
-#> [2,] -1.80601991 -0.006480311
+#> [1,] -0.01867863 -1.181204308
+#> [2,] -1.80601990 -0.006480311
 #> 
 #> , , 15
 #> 
 #>             [,1]        [,2]
 #> [1,] -0.01387714 -1.32725174
-#> [2,] -2.04016300 -0.00621083
+#> [2,] -2.04016299 -0.00621083
 #> 
 #> , , 16
 #> 
 #>            [,1]         [,2]
 #> [1,] -0.0113278 -1.503653743
-#> [2,] -2.3063265 -0.005893544
+#> [2,] -2.3063264 -0.005893544
 #> 
 #> , , 17
 #> 
 #>              [,1]         [,2]
-#> [1,] -0.009134826 -1.717696370
-#> [2,] -2.609320346 -0.005213065
+#> [1,] -0.009134826 -1.717696369
+#> [2,] -2.609320341 -0.005213065
 #> 
 #> 
 #> $upper

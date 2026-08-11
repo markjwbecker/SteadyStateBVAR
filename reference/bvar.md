@@ -56,7 +56,10 @@ is a \\kp\\-dimensional vector of lagged endogenous variables and
 lagged deterministic (exogenous) variables, \\I_p\\ is the \\(p \times
 p)\\ identity matrix and \\\otimes\\ denotes the Kronecker product. This
 is how the likelihood is written in the Stan code. The goal is to
-estimate \\\beta, \Psi\\, and \\\Sigma_u\\.
+estimate \\\beta, \Psi\\, and \\\Sigma_u\\, and as such priors are
+needed. Please see
+[priors](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md)
+for more details.
 
 For the innovations to the model, in the case of the homoscedastic
 steady-state BVAR, they are \\u_t \overset{\text{iid}}{\sim}
@@ -83,7 +86,7 @@ volatility specification, the log volatilities follow AR(1) processes
 where the log volatility AR(1) processes are restricted to the
 stationary region, i.e. \\\|\gamma\_{1,i}\|\<1 \\ \forall i\\. For the
 `RW` stochastic volatility specification, the log volatilities follow
-Random Walk processes
+(driftless) Random Walk processes
 
 \$\$\gamma\_{0,i}=0, \\ \gamma\_{1,i}=1 \\ \forall i\$\$
 

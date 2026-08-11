@@ -38,7 +38,9 @@ yt <- ts(yt[1:102, ], start = start(yt), frequency = frequency(yt))
 plot.ts(yt)
 ```
 
-![](figure/HOMO-1-1.png)
+![plot of chunk HOMO-1](figure/HOMO-1-1.png)
+
+plot of chunk HOMO-1
 
 Also, let us create the bvar object which we will use throughout here.
 
@@ -58,8 +60,8 @@ includes a constant term and a dummy for the pre-crisis period, i.e.
 
 ``` r
 
-bp <- which(time(yt) == 1992.75)
-dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+breakpoint <- which(time(yt) == 1992.75)
+dum_var <- c(rep(1,breakpoint), rep(0,nrow(yt)-breakpoint))
 ```
 
 To formulate a prior on \\\Psi\\, note that the specification of \\d_t\\
@@ -111,11 +113,11 @@ according to the 95% prior probability intervals (normal distribution)
 in Table I in Villani (2009). We first note that for our data here, the
 growth rate variables (\\\Delta y_f, \pi_f, \Delta y, \pi\\) are
 specified in terms of quarterly rates of change/quarter-on-quarter
-growth, i.e. for a variable \\z\\ which is on a quarterly frequency, the
-quarterly growth rate is \\100\[ \ln (z_t) - \ln (z\_{t-1})\]\\. The 95%
-prior probability intervals in Table I are specified in terms of
-annualized quarterly growth rates \\400 \[\ln (z_t) - \ln
-(z\_{t-1})\]\\.
+growth, i.e. for a variable \\z\\ which is on a quarterly frequency
+(`freq=4`), the quarterly growth rate is \\100\[ \ln (z_t) - \ln
+(z\_{t-1})\]\\. The 95% prior probability intervals in Table I are
+specified in terms of annualized quarterly growth rates \\400 \[\ln
+(z_t) - \ln (z\_{t-1})\]\\.
 
 The
 [`ppi()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/ppi.md)
@@ -133,39 +135,39 @@ and set `annualized_growthrate=FALSE`.
 
 theta_Psi <- 
   c(
-  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: pi_f
-  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
-  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
-  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
-  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$mean,  #psi_1: q
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_2: pi_f
-  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
-  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
-  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i
-  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$mean   #psi_2: q
+  ppi( 2.00,  3.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: delta y_f
+  ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: pi_f
+  ppi( 4.50,  5.50, interval = 0.95                                    )$mean,   #psi_1: i_f
+  ppi( 2.00,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: delta y
+  ppi( 1.70,  2.30, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: pi
+  ppi( 4.00,  4.50, interval = 0.95                                    )$mean,   #psi_1: i
+  ppi( 3.85,  4.00, interval = 0.95                                    )$mean,   #psi_1: q
+  ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: delta y_f
+  ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: pi_f
+  ppi( 1.50,  2.50, interval = 0.95                                    )$mean,   #psi_2: i_f
+  ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: delta y
+  ppi( 4.30,  5.70, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: pi
+  ppi( 3.00,  5.50, interval = 0.95                                    )$mean,   #psi_2: i
+  ppi(-0.50,  0.50, interval = 0.95                                    )$mean    #psi_2: q
   )
 
 Omega_Psi <- 
   diag(
   c(
-  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$var,    #psi_1: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: pi_f
-  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$var,   #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: delta y
-  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$var,    #psi_1: pi
-  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$var,   #psi_1: i
-  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$var,   #psi_1: q
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_2: pi_f
-  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$var,   #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y
-  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,    #psi_2: pi
-  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$var,   #psi_2: i
-  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$var    #psi_2: q
+  ppi( 2.00,  3.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: delta y_f
+  ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: pi_f
+  ppi( 4.50,  5.50, interval = 0.95                                    )$var,    #psi_1: i_f
+  ppi( 2.00,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: delta y
+  ppi( 1.70,  2.30, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: pi
+  ppi( 4.00,  4.50, interval = 0.95                                    )$var,    #psi_1: i
+  ppi( 3.85,  4.00, interval = 0.95                                    )$var,    #psi_1: q
+  ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: delta y_f
+  ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: pi_f
+  ppi( 1.50,  2.50, interval = 0.95                                    )$var,    #psi_2: i_f
+  ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: delta y
+  ppi( 4.30,  5.70, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: pi
+  ppi( 3.00,  5.50, interval = 0.95                                    )$var,    #psi_2: i
+  ppi(-0.50,  0.50, interval = 0.95                                    )$var     #psi_2: q
   )
   )
 ```
@@ -210,51 +212,58 @@ for(i in 1:p){
   cols <- 1:kf
   restriction_matrix[rows, cols] <- 0
 }
-restriction_matrix
-#>       [,1] [,2] [,3] [,4] [,5] [,6] [,7]
-#>  [1,]    1    1    1    1    1    1    1
-#>  [2,]    1    1    1    1    1    1    1
-#>  [3,]    1    1    1    1    1    1    1
-#>  [4,]    0    0    0    1    1    1    1
-#>  [5,]    0    0    0    1    1    1    1
-#>  [6,]    0    0    0    1    1    1    1
-#>  [7,]    0    0    0    1    1    1    1
-#>  [8,]    1    1    1    1    1    1    1
-#>  [9,]    1    1    1    1    1    1    1
-#> [10,]    1    1    1    1    1    1    1
-#> [11,]    0    0    0    1    1    1    1
-#> [12,]    0    0    0    1    1    1    1
-#> [13,]    0    0    0    1    1    1    1
-#> [14,]    0    0    0    1    1    1    1
-#> [15,]    1    1    1    1    1    1    1
-#> [16,]    1    1    1    1    1    1    1
-#> [17,]    1    1    1    1    1    1    1
-#> [18,]    0    0    0    1    1    1    1
-#> [19,]    0    0    0    1    1    1    1
-#> [20,]    0    0    0    1    1    1    1
-#> [21,]    0    0    0    1    1    1    1
-#> [22,]    1    1    1    1    1    1    1
-#> [23,]    1    1    1    1    1    1    1
-#> [24,]    1    1    1    1    1    1    1
-#> [25,]    0    0    0    1    1    1    1
-#> [26,]    0    0    0    1    1    1    1
-#> [27,]    0    0    0    1    1    1    1
-#> [28,]    0    0    0    1    1    1    1
 ```
 
-We can look at the restriction matrix for \\\beta\\ to see which
-elements we restrict to zero. Now we simply pass our \\(kp \times k)\\
-restriction matrix to the
+We simply pass our \\(kp \times k)\\ restriction matrix to the
 [`restrict_beta()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/restrict_beta.md)
 function:
 
 ``` r
 
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
+#> Restrictions applied using restriction matrix:
+#> 
+#>              delta y_f pi_f i_f delta y pi i q
+#> delta y_f.l1         1    1   1       1  1 1 1
+#> pi_f.l1              1    1   1       1  1 1 1
+#> i_f.l1               1    1   1       1  1 1 1
+#> delta y.l1           0    0   0       1  1 1 1
+#> pi.l1                0    0   0       1  1 1 1
+#> i.l1                 0    0   0       1  1 1 1
+#> q.l1                 0    0   0       1  1 1 1
+#> delta y_f.l2         1    1   1       1  1 1 1
+#> pi_f.l2              1    1   1       1  1 1 1
+#> i_f.l2               1    1   1       1  1 1 1
+#> delta y.l2           0    0   0       1  1 1 1
+#> pi.l2                0    0   0       1  1 1 1
+#> i.l2                 0    0   0       1  1 1 1
+#> q.l2                 0    0   0       1  1 1 1
+#> delta y_f.l3         1    1   1       1  1 1 1
+#> pi_f.l3              1    1   1       1  1 1 1
+#> i_f.l3               1    1   1       1  1 1 1
+#> delta y.l3           0    0   0       1  1 1 1
+#> pi.l3                0    0   0       1  1 1 1
+#> i.l3                 0    0   0       1  1 1 1
+#> q.l3                 0    0   0       1  1 1 1
+#> delta y_f.l4         1    1   1       1  1 1 1
+#> pi_f.l4              1    1   1       1  1 1 1
+#> i_f.l4               1    1   1       1  1 1 1
+#> delta y.l4           0    0   0       1  1 1 1
+#> pi.l4                0    0   0       1  1 1 1
+#> i.l4                 0    0   0       1  1 1 1
+#> q.l4                 0    0   0       1  1 1 1
+#> 
+#> 1 indicates that the parameter is free
+#> 0 indicates that the parameter is restricted to zero
 ```
 
-Now, we need to supply our forecast horizon \\H\\, and also a matrix
-containing the deterministic variables (\\d_t\\) for the future periods
+The function tells us which elements in \\\beta\\ we restrict to zero.
+
+Now we are almost ready to fit (estimate) the model. When estimating the
+model, we are at the same time generating draws from the joint
+predictive distribution. To accomplish the latter, we need the forecast
+horizon \\H\\, and also a matrix containing the deterministic variables
+(\\d_t\\) for the future periods
 
 \\ d\_{\text{pred}}=\begin{bmatrix}d\_{T+1}' \\ \vdots\\ d\_{T+H}'
 \end{bmatrix} \\
@@ -267,33 +276,28 @@ indicating whether \\t \leq 1992Q4\\, we simply set
 ``` r
 
 H <- 12
-(d_pred <- cbind(rep(1, 12), 0))
-#>       [,1] [,2]
-#>  [1,]    1    0
-#>  [2,]    1    0
-#>  [3,]    1    0
-#>  [4,]    1    0
-#>  [5,]    1    0
-#>  [6,]    1    0
-#>  [7,]    1    0
-#>  [8,]    1    0
-#>  [9,]    1    0
-#> [10,]    1    0
-#> [11,]    1    0
-#> [12,]    1    0
+d_pred <- cbind(rep(1, 12), 0)
 ```
 
-We can now fit the model
+However,
+[`fit()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/fit.md)
+automatically creates `d_pred`, so we do not need to bother with it.
+
+For the sampling, let us choose 4 markov chains, with each having 4000
+iterations, and where 2000 of those 4000 are warmup/burn-in iterations.
 
 ``` r
-
 bvar_obj <- fit(bvar_obj,
                 H = H,
-                d_pred = d_pred,
-                iter = 15000,
-                warmup = 5000,
+                d_pred=NULL
+                iter = 4000,
+                warmup = 2000,
                 chains = 4,
                 cores = 4)
+#> Error in parse(text = input): <text>:4:17: unexpected symbol
+#> 3:                 d_pred=NULL
+#> 4:                 iter
+#>                    ^
 ```
 
 Let us look at the posterior means of \\\beta\\, \\\Psi\\, and
@@ -302,68 +306,8 @@ Let us look at the posterior means of \\\beta\\, \\\Psi\\, and
 ``` r
 
 summary(bvar_obj)
-#> Posterior mean estimates
-#> ------------------------
-#> 
-#> 
-#> beta
-#> --------------------------------------------------------------------------------              
-#>                delta y_f  pi_f   i_f delta y    pi     i     q
-#>   delta y_f.l1      0.18  0.03 -0.01    0.12  0.07 -0.12  0.00
-#>   pi_f.l1          -0.02  0.32  0.25    0.12 -0.07  0.01  0.00
-#>   i_f.l1            0.00  0.04  0.92   -0.04  0.06  0.05  0.00
-#>   delta y.l1        0.00  0.00  0.00    0.23 -0.09 -0.10  0.00
-#>   pi.l1             0.00  0.00  0.00    0.00  0.08  0.06  0.00
-#>   i.l1              0.00  0.00  0.00    0.00  0.02  0.76  0.00
-#>   q.l1              0.00  0.00  0.00    1.21  3.96  0.72  0.93
-#>   delta y_f.l2      0.03 -0.01  0.09    0.02 -0.02  0.10  0.00
-#>   pi_f.l2           0.01  0.02  0.04    0.00 -0.03 -0.15  0.00
-#>   i_f.l2           -0.02 -0.01 -0.01    0.00  0.04  0.07  0.00
-#>   delta y.l2        0.00  0.00  0.00    0.11 -0.01  0.15  0.00
-#>   pi.l2             0.00  0.00  0.00    0.01 -0.04 -0.05  0.00
-#>   i.l2              0.00  0.00  0.00   -0.01  0.01  0.04  0.00
-#>   q.l2              0.00  0.00  0.00    0.55 -0.38  0.31 -0.04
-#>   delta y_f.l3      0.01 -0.01  0.00    0.02 -0.01  0.00  0.00
-#>   pi_f.l3          -0.02  0.06 -0.01    0.00  0.08  0.02  0.00
-#>   i_f.l3            0.00  0.00  0.02    0.00  0.00  0.03  0.00
-#>   delta y.l3        0.00  0.00  0.00    0.06  0.01 -0.02  0.00
-#>   pi.l3             0.00  0.00  0.00    0.00  0.02 -0.02  0.00
-#>   i.l3              0.00  0.00  0.00    0.01  0.00  0.01  0.00
-#>   q.l3              0.00  0.00  0.00   -0.14 -0.02 -0.58  0.00
-#>   delta y_f.l4      0.03 -0.01  0.00   -0.01  0.03  0.02  0.00
-#>   pi_f.l4           0.00  0.16 -0.03    0.00  0.01  0.02  0.00
-#>   i_f.l4            0.00  0.00 -0.02    0.00  0.00  0.03  0.00
-#>   delta y.l4        0.00  0.00  0.00   -0.08  0.01  0.03  0.00
-#>   pi.l4             0.00  0.00  0.00    0.00  0.06 -0.01  0.00
-#>   i.l4              0.00  0.00  0.00    0.00 -0.01  0.00  0.00
-#>   q.l4              0.00  0.00  0.00   -0.15 -0.07 -0.16 -0.01
-#> --------------------------------------------------------------------------------
-#> 
-#> 
-#> Psi
-#> --------------------------------------------------------------------------------           
-#>             [,1]  [,2]
-#>   delta y_f 0.58  0.08
-#>   pi_f      0.50  0.46
-#>   i_f       4.95  2.02
-#>   delta y   0.58 -0.04
-#>   pi        0.49  1.15
-#>   i         4.29  4.46
-#>   q         3.92 -0.10
-#> --------------------------------------------------------------------------------
-#> 
-#> 
-#> Sigma_u
-#> --------------------------------------------------------------------------------           
-#>             delta y_f  pi_f  i_f delta y    pi     i     q
-#>   delta y_f      0.15 -0.01 0.01    0.07 -0.01  0.00  0.00
-#>   pi_f          -0.01  0.09 0.05    0.01  0.13  0.04  0.00
-#>   i_f            0.01  0.05 0.52    0.01  0.18  0.11  0.00
-#>   delta y        0.07  0.01 0.01    0.19 -0.05 -0.01  0.00
-#>   pi            -0.01  0.13 0.18   -0.05  0.59  0.12  0.00
-#>   i              0.00  0.04 0.11   -0.01  0.12  1.56 -0.01
-#>   q              0.00  0.00 0.00    0.00  0.00 -0.01  0.00
-#> --------------------------------------------------------------------------------
+#> Error in `summary.bvar()`:
+#> ! object must be passed through fit() first
 ```
 
 We can access the posterior means or medians with
@@ -375,218 +319,7 @@ Note that `bvar_obj$fit$stan` is an object of class `stanfit`.
 ``` r
 
 (stanfit <- bvar_obj$fit$stan)
-#> Inference for Stan model: steady_state_bvar_homoscedastic_jeffreys_prior.
-#> 4 chains, each with iter=15000; warmup=5000; thin=1; 
-#> post-warmup draws per chain=10000, total post-warmup draws=40000.
-#> 
-#>                mean se_mean    sd   2.5%    25%    50%    75%  97.5%
-#> beta[1,1]      0.18    0.00  0.09   0.00   0.12   0.18   0.24   0.36
-#> beta[1,2]      0.03    0.00  0.05  -0.07   0.00   0.03   0.06   0.13
-#> beta[1,3]     -0.01    0.00  0.13  -0.27  -0.10  -0.01   0.07   0.24
-#> beta[1,4]      0.12    0.00  0.08  -0.05   0.06   0.12   0.18   0.28
-#> beta[1,5]      0.07    0.00  0.14  -0.20  -0.02   0.07   0.17   0.35
-#> beta[1,6]     -0.12    0.00  0.24  -0.59  -0.28  -0.12   0.04   0.35
-#> beta[1,7]      0.00    0.00  0.01  -0.01  -0.01   0.00   0.00   0.01
-#> beta[2,1]     -0.02    0.00  0.09  -0.20  -0.08  -0.02   0.04   0.16
-#> beta[2,2]      0.32    0.00  0.08   0.16   0.26   0.32   0.37   0.47
-#> beta[2,3]      0.25    0.00  0.17  -0.08   0.14   0.25   0.36   0.58
-#> beta[2,4]      0.12    0.00  0.11  -0.09   0.05   0.12   0.19   0.33
-#> beta[2,5]     -0.07    0.00  0.19  -0.45  -0.20  -0.07   0.06   0.31
-#> beta[2,6]      0.01    0.00  0.32  -0.61  -0.20   0.01   0.23   0.63
-#> beta[2,7]      0.00    0.00  0.01  -0.01   0.00   0.00   0.01   0.02
-#> beta[3,1]      0.00    0.00  0.03  -0.06  -0.02   0.00   0.02   0.05
-#> beta[3,2]      0.04    0.00  0.02   0.00   0.03   0.04   0.05   0.08
-#> beta[3,3]      0.92    0.00  0.07   0.78   0.87   0.92   0.97   1.07
-#> beta[3,4]     -0.04    0.00  0.04  -0.11  -0.06  -0.04  -0.01   0.03
-#> beta[3,5]      0.06    0.00  0.06  -0.07   0.01   0.06   0.10   0.18
-#> beta[3,6]      0.05    0.00  0.11  -0.16  -0.03   0.05   0.12   0.26
-#> beta[3,7]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.01
-#> beta[4,1]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[4,2]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[4,3]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[4,4]      0.23    0.00  0.09   0.06   0.17   0.23   0.29   0.40
-#> beta[4,5]     -0.09    0.00  0.12  -0.32  -0.17  -0.09  -0.01   0.14
-#> beta[4,6]     -0.10    0.00  0.21  -0.51  -0.24  -0.10   0.04   0.31
-#> beta[4,7]      0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01
-#> beta[5,1]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[5,2]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[5,3]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[5,4]      0.00    0.00  0.04  -0.07  -0.02   0.00   0.03   0.08
-#> beta[5,5]      0.08    0.00  0.09  -0.09   0.02   0.08   0.13   0.24
-#> beta[5,6]      0.06    0.00  0.12  -0.18  -0.02   0.06   0.14   0.30
-#> beta[5,7]      0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.00
-#> beta[6,1]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[6,2]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[6,3]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[6,4]      0.00    0.00  0.02  -0.04  -0.01   0.00   0.01   0.04
-#> beta[6,5]      0.02    0.00  0.04  -0.05   0.00   0.02   0.04   0.09
-#> beta[6,6]      0.76    0.00  0.08   0.60   0.70   0.76   0.82   0.93
-#> beta[6,7]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[7,1]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[7,2]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[7,3]      0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[7,4]      1.21    0.00  0.87  -0.51   0.63   1.21   1.80   2.92
-#> beta[7,5]      3.96    0.01  1.45   1.10   3.00   3.97   4.95   6.78
-#> beta[7,6]      0.72    0.01  2.61  -4.38  -1.03   0.73   2.47   5.86
-#> beta[7,7]      0.93    0.00  0.08   0.78   0.88   0.93   0.99   1.09
-#> beta[8,1]      0.03    0.00  0.07  -0.11  -0.02   0.03   0.08   0.17
-#> beta[8,2]     -0.01    0.00  0.03  -0.07  -0.03  -0.01   0.01   0.05
-#> beta[8,3]      0.09    0.00  0.08  -0.07   0.04   0.09   0.15   0.25
-#> beta[8,4]      0.02    0.00  0.05  -0.07  -0.01   0.02   0.06   0.12
-#> beta[8,5]     -0.02    0.00  0.09  -0.18  -0.07  -0.02   0.04   0.15
-#> beta[8,6]      0.10    0.00  0.15  -0.19   0.00   0.10   0.20   0.39
-#> beta[8,7]      0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01
-#> beta[9,1]      0.01    0.00  0.06  -0.12  -0.04   0.01   0.05   0.13
-#> beta[9,2]      0.02    0.00  0.07  -0.11  -0.02   0.02   0.07   0.15
-#> beta[9,3]      0.04    0.00  0.12  -0.18  -0.03   0.04   0.12   0.27
-#> beta[9,4]      0.00    0.00  0.07  -0.14  -0.05   0.00   0.05   0.14
-#> beta[9,5]     -0.03    0.00  0.12  -0.27  -0.11  -0.03   0.05   0.21
-#> beta[9,6]     -0.15    0.00  0.21  -0.56  -0.29  -0.15   0.00   0.26
-#> beta[9,7]      0.00    0.00  0.00  -0.01   0.00   0.00   0.01   0.01
-#> beta[10,1]    -0.02    0.00  0.02  -0.06  -0.03  -0.02   0.00   0.03
-#> beta[10,2]    -0.01    0.00  0.02  -0.04  -0.02  -0.01   0.00   0.02
-#> beta[10,3]    -0.01    0.00  0.07  -0.15  -0.06  -0.01   0.04   0.14
-#> beta[10,4]     0.00    0.00  0.03  -0.05  -0.02   0.00   0.02   0.05
-#> beta[10,5]     0.04    0.00  0.05  -0.04   0.01   0.04   0.07   0.13
-#> beta[10,6]     0.07    0.00  0.08  -0.09   0.02   0.07   0.12   0.22
-#> beta[10,7]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[11,1]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[11,2]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[11,3]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[11,4]     0.11    0.00  0.07  -0.02   0.07   0.11   0.16   0.25
-#> beta[11,5]    -0.01    0.00  0.08  -0.16  -0.06  -0.01   0.04   0.14
-#> beta[11,6]     0.15    0.00  0.13  -0.11   0.06   0.15   0.24   0.41
-#> beta[11,7]     0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01
-#> beta[12,1]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[12,2]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[12,3]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[12,4]     0.01    0.00  0.02  -0.04  -0.01   0.01   0.03   0.06
-#> beta[12,5]    -0.04    0.00  0.07  -0.18  -0.09  -0.04   0.00   0.09
-#> beta[12,6]    -0.05    0.00  0.08  -0.20  -0.10  -0.05   0.00   0.10
-#> beta[12,7]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[13,1]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[13,2]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[13,3]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[13,4]    -0.01    0.00  0.01  -0.04  -0.02  -0.01   0.00   0.02
-#> beta[13,5]     0.01    0.00  0.03  -0.04   0.00   0.01   0.03   0.06
-#> beta[13,6]     0.04    0.00  0.07  -0.10  -0.01   0.04   0.09   0.18
-#> beta[13,7]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[14,1]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[14,2]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[14,3]     0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00
-#> beta[14,4]     0.55    0.00  0.65  -0.72   0.11   0.55   0.99   1.83
-#> beta[14,5]    -0.38    0.01  1.15  -2.61  -1.15  -0.38   0.40   1.89
-#> beta[14,6]     0.31    0.01  1.97  -3.54  -1.00   0.31   1.64   4.15
-#> beta[14,7]    -0.04    0.00  0.08  -0.18  -0.09  -0.04   0.01   0.11
-#> beta[15,1]     0.01    0.00  0.05  -0.10  -0.03   0.01   0.05   0.11
-#> beta[15,2]    -0.01    0.00  0.02  -0.05  -0.03  -0.01   0.00   0.03
-#>              n_eff Rhat
-#> beta[1,1]    40150    1
-#> beta[1,2]    45296    1
-#> beta[1,3]    42854    1
-#> beta[1,4]    41517    1
-#> beta[1,5]    42423    1
-#> beta[1,6]    43589    1
-#> beta[1,7]    45295    1
-#> beta[2,1]    39701    1
-#> beta[2,2]    34690    1
-#> beta[2,3]    39927    1
-#> beta[2,4]    35802    1
-#> beta[2,5]    33715    1
-#> beta[2,6]    38733    1
-#> beta[2,7]    39654    1
-#> beta[3,1]    29280    1
-#> beta[3,2]    28944    1
-#> beta[3,3]    28370    1
-#> beta[3,4]    28883    1
-#> beta[3,5]    28375    1
-#> beta[3,6]    31548    1
-#> beta[3,7]    41547    1
-#> beta[4,1]    39605    1
-#> beta[4,2]    39601    1
-#> beta[4,3]    39731    1
-#> beta[4,4]    35166    1
-#> beta[4,5]    39363    1
-#> beta[4,6]    39406    1
-#> beta[4,7]    43648    1
-#> beta[5,1]    39401    1
-#> beta[5,2]    38193    1
-#> beta[5,3]    39133    1
-#> beta[5,4]    42511    1
-#> beta[5,5]    34122    1
-#> beta[5,6]    40712    1
-#> beta[5,7]    48326    1
-#> beta[6,1]    39813    1
-#> beta[6,2]    39565    1
-#> beta[6,3]    39635    1
-#> beta[6,4]    37552    1
-#> beta[6,5]    33969    1
-#> beta[6,6]    31316    1
-#> beta[6,7]    57420    1
-#> beta[7,1]    39388    1
-#> beta[7,2]    39796    1
-#> beta[7,3]    39499    1
-#> beta[7,4]    31179    1
-#> beta[7,5]    32051    1
-#> beta[7,6]    33127    1
-#> beta[7,7]    28384    1
-#> beta[8,1]    46269    1
-#> beta[8,2]    48993    1
-#> beta[8,3]    45878    1
-#> beta[8,4]    47188    1
-#> beta[8,5]    49200    1
-#> beta[8,6]    48345    1
-#> beta[8,7]    55205    1
-#> beta[9,1]    44623    1
-#> beta[9,2]    41962    1
-#> beta[9,3]    46569    1
-#> beta[9,4]    44740    1
-#> beta[9,5]    43434    1
-#> beta[9,6]    44706    1
-#> beta[9,7]    49658    1
-#> beta[10,1]   37304    1
-#> beta[10,2]   36142    1
-#> beta[10,3]   29606    1
-#> beta[10,4]   40124    1
-#> beta[10,5]   38118    1
-#> beta[10,6]   38266    1
-#> beta[10,7]   55612    1
-#> beta[11,1]   39367    1
-#> beta[11,2]   39537    1
-#> beta[11,3]   39366    1
-#> beta[11,4]   40132    1
-#> beta[11,5]   44252    1
-#> beta[11,6]   48571    1
-#> beta[11,7]   56025    1
-#> beta[12,1]   39772    1
-#> beta[12,2]   40576    1
-#> beta[12,3]   39058    1
-#> beta[12,4]   51834    1
-#> beta[12,5]   44912    1
-#> beta[12,6]   47352    1
-#> beta[12,7]   68808    1
-#> beta[13,1]   39823    1
-#> beta[13,2]   39783    1
-#> beta[13,3]   36916    1
-#> beta[13,4]   42333    1
-#> beta[13,5]   41540    1
-#> beta[13,6]   34533    1
-#> beta[13,7]   73059    1
-#> beta[14,1]   39069    1
-#> beta[14,2]   38914    1
-#> beta[14,3]   38852    1
-#> beta[14,4]   41177    1
-#> beta[14,5]   37036    1
-#> beta[14,6]   38159    1
-#> beta[14,7]   30120    1
-#> beta[15,1]   49045    1
-#> beta[15,2]   54365    1
-#>  [ reached 'max' / getOption("max.print") -- omitted 440 rows ]
-#> 
-#> Samples were drawn using NUTS(diag_e) at Tue Jul 28 12:51:31 2026.
-#> For each parameter, n_eff is a crude measure of effective sample size,
-#> and Rhat is the potential scale reduction factor on split chains (at 
-#> convergence, Rhat=1).
+#> NULL
 ```
 
 As such, we can do the usual `rstan` inference on our fitted model.
@@ -600,10 +333,20 @@ steady-state coefficient by 4 to obtain the annualized rate).
 rstan::plot(stanfit,
             pars=c("beta[6,6]", "Psi[5,1]"),
             plotfun="hist")
-#> `stat_bin()` using `bins = 30`. Pick better value `binwidth`.
+#> Warning in min(x): no non-missing arguments to min; returning Inf
+#> Warning in max(x): no non-missing arguments to max; returning -Inf
+#> Warning in min(x): no non-missing arguments to min; returning Inf
+#> Warning in max(x): no non-missing arguments to max; returning -Inf
 ```
 
-![](figure/HOMO-2-1.png)
+![plot of chunk HOMO-2](figure/HOMO-2-1.png)
+
+plot of chunk HOMO-2
+
+    #> Warning in plot.window(...): "pars" is not a graphical parameter
+    #> Warning in plot.window(...): "plotfun" is not a graphical parameter
+    #> Error in `plot.window()`:
+    #> ! need finite 'xlim' values
 
 We can also look at the model forecasts directly with `rstan`. Remember
 that we left out the last two observations/quarters, so let us look at
@@ -620,11 +363,22 @@ rstan::plot(stanfit,
             show_density = TRUE,
             ci_level = 0.68,
             fill_color = "blue")
-#> ci_level: 0.68 (68% intervals)
-#> outer_level: 0.95 (95% intervals)
+#> Warning in min(x): no non-missing arguments to min; returning Inf
+#> Warning in max(x): no non-missing arguments to max; returning -Inf
+#> Warning in min(x): no non-missing arguments to min; returning Inf
+#> Warning in max(x): no non-missing arguments to max; returning -Inf
 ```
 
-![](figure/HOMO-3-1.png)
+![plot of chunk HOMO-3](figure/HOMO-3-1.png)
+
+plot of chunk HOMO-3
+
+    #> Warning in plot.window(...): "pars" is not a graphical parameter
+    #> Warning in plot.window(...): "show_density" is not a graphical parameter
+    #> Warning in plot.window(...): "ci_level" is not a graphical parameter
+    #> Warning in plot.window(...): "fill_color" is not a graphical parameter
+    #> Error in `plot.window()`:
+    #> ! need finite 'xlim' values
 
 So the model overshot a bit, but the true values are within the 68%
 prediction interval. Now let us plot the forecasts along with the
@@ -644,28 +398,17 @@ fcst <- forecast(bvar_obj,
                  fcst_type = "mean",
                  growth_rate_idx = c(4,5),
                  plot_idx = c(4,5,6))
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
-
-![](figure/HOMO-4-1.png)![](figure/HOMO-4-2.png)![](figure/HOMO-4-3.png)
 
 For further inspection, we can print the point forecasts
 
 ``` r
 
 print(fcst$forecast)
-#>       delta y_f      pi_f      i_f  delta y        pi        i        q
-#>  [1,] 0.6276465 0.5229928 2.819384 2.781059 0.9298632 2.027414 3.994876
-#>  [2,] 0.6468063 0.4494034 3.016352 3.059956 0.9718910 2.040837 3.991086
-#>  [3,] 0.6349337 0.4245683 3.169026 3.366035 1.7662578 2.151360 3.986095
-#>  [4,] 0.6375280 0.4988742 3.277692 3.447495 1.7604261 2.261423 3.980847
-#>  [5,] 0.6336958 0.4521718 3.401158 3.394276 1.7852243 2.367041 3.976137
-#>  [6,] 0.6339985 0.4349920 3.517706 3.310616 1.8525212 2.461190 3.971779
-#>  [7,] 0.6323230 0.4277321 3.606088 3.209632 1.8801645 2.550862 3.967742
-#>  [8,] 0.6261529 0.4404831 3.685635 3.121814 1.8695738 2.653875 3.963905
-#>  [9,] 0.6250363 0.4330299 3.763542 3.037342 1.8752471 2.733654 3.960503
-#> [10,] 0.6251631 0.4317705 3.834999 2.970897 1.8809933 2.813070 3.957395
-#> [11,] 0.6180834 0.4323878 3.900309 2.909134 1.8775063 2.910268 3.954658
-#> [12,] 0.6178943 0.4373746 3.960933 2.858382 1.8767492 2.990701 3.952212
+#> Error:
+#> ! object 'fcst' not found
 ```
 
 We can also perform conditional forecasting by following Algorithm 3.3.1
@@ -707,9 +450,9 @@ cond_fcst <- conditional_forecast(bvar_obj,
                                   fcst_type = "mean",
                                   plot_idx = c(5,6),
                                   growth_rate_idx = c(5))
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
 ```
-
-![](figure/HOMO-5-1.png)![](figure/HOMO-5-2.png)
 
 The short interest rate rises more dramatically compared to the
 unconditional case. Makes sense.
@@ -723,17 +466,14 @@ to the annual/yearly scale.
 
 ``` r
 
-irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=5)
+irf <- IRF(bvar_obj,H=20,response=5,impulse=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=5)
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
+irf <- IRF(bvar_obj,H=20,response=4,impulse=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=4)
+#> Error:
+#> ! unable to find an inherited method for function 'extract' for signature 'object = "NULL"'
+#> Warning in par(old_par): calling par(new=TRUE) with no plot
 ```
-
-![](figure/HOMO-6-1.png)
-
-``` r
-
-irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=4)
-```
-
-![](figure/HOMO-6-2.png)
 
 ## References
 
