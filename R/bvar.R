@@ -48,7 +48,7 @@
 #' \deqn{\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k}
 #' 
 #' where the log volatility AR(1) processes are restricted to the stationary region, i.e. \eqn{|\gamma_{1,i}|<1 \ \forall i}.
-#' For the \code{RW} stochastic volatility specification, the log volatilities follow Random Walk processes
+#' For the \code{RW} stochastic volatility specification, the log volatilities follow (driftless) Random Walk processes
 #' 
 #' \deqn{\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \forall i}
 #' 

@@ -8,7 +8,7 @@
 #'   \code{\link{setup}} and \code{\link{priors}}.
 #' @param H Positive Integer. Forecast horizon.
 #'   Default is \code{1}.
-#' @param d_pred Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL}. Automatically created.
+#' @param d_pred Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL} (\code{d_pred} is automatically created).
 #' If \eqn{d_t} contains only a constant, \eqn{d_{t+h}=1 \ \forall \ h}.
 #' If \eqn{d_t} contains a constant and a dummy, it is assumed that the dummy stays at its last observed value for all future forecast periods.
 #' However, if this is not the intention, the user may supply \code{d_pred} themselves. Naturally, the constant is equal to one for all future periods.
@@ -224,7 +224,7 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
     if (identical(x$setup$deterministic, "constant_and_trend")) {
       d_pred[, 2] <- last_row[2] + seq_len(H)
     } else if (identical(x$setup$deterministic, "constant_and_dummy")) {
-      message("d_pred not supplied: assuming the dummy stays at its last observed value (",
+      message("d_pred not supplied: it is assumed that the dummy stays at its last observed value (",
               last_row[2], ") for all ", H, " forecast periods.")
     }
   }
@@ -246,9 +246,6 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
   
   x$predict$H <- H
   x$predict$d_pred <- d_pred
-  cat("Future deterministic variables (d_pred):\n")
-  print(d_pred)
-  cat("\n")
   
   setup <- x$setup
   priors <- x$priors
@@ -278,8 +275,15 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
     }
   }
   
-  cat("Estimating stan model:\n", model_name)
+  cat("------------------------------------------------------------\n")
+  cat("Estimating Stan model:\n", model_name, sep = "")
   cat("\n\n")
+  cat("Also generating draws from the joint predictive distribution\n\n")
+  cat("Forecast horizon:\n", H, sep = "")
+  cat("\n\n")
+  cat("Future deterministic variables (d_pred):\n", sep = "")
+  print(d_pred)
+  cat("------------------------------------------------------------\n")
   
   x$fit$stan <- rstan::sampling(stanmodels[[model_name]], data = stan_data, ...)
   

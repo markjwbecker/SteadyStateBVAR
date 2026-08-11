@@ -54,14 +54,14 @@
 #'
 #' \deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)}
 #'
-#' The prior means (the elements of \eqn{\theta_\beta}) are set to
+#' The prior means (the elements of \eqn{\theta_\beta}) are specified according to
 #'
 #' \deqn{
 #' \begin{aligned}
 #' \mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&=
 #' \begin{cases}\kappa & \text{if } \ell = 1 \ \text{and} \ i = j \\0 & \text{otherwise}\end{cases}\\
-#' \kappa&=\begin{cases}\kappa^{level} & \text{if } \text{variable} \ i \ \text{is in level} \\
-#' \kappa^{\Delta} & \text{if } \text{variable} \ i \ \text{is in difference}
+#' \kappa&=\begin{cases}\kappa^{level} & \text{if } \text{variable} \ i \ \text{is in levels} \\
+#' \kappa^{\Delta} & \text{if } \text{variable} \ i \ \text{is differenced}
 #' \end{cases}\\
 #' \end{aligned}
 #' }
@@ -69,15 +69,15 @@
 #' Here, the autoregressive coefficient \eqn{\Pi_{\ell}^{(i,j)}} is element \eqn{\left(i,j\right)}
 #' of \eqn{\Pi_{\ell}} for \eqn{\ell=1,\dots,p}. As such, the Minnesota prior sets all prior means
 #' for the elements in \eqn{\beta} to \eqn{0}, except for the elements that relate to the first
-#' own lags of the variables, which are set to \eqn{\kappa}. If variable \eqn{i} is in level
+#' own lags of the variables, which are set to \eqn{\kappa}. If variable \eqn{i} is in levels
 #' (e.g. nominal interest rate), then \eqn{\kappa=\kappa^{level}}, and typical choices for
 #' \eqn{\kappa^{level}} are \eqn{1} or \eqn{0.9}. Evaluating the equations at their prior means,
 #' equation \eqn{i} becomes a random walk if \eqn{\kappa^{level}=1} and a persistent stationary
 #' AR(1) process if \eqn{\kappa^{level}=0.9}. Since the steady state only exists if the process
-#' is stationary, \eqn{0.9} is recommended for the steady-state BVAR. If variable \eqn{i} is in difference
-#' (e.g. output growth), then \eqn{\kappa=\kappa^{\Delta}}, and the most common choice for
+#' is stationary, \eqn{0.9} is recommended for the steady-state BVAR. If variable \eqn{i} is differenced
+#' (e.g. GDP growth), then \eqn{\kappa=\kappa^{\Delta}}, and the most common choice for
 #' \eqn{\kappa^{\Delta}} is \eqn{0}, i.e. equation \eqn{i} becomes (when evaluating it at its prior means)
-#' a random walk expressed in first differences. If a differenced variable still shows some degree
+#' a random walk expressed in first differences (i.e. white noise process). If a differenced variable still shows some degree
 #' of persistence (can be examined with an ACF plot), a suitable value for \eqn{\kappa^{\Delta}} can
 #' be (for example) \eqn{0.6} instead of \eqn{0}. Moving on to the prior variances, \eqn{\Omega_\beta} is a
 #' diagonal matrix containing the prior variances for the elements in \eqn{\beta}. They are specified as
@@ -90,7 +90,7 @@
 #' Here \eqn{\lambda_1}, \eqn{\lambda_2}, and \eqn{\lambda_3} are scalar hyperparameters known as
 #' the overall tightness, the cross-equation tightness and the lag decay rate. Furthermore,
 #' \eqn{\sigma_i^2} is the \eqn{(i,i)}:th element of \eqn{\Sigma_u}, which is unknown and therefore
-#' replaced with an estimate. In this package, it is replaced by the least squares residual variance
+#' needs to be replaced with an estimate. In this package, it is replaced by the least squares residual variance
 #' from a univariate autoregression for variable \eqn{i} with \eqn{p} lags
 #' (including the constant and dummy/trend variable if applicable). Moving on to \eqn{\Psi}, the steady-state parameter matrix, the
 #' prior is
@@ -128,7 +128,7 @@
 #' 
 #' \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 #' \gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
-#' \gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) I(|\gamma_{1,i}| < 1)\\
+#' \gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \ I(|\gamma_{1,i}| < 1)\\
 #' \ln \lambda_{1} &\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
 #' \Phi &\sim \mathrm{IW}(V_{\Phi},m_{\Phi})\end{aligned}}
 #' 

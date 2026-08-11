@@ -40,7 +40,7 @@
 #' p <- bvar_obj$setup$p
 #' k <- bvar_obj$setup$k
 #' 
-#' restriction_matrix <- matrix(1,k*p,k, dimnames=list(NULL,c("y1","y2")))
+#' restriction_matrix <- matrix(1,k*p,k)
 #' 
 #' #restrict beta so y2 does not granger-cause y1
 #' 
@@ -58,6 +58,17 @@ restrict_beta <- function(x, restriction_matrix) {
   if (!all(dim(restriction_matrix) == c(k * p, k))) {
     stop("restriction_matrix must have dimension (k*p x k)")
   }
+  
+  var_names <- colnames(x$data)
+  if (is.null(var_names)) {
+    var_names <- paste0("Var", 1:ncol(x$data))
+  }
+  
+  var_rep   <- rep(var_names, p)
+  lag_names <- paste0("l", rep(1:p, each = k))
+  
+  rownames(restriction_matrix) <- paste0(var_rep, ".", lag_names)
+  colnames(restriction_matrix) <- var_names
   
   x$setup$restriction_matrix <- restriction_matrix
   zero_indices <- which(c(restriction_matrix) == 0)

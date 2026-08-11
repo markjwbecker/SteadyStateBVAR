@@ -49,7 +49,7 @@ bvar_obj <- priors(bvar_obj,
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
 
-restriction_matrix <- matrix(1,k*p,k, dimnames=list(NULL,c("y1","y2")))
+restriction_matrix <- matrix(1,k*p,k)
 
 #restrict beta so y2 does not granger-cause y1
 

@@ -13,7 +13,7 @@ fit(x, H = 1, d_pred = NULL, ...)
 \item{H}{Positive Integer. Forecast horizon.
 Default is \code{1}.}
 
-\item{d_pred}{Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL}. Automatically created.
+\item{d_pred}{Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL} (\code{d_pred} is automatically created).
 If \eqn{d_t} contains only a constant, \eqn{d_{t+h}=1 \ \forall \ h}.
 If \eqn{d_t} contains a constant and a dummy, it is assumed that the dummy stays at its last observed value for all future forecast periods.
 However, if this is not the intention, the user may supply \code{d_pred} themselves. Naturally, the constant is equal to one for all future periods.
