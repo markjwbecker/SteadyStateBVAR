@@ -67,8 +67,8 @@ d_{t}' =
 $$
 
 ```{r}
-bp <- which(time(yt) == 1992.75)
-dum_var <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+breakpoint <- which(time(yt) == 1992.75)
+dum_var <- c(rep(1,breakpoint), rep(0,nrow(yt)-breakpoint))
 ```
 
 To formulate a prior on $\Psi$, note that the specification of $d_t$ implies the following parametrization of the steady state:
@@ -111,7 +111,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$, i.r. the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $z$ which is on a quarterly frequency, the quarterly growth rate is $100[ \ln (z_t) - \ln (z_{t-1})]$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400 [\ln (z_t) - \ln (z_{t-1})]$.
+Now moving on to $\Psi$, i.r. the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $z$ which is on a quarterly frequency (`freq=4`), the quarterly growth rate is $100[ \ln (z_t) - \ln (z_{t-1})]$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400 [\ln (z_t) - \ln (z_{t-1})]$.
 
 The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`.
 
@@ -121,39 +121,39 @@ The `ppi()` function is useful here. Simply input the desired 95\% prior probabi
 
 theta_Psi <- 
   c(
-  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: pi_f
-  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
-  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
-  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
-  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$mean,  #psi_1: q
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_2: pi_f
-  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
-  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
-  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i
-  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$mean   #psi_2: q
+  ppi( 2.00,  3.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: delta y_f
+  ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: pi_f
+  ppi( 4.50,  5.50, interval = 0.95                                    )$mean,   #psi_1: i_f
+  ppi( 2.00,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: delta y
+  ppi( 1.70,  2.30, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: pi
+  ppi( 4.00,  4.50, interval = 0.95                                    )$mean,   #psi_1: i
+  ppi( 3.85,  4.00, interval = 0.95                                    )$mean,   #psi_1: q
+  ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: delta y_f
+  ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: pi_f
+  ppi( 1.50,  2.50, interval = 0.95                                    )$mean,   #psi_2: i_f
+  ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: delta y
+  ppi( 4.30,  5.70, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: pi
+  ppi( 3.00,  5.50, interval = 0.95                                    )$mean,   #psi_2: i
+  ppi(-0.50,  0.50, interval = 0.95                                    )$mean    #psi_2: q
   )
 
 Omega_Psi <- 
   diag(
   c(
-  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$var,    #psi_1: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: pi_f
-  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$var,   #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: delta y
-  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$var,    #psi_1: pi
-  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$var,   #psi_1: i
-  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$var,   #psi_1: q
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_2: pi_f
-  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$var,   #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y
-  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,    #psi_2: pi
-  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$var,   #psi_2: i
-  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$var    #psi_2: q
+  ppi( 2.00,  3.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: delta y_f
+  ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: pi_f
+  ppi( 4.50,  5.50, interval = 0.95                                    )$var,    #psi_1: i_f
+  ppi( 2.00,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: delta y
+  ppi( 1.70,  2.30, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: pi
+  ppi( 4.00,  4.50, interval = 0.95                                    )$var,    #psi_1: i
+  ppi( 3.85,  4.00, interval = 0.95                                    )$var,    #psi_1: q
+  ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: delta y_f
+  ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: pi_f
+  ppi( 1.50,  2.50, interval = 0.95                                    )$var,    #psi_2: i_f
+  ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: delta y
+  ppi( 4.30,  5.70, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: pi
+  ppi( 3.00,  5.50, interval = 0.95                                    )$var,    #psi_2: i
+  ppi(-0.50,  0.50, interval = 0.95                                    )$var     #psi_2: q
   )
   )
 ```
@@ -186,15 +186,17 @@ for(i in 1:p){
   cols <- 1:kf
   restriction_matrix[rows, cols] <- 0
 }
-restriction_matrix
 ```
-We can look at the restriction matrix for $\beta$ to see which elements we restrict to zero. Now we simply pass our $(kp \times k)$ restriction matrix to the `restrict_beta()` function:
+We simply pass our $(kp \times k)$ restriction matrix to the `restrict_beta()` function:
 
 ```{r}
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 ```
 
-Now, we need to supply our forecast horizon $H$, and also a matrix containing the deterministic variables ($d_t$) for the future periods
+The function tells us which elements in $\beta$ we restrict to zero. 
+
+Now we are almost ready to fit (estimate) the model. When estimating the model, we are at the same time generating draws from the joint predictive distribution.
+To accomplish the latter, we need the forecast horizon $H$, and also a matrix containing the deterministic variables ($d_t$) for the future periods
 
 $$
 d_{\text{pred}}=\begin{bmatrix}d_{T+1}' \\
@@ -211,17 +213,19 @@ $$
 
 ```{r}
 H <- 12
-(d_pred <- cbind(rep(1, 12), 0))
+d_pred <- cbind(rep(1, 12), 0)
 ```
 
-We can now fit the model
+However, `fit()` automatically creates `d_pred`, so we do not need to bother with it.
+
+For the sampling, let us choose 4 markov chains, with each having 4000 iterations, and where 2000 of those 4000 are warmup/burn-in iterations.
 
 ```{r}
 bvar_obj <- fit(bvar_obj,
                 H = H,
-                d_pred = d_pred,
-                iter = 15000,
-                warmup = 5000,
+                d_pred=NULL
+                iter = 4000,
+                warmup = 2000,
                 chains = 4,
                 cores = 4)
 ```
@@ -311,8 +315,8 @@ Now for some impulse response analysis. We can choose between the orthogonalized
 
 
 ```{r HOMO-6, fig.width=8, fig.height=8}
-irf <- IRF(bvar_obj,H=20,response=5,shock=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=5)
-irf <- IRF(bvar_obj,H=20,response=4,shock=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=4)
+irf <- IRF(bvar_obj,H=20,response=5,impulse=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=5)
+irf <- IRF(bvar_obj,H=20,response=4,impulse=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=4)
 ```
 
 

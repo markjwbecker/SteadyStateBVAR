@@ -224,8 +224,8 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
     if (identical(x$setup$deterministic, "constant_and_trend")) {
       d_pred[, 2] <- last_row[2] + seq_len(H)
     } else if (identical(x$setup$deterministic, "constant_and_dummy")) {
-      message("d_pred not supplied: it is assumed that the dummy stays at its last observed value (",
-              last_row[2], ") for all ", H, " forecast periods.")
+      message("NOTE: d_pred not supplied\nit is assumed that the dummy stays at its last observed value (",
+              last_row[2], ") for all ", H, " forecast periods.\n")
     }
   }
   
