@@ -10,7 +10,10 @@ forecast(
   fcst_type = c("mean", "median"),
   growth_rate_idx = NULL,
   plot_idx = NULL,
-  show_all = FALSE
+  show_all = FALSE,
+  ss = FALSE,
+  ss_type = c("mean", "median"),
+  ss_ci = 0.95
 )
 }
 \arguments{
@@ -34,6 +37,15 @@ returned for all variables, regardless of \code{plot_idx}.}
 \item{show_all}{Logical. If \code{FALSE} (default), the last eight years
 of history are shown alongside the forecast. If \code{TRUE}, the full
 history is shown.}
+
+\item{ss}{Logical. If \code{TRUE}, overlays the posterior steady state
+\eqn{\mu_t} and its posterior interval. Default \code{FALSE}.}
+
+\item{ss_type}{Character. Whether to use \code{"mean"} or \code{"median"}
+as the steady-state point estimate. Default \code{"mean"}.}
+
+\item{ss_ci}{Numeric. The posterior interval width for the steady state.
+Default \code{0.95}.}
 }
 \value{
 Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
@@ -41,10 +53,14 @@ Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
 forecast horizon and \code{k} is the number of variables.
 }
 \description{
-Computes and plots forecasts from a fitted \code{bvar} object. Draws from the
+Computes and plots forecasts from a fitted steady-state \code{bvar} object. Draws from the
 joint predictive distribution are used to construct point forecasts and
 prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
-rates for selected variables.
+rates for selected variables. Optionally overlays the posterior steady state
+\eqn{\mu_t = \Psi d_t}, computed directly from posterior draws of
+\eqn{\Psi} applied to the full historical \code{d_t} and future
+\code{d_pred}, as one continuous line/band spanning the entire sample and
+forecast horizon.
 }
 \examples{
 \donttest{
@@ -74,6 +90,6 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1,
                 cores = 1)
 
-(fcst <- forecast(bvar_obj, pi = 0.90, show_all = TRUE))
+(fcst <- forecast(bvar_obj, pi = 0.90, show_all = TRUE, ss = TRUE))
 }
 }

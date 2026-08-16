@@ -69,6 +69,9 @@ model {
 }
 
 generated quantities {
+  
+  matrix[N, k] mu = D * Psi';
+  matrix[H, k] mu_pred = d_pred * Psi';
 
   array[p] matrix[k, k] Pi;
   for (i in 1:p) {

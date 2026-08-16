@@ -3,7 +3,14 @@
 #' Computes and plots forecasts from a fitted \code{bvar} object. Draws from the 
 #' joint predictive distribution are used to construct point forecasts and
 #' prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
-#' rates for selected variables.
+#' rates for selected variables. Optionally overlays the posterior steady state
+#' \eqn{\mu_t = \Psi d_t}, computed directly from posterior draws of
+#' \eqn{\Psi} applied to the full historical \code{d_t} and future
+#' \code{d_pred}. For growth-rate variables, the steady state is converted
+#' to YoY terms using the same rolling-sum window as the data/forecast,
+#' applied per posterior draw so that any correlation across periods
+#' (including the perfect correlation within an unchanged regime) is
+#' captured automatically rather than assumed.
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.
 #' @param pi Numeric. The prediction interval width. Default \code{0.95}, i.e. 95% prediction interval.
@@ -20,6 +27,12 @@
 #' @param show_all Logical. If \code{FALSE} (default), the last eight years
 #'   of history are shown alongside the forecast. If \code{TRUE}, the full
 #'   history is shown.
+#' @param ss Logical. If \code{TRUE}, overlays the posterior steady state
+#'   \eqn{\mu_t} and its posterior interval. Default \code{FALSE}.
+#' @param ss_type Character. Whether to use \code{"mean"} or \code{"median"}
+#'   as the steady-state point estimate. Default \code{"mean"}.
+#' @param ss_ci Numeric. The posterior interval width for the steady state.
+#'   Default \code{0.95}.
 #'
 #' @return Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
 #'   \code{upper}, each of dimension \code{H x k} where \code{H} is the
@@ -54,25 +67,49 @@
 #'                 chains = 1,
 #'                 cores = 1)
 #'
-#' (fcst <- forecast(bvar_obj, pi = 0.90, show_all = TRUE))
+#' (fcst <- forecast(bvar_obj, pi = 0.90, show_all = TRUE, ss = TRUE))
 #' }
 forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
-                     growth_rate_idx = NULL, plot_idx = NULL, show_all = FALSE) {
+                     growth_rate_idx = NULL, plot_idx = NULL, show_all = FALSE,
+                     ss = FALSE, ss_type = c("mean", "median"), ss_ci = 0.95) {
   
   fcst_type <- match.arg(fcst_type)
+  ss_type   <- match.arg(ss_type)
   
   Y    <- x$data
   freq <- frequency(Y)
+  
+  alpha    <- 1 - pi
+  alpha_ss <- 1 - ss_ci
   
   if (is.null(plot_idx))
     plot_idx <- 1:ncol(Y)
   
   posterior    <- rstan::extract(x$fit$stan)
   y_pred       <- posterior$y_pred
-  alpha        <- 1 - pi
   y_pred_m     <- apply(y_pred, c(2, 3), fcst_type)
   y_pred_lower <- apply(y_pred, c(2, 3), quantile, probs = alpha / 2)
   y_pred_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - alpha / 2)
+  
+  if (isTRUE(ss)) {
+    Psi_draws <- posterior$Psi          # [S, k, q]
+    dt_full   <- x$setup$dt             # [N_original, q]
+    d_pred    <- x$predict$d_pred       # [H, q]
+    k         <- x$setup$k
+    S         <- dim(Psi_draws)[1]
+    N_full    <- nrow(dt_full)
+    H_ss      <- nrow(d_pred)
+    dt_all    <- rbind(dt_full, d_pred)     # [N_full + H_ss, q]
+    
+    mu_all_draws <- array(NA, dim = c(S, nrow(dt_all), k))
+    for (s in 1:S) {
+      mu_all_draws[s, , ] <- dt_all %*% t(Psi_draws[s, , ])
+    }
+    
+    mu_m_all     <- apply(mu_all_draws, c(2, 3), ss_type)
+    mu_lower_all <- apply(mu_all_draws, c(2, 3), quantile, probs = alpha_ss / 2)
+    mu_upper_all <- apply(mu_all_draws, c(2, 3), quantile, probs = 1 - alpha_ss / 2)
+  }
   
   T <- nrow(Y)
   H <- nrow(y_pred_m)
@@ -85,8 +122,18 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
   colnames(lower_ret)    <- colnames(Y)
   colnames(upper_ret)    <- colnames(Y)
   
-  time_hist <- as.numeric(time(Y))
-  time_fore <- seq(tail(time_hist, 1) + 1 / freq, by = 1 / freq, length.out = H)
+  time_hist    <- as.numeric(time(Y))
+  time_fore    <- seq(tail(time_hist, 1) + 1 / freq, by = 1 / freq, length.out = H)
+  mu_line_time <- c(time_hist, time_fore)
+  
+  legend_labels <- paste0("Prediction (", 100 * pi, "%)")
+  legend_cols   <- "blue"
+  legend_lty    <- 1
+  if (isTRUE(ss)) {
+    legend_labels <- c(legend_labels, paste0("Posterior steady state (", 100 * ss_ci, "%)"))
+    legend_cols   <- c(legend_cols, "gray40")
+    legend_lty    <- c(legend_lty, 2)
+  }
   
   for (i in 1:m) {
     smply      <- Y[, i]
@@ -94,7 +141,35 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
     fcst_lower <- y_pred_lower[, i]
     fcst_upper <- y_pred_upper[, i]
     
-    if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
+    is_growth <- !is.null(growth_rate_idx) && i %in% growth_rate_idx
+    
+    if (isTRUE(ss)) {
+      
+      if (is_growth) {
+        # Roll up mu draws over the same freq-quarter window used for the
+        # data/forecast YoY conversion, per posterior draw - this respects
+        # whatever correlation exists across periods (e.g. mu_t is identical
+        # across an unchanged regime) automatically, since it never assumes
+        # independence or tries to combine summary statistics.
+        n_tot        <- dim(mu_all_draws)[2]
+        mu_annual    <- matrix(NA, n_tot, S)
+        for (s in 1:S) {
+          v <- mu_all_draws[s, , i]
+          for (tt in freq:n_tot) {
+            mu_annual[tt, s] <- sum(v[(tt - freq + 1):tt])
+          }
+        }
+        mu_line       <- apply(mu_annual, 1, ss_type, na.rm = TRUE)
+        mu_line_lower <- apply(mu_annual, 1, quantile, probs = alpha_ss / 2, na.rm = TRUE)
+        mu_line_upper <- apply(mu_annual, 1, quantile, probs = 1 - alpha_ss / 2, na.rm = TRUE)
+      } else {
+        mu_line       <- mu_m_all[, i]
+        mu_line_lower <- mu_lower_all[, i]
+        mu_line_upper <- mu_upper_all[, i]
+      }
+    }
+    
+    if (is_growth) {
       
       annual_hist <- rep(NA, length(smply))
       for (t in freq:length(smply)) {
@@ -130,7 +205,9 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
         if (isFALSE(show_all)) {
           xlim_vals    <- c(head(time_fore, 1) - 8, tail(time_fore, 1))
           hist_in_plot <- annual_hist[time_hist >= xlim_vals[1] & time_hist <= xlim_vals[2]]
-          ylim         <- range(c(hist_in_plot, annual_lower, annual_upper), na.rm = TRUE)
+          ylim_vals    <- c(hist_in_plot, annual_lower, annual_upper)
+          if (isTRUE(ss)) ylim_vals <- c(ylim_vals, mu_line_lower, mu_line_upper)
+          ylim <- range(ylim_vals, na.rm = TRUE)
           
           plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"),
                   xlab = "Time", ylab = NULL,
@@ -140,14 +217,25 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
           points(as.numeric(time_hist), annual_hist, pch = 16, col = "black", cex=0.8)
           points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.8)
         } else {
+          ylim_vals <- c(upper_full, lower_full, annual_hist)
+          if (isTRUE(ss)) ylim_vals <- c(ylim_vals, mu_line_lower, mu_line_upper)
           plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"),
                   xlab = "Time", ylab = NULL, col = "black", lwd = 2,
                   xlim = c(head(time_hist, 1), tail(time_fore, 1)),
-                  ylim = range(upper_full, lower_full, annual_hist, na.rm = TRUE))
+                  ylim = range(ylim_vals, na.rm = TRUE))
         }
         polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
                 col = rgb(0, 0, 1, 0.2), border = NA)
         lines(time_full, m_full, col = "blue", lwd = 2)
+        
+        if (isTRUE(ss)) {
+          polygon(c(mu_line_time, rev(mu_line_time)), c(mu_line_upper, rev(mu_line_lower)),
+                  col = rgb(0.5, 0.5, 0.5, 0.3), border = NA)
+          lines(mu_line_time, mu_line, col = "gray40", lwd = 2, lty = "dashed")
+        }
+        
+        legend("bottomleft", legend = legend_labels, col = legend_cols,
+               lty = legend_lty, lwd = 2, bty = "n", cex = 0.8)
       }
       
     } else {
@@ -165,10 +253,9 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
         if (isFALSE(show_all)) {
           xlim_vals    <- c(head(time_fore, 1) - 8, tail(time_fore, 1))
           hist_in_plot <- smply[time_hist >= xlim_vals[1] & time_hist <= xlim_vals[2]]
-          ylim         <- range(c(hist_in_plot, lower_full, upper_full), na.rm = TRUE)
-          
-          
-          
+          ylim_vals    <- c(hist_in_plot, lower_full, upper_full)
+          if (isTRUE(ss)) ylim_vals <- c(ylim_vals, mu_line_lower, mu_line_upper)
+          ylim <- range(ylim_vals, na.rm = TRUE)
           
           plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
                   xlim = xlim_vals,
@@ -177,14 +264,25 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
           points(as.numeric(time_hist), smply, pch = 16, col = "black", cex=0.8)
           points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.8)
         } else {
+          ylim_vals <- c(upper_full, lower_full, smply)
+          if (isTRUE(ss)) ylim_vals <- c(ylim_vals, mu_line_lower, mu_line_upper)
           plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
                   col = "black", lwd = 2,
                   xlim = c(head(time_hist, 1), tail(time_fore, 1)),
-                  ylim = range(upper_full, lower_full, smply))
+                  ylim = range(ylim_vals, na.rm = TRUE))
         }
         polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
                 col = rgb(0, 0, 1, 0.2), border = NA)
         lines(time_full, m_full, col = "blue", lwd = 2)
+        
+        if (isTRUE(ss)) {
+          polygon(c(mu_line_time, rev(mu_line_time)), c(mu_line_upper, rev(mu_line_lower)),
+                  col = rgb(0.5, 0.5, 0.5, 0.3), border = NA)
+          lines(mu_line_time, mu_line, col = "gray40", lwd = 2, lty = "dashed")
+        }
+        
+        legend("bottomleft", legend = legend_labels, col = legend_cols,
+               lty = legend_lty, lwd = 2, bty = "n", cex = 0.8)
       }
     }
   }
