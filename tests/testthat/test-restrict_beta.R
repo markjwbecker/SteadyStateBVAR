@@ -3,15 +3,20 @@ test_that("restrict_beta stores restriction matrix", {
   model <- bvar(data)
   model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
-  
+
   k <- model$setup$k
   p <- model$setup$p
   R <- matrix(1, nrow = k * p, ncol = k)
   R[2, 1] <- 0
-  
+
   result <- restrict_beta(model, R)
-  
-  expect_equal(result$setup$restriction_matrix, R)
+
+  var_names <- paste0("Var", 1:k)
+  expected <- R
+  rownames(expected) <- paste0(rep(var_names, p), ".", paste0("l", rep(1:p, each = k)))
+  colnames(expected) <- var_names
+
+  expect_equal(result$setup$restriction_matrix, expected)
 })
 
 test_that("restrict_beta updates Omega_beta for zero restrictions", {

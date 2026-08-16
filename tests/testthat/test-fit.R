@@ -13,15 +13,17 @@ test_that("fit requires priors", {
   expect_error(fit(model), "must be passed through priors")
 })
 
-test_that("fit requires d_pred", {
+test_that("fit auto-constructs d_pred when not supplied", {
   model <- bvar(data = matrix(rnorm(300), nrow = 100, ncol = 3))
   model <- SteadyStateBVAR::setup(model, p = 2)
   model <- priors(model)
   
-  expect_error(
-    fit(model),
-    "d_pred must be supplied"
+  model <- suppressWarnings(
+    fit(model, H = 3, iter = 20, warmup = 10, chains = 1, cores = 1)
   )
+  
+  expect_equal(dim(model$predict$d_pred), c(3, 1))
+  expect_true(all(model$predict$d_pred == 1))
 })
 
 test_that("fit validates H", {

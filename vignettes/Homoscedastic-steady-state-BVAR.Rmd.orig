@@ -218,12 +218,12 @@ d_pred <- cbind(rep(1, 12), 0)
 
 However, `fit()` automatically creates `d_pred`, so we do not need to bother with it.
 
-For the sampling, let us choose 4 markov chains, with each having 4000 iterations, and where 2000 of those 4000 are warmup/burn-in iterations.
+For the estimation, let us choose 4 markov chains, with each having 4000 iterations, and where 2000 of those 4000 are warmup/burn-in iterations.
 
 ```{r}
 bvar_obj <- fit(bvar_obj,
                 H = H,
-                d_pred=NULL
+                d_pred=NULL,
                 iter = 4000,
                 warmup = 2000,
                 chains = 4,

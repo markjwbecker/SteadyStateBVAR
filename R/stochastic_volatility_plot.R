@@ -37,8 +37,8 @@
 #' @details
 #' The function supports two volatility representations:
 #' \itemize{
-#'   \item \code{"log_lambda"}: log variances
-#'   \item \code{"sd"}: implied standard deviations
+#'   \item \code{"log_lambda"}: log volatilities
+#'   \item \code{"sd"}: implied standard deviations of the reduced-form innovations \eqn{u_{t}}
 #' }
 #'
 #' For each selected variable, the function plots the posterior point estimate
