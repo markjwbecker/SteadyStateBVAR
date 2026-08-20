@@ -143,36 +143,27 @@ IRF <- function(x, H = 16, response = NULL, impulse = NULL,
     }
   }
   
-  alpha     <- 1 - ci
+  alpha <- 1 - ci
+  
+  if (!is.null(growth_rate_idx)) {
+    for (i in growth_rate_idx) {
+      for (j in 1:k) {
+        for (draw in 1:N_draws) {
+          irf_path <- irf_array[draw, i, j, ]
+          all_irf  <- c(rep(0, freq - 1), irf_path)
+          tmp      <- numeric(H + 1)
+          for (h in 1:(H + 1)) {
+            tmp[h] <- sum(all_irf[h:(h + freq - 1)])
+          }
+          irf_array[draw, i, j, ] <- tmp
+        }
+      }
+    }
+  }
+  
   m_irf     <- apply(irf_array, c(2, 3, 4), type)
   lower_irf <- apply(irf_array, c(2, 3, 4), quantile, probs = alpha / 2)
   upper_irf <- apply(irf_array, c(2, 3, 4), quantile, probs = 1 - alpha / 2)
-  
-  if (!is.null(growth_rate_idx)) {
-    transform_irf <- function(irf_mat, freq) {
-      dims     <- dim(irf_mat)
-      irf_yoy  <- array(NA, dim = dims)
-      for (i in 1:dims[1]) {
-        for (j in 1:dims[2]) {
-          if (i %in% growth_rate_idx) {
-            irf      <- irf_mat[i, j, ]
-            all_irf  <- c(rep(0, freq - 1), irf)
-            tmp      <- numeric(dims[3])
-            for (h in 1:dims[3]) {
-              tmp[h] <- sum(all_irf[h:(h + freq - 1)])
-            }
-            irf_yoy[i, j, ] <- tmp
-          } else {
-            irf_yoy[i, j, ] <- irf_mat[i, j, ]
-          }
-        }
-      }
-      return(irf_yoy)
-    }
-    m_irf     <- transform_irf(m_irf, freq)
-    lower_irf <- transform_irf(lower_irf, freq)
-    upper_irf <- transform_irf(upper_irf, freq)
-  }
   
   horizon    <- 0:H
   type_label <- if (type == "median") "Median" else "Mean"

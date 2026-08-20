@@ -1,16 +1,10 @@
 #' Forecast from a fitted steady-state BVAR model
 #'
-#' Computes and plots forecasts from a fitted \code{bvar} object. Draws from the 
+#' Computes and plots forecasts from a fitted steady-state \code{bvar} object. Draws from the 
 #' joint predictive distribution are used to construct point forecasts and
 #' prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
-#' rates for selected variables. Optionally overlays the posterior steady state
-#' \eqn{\mu_t = \Psi d_t}, computed directly from posterior draws of
-#' \eqn{\Psi} applied to the full historical \code{d_t} and future
-#' \code{d_pred}. For growth-rate variables, the steady state is converted
-#' to YoY terms using the same rolling-sum window as the data/forecast,
-#' applied per posterior draw so that any correlation across periods
-#' (including the perfect correlation within an unchanged regime) is
-#' captured automatically rather than assumed.
+#' rates for variables specified as \code{100*diff(log(x))}. Optionally overlays the posterior steady
+#' state \eqn{\mu_t = \Psi d_t}.
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.
 #' @param pi Numeric. The prediction interval width. Default \code{0.95}, i.e. 95% prediction interval.
@@ -28,10 +22,10 @@
 #'   of history are shown alongside the forecast. If \code{TRUE}, the full
 #'   history is shown.
 #' @param ss Logical. If \code{TRUE}, overlays the posterior steady state
-#'   \eqn{\mu_t} and its posterior interval. Default \code{FALSE}.
+#'   \eqn{\mu_t = \Psi d_t} and its posterior interval. Default \code{FALSE}.
 #' @param ss_type Character. Whether to use \code{"mean"} or \code{"median"}
 #'   as the steady-state point estimate. Default \code{"mean"}.
-#' @param ss_ci Numeric. The posterior interval width for the steady state.
+#' @param ss_ci Numeric. The posterior credible interval width for the steady state.
 #'   Default \code{0.95}.
 #'
 #' @return Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
@@ -55,10 +49,7 @@
 #'                    first_own_lag_prior_mean = rep(1,2),
 #'                    theta_Psi = rep(0, 2),
 #'                    Omega_Psi = diag(0.1, 2, 2),
-#'                    Jeffreys = TRUE,
-#'                    SV = FALSE,
-#'                    SV_type = NULL,
-#'                    SV_priors = NULL)
+#'                    Jeffreys = TRUE)
 #'                    
 #' bvar_obj <- fit(bvar_obj,
 #'                 H = 8,
@@ -66,131 +57,120 @@
 #'                 warmup = 50,
 #'                 chains = 1,
 #'                 cores = 1)
-#'
-#' (fcst <- forecast(bvar_obj, pi = 0.90, show_all = TRUE, ss = TRUE))
+#'                 
+#' forecast(bvar_obj,
+#'          fcst_type = "mean",
+#'          pi = 0.90,
+#'          show_all = TRUE,
+#'          ss = TRUE,
+#'          ss_type = "mean",
+#'          ss_ci = 0.95)
 #' }
 forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
                      growth_rate_idx = NULL, plot_idx = NULL, show_all = FALSE,
                      ss = FALSE, ss_type = c("mean", "median"), ss_ci = 0.95) {
   
   fcst_type <- match.arg(fcst_type)
-  ss_type   <- match.arg(ss_type)
+  ss_type <- match.arg(ss_type)
   
-  Y    <- x$data
-  freq <- frequency(Y)
+  yt   <- x$data
+  freq <- frequency(yt)
+  k    <- ncol(yt)
   
-  alpha    <- 1 - pi
-  alpha_ss <- 1 - ss_ci
-  
-  if (is.null(plot_idx))
-    plot_idx <- 1:ncol(Y)
-  
+  if (is.null(plot_idx)) {plot_idx <- 1:ncol(yt)}
+
   posterior    <- rstan::extract(x$fit$stan)
   y_pred       <- posterior$y_pred
-  y_pred_m     <- apply(y_pred, c(2, 3), fcst_type)
-  y_pred_lower <- apply(y_pred, c(2, 3), quantile, probs = alpha / 2)
-  y_pred_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - alpha / 2)
+  S            <- dim(y_pred)[1]
+  alpha        <- 1 - pi
+  alpha_ss     <- 1 - ss_ci
+  N            <- nrow(yt)
+  H            <- x$predict$H
   
   if (isTRUE(ss)) {
-    Psi_draws <- posterior$Psi          # [S, k, q]
-    dt_full   <- x$setup$dt             # [N_original, q]
-    d_pred    <- x$predict$d_pred       # [H, q]
-    k         <- x$setup$k
-    S         <- dim(Psi_draws)[1]
-    N_full    <- nrow(dt_full)
-    H_ss      <- nrow(d_pred)
-    dt_all    <- rbind(dt_full, d_pred)     # [N_full + H_ss, q]
+    Psi_draws <- posterior$Psi
+    dt_full   <- x$setup$dt
+    d_pred    <- x$predict$d_pred
+    dt_all    <- rbind(dt_full, d_pred)
     
-    mu_all_draws <- array(NA, dim = c(S, nrow(dt_all), k))
+    mu_draws <- array(NA, dim = c(S, N+H, k))
     for (s in 1:S) {
-      mu_all_draws[s, , ] <- dt_all %*% t(Psi_draws[s, , ])
+      mu_draws[s, , ] <- dt_all %*% t(Psi_draws[s, , ])
     }
-    
-    mu_m_all     <- apply(mu_all_draws, c(2, 3), ss_type)
-    mu_lower_all <- apply(mu_all_draws, c(2, 3), quantile, probs = alpha_ss / 2)
-    mu_upper_all <- apply(mu_all_draws, c(2, 3), quantile, probs = 1 - alpha_ss / 2)
   }
   
-  T <- nrow(Y)
-  H <- nrow(y_pred_m)
-  m <- ncol(Y)
+  forecast_ret <- matrix(NA, H, k)
+  lower_ret    <- matrix(NA, H, k)
+  upper_ret    <- matrix(NA, H, k)
+  colnames(forecast_ret) <- colnames(yt)
+  colnames(lower_ret)    <- colnames(yt)
+  colnames(upper_ret)    <- colnames(yt)
   
-  forecast_ret <- matrix(NA, H, m)
-  lower_ret    <- matrix(NA, H, m)
-  upper_ret    <- matrix(NA, H, m)
-  colnames(forecast_ret) <- colnames(Y)
-  colnames(lower_ret)    <- colnames(Y)
-  colnames(upper_ret)    <- colnames(Y)
+  point_fcst <- apply(y_pred, c(2, 3), fcst_type)
+  fcst_lower <- apply(y_pred, c(2, 3), quantile, probs = alpha / 2)
+  fcst_upper <- apply(y_pred, c(2, 3), quantile, probs = 1 - alpha / 2)
   
-  time_hist    <- as.numeric(time(Y))
-  time_fore    <- seq(tail(time_hist, 1) + 1 / freq, by = 1 / freq, length.out = H)
-  mu_line_time <- c(time_hist, time_fore)
+  time_hist <- as.numeric(time(yt))
+  time_fore <- seq(tail(time_hist, 1) + 1 / freq, by = 1 / freq, length.out = H)
+  mu_time   <- c(time_hist, time_fore)
   
-  legend_labels <- paste0("Prediction (", 100 * pi, "%)")
-  legend_cols   <- "blue"
-  legend_lty    <- 1
-  if (isTRUE(ss)) {
-    legend_labels <- c(legend_labels, paste0("Posterior steady state (", 100 * ss_ci, "%)"))
-    legend_cols   <- c(legend_cols, "gray40")
-    legend_lty    <- c(legend_lty, 2)
-  }
-  
-  for (i in 1:m) {
-    smply      <- Y[, i]
-    fcst_m     <- y_pred_m[, i]
-    fcst_lower <- y_pred_lower[, i]
-    fcst_upper <- y_pred_upper[, i]
-    
-    is_growth <- !is.null(growth_rate_idx) && i %in% growth_rate_idx
+  for (i in 1:k) {
+    yt_i <- yt[, i]
     
     if (isTRUE(ss)) {
       
-      if (is_growth) {
-        # Roll up mu draws over the same freq-quarter window used for the
-        # data/forecast YoY conversion, per posterior draw - this respects
-        # whatever correlation exists across periods (e.g. mu_t is identical
-        # across an unchanged regime) automatically, since it never assumes
-        # independence or tries to combine summary statistics.
-        n_tot        <- dim(mu_all_draws)[2]
-        mu_annual    <- matrix(NA, n_tot, S)
+      if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
+        
+        n_tot     <- dim(mu_draws)[2]
+        mu_annual <- matrix(NA, nrow = S, ncol = n_tot)
         for (s in 1:S) {
-          v <- mu_all_draws[s, , i]
-          for (tt in freq:n_tot) {
-            mu_annual[tt, s] <- sum(v[(tt - freq + 1):tt])
+          for (t in freq:n_tot) {
+            mu_annual[s, t] <- sum(mu_draws[s, (t - (freq - 1)):t, i])
           }
         }
-        mu_line       <- apply(mu_annual, 1, ss_type, na.rm = TRUE)
-        mu_line_lower <- apply(mu_annual, 1, quantile, probs = alpha_ss / 2, na.rm = TRUE)
-        mu_line_upper <- apply(mu_annual, 1, quantile, probs = 1 - alpha_ss / 2, na.rm = TRUE)
+        
+        mu_line       <- rep(NA, n_tot)
+        mu_line_lower <- rep(NA, n_tot)
+        mu_line_upper <- rep(NA, n_tot)
+        
+        valid_cols <- freq:n_tot
+        mu_line[valid_cols]       <- apply(mu_annual[, valid_cols, drop = FALSE], 2, ss_type)
+        mu_line_lower[valid_cols] <- apply(mu_annual[, valid_cols, drop = FALSE], 2, quantile, probs = alpha_ss / 2)
+        mu_line_upper[valid_cols] <- apply(mu_annual[, valid_cols, drop = FALSE], 2, quantile, probs = 1 - alpha_ss / 2)
+        
       } else {
-        mu_line       <- mu_m_all[, i]
-        mu_line_lower <- mu_lower_all[, i]
-        mu_line_upper <- mu_upper_all[, i]
+        
+        mu_line       <- apply(mu_draws[, , i], 2, ss_type)
+        mu_line_lower <- apply(mu_draws[, , i], 2, quantile, probs = alpha_ss / 2)
+        mu_line_upper <- apply(mu_draws[, , i], 2, quantile, probs = 1 - alpha_ss / 2)
       }
     }
     
-    if (is_growth) {
+    if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
       
-      annual_hist <- rep(NA, length(smply))
-      for (t in freq:length(smply)) {
-        annual_hist[t] <- sum(smply[(t - (freq - 1)):t])
+      annual_hist <- rep(NA, length(yt_i))
+      for (t in freq:length(yt_i)) {
+        annual_hist[t] <- sum(yt_i[(t - (freq - 1)):t])
       }
-      annual_hist <- ts(annual_hist, start = start(Y), frequency = freq)
+      annual_hist <- ts(annual_hist, start = start(yt), frequency = freq)
       
-      last_obs   <- tail(smply, (freq - 1))
-      all_fcst   <- c(last_obs, fcst_m)
-      all_lower  <- c(last_obs, fcst_lower)
-      all_upper  <- c(last_obs, fcst_upper)
+      last_obs <- tail(yt_i, (freq - 1))
       
-      annual_fcst  <- rep(NA, H)
-      annual_lower <- rep(NA, H)
-      annual_upper <- rep(NA, H)
-      
-      for (t_h in 1:H) {
-        annual_fcst[t_h]  <- sum(all_fcst[t_h:(t_h + (freq - 1))])
-        annual_lower[t_h] <- sum(all_lower[t_h:(t_h + (freq - 1))])
-        annual_upper[t_h] <- sum(all_upper[t_h:(t_h + (freq - 1))])
+      pred_extended <- matrix(NA, nrow = S, ncol = (freq - 1) + H)
+      for (s in 1:S) {
+        pred_extended[s, ] <- c(last_obs, y_pred[s, ,i])
       }
+      
+      annual_pred <- matrix(NA, nrow = S, ncol = H)
+      for (s in 1:S) {
+        for (h in 1:H) {
+          annual_pred[s, h] <- sum(pred_extended[s, h:(h + (freq - 1))])
+        }
+      }
+      
+      annual_fcst  <- apply(annual_pred, 2, fcst_type)
+      annual_lower <- apply(annual_pred, 2, quantile, probs = alpha / 2)
+      annual_upper <- apply(annual_pred, 2, quantile, probs = 1 - alpha / 2)
       
       forecast_ret[, i] <- annual_fcst
       lower_ret[, i]    <- annual_lower
@@ -206,10 +186,14 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
           xlim_vals    <- c(head(time_fore, 1) - 8, tail(time_fore, 1))
           hist_in_plot <- annual_hist[time_hist >= xlim_vals[1] & time_hist <= xlim_vals[2]]
           ylim_vals    <- c(hist_in_plot, annual_lower, annual_upper)
-          if (isTRUE(ss)) ylim_vals <- c(ylim_vals, mu_line_lower, mu_line_upper)
+          if (isTRUE(ss)) {
+            mu_in_plot_lower <- mu_line_lower[mu_time >= xlim_vals[1] & mu_time <= xlim_vals[2]]
+            mu_in_plot_upper <- mu_line_upper[mu_time >= xlim_vals[1] & mu_time <= xlim_vals[2]]
+            ylim_vals <- c(ylim_vals, mu_in_plot_lower, mu_in_plot_upper)
+          }
           ylim <- range(ylim_vals, na.rm = TRUE)
           
-          plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"),
+          plot.ts(annual_hist, main = paste(colnames(yt)[i], "(annual)"),
                   xlab = "Time", ylab = NULL,
                   xlim = xlim_vals,
                   ylim = ylim, col = "black", lwd = 2)
@@ -219,7 +203,7 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
         } else {
           ylim_vals <- c(upper_full, lower_full, annual_hist)
           if (isTRUE(ss)) ylim_vals <- c(ylim_vals, mu_line_lower, mu_line_upper)
-          plot.ts(annual_hist, main = paste(colnames(Y)[i], "(annual)"),
+          plot.ts(annual_hist, main = paste(colnames(yt)[i], "(annual)"),
                   xlab = "Time", ylab = NULL, col = "black", lwd = 2,
                   xlim = c(head(time_hist, 1), tail(time_fore, 1)),
                   ylim = range(ylim_vals, na.rm = TRUE))
@@ -227,46 +211,62 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
         polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
                 col = rgb(0, 0, 1, 0.2), border = NA)
         lines(time_full, m_full, col = "blue", lwd = 2)
-        
         if (isTRUE(ss)) {
-          polygon(c(mu_line_time, rev(mu_line_time)), c(mu_line_upper, rev(mu_line_lower)),
+          polygon(c(mu_time, rev(mu_time)), c(mu_line_upper, rev(mu_line_lower)),
                   col = rgb(0.5, 0.5, 0.5, 0.3), border = NA)
-          lines(mu_line_time, mu_line, col = "gray40", lwd = 2, lty = "dashed")
+          lines(mu_time, mu_line, col = "gray40", lwd = 2, lty = "dashed")
+          legend("bottomleft",
+                 legend = c(paste0("Forecast (", 100 * pi, "% PI)"),
+                            paste0("Posterior steady-state (", 100 * ss_ci, "% CI)")),
+                 col    = c("blue", "gray40"),
+                 lty    = c(1, 2),
+                 lwd    = 2,
+                 bty    = "o",
+                 bg     = "white")
+        } else {
+          legend("bottomleft",
+                 legend = paste0("Forecast (", 100 * pi, "% PI)"),
+                 col    = "blue",
+                 lty    = 1,
+                 lwd    = 2,
+                 bty    = "o",
+                 bg     = "white")
         }
-        
-        legend("bottomleft", legend = legend_labels, col = legend_cols,
-               lty = legend_lty, lwd = 2, bty = "n", cex = 0.8)
       }
       
     } else {
       
-      forecast_ret[, i] <- fcst_m
-      lower_ret[, i]    <- fcst_lower
-      upper_ret[, i]    <- fcst_upper
+      forecast_ret[, i] <- point_fcst[,i]
+      lower_ret[, i]    <- fcst_lower[,i]
+      upper_ret[, i]    <- fcst_upper[,i]
       
       if (i %in% plot_idx) {
         time_full  <- c(tail(time_hist, 1), time_fore)
-        m_full     <- c(tail(smply, 1), fcst_m)
-        lower_full <- c(tail(smply, 1), fcst_lower)
-        upper_full <- c(tail(smply, 1), fcst_upper)
+        m_full     <- c(tail(yt_i, 1), point_fcst[, i])
+        lower_full <- c(tail(yt_i, 1), fcst_lower[, i])
+        upper_full <- c(tail(yt_i, 1), fcst_upper[, i])
         
         if (isFALSE(show_all)) {
           xlim_vals    <- c(head(time_fore, 1) - 8, tail(time_fore, 1))
-          hist_in_plot <- smply[time_hist >= xlim_vals[1] & time_hist <= xlim_vals[2]]
+          hist_in_plot <- yt_i[time_hist >= xlim_vals[1] & time_hist <= xlim_vals[2]]
           ylim_vals    <- c(hist_in_plot, lower_full, upper_full)
-          if (isTRUE(ss)) ylim_vals <- c(ylim_vals, mu_line_lower, mu_line_upper)
+          if (isTRUE(ss)) {
+            mu_in_plot_lower <- mu_line_lower[mu_time >= xlim_vals[1] & mu_time <= xlim_vals[2]]
+            mu_in_plot_upper <- mu_line_upper[mu_time >= xlim_vals[1] & mu_time <= xlim_vals[2]]
+            ylim_vals <- c(ylim_vals, mu_in_plot_lower, mu_in_plot_upper)
+          }
           ylim <- range(ylim_vals, na.rm = TRUE)
           
-          plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
+          plot.ts(yt_i, main = colnames(yt)[i], xlab = "Time", ylab = NULL,
                   xlim = xlim_vals,
                   ylim = ylim, col = "black", lwd = 2)
           grid(col = "gray", lty = "dotted") 
-          points(as.numeric(time_hist), smply, pch = 16, col = "black", cex=0.8)
+          points(as.numeric(time_hist), yt_i, pch = 16, col = "black", cex=0.8)
           points(time_full[-1], m_full[-1], pch = 16, col = "blue", cex=0.8)
         } else {
-          ylim_vals <- c(upper_full, lower_full, smply)
+          ylim_vals <- c(upper_full, lower_full, yt_i)
           if (isTRUE(ss)) ylim_vals <- c(ylim_vals, mu_line_lower, mu_line_upper)
-          plot.ts(smply, main = colnames(Y)[i], xlab = "Time", ylab = NULL,
+          plot.ts(yt_i, main = colnames(yt)[i], xlab = "Time", ylab = NULL,
                   col = "black", lwd = 2,
                   xlim = c(head(time_hist, 1), tail(time_fore, 1)),
                   ylim = range(ylim_vals, na.rm = TRUE))
@@ -274,15 +274,27 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
         polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
                 col = rgb(0, 0, 1, 0.2), border = NA)
         lines(time_full, m_full, col = "blue", lwd = 2)
-        
         if (isTRUE(ss)) {
-          polygon(c(mu_line_time, rev(mu_line_time)), c(mu_line_upper, rev(mu_line_lower)),
+          polygon(c(mu_time, rev(mu_time)), c(mu_line_upper, rev(mu_line_lower)),
                   col = rgb(0.5, 0.5, 0.5, 0.3), border = NA)
-          lines(mu_line_time, mu_line, col = "gray40", lwd = 2, lty = "dashed")
+          lines(mu_time, mu_line, col = "gray40", lwd = 2, lty = "dashed")
+          legend("bottomleft",
+                 legend = c(paste0("Forecast (", 100 * pi, "% PI)"),
+                            paste0("Posterior steady-state (", 100 * ss_ci, "% CI)")),
+                 col    = c("blue", "gray40"),
+                 lty    = c(1, 2),
+                 lwd    = 2,
+                 bty    = "o",
+                 bg     = "white")
+        } else {
+          legend("bottomleft",
+                 legend = paste0("Forecast (", 100 * pi, "% PI)"),
+                 col    = "blue",
+                 lty    = 1,
+                 lwd    = 2,
+                 bty    = "o",
+                 bg     = "white")
         }
-        
-        legend("bottomleft", legend = legend_labels, col = legend_cols,
-               lty = legend_lty, lwd = 2, bty = "n", cex = 0.8)
       }
     }
   }

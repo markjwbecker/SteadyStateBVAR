@@ -39,12 +39,12 @@ of history are shown alongside the forecast. If \code{TRUE}, the full
 history is shown.}
 
 \item{ss}{Logical. If \code{TRUE}, overlays the posterior steady state
-\eqn{\mu_t} and its posterior interval. Default \code{FALSE}.}
+\eqn{\mu_t = \Psi d_t} and its posterior interval. Default \code{FALSE}.}
 
 \item{ss_type}{Character. Whether to use \code{"mean"} or \code{"median"}
 as the steady-state point estimate. Default \code{"mean"}.}
 
-\item{ss_ci}{Numeric. The posterior interval width for the steady state.
+\item{ss_ci}{Numeric. The posterior credible interval width for the steady state.
 Default \code{0.95}.}
 }
 \value{
@@ -56,11 +56,8 @@ forecast horizon and \code{k} is the number of variables.
 Computes and plots forecasts from a fitted steady-state \code{bvar} object. Draws from the
 joint predictive distribution are used to construct point forecasts and
 prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
-rates for selected variables. Optionally overlays the posterior steady state
-\eqn{\mu_t = \Psi d_t}, computed directly from posterior draws of
-\eqn{\Psi} applied to the full historical \code{d_t} and future
-\code{d_pred}, as one continuous line/band spanning the entire sample and
-forecast horizon.
+rates for variables specified as \code{100*diff(log(x))}. Optionally overlays the posterior steady
+state \eqn{\mu_t = \Psi d_t}.
 }
 \examples{
 \donttest{
@@ -78,10 +75,7 @@ bvar_obj <- priors(bvar_obj,
                    first_own_lag_prior_mean = rep(1,2),
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2),
-                   Jeffreys = TRUE,
-                   SV = FALSE,
-                   SV_type = NULL,
-                   SV_priors = NULL)
+                   Jeffreys = TRUE)
                    
 bvar_obj <- fit(bvar_obj,
                 H = 8,
@@ -89,7 +83,13 @@ bvar_obj <- fit(bvar_obj,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
-
-(fcst <- forecast(bvar_obj, pi = 0.90, show_all = TRUE, ss = TRUE))
+                
+forecast(bvar_obj,
+         fcst_type = "mean",
+         pi = 0.90,
+         show_all = TRUE,
+         ss = TRUE,
+         ss_type = "mean",
+         ss_ci = 0.95)
 }
 }

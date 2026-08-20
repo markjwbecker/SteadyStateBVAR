@@ -276,14 +276,15 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
   }
   
   cat("------------------------------------------------------------\n")
-  cat("Estimating Stan model:\n", model_name, sep = "")
-  cat("\n\n")
-  cat("Also generating draws from the joint predictive distribution\n\n")
   cat("Forecast horizon:\n", H, sep = "")
   cat("\n\n")
   cat("Future deterministic variables (d_pred):\n", sep = "")
   print(d_pred)
   cat("------------------------------------------------------------\n")
+  cat("Estimating Stan model:\n", model_name, sep = "")
+  cat("\n\n")
+  cat("Also generating draws from the joint predictive distribution\n\n")
+  cat("...")
   
   x$fit$stan <- rstan::sampling(stanmodels[[model_name]], data = stan_data, ...)
   

@@ -209,23 +209,45 @@ conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
         annual_hist[t] <- sum(smply[(t - (freq - 1)):t])
       }
       annual_hist        <- ts(annual_hist, start = start(data_Y), frequency = freq)
-      last_obs           <- tail(smply, (freq - 1))
-      all_fcst           <- c(last_obs, fcst_m)
-      all_fcst_uncond    <- c(last_obs, uncond_m)
-      annual_fcst        <- rep(NA, H)
-      annual_fcst_uncond <- rep(NA, H)
-      for (t_h in 1:H) {
-        annual_fcst[t_h]        <- sum(all_fcst[t_h:(t_h + (freq - 1))])
-        annual_fcst_uncond[t_h] <- sum(all_fcst_uncond[t_h:(t_h + (freq - 1))])
+
+      ### START ###
+      
+      last_obs <- tail(smply, (freq - 1))
+      
+      # Conditional forecast draws, rolled up per draw
+      cond_draws_full <- matrix(NA, nrow = n_draws, ncol = (freq - 1) + H)
+      for (n in 1:n_draws) {
+        cond_draws_full[n, ] <- c(last_obs, cond_forecast_array[, i, n])
       }
-      all_lower    <- c(last_obs, fcst_lower)
-      all_upper    <- c(last_obs, fcst_upper)
-      annual_lower <- rep(NA, H)
-      annual_upper <- rep(NA, H)
-      for (t_h in 1:H) {
-        annual_lower[t_h] <- sum(all_lower[t_h:(t_h + (freq - 1))])
-        annual_upper[t_h] <- sum(all_upper[t_h:(t_h + (freq - 1))])
+      
+      cond_annual_draws <- matrix(NA, nrow = H, ncol = n_draws)
+      for (n in 1:n_draws) {
+        for (t_h in 1:H) {
+          cond_annual_draws[t_h, n] <- sum(cond_draws_full[n, t_h:(t_h + (freq - 1))])
+        }
       }
+      
+      annual_fcst  <- apply(cond_annual_draws, 1, fcst_fun)
+      annual_lower <- apply(cond_annual_draws, 1, quantile, probs = alpha / 2)
+      annual_upper <- apply(cond_annual_draws, 1, quantile, probs = 1 - alpha / 2)
+      
+      # Unconditional forecast draws, rolled up per draw
+      uncond_draws_full <- matrix(NA, nrow = n_draws, ncol = (freq - 1) + H)
+      for (n in 1:n_draws) {
+        uncond_draws_full[n, ] <- c(last_obs, y_pred_uncond[n, , i])
+      }
+      
+      uncond_annual_draws <- matrix(NA, nrow = H, ncol = n_draws)
+      for (n in 1:n_draws) {
+        for (t_h in 1:H) {
+          uncond_annual_draws[t_h, n] <- sum(uncond_draws_full[n, t_h:(t_h + (freq - 1))])
+        }
+      }
+      
+      annual_fcst_uncond <- apply(uncond_annual_draws, 1, fcst_fun)
+      
+      ### STOP ###
+      
       forecast_ret[, i] <- annual_fcst
       lower_ret[, i]    <- annual_lower
       upper_ret[, i]    <- annual_upper
