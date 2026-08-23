@@ -5,7 +5,7 @@
 \title{Conditional forecasts from a fitted steady-state BVAR model}
 \usage{
 conditional_forecast(
-  bvar_obj,
+  x,
   conditions,
   pi = 0.95,
   fcst_type = c("mean", "median"),
@@ -14,7 +14,7 @@ conditional_forecast(
 )
 }
 \arguments{
-\item{bvar_obj}{A steady-state \code{bvar} object that has been passed through
+\item{x}{A steady-state \code{bvar} object that has been passed through
 \code{\link{fit}}.}
 
 \item{conditions}{A data frame with three columns: \code{var} (integer index

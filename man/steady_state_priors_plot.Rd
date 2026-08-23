@@ -20,7 +20,7 @@ i.e. a 95\% prior interval for the steady state.}
 
 \item{growth_rate_idx}{Integer vector. Indices of variables specified as
 \code{100*diff(log(x))} for which the historical series and the
-steady-state prior are converted to annual terms. Default is \code{NULL}.}
+steady-state prior is converted to the annual scale. Default is \code{NULL}.}
 
 \item{plot_idx}{Integer vector. Indices of variables to plot. If
 \code{NULL} (default), all variables are plotted.}
@@ -29,28 +29,18 @@ steady-state prior are converted to annual terms. Default is \code{NULL}.}
 Invisibly returns a list with three matrices, \code{lower},
 \code{mean}, and \code{upper}, each of dimension \code{T x k} giving the
 steady-state prior bounds and mean over the historical sample. For
-\code{growth_rate_idx} columns, these are on the annualized scale.
+\code{growth_rate_idx} columns, these are on the annual scale.
 }
 \description{
-Produces time series plots of the data along with the implied prior
-interval for the steady state \eqn{\mu_t = \Psi d_t}, based on the
-normal prior
+Produces time series plots of the data along with the implied prior for
+the steady state \eqn{\mu_t = \Psi d_t}.
 }
 \details{
+The implied prior for the steady state \eqn{\mu_t = \Psi d_t} is based on the prior for \eqn{\Psi}
+
 \deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}(\theta_\Psi, \Omega_\Psi)}
 
-specified in \code{\link{priors}}. Since \eqn{\Omega_\Psi} is diagonal,
-the elements of \eqn{\Psi} are independent under the prior, so the
-variance of \eqn{\mu_t = \Psi d_t} is obtained by propagating the
-marginal prior variances through the linear combination implied by
-\eqn{d_t}, rather than by combining marginal intervals directly. For
-\code{growth_rate_idx} variables, the annual steady state is computed by
-first summing \eqn{d_t} over the same rolling \code{freq}-period window
-used for the data (since \eqn{\Psi} is time-invariant, this is exactly
-equivalent to summing \eqn{\mu_t} itself over that window), and then
-applying the same variance-propagation formula to that summed \eqn{d_t}.
-The returned \code{lower}/\code{mean}/\code{upper} matrices reflect this
-annualized version for \code{growth_rate_idx} columns.
+which is specified in \code{\link{priors}}. It is assumed that \eqn{\Omega_\Psi} is diagonal.
 }
 \examples{
 \donttest{

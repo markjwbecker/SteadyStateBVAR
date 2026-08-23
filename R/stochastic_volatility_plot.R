@@ -209,7 +209,8 @@ stochastic_volatility_plot <- function(x, ci = 0.95, vol = "log_lambda",
            legend = c("Estimated volatility", "Predicted volatility"),
            col    = c("red", "blue"),
            lwd    = 2,
-           bty    = "n")
+           bty    = "o",
+           bg     = "white")
   }
   
   invisible(list(

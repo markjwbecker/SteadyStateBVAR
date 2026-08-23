@@ -22,8 +22,7 @@
 #'   annual growth rate response, i.e. \eqn{100 (\ln x_{t} - \ln x_{t-f})}, where \eqn{f} is
 #'   the frequency of the data (4 for quarterly, 12 for monthly).
 #'   Only suitable for variables specified as \eqn{100 (\ln x_{t} - \ln x_{t-1})}, i.e. 
-#'   \code{100*diff(log(x))}. Computed by summing up to \eqn{f} periods of the impulse response,
-#'   treating the response in periods prior to the impulse as zero. Default is \code{NULL}.
+#'   \code{100*diff(log(x))}. Computed by summing up to \eqn{f} periods of the impulse response. Default is \code{NULL}.
 #'
 #' @return Invisibly returns a list with three arrays: the point estimate IRF, \code{lower}, and
 #'   \code{upper} credible bounds, each of dimension \code{k x k x (H+1)}.
@@ -203,6 +202,7 @@ IRF <- function(x, H = 16, response = NULL, impulse = NULL,
     par(mfrow = c(1, 1))
     for (j in 1:k) plot_single(response, j)
   } else {
+    par(mfrow = c(1, 1))
     plot_single(response, impulse)
   }
   

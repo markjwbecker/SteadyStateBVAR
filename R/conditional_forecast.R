@@ -6,7 +6,7 @@
 #' forecasts are plotted for comparison. Please note that for the moment, conditional forecasting
 #' is only enabled for the homoscedastic steady-state BVAR, i.e. when \code{SV=FALSE} in \code{priors()}.
 #'
-#' @param bvar_obj A steady-state \code{bvar} object that has been passed through
+#' @param x A steady-state \code{bvar} object that has been passed through
 #'   \code{\link{fit}}.
 #' @param conditions A data frame with three columns: \code{var} (integer index
 #'   of the conditioned variable), \code{horizon} (integer forecast horizon at
@@ -75,25 +75,25 @@
 #'                                   pi=0.68,
 #'                                   fcst_type = "mean"))
 #' }
-conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
+conditional_forecast <- function(x, conditions, pi = 0.95,
                                  fcst_type = c("mean", "median"),
                                  growth_rate_idx = NULL, plot_idx = NULL) {
   
-  if (isTRUE(bvar_obj$priors$SV)) {
+  if (isTRUE(x$priors$SV)) {
     stop("conditional_forecast is only supported for the homoscedastic steady-state BVAR (SV = FALSE).")
   }
   
   fcst_fun  <- match.arg(fcst_type)
-  posterior <- rstan::extract(bvar_obj$fit$stan)
+  posterior <- rstan::extract(x$fit$stan)
   n_draws   <- dim(posterior$beta)[1]
   
-  p      <- bvar_obj$setup$p
-  k      <- bvar_obj$setup$k
-  Y      <- bvar_obj$setup$Y
-  X      <- bvar_obj$setup$X
-  N      <- bvar_obj$setup$N
-  d_pred <- bvar_obj$predict$d_pred
-  H      <- bvar_obj$predict$H
+  p      <- x$setup$p
+  k      <- x$setup$k
+  Y      <- x$setup$Y
+  X      <- x$setup$X
+  N      <- x$setup$N
+  d_pred <- x$predict$d_pred
+  H      <- x$predict$H
   alpha  <- 1 - pi
   s      <- k * H
   
@@ -181,7 +181,7 @@ conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
   y_pred_uncond   <- posterior$y_pred
   y_pred_m_uncond <- apply(y_pred_uncond, c(2, 3), fcst_fun)
   
-  data_Y    <- bvar_obj$data
+  data_Y    <- x$data
   freq      <- frequency(data_Y)
   m         <- ncol(data_Y)
   if (is.null(plot_idx)) plot_idx <- 1:m
@@ -208,45 +208,39 @@ conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
       for (t in freq:length(smply)) {
         annual_hist[t] <- sum(smply[(t - (freq - 1)):t])
       }
-      annual_hist        <- ts(annual_hist, start = start(data_Y), frequency = freq)
-
-      ### START ###
+      annual_hist <- ts(annual_hist, start = start(data_Y), frequency = freq)
       
       last_obs <- tail(smply, (freq - 1))
       
-      # Conditional forecast draws, rolled up per draw
       cond_draws_full <- matrix(NA, nrow = n_draws, ncol = (freq - 1) + H)
       for (n in 1:n_draws) {
         cond_draws_full[n, ] <- c(last_obs, cond_forecast_array[, i, n])
       }
       
-      cond_annual_draws <- matrix(NA, nrow = H, ncol = n_draws)
+      cond_annual_draws <- matrix(NA, nrow = n_draws, ncol = H)
       for (n in 1:n_draws) {
-        for (t_h in 1:H) {
-          cond_annual_draws[t_h, n] <- sum(cond_draws_full[n, t_h:(t_h + (freq - 1))])
+        for (h in 1:H) {
+          cond_annual_draws[n, h] <- sum(cond_draws_full[n, h:(h + (freq - 1))])
         }
       }
       
-      annual_fcst  <- apply(cond_annual_draws, 1, fcst_fun)
-      annual_lower <- apply(cond_annual_draws, 1, quantile, probs = alpha / 2)
-      annual_upper <- apply(cond_annual_draws, 1, quantile, probs = 1 - alpha / 2)
+      annual_fcst  <- apply(cond_annual_draws, 2, fcst_fun)
+      annual_lower <- apply(cond_annual_draws, 2, quantile, probs = alpha / 2)
+      annual_upper <- apply(cond_annual_draws, 2, quantile, probs = 1 - alpha / 2)
       
-      # Unconditional forecast draws, rolled up per draw
       uncond_draws_full <- matrix(NA, nrow = n_draws, ncol = (freq - 1) + H)
       for (n in 1:n_draws) {
-        uncond_draws_full[n, ] <- c(last_obs, y_pred_uncond[n, , i])
+        uncond_draws_full[n, ] <- c(last_obs, y_pred_uncond[n, ,i])
       }
       
-      uncond_annual_draws <- matrix(NA, nrow = H, ncol = n_draws)
+      uncond_annual_draws <- matrix(NA, nrow = n_draws, ncol = H)
       for (n in 1:n_draws) {
-        for (t_h in 1:H) {
-          uncond_annual_draws[t_h, n] <- sum(uncond_draws_full[n, t_h:(t_h + (freq - 1))])
+        for (h in 1:H) {
+          uncond_annual_draws[n, h] <- sum(uncond_draws_full[n, h:(h + (freq - 1))])
         }
       }
       
-      annual_fcst_uncond <- apply(uncond_annual_draws, 1, fcst_fun)
-      
-      ### STOP ###
+      annual_fcst_uncond <- apply(uncond_annual_draws, 2, fcst_fun)
       
       forecast_ret[, i] <- annual_fcst
       lower_ret[, i]    <- annual_lower
@@ -270,7 +264,8 @@ conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
                legend = c("Conditional forecast", "Unconditional forecast"),
                col    = c("blue", "red"),
                lwd    = 2,
-               bty    = "n")
+               bty    = "o",
+               bg     = "white")
       }
     } else {
       forecast_ret[, i] <- fcst_m
@@ -295,7 +290,8 @@ conditional_forecast <- function(bvar_obj, conditions, pi = 0.95,
                legend = c("Conditional forecast", "Unconditional forecast"),
                col    = c("blue", "red"),
                lwd    = 2,
-               bty    = "n")
+               bty    = "o",
+               bg     = "white")
       }
     }
   }

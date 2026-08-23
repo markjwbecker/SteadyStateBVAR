@@ -11,7 +11,7 @@ forecast(
   growth_rate_idx = NULL,
   plot_idx = NULL,
   show_all = FALSE,
-  ss = FALSE,
+  ss = TRUE,
   ss_type = c("mean", "median"),
   ss_ci = 0.95
 )
@@ -39,13 +39,13 @@ of history are shown alongside the forecast. If \code{TRUE}, the full
 history is shown.}
 
 \item{ss}{Logical. If \code{TRUE}, overlays the posterior steady state
-\eqn{\mu_t = \Psi d_t} and its posterior interval. Default \code{FALSE}.}
+\eqn{\mu_t = \Psi d_t}. Default \code{TRUE}.}
 
 \item{ss_type}{Character. Whether to use \code{"mean"} or \code{"median"}
-as the steady-state point estimate. Default \code{"mean"}.}
+of the posterior as the steady-state point estimate. Default \code{"mean"}.}
 
 \item{ss_ci}{Numeric. The posterior credible interval width for the steady state.
-Default \code{0.95}.}
+Default \code{0.95}, i.e. 95\% credible interval.}
 }
 \value{
 Invisibly returns a list with three matrices: \code{forecast}, \code{lower}, and
