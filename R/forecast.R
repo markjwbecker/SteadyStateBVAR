@@ -195,6 +195,7 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
                   xlab = "Time", ylab = NULL, col = "black", lwd = 2,
                   xlim = c(head(time_hist, 1), tail(time_fore, 1)),
                   ylim = range(ylim_vals, na.rm = TRUE))
+          grid(col = "gray", lty = "dotted") 
         }
         polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
                 col = rgb(0, 0, 1, 0.2), border = NA)
@@ -258,6 +259,7 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
                   col = "black", lwd = 2,
                   xlim = c(head(time_hist, 1), tail(time_fore, 1)),
                   ylim = range(ylim_vals, na.rm = TRUE))
+          grid(col = "gray", lty = "dotted") 
         }
         polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
                 col = rgb(0, 0, 1, 0.2), border = NA)

@@ -192,6 +192,7 @@ stochastic_volatility_plot <- function(x, ci = 0.95, vol = "log_lambda",
             main = if (vol == "sd") paste0("sd(u_", i, ")")
             else paste0("ln(lambda_", i, ")"),
             ylim = ylim_i, xlim = xlim_i, ylab = "")
+    grid(col = "gray", lty = "dotted")
     
     x_insample <- 1:N_est
     polygon(x = c(x_insample, rev(x_insample)),

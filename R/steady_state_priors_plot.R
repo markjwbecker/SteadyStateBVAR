@@ -87,7 +87,7 @@ steady_state_priors_plot <- function(x,
   
   time_hist <- as.numeric(time(Y))
   
-  legend_labels <- paste0("Steady state prior (", 100 * interval, "%)")
+  legend_labels <- paste0("steady-state prior (", 100 * interval, "%)")
   legend_cols   <- "gray40"
   legend_lty    <- 2
   

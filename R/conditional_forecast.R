@@ -256,6 +256,7 @@ conditional_forecast <- function(x, conditions, pi = 0.95,
                 xlab = "Time", ylab = NULL, col = "black", lwd = 2,
                 xlim = c(head(time_hist, 1), tail(time_fore, 1)),
                 ylim = range(upper_full, lower_full, annual_hist, uncond_full, na.rm = TRUE))
+        grid(col = "gray", lty = "dotted") 
         polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
                 col = rgb(0, 0, 1, 0.2), border = NA)
         lines(time_full, m_full,      col = "blue", lwd = 2)
@@ -282,6 +283,7 @@ conditional_forecast <- function(x, conditions, pi = 0.95,
                 col = "black", lwd = 2,
                 xlim = c(head(time_hist, 1), tail(time_fore, 1)),
                 ylim = range(upper_full, lower_full, smply, uncond_full))
+        grid(col = "gray", lty = "dotted") 
         polygon(c(time_full, rev(time_full)), c(upper_full, rev(lower_full)),
                 col = rgb(0, 0, 1, 0.2), border = NA)
         lines(time_full, m_full,      col = "blue", lwd = 2)

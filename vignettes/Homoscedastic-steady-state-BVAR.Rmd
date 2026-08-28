@@ -305,7 +305,7 @@ bvar_obj <- fit(bvar_obj,
 #> ...
 ```
 
-Let us look at the posterior means of $\beta$, $\Psi$, and $\Sigma_u$.
+Let us look at the elementwise posterior means of $\beta$, $\Psi$, and $\Sigma_u$.
 
 
 ``` r
