@@ -9,15 +9,15 @@
 #' @param interval Numeric. The prior interval width. Default \code{0.95},
 #'   i.e. a 95% prior interval for the steady state.
 #' @param growth_rate_idx Integer vector. Indices of variables specified as
-#'   \code{100*diff(log(x))} for which the historical series and the
-#'   steady-state prior is converted to the annual scale. Default is \code{NULL}.
+#'   \code{100*diff(log(x))} for which the historical series is converted to the annual growth scale and the
+#'   steady-state prior is converted to the annualized growth scale. Default is \code{NULL}.
 #' @param plot_idx Integer vector. Indices of variables to plot. If
 #'   \code{NULL} (default), all variables are plotted.
 #'
 #' @return Invisibly returns a list with three matrices, \code{lower},
 #'   \code{mean}, and \code{upper}, each of dimension \code{T x k} giving the
 #'   steady-state prior bounds and mean over the historical sample. For
-#'   \code{growth_rate_idx} columns, these are on the annual scale.
+#'   \code{growth_rate_idx} columns, these are on the annualized scale.
 #' @export
 #' 
 #' @details
@@ -107,22 +107,9 @@ steady_state_priors_plot <- function(x,
       annual_hist <- ts(annual_hist, start = start(Y), frequency = freq)
       smply <- annual_hist
       
-      n <- length(smply)
-      line_mean  <- rep(NA, n)
-      line_lower <- rep(NA, n)
-      line_upper <- rep(NA, n)
-      
-      for (t in freq:n) {
-        
-        d_sum <- colSums(dt[(t - freq + 1):t, , drop = FALSE])
-        
-        mu_val  <- sum(d_sum * Psi_mean[i, ])
-        var_val <- sum((d_sum^2) * (Psi_sd[i, ]^2))
-        
-        line_mean[t]  <- mu_val
-        line_lower[t] <- mu_val - z * sqrt(var_val)
-        line_upper[t] <- mu_val + z * sqrt(var_val)
-      }
+      line_mean  <- line_mean  * freq
+      line_lower <- line_lower * freq
+      line_upper <- line_upper * freq
       
       ss_mean[, i]  <- line_mean
       ss_lower[, i] <- line_lower

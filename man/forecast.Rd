@@ -39,7 +39,8 @@ of history are shown alongside the forecast. If \code{TRUE}, the full
 history is shown.}
 
 \item{ss}{Logical. If \code{TRUE}, overlays the posterior steady state
-\eqn{\mu_t = \Psi d_t}. Default \code{TRUE}.}
+\eqn{\mu_t = \Psi d_t}. Default \code{TRUE}. For variables in \code{growth_rate_idx},
+the posterior steady-state is annualized.}
 
 \item{ss_type}{Character. Whether to use \code{"mean"} or \code{"median"}
 of the posterior as the steady-state point estimate. Default \code{"mean"}.}
@@ -57,7 +58,7 @@ Computes and plots forecasts from a fitted steady-state \code{bvar} object. Draw
 joint predictive distribution are used to construct point forecasts and
 prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 rates for variables specified as \code{100*diff(log(x))}. Optionally overlays the posterior steady
-state \eqn{\mu_t = \Psi d_t}.
+state.
 }
 \examples{
 \donttest{

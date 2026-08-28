@@ -90,7 +90,7 @@ The prior means (the elements of \eqn{\theta_\beta}) are specified according to
 \begin{aligned}
 \mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&=
 \begin{cases}\kappa & \text{if } \ell = 1 \ \text{and} \ i = j \\0 & \text{otherwise}\end{cases}\\
-\kappa&=\begin{cases}\kappa^{level} & \text{if } \text{variable} \ i \ \text{is in levels} \\
+\kappa&=\begin{cases}\kappa^{levels} & \text{if } \text{variable} \ i \ \text{is in levels} \\
 \kappa^{\Delta} & \text{if } \text{variable} \ i \ \text{is differenced}
 \end{cases}\\
 \end{aligned}
@@ -100,10 +100,10 @@ Here, the autoregressive coefficient \eqn{\Pi_{\ell}^{(i,j)}} is element \eqn{\l
 of \eqn{\Pi_{\ell}} for \eqn{\ell=1,\dots,p}. As such, the Minnesota prior sets all prior means
 for the elements in \eqn{\beta} to \eqn{0}, except for the elements that relate to the first
 own lags of the variables, which are set to \eqn{\kappa}. If variable \eqn{i} is in levels
-(e.g. nominal interest rate), then \eqn{\kappa=\kappa^{level}}, and typical choices for
-\eqn{\kappa^{level}} are \eqn{1} or \eqn{0.9}. Evaluating the equations at their prior means,
-equation \eqn{i} becomes a random walk if \eqn{\kappa^{level}=1} and a persistent stationary
-AR(1) process if \eqn{\kappa^{level}=0.9}. Since the steady state only exists if the process
+(e.g. nominal interest rate), then \eqn{\kappa=\kappa^{levels}}, and typical choices for
+\eqn{\kappa^{levels}} are \eqn{1} or \eqn{0.9}. Evaluating the equations at their prior means,
+equation \eqn{i} becomes a random walk if \eqn{\kappa^{levels}=1} and a persistent stationary
+AR(1) process if \eqn{\kappa^{levels}=0.9}. Since the steady state only exists if the process
 is stationary, \eqn{0.9} is recommended for the steady-state BVAR. If variable \eqn{i} is differenced
 (e.g. GDP growth), then \eqn{\kappa=\kappa^{\Delta}}, and the most common choice for
 \eqn{\kappa^{\Delta}} is \eqn{0}, i.e. equation \eqn{i} becomes (when evaluating it at its prior means)
@@ -145,7 +145,7 @@ from the VAR(\eqn{p}) (including the constant and dummy/trend variable if applic
 For the stochastic volatility specifications, the innovation covariance matrix is now time-varying \eqn{\Sigma_{u,t}}.
 Therefore, stochastic volatility priors are needed, see \link{bvar} for more details. Please note that
 \eqn{\lambda} below (volatilities) has nothing to do with the \eqn{\lambda} from the Minnesota prior (hyperparameters).
-Now, for the Random Walk (\code{"RW"}) stochastic volatility specification, the following priors are used
+Now, for the Random Walk (\code{"RW"}) stochastic volatility specification, the following priors are available
 
 \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \ln \lambda_{1} &\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
@@ -154,7 +154,7 @@ Now, for the Random Walk (\code{"RW"}) stochastic volatility specification, the 
 Here \eqn{a} is a \eqn{k(k-1)/2}-dimensional vector that collects the free parameters in \eqn{A} in row-major order,
 and \eqn{\ln \lambda_1} is a \eqn{k}-dimensional vector containing the time \eqn{t=1} values (initial conditions) of \eqn{\ln \lambda_{t}}.
 We assume that \eqn{\Omega_A} and \eqn{\Omega_{\ln \lambda_{1}}} are diagonal matrices.
-Furthermore, \eqn{\phi_i} for \eqn{i=1,\dots,k} are the log volatility innovation variances. For the AR(1) (\code{"AR1"}) stochastic volatility specification, the following priors are used
+Furthermore, \eqn{\phi_i} for \eqn{i=1,\dots,k} are the log volatility innovation variances. For the AR(1) (\code{"AR1"}) stochastic volatility specification, the following priors are available
 
 \deqn{\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
 \gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\

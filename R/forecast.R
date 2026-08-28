@@ -4,7 +4,7 @@
 #' joint predictive distribution are used to construct point forecasts and
 #' prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 #' rates for variables specified as \code{100*diff(log(x))}. Optionally overlays the posterior steady
-#' state \eqn{\mu_t = \Psi d_t}.
+#' state.
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.
 #' @param pi Numeric. The prediction interval width. Default \code{0.95}, i.e. 95% prediction interval.
@@ -22,7 +22,8 @@
 #'   of history are shown alongside the forecast. If \code{TRUE}, the full
 #'   history is shown.
 #' @param ss Logical. If \code{TRUE}, overlays the posterior steady state
-#'   \eqn{\mu_t = \Psi d_t}. Default \code{TRUE}.
+#'   \eqn{\mu_t = \Psi d_t}. Default \code{TRUE}. For variables in \code{growth_rate_idx},
+#'   the posterior steady-state is annualized.
 #' @param ss_type Character. Whether to use \code{"mean"} or \code{"median"}
 #' of the posterior as the steady-state point estimate. Default \code{"mean"}.
 #' @param ss_ci Numeric. The posterior credible interval width for the steady state.
@@ -121,22 +122,10 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
       
       if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
         
-        n_tot     <- dim(mu_draws)[2]
-        mu_annual <- matrix(NA, nrow = S, ncol = n_tot)
-        for (s in 1:S) {
-          for (t in freq:n_tot) {
-            mu_annual[s, t] <- sum(mu_draws[s, (t - (freq - 1)):t, i])
-          }
-        }
-        
-        mu_line       <- rep(NA, n_tot)
-        mu_line_lower <- rep(NA, n_tot)
-        mu_line_upper <- rep(NA, n_tot)
-        
-        valid_cols <- freq:n_tot
-        mu_line[valid_cols]       <- apply(mu_annual[, valid_cols, drop = FALSE], 2, ss_type)
-        mu_line_lower[valid_cols] <- apply(mu_annual[, valid_cols, drop = FALSE], 2, quantile, probs = alpha_ss / 2)
-        mu_line_upper[valid_cols] <- apply(mu_annual[, valid_cols, drop = FALSE], 2, quantile, probs = 1 - alpha_ss / 2)
+        mu_scaled     <- mu_draws[, , i] * freq
+        mu_line       <- apply(mu_scaled, 2, ss_type)
+        mu_line_lower <- apply(mu_scaled, 2, quantile, probs = alpha_ss / 2)
+        mu_line_upper <- apply(mu_scaled, 2, quantile, probs = 1 - alpha_ss / 2)
         
       } else {
         
@@ -145,7 +134,6 @@ forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
         mu_line_upper <- apply(mu_draws[, , i], 2, quantile, probs = 1 - alpha_ss / 2)
       }
     }
-    
     if (!is.null(growth_rate_idx) && i %in% growth_rate_idx) {
       
       annual_hist <- rep(NA, length(yt_i))

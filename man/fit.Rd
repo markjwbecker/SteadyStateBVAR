@@ -32,8 +32,8 @@ summaries, an error will be raised.}
 A fitted steady-state \code{bvar} object with:
 \itemize{
 \item \code{x$fit$stan}: An object of class \code{stanfit}
-\item \code{x$fit$posterior_means}: List of posterior mean estimates
-\item \code{x$fit$posterior_medians}: List of posterior median estimates
+\item \code{x$fit$posterior_means}: List of elementwise posterior mean estimates
+\item \code{x$fit$posterior_medians}: List of elementwise posterior median estimates
 }
 }
 \description{

@@ -43,8 +43,7 @@ response is converted from a quarterly or monthly log first difference to an
 annual growth rate response, i.e. \eqn{100 (\ln x_{t} - \ln x_{t-f})}, where \eqn{f} is
 the frequency of the data (4 for quarterly, 12 for monthly).
 Only suitable for variables specified as \eqn{100 (\ln x_{t} - \ln x_{t-1})}, i.e.
-\code{100*diff(log(x))}. Computed by summing up to \eqn{f} periods of the impulse response,
-treating the response in periods prior to the impulse as zero. Default is \code{NULL}.}
+\code{100*diff(log(x))}. Computed by summing up to \eqn{f} periods of the impulse response. Default is \code{NULL}.}
 }
 \value{
 Invisibly returns a list with three arrays: the point estimate IRF, \code{lower}, and

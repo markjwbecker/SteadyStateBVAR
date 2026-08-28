@@ -1,0 +1,188 @@
+---
+title: "Steady-state BVAR introduction"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Steady-state BVAR introduction}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Introduction
+
+The steady-state BVAR($p$) model (Villani, 2009) is
+
+$$
+y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t
+$$
+
+where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic (exogenous) variables at time $t$, and $u_t$ are the (reduced-form) innovations. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ autoregressive parameter matrix, and $\Psi$ is a $(k \times q)$ steady-state parameter matrix. Now
+
+$$
+\mathrm{E}(y_t)=\mu_t=\Psi d_t
+$$
+
+is the unconditional mean, or the **steady state**, of the process. Since long-horizon forecasts from stationary VARs converge to the unconditional mean (steady state), it is naturally very important from a forecasting perspective to obtain precise inference on $\Psi$. The current version of this package allows for $d_t$ to contain either just a constant, a constant and a dummy variable, or a constant and a time trend. Continuing, we may stack the (transposed) $\Pi_i$ matrices in the $(kp \times k)$ matrix $\beta$
+
+$$
+\beta=
+\begin{bmatrix}
+\Pi'_1 \\ 
+\vdots  \\
+\Pi'_p
+\end{bmatrix}
+$$
+
+We can then rewrite the model as a nonlinear regression (Karlsson, 2013)
+
+$$
+y_t' =d_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t'
+$$
+
+where $w_t'=(y_{t-1}',\dots,y_{t-p}')$ is a $kp$-dimensional vector of lagged endogenous variables and $q_t'=(d_{t-1}',\dots,d_{t-p}')$ is a $qp$-dimensional vector of lagged deterministic (exogenous) variables, $I_p$ is the $(p \times p)$ identity matrix and $\otimes$ denotes the Kronecker product. This is how the likelihood is written in the Stan code. The goal is to estimate $\beta, \Psi$, and $\Sigma_u$, and as such priors are needed. Following Villani (2009), prior independence between $\beta, \Psi$ and $\Sigma_u$ is assumed. For $\beta$, the Minnesota prior is used
+
+
+$$
+\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)
+$$
+
+
+The prior means (the elements of $\theta_\beta$) are set to
+
+
+$$
+\begin{aligned}
+\mathrm{E}\left(\Pi_{\ell}^{(i,j)}\right)&=
+\begin{cases}
+\kappa & \text{if } \ell = 1 \ \text{and} \ i = j \\
+0 & \text{otherwise}
+\end{cases}\\
+\kappa&=
+\begin{cases}
+\kappa^{levels} & \text{if} \  \text{variable} \ i \ \text{is in levels} \\
+\kappa^{\Delta} & \text{if} \ \text{variable} \ i \ \text{is differenced}
+\end{cases}\\
+\end{aligned}
+$$
+
+
+Here, the autoregressive coefficient $\Pi_{\ell}^{(i,j)}$ is element $\left(i,j\right)$ of $\Pi_{\ell}$ for $\ell=1,\dots,p$. As such, the Minnesota prior sets all prior means for the elements in $\beta$ to $0$, except for the elements that relate to the first own lags of the variables, which are set to $\kappa$. If variable $i$ is in level (e.g. nominal interest rate), then $\kappa=\kappa^{levels}$, and typical choices for $\kappa^{levels}$ are $1$ or $0.9$. Evaluating the equations at their prior means, equation $i$ becomes a random walk if $\kappa^{levels}=1$ and a persistent stationary AR(1) process if $\kappa^{levels}=0.9$. Since the steady state only exists if the process is stationary, $0.9$ is recommended for the steady-state BVAR. If variable $i$ is in difference (e.g. output growth), then $\kappa=\kappa^{\Delta}$, and the most common choice for $\kappa^{\Delta}$ is $0$, i.e. equation $i$ becomes (when evaluating it at its prior means) a random walk expressed in first differences. If a differenced variable still shows some degree of persistence (can be examined with an ACF plot), a suitable value for $\kappa^{\Delta}$ can be (for example) $0.6$ instead of $0$. Moving on to the prior variances, $\Omega_\beta$ is a diagonal matrix containing the prior variances for the elements in $\beta$. They are specified as
+
+
+$$
+\mathrm{Var}\left(\Pi_{\ell}^{(i,j)}\right)=
+\begin{cases}
+\left(\frac{\lambda_1}{\ell^{\lambda_3}}\right)^2 & \text{if } i = j \\
+\left(\frac{\lambda_1 \lambda_2\sigma_i}{\ell^{\lambda_3}\sigma_j}\right)^2& \text{if } i \neq j
+\end{cases}
+$$
+
+
+Here $\lambda_1$, $\lambda_2$, and $\lambda_3$ are scalar hyperparameters known as the overall tightness, the cross-equation tightness and the lag decay rate. Furthermore, $\sigma_i^2$ is the $(i,i)$:th element of $\Sigma_u$, which we do not know and therefore replace with an estimate. In this package, it is replaced by the least squares residual variance from a univariate autoregression for variable $i$ with $p$ lags (including the constant and dummy/trend variable if applicable). Moving on to $\Psi$, which contains the steady-state parameters, the prior is
+
+
+$$
+\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}(\theta_\Psi,\Omega_\Psi)
+$$
+
+
+This is the core of the steady-state BVAR model. In $\theta_\Psi$, we specify our prior beliefs about the location of the steady state, and in $\Omega_\Psi$, which we assume to be a diagonal matrix, we specify our degree of certainty in those prior beliefs. We have not touched upon the reduced-form innovations $u_t$ yet. This package supports the homoscedastic steady-state BVAR (the original model) and steady-state BVARs with stochastic volatility, either Random Walk or AR(1) stochastic volatility. As such, in the homoscedastic case, we have
+
+$$
+u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)
+$$
+where the prior for $\Sigma_u$ is the usual non-informative Jeffreys prior
+
+
+$$
+p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}
+$$
+
+Alternatively, a proper inverse-Wishart prior can be used (Karlsson, 2013)
+
+
+$$
+\Sigma_u \sim \mathrm{IW}(V,m)
+$$
+
+where $V$ is the scale matrix and $m$ is the number of degrees of freedom. For stochastic volatility, the reduced form innovations are instead specified as
+
+$$
+\begin{aligned}
+u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
+\epsilon_t &\overset{\text{iid}}{\sim} \mathrm{N}(0, \mathrm{I}_k)
+\end{aligned}
+$$
+where $A$ is a lower triangular matrix with ones on the diagonal that describes the contemporaneous interaction of the endogenous variables, and
+
+$$
+\Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
+$$
+contains the time-varying volatilities. For the AR(1) stochastic volatility specification, the log volatilities follow correlated AR(1) processes
+
+$$
+\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k
+$$
+where the log volatility `AR1` processes are restricted to the stationary region, i.e. $|\gamma_{1,i}|<1 \ \forall i$. For the `RW` stochastic volatility specification, the log volatilities follow uncorrelated (driftless) Random Walk processes, i.e. we restrict the above by
+
+$$
+\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \forall i
+$$
+The innovations to the log volatilities follow in the `AR1` case
+
+$$
+\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\overset{\text{iid}}{\sim} \mathrm{N}(0, \Phi)
+$$
+
+where $\Phi$ *is not diagonal* and as such the innovations to the log
+volatilities are allowed to be correlated across variables. For the `RW` case, $\Phi$ *is diagonal*
+with variances $\phi_i$ for $i=1,\dots,k$. Note that under both stochastic volatility specifications, the time-varying covariance matrix is
+
+$$
+\begin{aligned}
+u_t &\sim \mathrm{N_k}(0,\Sigma_{u,t}) \\
+\Sigma_{u,t} &= A^{-1} \Lambda_t (A^{-1})'
+\end{aligned}
+$$
+
+For the Random Walk (`RW`) stochastic volatility specification, the following priors are available
+
+$$
+\begin{aligned}a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
+\ln \lambda_{1} &\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
+\phi_i &\sim \mathrm{IG}(\alpha_{\phi_i},\beta_{\phi_i})\end{aligned}
+$$
+
+Here $a$ is a $k(k-1)/2$-dimensional vector that collects the free parameters in $A$ in row-major order,
+and $\ln \lambda_1$ is a $k$-dimensional vector containing the time $t=1$ values (initial conditions) of $\ln \lambda_{t}$.
+We assume that $\Omega_A$ and $\Omega_{\ln \lambda_{1}}$ are diagonal matrices. Furthermore, $\phi_i$ for $i=1,\dots,k$ are the log volatility innovation variances.
+For the AR(1) stochastic volatility specification, the following priors are available
+
+$$
+\begin{aligned}
+a &\sim \mathrm{N}(\theta_A, \Omega_A) \\
+\gamma_{0} &\sim \mathrm{N}(\theta_{\gamma_0}, \Omega_{\gamma_0}) \\
+\gamma_{1} &\sim \mathrm{N}(\theta_{\gamma_1}, \Omega_{\gamma_1}) \ I(|\gamma_{1,i}| < 1)\\
+\ln \lambda_{1} &\sim \mathrm{N}(\theta_{\ln \lambda_{1}}, \Omega_{\ln \lambda_{1}}) \\
+\Phi &\sim \mathrm{IW}(V_{\Phi},m_{\Phi})
+\end{aligned}
+$$
+
+Here $a$ is again the $k(k-1)/2$-dimensional vector that collects the free parameters in $A$ in row-major order,
+and $\ln \lambda_1$ is a $k$-dimensional vector containing the time $t=1$ values (initial conditions) of $\ln \lambda_t$.
+Furthermore, $\gamma_{0}$ is a $k$-dimensional vector of log volatility intercepts, $\gamma_{1}$ is a $k$-dimensional vector of log volatility
+slopes, and $\Phi$ is the $k \times k$ log volatility innovation covariance matrix. We assume that $\Omega_A$, $\Omega_{\gamma_0}$, $\Omega_{\gamma_1}$,
+and $\Omega_{\ln \lambda_{1}}$ are diagonal matrices. Note that the prior for $\gamma_1$ is truncated normal.
+
+## References
+
+Clark, T. E. (2011). Real-time density forecasts from Bayesian vector autoregressions
+with stochastic volatility. *Journal of Business \& Economic Statistics*, 29(3), pp. 327–341.
+
+Dieppe, A., Legrand, R., and van Roye, B. (2016). The BEAR toolbox. Working Paper Series, No. 1934. European Central Bank.
+
+Gustafsson, O., and Villani, M. (2025). Variational inference for steady-state BVARs. arXiv preprint arXiv:2506.09271.
+
+Karlsson, S. (2013). Forecasting with Bayesian vector autoregression. 
+In: Elliott, G. and Timmermann, A. (eds), *Handbook of Economic Forecasting*. Elsevier B.V., Vol. 2, Part B, pp. 791–897.
+
+Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630–650.

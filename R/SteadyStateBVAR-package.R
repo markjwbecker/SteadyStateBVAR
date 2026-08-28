@@ -23,9 +23,10 @@
 #'   \item \eqn{u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})}, where \eqn{\Sigma_{u,t}} is driven by a latent AR(1) process (stochastic volatility)
 #' }
 #' 
-#' For more information, see the package vignettes
+#' For more information, please see the package vignettes
 #' 
 #' \enumerate{
+#'   \item \code{vignette("steady-state-BVAR-intro")}
 #'   \item \code{vignette("Homoscedastic-steady-state-BVAR")}
 #'   \item \code{vignette("RW-stochastic-volatility-steady-state-BVAR")}
 #'   \item \code{vignette("AR1-stochastic-volatility-steady-state-BVAR")}

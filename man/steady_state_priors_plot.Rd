@@ -19,8 +19,8 @@ steady_state_priors_plot(
 i.e. a 95\% prior interval for the steady state.}
 
 \item{growth_rate_idx}{Integer vector. Indices of variables specified as
-\code{100*diff(log(x))} for which the historical series and the
-steady-state prior is converted to the annual scale. Default is \code{NULL}.}
+\code{100*diff(log(x))} for which the historical series is converted to the annual growth scale and the
+steady-state prior is converted to the annualized growth scale. Default is \code{NULL}.}
 
 \item{plot_idx}{Integer vector. Indices of variables to plot. If
 \code{NULL} (default), all variables are plotted.}
@@ -29,7 +29,7 @@ steady-state prior is converted to the annual scale. Default is \code{NULL}.}
 Invisibly returns a list with three matrices, \code{lower},
 \code{mean}, and \code{upper}, each of dimension \code{T x k} giving the
 steady-state prior bounds and mean over the historical sample. For
-\code{growth_rate_idx} columns, these are on the annual scale.
+\code{growth_rate_idx} columns, these are on the annualized scale.
 }
 \description{
 Produces time series plots of the data along with the implied prior for

@@ -1,6 +1,6 @@
-#' Summarise a fitted steady-state BVAR model
+#' Summarize a fitted steady-state BVAR model
 #'
-#' Computes and prints posterior summaries from a fitted steady-state \code{bvar} object.
+#' Computes and prints elementwise posterior summaries from a fitted steady-state \code{bvar} object.
 #' The printed output depends on whether the model is homoscedastic or includes
 #' stochastic volatility (RW or AR1 specification).
 #'
@@ -17,7 +17,7 @@
 #' @return Returns the input object invisibly.
 #'
 #' @details
-#' The function summarises the following estimated parameters:
+#' The function summarizes, by calculating elementwise posterior means/medians, the following estimated parameters:
 #' \itemize{
 #'   \item \code{beta}: \eqn{kp \times k} VAR coefficient matrix
 #'   \item \code{Psi}: \eqn{k \times q} steady-state parameter matrix

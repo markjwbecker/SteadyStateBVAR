@@ -2,7 +2,7 @@
 % Please edit documentation in R/summary.R
 \name{summary.bvar}
 \alias{summary.bvar}
-\title{Summarise a fitted steady-state BVAR model}
+\title{Summarize a fitted steady-state BVAR model}
 \usage{
 \method{summary}{bvar}(object, pars = NULL, stat = "mean", t = NULL, ...)
 }
@@ -25,12 +25,12 @@ If \code{NULL}, the latest available \code{t} is used.}
 Returns the input object invisibly.
 }
 \description{
-Computes and prints posterior summaries from a fitted steady-state \code{bvar} object.
+Computes and prints elementwise posterior summaries from a fitted steady-state \code{bvar} object.
 The printed output depends on whether the model is homoscedastic or includes
 stochastic volatility (RW or AR1 specification).
 }
 \details{
-The function summarises the following estimated parameters:
+The function summarizes, by calculating elementwise posterior means/medians, the following estimated parameters:
 \itemize{
 \item \code{beta}: \eqn{kp \times k} VAR coefficient matrix
 \item \code{Psi}: \eqn{k \times q} steady-state parameter matrix
