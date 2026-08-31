@@ -58,7 +58,7 @@ Computes and plots forecasts from a fitted steady-state \code{bvar} object. Draw
 joint predictive distribution are used to construct point forecasts and
 prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 rates for variables specified as \code{100*diff(log(x))}. Optionally overlays the posterior steady
-state.
+states.
 }
 \examples{
 \donttest{

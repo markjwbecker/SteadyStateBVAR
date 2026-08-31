@@ -8,9 +8,10 @@
 #'   \code{\link{priors}}.
 #' @param interval Numeric. The prior interval width. Default \code{0.95},
 #'   i.e. a 95% prior interval for the steady state.
-#' @param growth_rate_idx Integer vector. Indices of variables specified as
-#'   \code{100*diff(log(x))} for which the historical series is converted to the annual growth scale and the
-#'   steady-state prior is converted to the annualized growth scale. Default is \code{NULL}.
+#' @param growth_rate_idx Integer vector. Indices of variables specified
+#'   as \eqn{100 (\ln x_{t} - \ln x_{t-1})}, i.e. \code{100*diff(log(x))},
+#'   for which the historical series is converted to year-over-year (annual) growth scale and the
+#'   steady-state prior is converted to the annualized (not annual) growth scale. Default is \code{NULL}.
 #' @param plot_idx Integer vector. Indices of variables to plot. If
 #'   \code{NULL} (default), all variables are plotted.
 #'
@@ -25,7 +26,7 @@
 #' 
 #' \deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}(\theta_\Psi, \Omega_\Psi)}
 #' 
-#' which is specified in \code{\link{priors}}. It is assumed that \eqn{\Omega_\Psi} is diagonal.
+#' which is specified in \code{\link{priors}}. Note that it is assumed that \eqn{\Omega_\Psi} is diagonal.
 #' 
 #' @examples
 #' \donttest{
@@ -42,10 +43,7 @@
 #'                    first_own_lag_prior_mean = rep(1, 2),
 #'                    theta_Psi = rep(0, 2),
 #'                    Omega_Psi = diag(0.1, 2, 2),
-#'                    Jeffreys = TRUE,
-#'                    SV = FALSE,
-#'                    SV_type = NULL,
-#'                    SV_priors = NULL)
+#'                    Jeffreys = TRUE)
 #'
 #' steady_state_priors_plot(bvar_obj)
 #' }
@@ -73,13 +71,13 @@ steady_state_priors_plot <- function(x,
   
   alpha  <- 1 - interval
   z      <- qnorm(1 - alpha / 2)
-  sd_Psi <- sqrt(diag(Omega_Psi))
+  omegas <- diag(Omega_Psi)
   
   Psi_mean <- matrix(theta_Psi, k, q)
-  Psi_sd   <- matrix(sd_Psi, k, q)
+  Psi_var   <- matrix(omegas, k, q)
   
   ss_mean <- t(Psi_mean %*% t(dt))
-  ss_var  <- t((Psi_sd^2) %*% t(dt^2))
+  ss_var  <- t(Psi_var %*% t(dt^2))
   ss_sd   <- sqrt(ss_var)
   
   ss_lower <- ss_mean - z * ss_sd

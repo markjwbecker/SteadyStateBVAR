@@ -15,7 +15,7 @@ $$
 y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t
 $$
 
-where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic (exogenous) variables at time $t$, and $u_t$ are the (reduced-form) innovations. Here $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ autoregressive parameter matrix, and $\Psi$ is a $(k \times q)$ steady-state parameter matrix. Now
+where $y_t$ is a $k$-dimensional vector of endogenous variables (time series) at time $t$, $d_t$ is a $q$-dimensional vector of deterministic (exogenous) variables at time $t$. The (reduced-form) innovations $u_t$ are either homoscedastic case $u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)$, or in the heteroscedastic case (stochastic volatility case) $u_t {\sim} \mathrm{N_k}(0,\Sigma_{u,t})$. Now $\Pi_\ell$ for $\ell=1,\dots,p$ is a $(k \times k)$ autoregressive parameter matrix, and $\Psi$ is a $(k \times q)$ steady-state parameter matrix. Now
 
 $$
 \mathrm{E}(y_t)=\mu_t=\Psi d_t

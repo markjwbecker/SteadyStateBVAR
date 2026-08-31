@@ -10,17 +10,11 @@
 #'   Default is \code{1}.
 #' @param d_pred Matrix of size \eqn{H \times q}. Future values of the deterministic variables \eqn{d_t}. Default is \code{NULL} (\code{d_pred} is automatically created).
 #' If \eqn{d_t} contains only a constant, \eqn{d_{t+h}=1 \ \forall \ h}.
-#' If \eqn{d_t} contains a constant and a dummy, it is assumed that the dummy stays at its last observed value for all future forecast periods.
-#' However, if this is not the intention, the user may supply \code{d_pred} themselves. Naturally, the constant is equal to one for all future periods.
+#' If \eqn{d_t} contains a constant and a dummy, it is assumed that the dummy (and the constant) stays at its last observed value for all future forecast periods.
+#' However, if this is not the intention, the user may supply \code{d_pred} themselves.
 #' If \eqn{d_t} contains a constant and a trend, the trend is extrapolated from its last observed value (i.e. \eqn{trend_{T+h}=trend_{T}+h}).
-#' Naturally, the constant is equal to one for all future periods.
+#' Naturally, the constant is again equal to one for all future periods.
 #' @param ... Additional arguments passed directly to the \code{rstan} function \code{\link[rstan]{sampling}}
-#' (e.g. \code{iter}, \code{warmup}, \code{chains}, \code{cores}, \code{control},
-#' \code{seed}, \code{init}, \code{thin}, \code{algorithm}, \code{pars},
-#' \code{include}, \code{refresh}, \code{verbose}, \code{save_warmup},
-#' \code{sample_file}, \code{diagnostic_file}). If \code{pars}/\code{include} is
-#' used to exclude model parameters required by \code{fit()} for posterior
-#' summaries, an error will be raised.
 #'
 #' @return A fitted steady-state \code{bvar} object with:
 #' \itemize{
@@ -37,7 +31,7 @@
 #'   \item \code{steady_state_bvar_RW_stochastic_volatility}
 #'   \item \code{steady_state_bvar_AR1_stochastic_volatility}
 #' }
-#' The function estimates the following parameters (see \link{bvar} for details):
+#' The function estimates the following parameter matrices/vectors (see \link{bvar} for details):
 #' \itemize{
 #'       \item \code{beta}: \eqn{kp \times k} VAR coefficient matrix
 #'       \item \code{Psi}: \eqn{k \times q} steady-state parameter matrix
@@ -286,8 +280,8 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
   cat("Also generating draws from the joint predictive distribution\n\n")
   cat("...")
   
-  x$fit$stan <- rstan::sampling(stanmodels[[model_name]], data = stan_data, ...)
-  
+  x$fit$stan <- rstan::sampling(stanmodels[[model_name]], data = stan_data, algorithm="NUTS", ...)
+  cat("SAMPLING FINISHED")
   posterior <- rstan::extract(x$fit$stan)
   
   required_params <- if (!SV) {

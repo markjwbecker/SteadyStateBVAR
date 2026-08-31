@@ -18,9 +18,10 @@ steady_state_priors_plot(
 \item{interval}{Numeric. The prior interval width. Default \code{0.95},
 i.e. a 95\% prior interval for the steady state.}
 
-\item{growth_rate_idx}{Integer vector. Indices of variables specified as
-\code{100*diff(log(x))} for which the historical series is converted to the annual growth scale and the
-steady-state prior is converted to the annualized growth scale. Default is \code{NULL}.}
+\item{growth_rate_idx}{Integer vector. Indices of variables specified
+as \eqn{100 (\ln x_{t} - \ln x_{t-1})}, i.e. \code{100*diff(log(x))},
+for which the historical series is converted to year-over-year (annual) growth scale and the
+steady-state prior is converted to the annualized (not annual) growth scale. Default is \code{NULL}.}
 
 \item{plot_idx}{Integer vector. Indices of variables to plot. If
 \code{NULL} (default), all variables are plotted.}
@@ -40,7 +41,7 @@ The implied prior for the steady state \eqn{\mu_t = \Psi d_t} is based on the pr
 
 \deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}(\theta_\Psi, \Omega_\Psi)}
 
-which is specified in \code{\link{priors}}. It is assumed that \eqn{\Omega_\Psi} is diagonal.
+which is specified in \code{\link{priors}}. Note that it is assumed that \eqn{\Omega_\Psi} is diagonal.
 }
 \examples{
 \donttest{
@@ -57,10 +58,7 @@ bvar_obj <- priors(bvar_obj,
                    first_own_lag_prior_mean = rep(1, 2),
                    theta_Psi = rep(0, 2),
                    Omega_Psi = diag(0.1, 2, 2),
-                   Jeffreys = TRUE,
-                   SV = FALSE,
-                   SV_type = NULL,
-                   SV_priors = NULL)
+                   Jeffreys = TRUE)
 
 steady_state_priors_plot(bvar_obj)
 }

@@ -33,7 +33,7 @@ and \eqn{\Psi} is a \eqn{(k \times q)} matrix of steady-state parameters.
 One can stack the (transposed) \eqn{\Pi_i} matrices in the \eqn{(kp \times k)} matrix \eqn{\beta}
 \deqn{\beta=\begin{bmatrix}\Pi'_1 \\ \vdots  \\\Pi'_p\end{bmatrix}}
 
-This function puts zero restrictions on the elements of \eqn{\beta}.
+This function puts zero restrictions on the autoregressive parameters/coefficients, i.e the elements of \eqn{\beta}.
 }
 \examples{
 yt <- matrix(rnorm(50), 25, 2)

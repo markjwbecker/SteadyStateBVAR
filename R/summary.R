@@ -17,7 +17,7 @@
 #' @return Returns the input object invisibly.
 #'
 #' @details
-#' The function summarizes, by calculating elementwise posterior means/medians, the following estimated parameters:
+#' The function summarizes, by calculating elementwise posterior means/medians, the following estimated parameter matrices/vectors:
 #' \itemize{
 #'   \item \code{beta}: \eqn{kp \times k} VAR coefficient matrix
 #'   \item \code{Psi}: \eqn{k \times q} steady-state parameter matrix

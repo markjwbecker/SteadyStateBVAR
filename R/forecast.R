@@ -4,7 +4,7 @@
 #' joint predictive distribution are used to construct point forecasts and
 #' prediction intervals. Optionally converts monthly or quarterly growth rate forecasts to annual growth
 #' rates for variables specified as \code{100*diff(log(x))}. Optionally overlays the posterior steady
-#' state.
+#' states.
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.
 #' @param pi Numeric. The prediction interval width. Default \code{0.95}, i.e. 95% prediction interval.
