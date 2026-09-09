@@ -10,7 +10,7 @@ forecast(
   fcst_type = c("mean", "median"),
   growth_rate_idx = NULL,
   plot_idx = NULL,
-  show_all = FALSE,
+  show_all = TRUE,
   ss = TRUE,
   ss_type = c("mean", "median"),
   ss_ci = 0.95
@@ -34,9 +34,9 @@ Computed by summing up to \eqn{f} log first differences. Default is \code{NULL}.
 (default), all variables are plotted. Forecasts are always computed and
 returned for all variables, regardless of \code{plot_idx}.}
 
-\item{show_all}{Logical. If \code{FALSE} (default), the last eight years
-of history are shown alongside the forecast. If \code{TRUE}, the full
-history is shown.}
+\item{show_all}{Logical. If \code{TRUE} (default), the full
+history is shown. If \code{FALSE}, the last eight years
+of history are shown.}
 
 \item{ss}{Logical. If \code{TRUE}, overlays the posterior steady state
 \eqn{\mu_t = \Psi d_t}. Default \code{TRUE}. For variables in \code{growth_rate_idx},

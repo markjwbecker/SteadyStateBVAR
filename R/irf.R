@@ -5,7 +5,7 @@
 #' (GIRF) impulse responses, with optional conversion to annual growth rates.
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.
-#' @param H Integer. The forecast horizon for the IRF. Default \code{16}.
+#' @param H Integer. The forecast horizon for the IRF. Default \code{20}.
 #' @param response Integer. Index of the response variable to plot. If
 #'   \code{NULL} (default), all responses are plotted.
 #' @param impulse Integer. Index of the impulse variable to plot. If \code{NULL}
@@ -58,7 +58,7 @@
 #'                 
 #' (IRF(bvar_obj))
 #' }
-IRF <- function(x, H = 16, response = NULL, impulse = NULL,
+IRF <- function(x, H = 20, response = NULL, impulse = NULL,
                 type = c("median", "mean"), method = c("OIRF", "GIRF"),
                 ci = 0.95, t = NULL, growth_rate_idx = NULL) {
   
@@ -196,14 +196,14 @@ IRF <- function(x, H = 16, response = NULL, impulse = NULL,
     par(mfrow = c(k, k))
     for (j in 1:k) for (i in 1:k) plot_single(i, j)
   } else if (is.null(response) && !is.null(impulse)) {
-    par(mfrow = c(1, 1))
-    for (i in 1:k) plot_single(i, impulse)
+    par(mfrow = c(k, length(impulse)))
+    for (j in impulse) for (i in 1:k) plot_single(i, j)
   } else if (!is.null(response) && is.null(impulse)) {
-    par(mfrow = c(1, 1))
-    for (j in 1:k) plot_single(response, j)
+    par(mfrow = c(length(response), k))
+    for (i in response) for (j in 1:k) plot_single(i, j)
   } else {
-    par(mfrow = c(1, 1))
-    plot_single(response, impulse)
+    par(mfrow = c(length(response), length(impulse)))
+    for (i in response) for (j in impulse) plot_single(i, j)
   }
   
   if (type == "median") {

@@ -18,9 +18,9 @@
 #' @param plot_idx Integer vector. Indices of variables to plot. If \code{NULL}
 #'   (default), all variables are plotted. Forecasts are always computed and
 #'   returned for all variables, regardless of \code{plot_idx}.
-#' @param show_all Logical. If \code{FALSE} (default), the last eight years
-#'   of history are shown alongside the forecast. If \code{TRUE}, the full
-#'   history is shown.
+#' @param show_all Logical. If \code{TRUE} (default), the full
+#'   history is shown. If \code{FALSE}, the last eight years
+#'   of history are shown.
 #' @param ss Logical. If \code{TRUE}, overlays the posterior steady state
 #'   \eqn{\mu_t = \Psi d_t}. Default \code{TRUE}. For variables in \code{growth_rate_idx},
 #'   the posterior steady-state is annualized.
@@ -68,7 +68,7 @@
 #'          ss_ci = 0.95)
 #' }
 forecast <- function(x, pi = 0.95, fcst_type = c("mean", "median"),
-                     growth_rate_idx = NULL, plot_idx = NULL, show_all = FALSE,
+                     growth_rate_idx = NULL, plot_idx = NULL, show_all = TRUE,
                      ss = TRUE, ss_type = c("mean", "median"), ss_ci = 0.95) {
   
   fcst_type <- match.arg(fcst_type)

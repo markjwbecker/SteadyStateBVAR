@@ -10,8 +10,9 @@
 #'   i.e. a 95% prior interval for the steady state.
 #' @param growth_rate_idx Integer vector. Indices of variables specified
 #'   as \eqn{100 (\ln x_{t} - \ln x_{t-1})}, i.e. \code{100*diff(log(x))},
-#'   for which the historical series is converted to year-over-year (annual) growth scale and the
-#'   steady-state prior is converted to the annualized (not annual) growth scale. Default is \code{NULL}.
+#'   for which the historical series is converted to year-over-year (annual) growth scale
+#'  \eqn{100 (\ln x_{t} - \ln x_{t-f})} and the steady-state prior is converted to the annualized (not annual) growth scale
+#'  \eqn{f100(\ln x_{t} - \ln x_{t-1})} where \eqn{f} = frequency. Default is \code{NULL}.
 #' @param plot_idx Integer vector. Indices of variables to plot. If
 #'   \code{NULL} (default), all variables are plotted.
 #'

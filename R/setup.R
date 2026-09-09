@@ -5,7 +5,7 @@
 #'
 #' @param x A steady-state \code{bvar} object created by \code{\link{bvar}}.
 #' @param p Integer. The lag order of the VAR. Default \code{1}.
-#' @param deterministic Character. The deterministic component to include.
+#' @param deterministic Character. The deterministic components to include in \eqn{d_t}.
 #'   One of \code{"constant"} (default), \code{"constant_and_dummy"}, or
 #'   \code{"constant_and_trend"}.
 #' @param dummy Numeric vector of a dummy variable. Only

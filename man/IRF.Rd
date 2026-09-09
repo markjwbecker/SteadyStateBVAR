@@ -6,7 +6,7 @@
 \usage{
 IRF(
   x,
-  H = 16,
+  H = 20,
   response = NULL,
   impulse = NULL,
   type = c("median", "mean"),
@@ -19,7 +19,7 @@ IRF(
 \arguments{
 \item{x}{A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.}
 
-\item{H}{Integer. The forecast horizon for the IRF. Default \code{16}.}
+\item{H}{Integer. The forecast horizon for the IRF. Default \code{20}.}
 
 \item{response}{Integer. Index of the response variable to plot. If
 \code{NULL} (default), all responses are plotted.}

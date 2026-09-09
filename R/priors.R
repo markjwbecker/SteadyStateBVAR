@@ -2,9 +2,9 @@
 #'
 #' This function prepares the priors. The Minnesota prior is used for the autoregressive parameters, and is determined by
 #' the overall tightness, cross-equation tightness, and the lag decay rate.
-#' For the steady-state parameters, a normal prior is used. For the covariance matrix of the innovations,
+#' For the steady-state parameters, a normal prior is used. Regarding the covariance matrix of the reduced-form innovations, for the homoscedastic model,
 #' the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-#' Optionally enables stochastic volatility where the covariance matrix varies over time.
+#' The user may also choose stochastic volatility specification for the innovations, where the covariance matrix varies over time.
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through \code{\link{setup}}.
 #' @param lambda_1 Numeric. Overall tightness of the Minnesota prior.
@@ -15,8 +15,8 @@
 #'   of the variables. If \code{NULL} (default), a zero vector is used.
 #' @param theta_Psi Numeric vector. Prior mean vector for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters. If \code{NULL} (default),
 #'   the OLS estimates are used.
-#' @param Omega_Psi Numeric matrix. Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters. If \code{NULL} (default),
-#'    a diagonal matrix with variances \code{1000} is used.
+#' @param Omega_Psi Numeric matrix. Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters. Assumed to be diagonal. If \code{NULL} (default),
+#'    the identity matrix is used.
 #' @param Jeffreys Logical. If \code{TRUE} (default), uses Jeffreys prior for the innovation covariance matrix.
 #'   If \code{FALSE}, uses an uninformative inverse-Wishart prior. Only considered if \code{SV=FALSE}.
 #' @param SV Logical. If \code{TRUE}, enables stochastic volatility specification.
@@ -40,17 +40,17 @@
 #'   \item{Omega_Psi}{Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters}
 #'   \item{Jeffreys}{Indicator for Jeffreys prior usage}
 #'   \item{Sigma_AR}{Residual variance estimates from univariate AR fits, which are used by the Minnesota prior}
-#'   \item{m}{Inverse-Wishart prior degrees of freedom (if \code{Jeffreys = FALSE})}
-#'   \item{V}{Inverse-Wishart prior scale matrix (if \code{Jeffreys = FALSE})}
+#'   \item{m}{Inverse-Wishart prior degrees of freedom (if \code{Jeffreys = FALSE} and \code{SV = FALSE})}
+#'   \item{V}{Inverse-Wishart prior scale matrix (if \code{Jeffreys = FALSE} and \code{SV = FALSE})}
 #'   \item{SV}{Logical indicator for stochastic volatility specification}
 #'   \item{SV_type}{Stochastic volatility specification type}
 #'   \item{SV_priors}{User-supplied SV prior list (if \code{SV = TRUE})}
 #'   
 #' @details
 #' 
-#' The goal is to estimate \eqn{\beta, \Psi}, and \eqn{\Sigma_u}, so priors are needed.
-#' Following Villani (2009), prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed. For \eqn{\beta}, i.e. the autoregressive parameter matrix,
-#' the Minnesota prior is used
+#' The goal is to estimate the parameters \eqn{\Theta = \begin{bmatrix} \beta & \Psi & \Sigma_u \end{bmatrix}},
+#' and as such priors are needed. Following Villani (2009), prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed.
+#' For \eqn{\beta}, i.e. the autoregressive parameter matrix, the Minnesota prior is used
 #'
 #' \deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)}
 #'
@@ -77,7 +77,7 @@
 #' is stationary, \eqn{0.9} is recommended for the steady-state BVAR. If variable \eqn{i} is differenced
 #' (e.g. GDP growth), then \eqn{\kappa=\kappa^{\Delta}}, and the most common choice for
 #' \eqn{\kappa^{\Delta}} is \eqn{0}, i.e. equation \eqn{i} becomes (when evaluating it at its prior means)
-#' a random walk expressed in first differences (i.e. white noise process). If a differenced variable still shows some degree
+#' a random walk expressed in first differences (a white noise process). If a differenced variable still shows some degree
 #' of persistence (can be examined with an ACF plot), a suitable value for \eqn{\kappa^{\Delta}} can
 #' be (for example) \eqn{0.6} instead of \eqn{0}. Moving on to the prior variances, \eqn{\Omega_\beta} is a
 #' diagonal matrix containing the prior variances for the elements in \eqn{\beta}. They are specified as
@@ -93,14 +93,15 @@
 #' needs to be replaced with an estimate. In this package, it is replaced by the least squares residual variance
 #' from a univariate autoregression for variable \eqn{i} with \eqn{p} lags
 #' (including the constant and dummy/trend variable if applicable). Moving on to \eqn{\Psi}, the steady-state parameter matrix, the
-#' prior is
+#' (steady-state) prior is
 #' 
 #' \deqn{\mathrm{vec}(\Psi) \sim \mathrm{N}_{kq}(\theta_\Psi,\Omega_\Psi)}
 #' 
 #' This is the core of the steady-state BVAR model.
 #' In \eqn{\theta_\Psi}, one specifies the prior beliefs about the location of the steady state,
 #' and in \eqn{\Omega_\Psi}, which is assumed to be a diagonal matrix, one specifies the degree
-#' of certainty in those prior beliefs. The prior for \eqn{\Sigma_u} is either the usual non-informative Jeffreys prior
+#' of certainty in those prior beliefs. Too see how to specify steady-state priors in practice, please see the package vignettes.
+#' The prior for \eqn{\Sigma_u} is either the usual non-informative Jeffreys prior
 #' 
 #' \deqn{p(\Sigma_u) \propto\left|\Sigma_u \right|^{-(k+1)/2}}
 #' 
@@ -112,8 +113,9 @@
 #' An uninformative prior is specified by setting
 #' \eqn{V=(m-k-1)\hat{\Sigma}_u} where \eqn{\hat{\Sigma}_u} is the least squares estimate
 #' from the VAR(\eqn{p}) (including the constant and dummy/trend variable if applicable), and \eqn{m=k+2}.
-#' For the stochastic volatility specifications, the innovation covariance matrix is now time-varying \eqn{\Sigma_{u,t}}.
-#' Therefore, stochastic volatility priors are needed, see \link{bvar} for more details. Please note that
+#' However, if we opt to use stochastic volatility, the innovation covariance matrix is time-varying \eqn{\Sigma_{u,t}},
+#' instead of constant \eqn{\Sigma_{u}}. Therefore, stochastic volatility priors are needed.
+#' See \link{bvar} for more details on the stochastic volatility specifications. Please note that
 #' \eqn{\lambda} below (volatilities) has nothing to do with the \eqn{\lambda} from the Minnesota prior (hyperparameters).
 #' Now, for the Random Walk (\code{"RW"}) stochastic volatility specification, the following priors are available
 #' 
@@ -137,11 +139,20 @@
 #' Furthermore, \eqn{\gamma_{0}} is a \eqn{k}-dimensional vector of log volatility intercepts, \eqn{\gamma_{1}} is a \eqn{k}-dimensional vector of log volatility
 #' slopes, and \eqn{\Phi} is the \eqn{k \times k} log volatility innovation covariance matrix.
 #' We assume that \eqn{\Omega_A}, \eqn{\Omega_{\gamma_0}}, \eqn{\Omega_{\gamma_1}}, and \eqn{\Omega_{\ln \lambda_{1}}} are diagonal matrices.
+#' Note that the prior for \eqn{\gamma_1} is truncated normal.
 #' 
 #' For details on the homoscedastic steady-state BVAR model, see Villani (2009).
 #' For details on the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
 #' See Carriero, Clark, and Marcellino (2024) for the AR(1) stochastic volatility
 #' specification applied to a conventional BVAR.
+#' 
+#' To see examples of how to specify the priors, simply view the relevant vignette
+#' 
+#' \itemize{
+#'   \item \code{vignette("Homoscedastic-steady-state-BVAR")}
+#'   \item \code{vignette("RW-stochastic-volatility-steady-state-BVAR")}
+#'   \item \code{vignette("AR1-stochastic-volatility-steady-state-BVAR")}
+#' }
 #' 
 #' @references
 #' Carriero, A., Clark, T. E., and Marcellino, M. (2024).
@@ -376,9 +387,9 @@ priors<- function(x,
   theta_beta = c(mat)
   
   if (is.null(theta_Psi)) theta_Psi <- c(x$setup$Psi_OLS)
-  if (is.null(Omega_Psi)) Omega_Psi <- diag(1000, k*q, k*q)
+  if (is.null(Omega_Psi)) Omega_Psi <- diag(1, k*q, k*q)
   
-  if (isFALSE(Jeffreys)){
+  if (isFALSE(Jeffreys) && isFALSE(SV)){
     m=k+2
     V = (m-k-1)*setup$Sigma_u_OLS
     priors$V <- V

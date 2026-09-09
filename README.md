@@ -59,7 +59,7 @@ and iii) an AR(1) stochastic volatility model.
 
 ## Installation
 
-You can install SteadyStateBVAR (version 0.1.1) from CRAN with:
+You can install SteadyStateBVAR from CRAN with:
 
 ``` r
 install.packages("SteadyStateBVAR")
@@ -75,13 +75,22 @@ pak::pak("markjwbecker/SteadyStateBVAR")
 
 ## Vignettes
 
-Feel free to have a look at the package vignettes by running:
+For a general theoretical introduction to steady-state BVAR models run
+
+``` r
+vignette("SteadyStateBVAR-intro")
+```
+
+For examples with real macroeconomic data, run
 
 ``` r
 vignette("Homoscedastic-steady-state-BVAR")
 vignette("RW-stochastic-volatility-steady-state-BVAR")
 vignette("AR1-stochastic-volatility-steady-state-BVAR")
 ```
+
+Note that `Homoscedastic-steady-state-BVAR` shows a replication of the
+empirical example in Section 4.1 of Villani (2009).
 
 ## Example
 
@@ -102,8 +111,8 @@ bvar_obj <- bvar(data = yt)
 
 #Use a dummy to model Sweden’s change in monetary policy in the 1990s
 #(move to inflation targeting and flexible exchange rate)
-bp <- which(time(yt) == 1992.75) #breakpoint
-dummy_variable <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+breakpoint <- which(time(yt) == 1992.75)
+dummy_variable <- c(rep(1,breakpoint), rep(0,nrow(yt)-breakpoint))
 
 bvar_obj <- setup(bvar_obj,
                   p=4,
@@ -122,7 +131,7 @@ fol_pm=c(0,   #delta y_f
          0,   #pi
          0.9, #i
          0.9  #q
-         )
+)
 
 #95% prior probability intervals (normal distribution)
 #See Table I in Villani (2009)
@@ -132,40 +141,40 @@ fol_pm=c(0,   #delta y_f
 
 theta_Psi <- 
   c(
-  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: pi_f
-  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
-  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
-  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
-  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$mean,  #psi_1: q
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_2: pi_f
-  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
-  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
-  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i
-  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$mean   #psi_2: q
+    ppi( 2.00,  3.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: delta y_f
+    ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: pi_f
+    ppi( 4.50,  5.50, interval = 0.95                                    )$mean,   #psi_1: i_f
+    ppi( 2.00,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: delta y
+    ppi( 1.70,  2.30, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: pi
+    ppi( 4.00,  4.50, interval = 0.95                                    )$mean,   #psi_1: i
+    ppi( 3.85,  4.00, interval = 0.95                                    )$mean,   #psi_1: q
+    ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: delta y_f
+    ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: pi_f
+    ppi( 1.50,  2.50, interval = 0.95                                    )$mean,   #psi_2: i_f
+    ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: delta y
+    ppi( 4.30,  5.70, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: pi
+    ppi( 3.00,  5.50, interval = 0.95                                    )$mean,   #psi_2: i
+    ppi(-0.50,  0.50, interval = 0.95                                    )$mean    #psi_2: q
   )
 
 Omega_Psi <- 
   diag(
-  c(
-  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$var,    #psi_1: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: pi_f
-  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$var,   #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: delta y
-  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$var,    #psi_1: pi
-  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$var,   #psi_1: i
-  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$var,   #psi_1: q
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_2: pi_f
-  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$var,   #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y
-  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,    #psi_2: pi
-  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$var,   #psi_2: i
-  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$var    #psi_2: q
-  )
+    c(
+      ppi( 2.00,  3.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: delta y_f
+      ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: pi_f
+      ppi( 4.50,  5.50, interval = 0.95                                    )$var,    #psi_1: i_f
+      ppi( 2.00,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: delta y
+      ppi( 1.70,  2.30, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: pi
+      ppi( 4.00,  4.50, interval = 0.95                                    )$var,    #psi_1: i
+      ppi( 3.85,  4.00, interval = 0.95                                    )$var,    #psi_1: q
+      ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: delta y_f
+      ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: pi_f
+      ppi( 1.50,  2.50, interval = 0.95                                    )$var,    #psi_2: i_f
+      ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: delta y
+      ppi( 4.30,  5.70, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: pi
+      ppi( 3.00,  5.50, interval = 0.95                                    )$var,    #psi_2: i
+      ppi(-0.50,  0.50, interval = 0.95                                    )$var     #psi_2: q
+    )
   )
 
 bvar_obj <- priors(bvar_obj,
@@ -188,65 +197,75 @@ for(i in 1:p){
   cols <- 1:kf
   restriction_matrix[rows, cols] <- 0
 }
-print(restriction_matrix)
-#block exogeneity for foreign variables
+
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
-
-H <- 12 #forecast horizon
-(d_pred <- cbind(rep(1, 12), 0)) #future d_t values
-
 
 #fit the model
 bvar_obj <- fit(bvar_obj,
-                H = H,
-                d_pred = d_pred,
-                iter = 10000,
-                warmup = 2500,
-                chains = 2,
-                cores = 2)
+                H = 12, #forecast horizon
+                iter = 3000,
+                warmup = 1000,
+                chains = 4,
+                cores = 4)
 
-#posterior summaries
+#elementwise posterior summaries ("mean" or "median")
 summary(bvar_obj , stat = "mean")
 
 #you can look at the stanfit object directly
 stan_fit <- bvar_obj$fit$stan
 print(stan_fit)
 
+#plot histogram of the posterior steady-state of inflation mu_t,i at t=102 (last observation)
+#we have effective sample size N=T-p, that is why the index is 98
+
+rstan::plot(stan_fit,
+            pars=c("mu[98,5]"),
+            plotfun="hist")
+
+#note that inflation (pi) is specified as 100*diff(log(pi)) growth in the model, so for annualized steady-state
+posterior <- rstan::extract(stan_fit)
+hist(posterior$mu[,98,5]*4, breaks=30, col="darkred")
+abline(v=mean(posterior$mu[,98,5]*4), col="green")
+
 #unconditional forecasts
 #see last forecasts in Figures 1-3 in Villani (2009)
 fcst <- forecast(bvar_obj,
-                 pi = 0.68, #pi = prediction interval
-                 fcst_type = "mean",
+                 pi = 0.95, #pi = prediction interval
+                 fcst_type = "mean", #mean as point forecast
                  growth_rate_idx = c(4,5), #convert QoQ forecasts to YoY
-                 plot_idx = c(4,5,6))
+                 plot_idx = c(4,5,6),
+                 ss = TRUE, #plot posterior steady-state
+                 ss_type = "mean", #mean as point estimate for posterior steady-state
+                 ss_ci = 0.99 #99% credible interval for steady-state
+)
 
 #conditional forecasts
 #Toy scenario: inflation gets really high
 #What will happen to domestic interest rate?
 conditions <- data.frame(
-              var        = rep(5,12),
-              horizon    = rep(1:12),
-              value      = c(1.0,1.5,2.0,1.8,
-                             1.5,1.2,1.0,1.0,
-                             rep(0.5,4)) #QoQ scale for inflation here
-              )
-              
+  var        = rep(5,12),
+  horizon    = rep(1:12),
+  value      = c(1.0,1.5,2.0,1.8,
+                 1.5,1.2,1.0,1.0,
+                 rep(0.5,4)) #QoQ scale for inflation here
+)
+
 cond_fcst <- conditional_forecast(bvar_obj,
-                    conditions,
-                    pi=0.68,
-                    fcst_type = "mean",
-                    plot_idx = c(5,6),
-                    growth_rate_idx = c(5)) #convert QoQ forecasts to YoY
+                                  conditions,
+                                  pi=0.95,
+                                  fcst_type = "mean",
+                                  plot_idx = c(5,6),
+                                  growth_rate_idx = c(5)) #convert QoQ forecasts to YoY
 
 #impulse response analysis
 irf <- IRF(bvar_obj,
            H=20,
-           response=5,#inflation
-           shock=6, #interest rate
+           response=c(4,5), #gdp growth, inflation
+           impulse=c(6), #interest rate
            type="median",
            method="OIRF",
-           ci=0.68,
-           growth_rate_idx=5) #YoY inflation instead of QoQ
+           ci=0.95,
+           growth_rate_idx=c(4,5)) #YoY inflation instead of QoQ
 ```
 
 ## References

@@ -64,7 +64,7 @@ fol_pm=c(0.6, # delta pi
 ```
 
 Now, for the steady-state priors, we specify our prior beliefs with the help of 95\% prior probability intervals (let us pretend that our steady-state priors are expert based).
-Remember that we only have a constant now, so $q=1$ and therefore $\Psi$ only has one column $\psi_1=\Psi$. Since $d_t = 1 \ \forall \ t$, we have $\Psi d_t = \mu_t$ which simplifies to $\Psi = \mu$ and as such we can directly interpret $\Psi$ as the unconditional mean, i.e. the steady state.
+Since we only have a constant now, we have $q=1$ and as such $\Psi$ has only one column $\psi_1=\Psi$. Since $d_t = 1 \ \forall \ t$, we have $\Psi d_t = \mu_t$ which simplifies to $\Psi = \mu$ and as such we can directly interpret $\Psi$ as the unconditional mean, i.e. the steady state.
 
 ```{r, fig.width=8, fig.height=8}
 theta_Psi <- 
@@ -118,19 +118,25 @@ bvar_obj <- priors(bvar_obj,
                    SV_priors = SV_priors_RW)
 ```
 
-Now we can fit the model. Note that we can use arguments from `rstan::sampling()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
+We can plot the steady-state priors
+
+```{r, fig.width=8, fig.height=8}
+steady_state_priors_plot(bvar_obj, interval = 0.95)
+```
+
+Now, let us fit the model. Note that we can use arguments from `rstan::sampling()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- fit(bvar_obj,
                 H = 40,
-                iter = 2000,
-                warmup = 1000,
+                iter = 4000,
+                warmup = 2000,
                 chains = 2,
                 cores = 2,
                 control = list(max_treedepth = 14, adapt_delta = 0.95))
 ```
 
-Now let's see the posterior means
+Now let's see the elemntwise posterior means
 
 ```{r, fig.width=8, fig.height=8}
 summary(bvar_obj, stat="mean", t = 215) #t = 215 for covariance matrix
@@ -143,10 +149,21 @@ the log volatilities more efficiently.
 print(bvar_obj$fit$stan)
 ```
 
+Let us plot the posterior of the steady-state $mu_t=mu=\Psi$
+
+```{r, fig.width=10, fig.height=10}
+stanfit <- bvar_obj$fit$stan
+
+rstan::plot(stanfit, pars=c("mu[1,1]",
+                            "mu[1,2]",
+                            "mu[1,3]"), plotfun="hist")
+
+```
+
 We can forecast
 
 ```{r RW-2, fig.width=8, fig.height=6}
-forecast(bvar_obj, pi = 0.68, show_all = TRUE)
+forecast(bvar_obj, pi = 0.68)
 ```
 
 Let us plot the log volatility estimates and predictions

@@ -278,7 +278,7 @@ fit <- function(x, H = 1, d_pred = NULL, ...) {
   cat("Estimating Stan model:\n", model_name, sep = "")
   cat("\n\n")
   cat("Also generating draws from the joint predictive distribution\n\n")
-  cat("...")
+  cat("...\n")
   
   x$fit$stan <- rstan::sampling(stanmodels[[model_name]], data = stan_data, algorithm="NUTS", ...)
   cat("SAMPLING FINISHED")
