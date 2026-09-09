@@ -27,8 +27,9 @@ setup(
 
 - deterministic:
 
-  Character. The deterministic component to include. One of `"constant"`
-  (default), `"constant_and_dummy"`, or `"constant_and_trend"`.
+  Character. The deterministic components to include in \\d_t\\. One of
+  `"constant"` (default), `"constant_and_dummy"`, or
+  `"constant_and_trend"`.
 
 - dummy:
 

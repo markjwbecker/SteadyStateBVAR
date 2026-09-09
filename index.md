@@ -39,7 +39,7 @@ and iii) an AR(1) stochastic volatility model.
 
 ## Installation
 
-You can install SteadyStateBVAR with:
+You can install SteadyStateBVAR from CRAN with:
 
 ``` r
 
@@ -55,123 +55,26 @@ You can also install the development version of SteadyStateBVAR from
 pak::pak("markjwbecker/SteadyStateBVAR")
 ```
 
-## Introduction
+## Vignettes
 
-The steady-state BVAR(\\p\\) model (Villani, 2009) is
+For a general theoretical introduction to steady-state BVAR models run
 
-\\y_t = \Psi d_t + \Pi_1(y\_{t-1}-\Psi
-d\_{t-1})+\dots+\Pi_p(y\_{t-p}-\Psi d\_{t-p})+u_t\\
+``` r
 
-where \\y_t\\ is a \\k\\-dimensional vector of endogenous variables
-(time series) at time \\t\\, \\d_t\\ is a \\q\\-dimensional vector of
-deterministic (exogenous) variables at time \\t\\, and the
-(reduced-form) innovations are \\u_t \overset{\text{iid}}{\sim}
-\mathrm{N_k}(0,\Sigma_u)\\. Here \\\Pi\_\ell\\ for \\\ell=1,\dots,p\\ is
-a \\(k \times k)\\ autoregressive parameter matrix, and \\\Psi\\ is a
-\\(k \times q)\\ steady-state parameter matrix. Now
+vignette("SteadyStateBVAR-intro")
+```
 
-\\\mathrm{E}(y_t)=\mu_t=\Psi d_t\\
+For examples with real macroeconomic data, run
 
-is the unconditional mean, or the **steady state**, of the process.
-Since long-horizon forecasts from stationary VARs converge to the
-unconditional mean (steady state), it is naturally very important from a
-forecasting perspective to obtain precise inference on \\\Psi\\. Note
-that the current version of this package only allows for \\d_t\\ to
-contain either a constant, a constant and a dummy variable, or a
-constant and a time trend.
+``` r
 
-We may stack the (transposed) \\\Pi_i\\ matrices in the \\(kp \times
-k)\\ matrix \\\beta\\
+vignette("Homoscedastic-steady-state-BVAR")
+vignette("RW-stochastic-volatility-steady-state-BVAR")
+vignette("AR1-stochastic-volatility-steady-state-BVAR")
+```
 
-\\\beta= \begin{bmatrix} \Pi'\_1 \\ \vdots \\ \Pi'\_p \end{bmatrix}\\
-
-We can then rewrite the model as a nonlinear regression (Karlsson, 2013)
-
-\\y_t' =d_t'\Psi' + \left\[w_t'-q_t'(I_p \otimes \Psi') \right\]\beta
-+u_t'\\
-
-where \\w_t'=(y\_{t-1}',\dots,y\_{t-p}')\\ is a \\kp\\-dimensional
-vector of lagged endogenous variables and
-\\q_t'=(d\_{t-1}',\dots,d\_{t-p}')\\ is a \\qp\\-dimensional vector of
-lagged deterministic (exogenous) variables, \\I_p\\ is the \\(p \times
-p)\\ identity matrix and \\\otimes\\ denotes the Kronecker product. This
-is how the likelihood is written in the Stan code. The goal is to
-estimate \\\beta, \Psi\\, and \\\Sigma_u\\, and as such priors are
-needed. Following Villani (2009), prior independence between \\\beta,
-\Psi\\ and \\\Sigma_u\\ is assumed. For \\\beta\\, the Minnesota prior
-is used
-
-\\\mathrm{vec}(\beta) \sim \mathrm{N}\_{kpk}
-(\theta\_\beta,\Omega\_\beta)\\
-
-The prior means (the elements of \\\theta\_\beta\\) are set to
-
-\\\begin{aligned} \mathrm{E}\left(\Pi\_{\ell}^{(i,j)}\right)&=
-\begin{cases} \kappa & \text{if } \ell = 1 \\ \text{and} \\ i = j \\ 0 &
-\text{otherwise} \end{cases}\\ \kappa&= \begin{cases} \kappa^{level} &
-\text{if} \\ \text{variable} \\ i \\ \text{is in level} \\
-\kappa^{\Delta} & \text{if} \\ \text{variable} \\ i \\ \text{is in
-difference} \end{cases}\\ \end{aligned}\\
-
-Here, the autoregressive coefficient \\\Pi\_{\ell}^{(i,j)}\\ is element
-\\\left(i,j\right)\\ of \\\Pi\_{\ell}\\ for \\\ell=1,\dots,p\\. As such,
-the Minnesota prior sets all prior means for the elements in \\\beta\\
-to \\0\\, except for the elements that relate to the first own lags of
-the variables, which are set to \\\kappa\\. If variable \\i\\ is in
-level (e.g. nominal interest rate), then \\\kappa=\kappa^{level}\\, and
-typical choices for \\\kappa^{level}\\ are \\1\\ or \\0.9\\. Evaluating
-the equations at their prior means, equation \\i\\ becomes a random walk
-if \\\kappa^{level}=1\\ and a persistent stationary AR(1) process if
-\\\kappa^{level}=0.9\\. Since the steady state only exists if the
-process is stationary, \\0.9\\ is recommended for the steady-state BVAR.
-If variable \\i\\ is in difference (e.g. output growth), then
-\\\kappa=\kappa^{\Delta}\\, and the most common choice for
-\\\kappa^{\Delta}\\ is \\0\\, i.e. equation \\i\\ becomes (when
-evaluating it at its prior means) a random walk expressed in first
-differences. If a differenced variable still shows some degree of
-persistence (can be examined with an ACF plot), a suitable value for
-\\\kappa^{\Delta}\\ can be (for example) \\0.6\\ instead of \\0\\.
-Moving on to the prior variances, \\\Omega\_\beta\\ is a diagonal matrix
-containing the prior variances for the elements in \\\beta\\. They are
-specified as
-
-\\\mathrm{Var}\left(\Pi\_{\ell}^{(i,j)}\right)= \begin{cases}
-\left(\frac{\lambda_1}{\ell^{\lambda_3}}\right)^2 & \text{if } i = j \\
-\left(\frac{\lambda_1
-\lambda_2\sigma_i}{\ell^{\lambda_3}\sigma_j}\right)^2& \text{if } i \neq
-j \end{cases}\\
-
-Here \\\lambda_1\\, \\\lambda_2\\, and \\\lambda_3\\ are scalar
-hyperparameters known as the overall tightness, the cross-equation
-tightness and the lag decay rate. Furthermore, \\\sigma_i^2\\ is the
-\\(i,i)\\:th element of \\\Sigma_u\\, which we do not know and therefore
-replace with an estimate. In this package, it is replaced by the least
-squares residual variance from a univariate autoregression for variable
-\\i\\ with \\p\\ lags (including the constant and dummy/trend variable
-if applicable). Moving on to \\\Psi\\, which contains the steady-state
-parameters, the prior is
-
-\\\mathrm{vec}(\Psi) \sim \mathrm{N}\_{kq}(\theta\_\Psi,\Omega\_\Psi)\\
-
-This is the core of the steady-state BVAR model. In \\\theta\_\Psi\\, we
-specify our prior beliefs about the location of the steady state, and in
-\\\Omega\_\Psi\\, which we assume to be a diagonal matrix, we specify
-our degree of certainty in those prior beliefs. Finally, the prior for
-\\\Sigma_u\\ is the usual non-informative Jeffreys prior
-
-\\p(\Sigma_u) \propto\left\|\Sigma_u \right\|^{-(k+1)/2}\\
-
-Alternatively, a proper inverse-Wishart prior can be used (Karlsson,
-2013)
-
-\\\Sigma_u \sim \mathrm{IW}(V,m)\\
-
-where \\V\\ is the scale matrix and \\m\\ is the number of degrees of
-freedom. As mentioned, this package also allows for stochastic
-volatility (Random Walk or AR(1) specifications), where the covariance
-matrix varies over time, i.e. we have \\\Sigma\_{u,t}\\ (see
-[`?bvar`](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
-for more details).
+Note that `Homoscedastic-steady-state-BVAR` shows a replication of the
+empirical example in Section 4.1 of Villani (2009).
 
 ## Example
 
@@ -193,8 +96,8 @@ bvar_obj <- bvar(data = yt)
 
 #Use a dummy to model Sweden’s change in monetary policy in the 1990s
 #(move to inflation targeting and flexible exchange rate)
-bp <- which(time(yt) == 1992.75) #breakpoint
-dummy_variable <- c(rep(1,bp), rep(0,nrow(yt)-bp))
+breakpoint <- which(time(yt) == 1992.75)
+dummy_variable <- c(rep(1,breakpoint), rep(0,nrow(yt)-breakpoint))
 
 bvar_obj <- setup(bvar_obj,
                   p=4,
@@ -213,7 +116,7 @@ fol_pm=c(0,   #delta y_f
          0,   #pi
          0.9, #i
          0.9  #q
-         )
+)
 
 #95% prior probability intervals (normal distribution)
 #See Table I in Villani (2009)
@@ -223,40 +126,40 @@ fol_pm=c(0,   #delta y_f
 
 theta_Psi <- 
   c(
-  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: pi_f
-  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_1: delta y
-  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$mean,   #psi_1: pi
-  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$mean,  #psi_1: i
-  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$mean,  #psi_1: q
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$mean,   #psi_2: pi_f
-  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$mean,   #psi_2: delta y
-  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$mean,   #psi_2: pi
-  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$mean,  #psi_2: i
-  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$mean   #psi_2: q
+    ppi( 2.00,  3.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: delta y_f
+    ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: pi_f
+    ppi( 4.50,  5.50, interval = 0.95                                    )$mean,   #psi_1: i_f
+    ppi( 2.00,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: delta y
+    ppi( 1.70,  2.30, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_1: pi
+    ppi( 4.00,  4.50, interval = 0.95                                    )$mean,   #psi_1: i
+    ppi( 3.85,  4.00, interval = 0.95                                    )$mean,   #psi_1: q
+    ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: delta y_f
+    ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: pi_f
+    ppi( 1.50,  2.50, interval = 0.95                                    )$mean,   #psi_2: i_f
+    ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: delta y
+    ppi( 4.30,  5.70, interval = 0.95, annualized_growthrate=TRUE, freq=4)$mean,   #psi_2: pi
+    ppi( 3.00,  5.50, interval = 0.95                                    )$mean,   #psi_2: i
+    ppi(-0.50,  0.50, interval = 0.95                                    )$mean    #psi_2: q
   )
 
 Omega_Psi <- 
   diag(
-  c(
-  ppi( 2.00,  3.00,  annualized_growthrate=TRUE)$var,    #psi_1: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: pi_f
-  ppi( 4.50,  5.50,  annualized_growthrate=FALSE)$var,   #psi_1: i_f
-  ppi( 2.00,  2.50,  annualized_growthrate=TRUE)$var,    #psi_1: delta y
-  ppi( 1.70,  2.30,  annualized_growthrate=TRUE)$var,    #psi_1: pi
-  ppi( 4.00,  4.50,  annualized_growthrate=FALSE)$var,   #psi_1: i
-  ppi( 3.85,  4.00,  annualized_growthrate=FALSE)$var,   #psi_1: q
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y_f
-  ppi( 1.50,  2.50,  annualized_growthrate=TRUE)$var,    #psi_2: pi_f
-  ppi( 1.50,  2.50,  annualized_growthrate=FALSE)$var,   #psi_2: i_f
-  ppi(-1.00,  1.00,  annualized_growthrate=TRUE)$var,    #psi_2: delta y
-  ppi( 4.30,  5.70,  annualized_growthrate=TRUE)$var,    #psi_2: pi
-  ppi( 3.00,  5.50,  annualized_growthrate=FALSE)$var,   #psi_2: i
-  ppi(-0.50,  0.50,  annualized_growthrate=FALSE)$var    #psi_2: q
-  )
+    c(
+      ppi( 2.00,  3.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: delta y_f
+      ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: pi_f
+      ppi( 4.50,  5.50, interval = 0.95                                    )$var,    #psi_1: i_f
+      ppi( 2.00,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: delta y
+      ppi( 1.70,  2.30, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_1: pi
+      ppi( 4.00,  4.50, interval = 0.95                                    )$var,    #psi_1: i
+      ppi( 3.85,  4.00, interval = 0.95                                    )$var,    #psi_1: q
+      ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: delta y_f
+      ppi( 1.50,  2.50, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: pi_f
+      ppi( 1.50,  2.50, interval = 0.95                                    )$var,    #psi_2: i_f
+      ppi(-1.00,  1.00, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: delta y
+      ppi( 4.30,  5.70, interval = 0.95, annualized_growthrate=TRUE, freq=4)$var,    #psi_2: pi
+      ppi( 3.00,  5.50, interval = 0.95                                    )$var,    #psi_2: i
+      ppi(-0.50,  0.50, interval = 0.95                                    )$var     #psi_2: q
+    )
   )
 
 bvar_obj <- priors(bvar_obj,
@@ -279,65 +182,75 @@ for(i in 1:p){
   cols <- 1:kf
   restriction_matrix[rows, cols] <- 0
 }
-print(restriction_matrix)
-#block exogeneity for foreign variables
+
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
-
-H <- 12 #forecast horizon
-(d_pred <- cbind(rep(1, 12), 0)) #future d_t values
-
 
 #fit the model
 bvar_obj <- fit(bvar_obj,
-                H = H,
-                d_pred = d_pred,
-                iter = 10000,
-                warmup = 2500,
-                chains = 2,
-                cores = 2)
+                H = 12, #forecast horizon
+                iter = 3000,
+                warmup = 1000,
+                chains = 4,
+                cores = 4)
 
-#posterior summaries
+#elementwise posterior summaries ("mean" or "median")
 summary(bvar_obj , stat = "mean")
 
 #you can look at the stanfit object directly
 stan_fit <- bvar_obj$fit$stan
 print(stan_fit)
 
+#plot histogram of the posterior steady-state of inflation mu_t,i at t=102 (last observation)
+#we have effective sample size N=T-p, that is why the index is 98
+
+rstan::plot(stan_fit,
+            pars=c("mu[98,5]"),
+            plotfun="hist")
+
+#note that inflation (pi) is specified as 100*diff(log(pi)) growth in the model, so for annualized steady-state
+posterior <- rstan::extract(stan_fit)
+hist(posterior$mu[,98,5]*4, breaks=30, col="darkred")
+abline(v=mean(posterior$mu[,98,5]*4), col="green")
+
 #unconditional forecasts
 #see last forecasts in Figures 1-3 in Villani (2009)
 fcst <- forecast(bvar_obj,
-                 pi = 0.68, #pi = prediction interval
-                 fcst_type = "mean",
+                 pi = 0.95, #pi = prediction interval
+                 fcst_type = "mean", #mean as point forecast
                  growth_rate_idx = c(4,5), #convert QoQ forecasts to YoY
-                 plot_idx = c(4,5,6))
+                 plot_idx = c(4,5,6),
+                 ss = TRUE, #plot posterior steady-state
+                 ss_type = "mean", #mean as point estimate for posterior steady-state
+                 ss_ci = 0.99 #99% credible interval for steady-state
+)
 
 #conditional forecasts
 #Toy scenario: inflation gets really high
 #What will happen to domestic interest rate?
 conditions <- data.frame(
-              var        = rep(5,12),
-              horizon    = rep(1:12),
-              value      = c(1.0,1.5,2.0,1.8,
-                             1.5,1.2,1.0,1.0,
-                             rep(0.5,4)) #QoQ scale for inflation here
-              )
-              
+  var        = rep(5,12),
+  horizon    = rep(1:12),
+  value      = c(1.0,1.5,2.0,1.8,
+                 1.5,1.2,1.0,1.0,
+                 rep(0.5,4)) #QoQ scale for inflation here
+)
+
 cond_fcst <- conditional_forecast(bvar_obj,
-                    conditions,
-                    pi=0.68,
-                    fcst_type = "mean",
-                    plot_idx = c(5,6),
-                    growth_rate_idx = c(5)) #convert QoQ forecasts to YoY
+                                  conditions,
+                                  pi=0.95,
+                                  fcst_type = "mean",
+                                  plot_idx = c(5,6),
+                                  growth_rate_idx = c(5)) #convert QoQ forecasts to YoY
 
 #impulse response analysis
 irf <- IRF(bvar_obj,
            H=20,
-           response=5,#inflation
-           shock=6, #interest rate
+           response=c(4,5), #gdp growth, inflation
+           impulse=c(6), #interest rate
            type="median",
            method="OIRF",
-           ci=0.68,
-           growth_rate_idx=5) #YoY inflation instead of QoQ
+           ci=0.95,
+           growth_rate_idx=c(4,5)) #YoY inflation instead of QoQ
 ```
 
 ## References

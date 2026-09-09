@@ -31,6 +31,7 @@ and fit to build and estimate the model."></head><body>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/AR1-stochastic-volatility-steady-state-BVAR.html">AR(1) stochastic volatility steady-state BVAR</a></li>
     <li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
     <li><a class="dropdown-item" href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">Random Walk stochastic volatility steady-state BVAR (Clark, 2011)</a></li>
+    <li><a class="dropdown-item" href="../articles/SteadyStateBVAR-intro.html">Steady-state BVAR models</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -71,11 +72,13 @@ variable and each row is a time period.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An object of class <code>bvar</code>.</p>
+    <p>A steady-state <code>bvar</code> object.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The model takes the form</p>
+    <p>For a detailed theoretical introduction to the steady-state BVAR model, run the following</p>
+<p><code><a href="../articles/SteadyStateBVAR-intro.html">vignette("SteadyStateBVAR-intro")</a></code></p>
+<p>The steady-state BVAR model takes the form</p>
 <p>$$y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t$$</p>
 <p>where \(y_t\) is an \(k\)-dimensional vector of endogenous variables at time \(t\), and \(d_t\) is
 a \(q\)-dimensional vector of deterministic (exogenous) variables at time \(t\).
@@ -85,16 +88,17 @@ and \(\Psi\) is a \((k \times q)\) matrix of steady-state parameters. Now</p>
 <p>is the unconditional mean, or the <strong>steady state</strong> of the process.
 Note that the current version of this package only allows for \(d_t\) to contain either a constant,
 a constant and a dummy variable, or a constant and a time trend.
-One can stack the (transposed) \(\Pi_i\) matrices in the \((kp \times k)\) matrix \(\beta\)
+We may stack the (transposed) \(\Pi_i\) matrices in the \((kp \times k)\) matrix \(\beta\)
 $$\beta=\begin{bmatrix}\Pi'_1 \\ \vdots  \\\Pi'_p\end{bmatrix}$$
 Then the model can be rewritten as a nonlinear regression (Karlsson, 2013)
 $$y_t' =d_t'\Psi' + \left[w_t'-q_t'(I_p \otimes \Psi') \right]\beta +u_t'$$
-where where \(w_t'=(y_{t-1}',\dots,y_{t-p}')\) is a \(kp\)-dimensional vector of lagged endogenous variables
+where \(w_t'=(y_{t-1}',\dots,y_{t-p}')\) is a \(kp\)-dimensional vector of lagged endogenous variables
 and \(q_t'=(d_{t-1}',\dots,d_{t-p}')\) is a \(qp\)-dimensional vector of lagged deterministic (exogenous) variables,
 \(I_p\) is the \((p \times p)\) identity matrix and \(\otimes\) denotes the Kronecker product.
-This is how the likelihood is written in the Stan code. The goal is to estimate \(\beta, \Psi\), and \(\Sigma_u\).</p>
-<p>For the innovations to the model, in the case of the homoscedastic steady-state BVAR, they are \(u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)\).
-However, for models with stochastic volatility, there is instead a time-varying covariance matrix \(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\).
+The goal is to estimate the parameters \(\Theta = \begin{bmatrix} \beta &amp; \Psi &amp; \Sigma_u \end{bmatrix}\), and as such priors are needed.
+Please see <a href="priors.html">priors</a> for more details.</p>
+<p>For the innovations to the model, in the case of the homoscedastic (the original) steady-state BVAR, they are \(u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)\).
+However, with stochastic volatility, there is instead a time-varying covariance matrix \(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\).
 The innovations then take the form</p>
 <p>$$\begin{aligned} u_t &amp;= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \epsilon_t &amp;\overset{\text{iid}}{\sim} \mathrm{N}(0, \mathrm{I}_k)\end{aligned}$$</p>
@@ -105,12 +109,12 @@ the contemporaneous interaction of the endogenous variables, and</p>
 For the <code>AR1</code> stochastic volatility specification, the log volatilities follow AR(1) processes</p>
 <p>$$\ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k$$</p>
 <p>where the log volatility AR(1) processes are restricted to the stationary region, i.e. \(|\gamma_{1,i}|&lt;1 \ \forall i\).
-For the <code>RW</code> stochastic volatility specification, the log volatilities follow Random Walk processes</p>
+For the <code>RW</code> stochastic volatility specification, the log volatilities follow (driftless) Random Walk processes</p>
 <p>$$\gamma_{0,i}=0, \ \gamma_{1,i}=1 \ \forall i$$</p>
-<p>The innovations to the log volatilities follow in the <code>AR1</code> case</p>
+<p>The innovations to the log volatilities follow in the AR(1) case</p>
 <p>$$\nu_{t} = (\nu_{1,t},\dots,\nu_{k,t})'\overset{\text{iid}}{\sim} \mathrm{N}(0, \Phi)$$</p>
 <p>where \(\Phi\) <em>is not diagonal</em> and as such the innovations to the log
-volatilities are allowed to be correlated across variables. For the <code>RW</code> case, \(\Phi\) <em>is diagonal</em>
+volatilities are allowed to be correlated across variables. For the Random Walk case, \(\Phi\) <em>is diagonal</em>
 with variances \(\phi_i\) for \(i=1,\dots,k\).</p>
 <p>Note that under both stochastic volatility specifications, the time-varying covariance matrix is</p>
 <p>$$\Sigma_{u,t} = A^{-1} \Lambda_t (A^{-1})'$$</p>
@@ -118,7 +122,11 @@ with variances \(\phi_i\) for \(i=1,\dots,k\).</p>
 For details on the Random Walk stochastic volatility steady-state BVAR model, see Clark (2011).
 See Carriero, Clark, and Marcellino (2024) for the above-mentioned AR(1) stochastic volatility
 specification applied to a conventional BVAR.</p>
-    </div>
+<p>To see examples for each type of steady-state BVAR model, simply run one of the following</p>
+<ul><li><p><code><a href="../articles/Homoscedastic-steady-state-BVAR.html">vignette("Homoscedastic-steady-state-BVAR")</a></code></p></li>
+<li><p><code><a href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">vignette("RW-stochastic-volatility-steady-state-BVAR")</a></code></p></li>
+<li><p><code><a href="../articles/AR1-stochastic-volatility-steady-state-BVAR.html">vignette("AR1-stochastic-volatility-steady-state-BVAR")</a></code></p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Carriero, A., Clark, T. E., and Marcellino, M. (2024).

@@ -1,8 +1,8 @@
-# Summarise a fitted steady-state BVAR model
+# Summarize a fitted steady-state BVAR model
 
-Computes and prints posterior summaries from a fitted steady-state
-`bvar` object. The printed output depends on whether the model is
-homoscedastic or includes stochastic volatility (RW or AR1
+Computes and prints elementwise posterior summaries from a fitted
+steady-state `bvar` object. The printed output depends on whether the
+model is homoscedastic or includes stochastic volatility (RW or AR1
 specification).
 
 ## Usage
@@ -44,7 +44,8 @@ Returns the input object invisibly.
 
 ## Details
 
-The function summarises the following estimated parameters:
+The function summarizes, by calculating elementwise posterior
+means/medians, the following estimated parameter matrices/vectors:
 
 - `beta`: \\kp \times k\\ VAR coefficient matrix
 
@@ -87,16 +88,29 @@ bvar_obj <- priors(bvar_obj,
 
 bvar_obj <- fit(bvar_obj,
                 H = 1,
-                d_pred = matrix(1),
                 iter = 100,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
+#> ------------------------------------------------------------
+#> Forecast horizon:
+#> 1
+#> 
+#> Future deterministic variables (d_pred):
+#>     constant
+#> h=1        1
+#> ------------------------------------------------------------
+#> Estimating Stan model:
+#> steady_state_bvar_homoscedastic_jeffreys_prior
+#> 
+#> Also generating draws from the joint predictive distribution
+#> 
+#> ...
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 4.6e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.46 seconds.
+#> Chain 1: Gradient evaluation took 4.7e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.47 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -121,11 +135,11 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 90 / 100 [ 90%]  (Sampling)
 #> Chain 1: Iteration: 100 / 100 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.017 seconds (Warm-up)
-#> Chain 1:                0.015 seconds (Sampling)
-#> Chain 1:                0.032 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.006 seconds (Warm-up)
+#> Chain 1:                0.005 seconds (Sampling)
+#> Chain 1:                0.011 seconds (Total)
 #> Chain 1: 
-#> Warning: The largest R-hat is 1.22, indicating chains have not mixed.
+#> Warning: The largest R-hat is NA, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#r-hat
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -134,6 +148,7 @@ bvar_obj <- fit(bvar_obj,
 #> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#tail-ess
+#> SAMPLING FINISHED
 
 summary(bvar_obj)
 #> Posterior mean estimates
@@ -143,24 +158,24 @@ summary(bvar_obj)
 #> beta
 #> --------------------------------------------------------------------------------         
 #>           Var1  Var2
-#>   Var1.l1 0.01 -0.01
-#>   Var2.l1 0.03  0.05
+#>   Var1.l1 0.04 -0.01
+#>   Var2.l1 0.04 -0.08
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Psi
 #> --------------------------------------------------------------------------------      
 #>        [,1]
-#>   Var1 0.03
-#>   Var2 0.00
+#>   Var1 0.14
+#>   Var2 0.26
 #> --------------------------------------------------------------------------------
 #> 
 #> 
 #> Sigma_u
 #> --------------------------------------------------------------------------------      
-#>        Var1 Var2
-#>   Var1 3.59 0.09
-#>   Var2 0.09 1.32
+#>         Var1  Var2
+#>   Var1  2.39 -0.67
+#>   Var2 -0.67  1.22
 #> --------------------------------------------------------------------------------
 #> 
 # }

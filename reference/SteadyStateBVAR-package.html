@@ -29,6 +29,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/AR1-stochastic-volatility-steady-state-BVAR.html">AR(1) stochastic volatility steady-state BVAR</a></li>
     <li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
     <li><a class="dropdown-item" href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">Random Walk stochastic volatility steady-state BVAR (Clark, 2011)</a></li>
+    <li><a class="dropdown-item" href="../articles/SteadyStateBVAR-intro.html">Steady-state BVAR models</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -53,6 +54,33 @@
     </div>
 
 
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>The steady-state BVAR model takes the form</p>
+<p>$$y_t = \Psi d_t + \Pi_1(y_{t-1}-\Psi d_{t-1})+\dots+\Pi_p(y_{t-p}-\Psi d_{t-p})+u_t$$</p>
+<p>where \(y_t\) is an \(k\)-dimensional vector of endogenous variables at time \(t\), and \(d_t\) is
+a \(q\)-dimensional vector of deterministic (exogenous) variables at time \(t\).
+Here \(\Pi_\ell\) for \(\ell=1,\dots,p\) is a \((k \times k)\) matrix of autoregressive parameters,
+and \(\Psi\) is a \((k \times q)\) matrix of steady-state parameters. Now</p>
+<p>$$\mathrm{E}(y_t)=\mu_t=\Psi d_t$$</p>
+<p>is the unconditional mean, or the <strong>steady state</strong> of the process.</p>
+<p>For the autoregressive parameters, the Minnesota prior is used. For the steady-state parameters,
+a normal prior is used (which is hopefully informative, at least for some of the parameters, otherwise there is no point in using this model)</p>
+<p>The package currently supports three specifications for the (reduced-form) innovations \(u_t\)</p>
+<ol><li><p>\(u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)\)</p></li>
+<li><p>\(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\), where \(\Sigma_{u,t}\) is driven by a latent Random Walk process (stochastic volatility)</p></li>
+<li><p>\(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\), where \(\Sigma_{u,t}\) is driven by a latent AR(1) process (stochastic volatility)</p></li>
+</ol><p>For more information, please see the package vignettes</p>
+<ol><li><p><code>vignette("steady-state-BVAR-intro")</code></p></li>
+<li><p><code><a href="../articles/Homoscedastic-steady-state-BVAR.html">vignette("Homoscedastic-steady-state-BVAR")</a></code></p></li>
+<li><p><code><a href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">vignette("RW-stochastic-volatility-steady-state-BVAR")</a></code></p></li>
+<li><p><code><a href="../articles/AR1-stochastic-volatility-steady-state-BVAR.html">vignette("AR1-stochastic-volatility-steady-state-BVAR")</a></code></p></li>
+</ol></div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>Villani, M. (2009). Steady-state priors for vector autoregressions.
+<em>Journal of Applied Econometrics</em>, 24(4), pp. 630–650.</p>
+    </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Useful links:</p><ul><li><p><a href="https://github.com/markjwbecker/SteadyStateBVAR" class="external-link">https://github.com/markjwbecker/SteadyStateBVAR</a></p></li>

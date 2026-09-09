@@ -31,6 +31,7 @@ horizon for a fitted steady-state bvar object with stochastic volatility."></hea
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/AR1-stochastic-volatility-steady-state-BVAR.html">AR(1) stochastic volatility steady-state BVAR</a></li>
     <li><a class="dropdown-item" href="../articles/Homoscedastic-steady-state-BVAR.html">Homoscedastic steady-state BVAR (Villani, 2009)</a></li>
     <li><a class="dropdown-item" href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">Random Walk stochastic volatility steady-state BVAR (Clark, 2011)</a></li>
+    <li><a class="dropdown-item" href="../articles/SteadyStateBVAR-intro.html">Steady-state BVAR models</a></li>
   </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
@@ -119,8 +120,8 @@ horizon for a fitted steady-state <code>bvar</code> object with stochastic volat
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function supports two volatility representations:</p><ul><li><p><code>"log_lambda"</code>: log variances</p></li>
-<li><p><code>"sd"</code>: implied standard deviations</p></li>
+    <p>The function supports two volatility representations:</p><ul><li><p><code>"log_lambda"</code>: log volatilities</p></li>
+<li><p><code>"sd"</code>: implied standard deviations of the reduced-form innovations \(u_{t}\)</p></li>
 </ul><p>For each selected variable, the function plots the posterior point estimate
 path and credible bands over the estimation sample, and the predictive point
 estimate path and prediction intervals over the forecast horizon.</p>
@@ -138,13 +139,13 @@ estimate path and prediction intervals over the forecast horizon.</p>
 <span class="r-in"><span><span class="va">k</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">k</span></span></span>
 <span class="r-in"><span><span class="va">n_free_params_A</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">n_free_params_A</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">SV_priors</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>theta_A             <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">n_free_params_A</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>Omega_A             <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">n_free_params_A</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>mu_log_lambda_1     <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>sigma2_log_lambda_1 <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>alpha_phi           <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>beta_phi            <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">k</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">SV_priors_RW</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>theta_A              <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">n_free_params_A</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>Omega_A              <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">n_free_params_A</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>theta_log_lambda_1   <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>Omega_log_lambda_1   <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">1000</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>alpha_phi            <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>beta_phi             <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">5</span>, <span class="va">k</span><span class="op">)</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">k</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="priors.html">priors</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>
@@ -152,21 +153,41 @@ estimate path and prediction intervals over the forecast horizon.</p>
 <span class="r-in"><span>                   Omega_Psi <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">2</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                   SV <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                   SV_type <span class="op">=</span> <span class="st">"RW"</span>,</span></span>
-<span class="r-in"><span>                   SV_priors <span class="op">=</span> <span class="va">SV_priors</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   SV_priors <span class="op">=</span> <span class="va">SV_priors_RW</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span></span>
 <span class="r-in"><span>                H <span class="op">=</span> <span class="fl">8</span>,</span></span>
-<span class="r-in"><span>                d_pred <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">8</span><span class="op">)</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                iter <span class="op">=</span> <span class="fl">200</span>,</span></span>
 <span class="r-in"><span>                warmup <span class="op">=</span> <span class="fl">50</span>,</span></span>
 <span class="r-in"><span>                chains <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                cores <span class="op">=</span> <span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Forecast horizon:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Future deterministic variables (d_pred):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     constant</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> h=1        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> h=2        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> h=3        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> h=4        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> h=5        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> h=6        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> h=7        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> h=8        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ------------------------------------------------------------</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Estimating Stan model:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> steady_state_bvar_RW_stochastic_volatility</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Also generating draws from the joint predictive distribution</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Gradient evaluation took 0.000105 seconds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 1.05 seconds.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Gradient evaluation took 7.9e-05 seconds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.79 seconds.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Adjust your expectations accordingly!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
@@ -191,12 +212,10 @@ estimate path and prediction intervals over the forecast horizon.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:  Elapsed Time: 0.033 seconds (Warm-up)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                1.86 seconds (Sampling)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                1.893 seconds (Total)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:  Elapsed Time: 0.008 seconds (Warm-up)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.158 seconds (Sampling)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1:                0.166 seconds (Total)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Chain 1: </span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There were 1 transitions after warmup that exceeded the maximum treedepth. Increase max_treedepth above 10. See</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> https://mc-stan.org/misc/warnings.html#maximum-treedepth-exceeded</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> https://mc-stan.org/misc/warnings.html#bfmi-low</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Examine the pairs() plot to diagnose sampling problems</span>
@@ -209,6 +228,7 @@ estimate path and prediction intervals over the forecast horizon.</p>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> Running the chains for more iterations may help. See</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> https://mc-stan.org/misc/warnings.html#tail-ess</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> SAMPLING FINISHED</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">stochastic_volatility_plot</span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="stochastic_volatility_plot-1.png" alt="" width="700" height="433"></span>

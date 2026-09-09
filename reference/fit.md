@@ -27,17 +27,20 @@ fit(x, H = 1, d_pred = NULL, ...)
 - d_pred:
 
   Matrix of size \\H \times q\\. Future values of the deterministic
-  variables \\d_t\\. Default is `NULL`, must be provided by the user.
+  variables \\d_t\\. Default is `NULL` (`d_pred` is automatically
+  created). If \\d_t\\ contains only a constant, \\d\_{t+h}=1 \\ \forall
+  \\ h\\. If \\d_t\\ contains a constant and a dummy, it is assumed that
+  the dummy (and the constant) stays at its last observed value for all
+  future forecast periods. However, if this is not the intention, the
+  user may supply `d_pred` themselves. If \\d_t\\ contains a constant
+  and a trend, the trend is extrapolated from its last observed value
+  (i.e. \\trend\_{T+h}=trend\_{T}+h\\). Naturally, the constant is again
+  equal to one for all future periods.
 
 - ...:
 
   Additional arguments passed directly to the `rstan` function
   [`sampling`](https://mc-stan.org/rstan/reference/stanmodel-method-sampling.html)
-  (e.g. `iter`, `warmup`, `chains`, `cores`, `control`, `seed`, `init`,
-  `thin`, `algorithm`, `pars`, `include`, `refresh`, `verbose`,
-  `save_warmup`, `sample_file`, `diagnostic_file`). If `pars`/`include`
-  is used to exclude model parameters required by `fit()` for posterior
-  summaries, an error will be raised.
 
 ## Value
 
@@ -45,9 +48,10 @@ A fitted steady-state `bvar` object with:
 
 - `x$fit$stan`: An object of class `stanfit`
 
-- `x$fit$posterior_means`: List of posterior mean estimates
+- `x$fit$posterior_means`: List of elementwise posterior mean estimates
 
-- `x$fit$posterior_medians`: List of posterior median estimates
+- `x$fit$posterior_medians`: List of elementwise posterior median
+  estimates
 
 ## Details
 
@@ -63,7 +67,7 @@ settings from
 
 - `steady_state_bvar_AR1_stochastic_volatility`
 
-The function estimates the following parameters (see
+The function estimates the following parameter matrices/vectors (see
 [bvar](https://markjwbecker.github.io/SteadyStateBVAR/reference/bvar.md)
 for details):
 
@@ -116,33 +120,39 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi = diag(0.1, 2, 2),
                    Jeffreys = TRUE)
                    
-H <- 8
-d_pred <- matrix(rep(1,8))
-colnames(d_pred) <- c("constant")
-rownames(d_pred) <- paste("Horizon", 1:H)
-print(d_pred)
-#>           constant
-#> Horizon 1        1
-#> Horizon 2        1
-#> Horizon 3        1
-#> Horizon 4        1
-#> Horizon 5        1
-#> Horizon 6        1
-#> Horizon 7        1
-#> Horizon 8        1
 
 bvar_obj <- fit(bvar_obj,
-                H = H,
-                d_pred = d_pred,
+                H = 8,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
+#> ------------------------------------------------------------
+#> Forecast horizon:
+#> 8
+#> 
+#> Future deterministic variables (d_pred):
+#>     constant
+#> h=1        1
+#> h=2        1
+#> h=3        1
+#> h=4        1
+#> h=5        1
+#> h=6        1
+#> h=7        1
+#> h=8        1
+#> ------------------------------------------------------------
+#> Estimating Stan model:
+#> steady_state_bvar_homoscedastic_jeffreys_prior
+#> 
+#> Also generating draws from the joint predictive distribution
+#> 
+#> ...
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_jeffreys_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6.4e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.64 seconds.
+#> Chain 1: Gradient evaluation took 4.6e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.46 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -167,11 +177,11 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.024 seconds (Warm-up)
-#> Chain 1:                0.061 seconds (Sampling)
-#> Chain 1:                0.085 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.008 seconds (Warm-up)
+#> Chain 1:                0.021 seconds (Sampling)
+#> Chain 1:                0.029 seconds (Total)
 #> Chain 1: 
-#> Warning: The largest R-hat is 1.05, indicating chains have not mixed.
+#> Warning: The largest R-hat is NA, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#r-hat
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
@@ -180,6 +190,7 @@ bvar_obj <- fit(bvar_obj,
 #> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#tail-ess
+#> SAMPLING FINISHED
                 
                 
 #homoscedastic with inverse-Wishart prior, d_t = constant and dummy
@@ -206,33 +217,41 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi = diag(0.1, k*q, k*q),
                    Jeffreys = FALSE) #inverse-Wishart
 
-H <- 8
-d_pred <- cbind(rep(1, H), rep(0, H))
-colnames(d_pred) <- c("constant", "dummy")
-rownames(d_pred) <- paste("Horizon", 1:H)
-print(d_pred)
-#>           constant dummy
-#> Horizon 1        1     0
-#> Horizon 2        1     0
-#> Horizon 3        1     0
-#> Horizon 4        1     0
-#> Horizon 5        1     0
-#> Horizon 6        1     0
-#> Horizon 7        1     0
-#> Horizon 8        1     0
 
 bvar_obj <- fit(bvar_obj,
-                H = H,
-                d_pred = d_pred,
+                H = 8,
                 iter = 200,
                 warmup = 50,
                 chains = 1,
                 cores = 1)
+#> NOTE: d_pred not supplied
+#> it is assumed that the dummy stays at its last observed value (0) for all 8 forecast periods.
+#> ------------------------------------------------------------
+#> Forecast horizon:
+#> 8
+#> 
+#> Future deterministic variables (d_pred):
+#>     constant dummy
+#> h=1        1     0
+#> h=2        1     0
+#> h=3        1     0
+#> h=4        1     0
+#> h=5        1     0
+#> h=6        1     0
+#> h=7        1     0
+#> h=8        1     0
+#> ------------------------------------------------------------
+#> Estimating Stan model:
+#> steady_state_bvar_homoscedastic_inverse_wishart_prior
+#> 
+#> Also generating draws from the joint predictive distribution
+#> 
+#> ...
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_homoscedastic_inverse_wishart_prior' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 4.5e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.45 seconds.
+#> Chain 1: Gradient evaluation took 4.3e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.43 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -257,9 +276,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.021 seconds (Warm-up)
-#> Chain 1:                0.047 seconds (Sampling)
-#> Chain 1:                0.068 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.008 seconds (Warm-up)
+#> Chain 1:                0.016 seconds (Sampling)
+#> Chain 1:                0.024 seconds (Total)
 #> Chain 1: 
 #> Warning: Bulk Effective Samples Size (ESS) is too low, indicating posterior means and medians may be unreliable.
 #> Running the chains for more iterations may help. See
@@ -267,6 +286,7 @@ bvar_obj <- fit(bvar_obj,
 #> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#tail-ess
+#> SAMPLING FINISHED
  
 
 #RW stochastic volatility
@@ -283,8 +303,8 @@ n_free_params_A <- bvar_obj$setup$n_free_params_A
 SV_priors_RW <- list(
 theta_A              =  rep(0, n_free_params_A),
 Omega_A              =  diag(1000, n_free_params_A),
-mu_log_lambda_1      =  rep(0, k),
-sigma2_log_lambda_1  =  rep(1000, k),
+theta_log_lambda_1   =  rep(0, k),
+Omega_log_lambda_1   =  diag(1000, k),
 alpha_phi            =  rep(5, k),
 beta_phi             = (rep(5, k) - 1) * rep(0.1, k)
 )
@@ -302,18 +322,38 @@ bvar_obj <- priors(bvar_obj,
 
 bvar_obj <- fit(bvar_obj,
                 H = 8,
-                d_pred = matrix(rep(1,8)),
                 iter = 200,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
+#> ------------------------------------------------------------
+#> Forecast horizon:
+#> 8
+#> 
+#> Future deterministic variables (d_pred):
+#>     constant
+#> h=1        1
+#> h=2        1
+#> h=3        1
+#> h=4        1
+#> h=5        1
+#> h=6        1
+#> h=7        1
+#> h=8        1
+#> ------------------------------------------------------------
+#> Estimating Stan model:
+#> steady_state_bvar_RW_stochastic_volatility
+#> 
+#> Also generating draws from the joint predictive distribution
+#> 
+#> ...
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_RW_stochastic_volatility' NOW (CHAIN 1).
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 6.6e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.66 seconds.
+#> Chain 1: Gradient evaluation took 5.7e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.57 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -338,9 +378,9 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.02 seconds (Warm-up)
-#> Chain 1:                0.038 seconds (Sampling)
-#> Chain 1:                0.058 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.004 seconds (Warm-up)
+#> Chain 1:                0.02 seconds (Sampling)
+#> Chain 1:                0.024 seconds (Total)
 #> Chain 1: 
 #> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
 #> https://mc-stan.org/misc/warnings.html#bfmi-low
@@ -354,6 +394,7 @@ bvar_obj <- fit(bvar_obj,
 #> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#tail-ess
+#> SAMPLING FINISHED
 
 
 #AR1 stochastic volatility
@@ -393,21 +434,38 @@ bvar_obj <- priors(bvar_obj,
 
 bvar_obj <- fit(bvar_obj,
                 H = 8,
-                d_pred = matrix(rep(1,8)),
                 iter = 200,
                 warmup = 50,
                 chains = 1,
                 cores = 1,
                 control = list(max_treedepth = 12, adapt_delta = 0.85)
                 )
+#> ------------------------------------------------------------
+#> Forecast horizon:
+#> 8
+#> 
+#> Future deterministic variables (d_pred):
+#>     constant
+#> h=1        1
+#> h=2        1
+#> h=3        1
+#> h=4        1
+#> h=5        1
+#> h=6        1
+#> h=7        1
+#> h=8        1
+#> ------------------------------------------------------------
+#> Estimating Stan model:
+#> steady_state_bvar_AR1_stochastic_volatility
+#> 
+#> Also generating draws from the joint predictive distribution
+#> 
+#> ...
 #> 
 #> SAMPLING FOR MODEL 'steady_state_bvar_AR1_stochastic_volatility' NOW (CHAIN 1).
-#> Chain 1: Rejecting initial value:
-#> Chain 1:   Error evaluating the log probability at the initial value.
-#> Chain 1: Exception: multi_normal_lpdf: LDLT_Factor of covariance parameter is not positive definite.  last conditional variance is -1.69407e-21. (in 'steady_state_bvar_AR1_stochastic_volatility', line 102, column 6 to column 54)
 #> Chain 1: 
-#> Chain 1: Gradient evaluation took 7.1e-05 seconds
-#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.71 seconds.
+#> Chain 1: Gradient evaluation took 7.2e-05 seconds
+#> Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.72 seconds.
 #> Chain 1: Adjust your expectations accordingly!
 #> Chain 1: 
 #> Chain 1: 
@@ -432,13 +490,12 @@ bvar_obj <- fit(bvar_obj,
 #> Chain 1: Iteration: 190 / 200 [ 95%]  (Sampling)
 #> Chain 1: Iteration: 200 / 200 [100%]  (Sampling)
 #> Chain 1: 
-#> Chain 1:  Elapsed Time: 0.569 seconds (Warm-up)
-#> Chain 1:                1.796 seconds (Sampling)
-#> Chain 1:                2.365 seconds (Total)
+#> Chain 1:  Elapsed Time: 0.005 seconds (Warm-up)
+#> Chain 1:                0.065 seconds (Sampling)
+#> Chain 1:                0.07 seconds (Total)
 #> Chain 1: 
-#> Warning: There were 57 divergent transitions after warmup. See
-#> https://mc-stan.org/misc/warnings.html#divergent-transitions-after-warmup
-#> to find out why this is a problem and how to eliminate them.
+#> Warning: There were 1 chains where the estimated Bayesian Fraction of Missing Information was low. See
+#> https://mc-stan.org/misc/warnings.html#bfmi-low
 #> Warning: Examine the pairs() plot to diagnose sampling problems
 #> Warning: The largest R-hat is NA, indicating chains have not mixed.
 #> Running the chains for more iterations may help. See
@@ -449,5 +506,6 @@ bvar_obj <- fit(bvar_obj,
 #> Warning: Tail Effective Samples Size (ESS) is too low, indicating posterior variances and tail quantiles may be unreliable.
 #> Running the chains for more iterations may help. See
 #> https://mc-stan.org/misc/warnings.html#tail-ess
+#> SAMPLING FINISHED
 # }
 ```

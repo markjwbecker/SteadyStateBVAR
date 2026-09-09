@@ -1,5 +1,10 @@
 # Package index
 
+- [`SteadyStateBVAR`](https://markjwbecker.github.io/SteadyStateBVAR/reference/SteadyStateBVAR-package.md)
+  [`SteadyStateBVAR-package`](https://markjwbecker.github.io/SteadyStateBVAR/reference/SteadyStateBVAR-package.md)
+  : SteadyStateBVAR: Bayesian Vector Autoregressions with Steady-State
+  Priors
+
 ## All functions
 
 - [`IRF()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/IRF.md)
@@ -24,7 +29,9 @@
   : Restrict VAR coefficients to zero
 - [`setup()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/setup.md)
   : Set up the steady-state BVAR model
+- [`steady_state_priors_plot()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/steady_state_priors_plot.md)
+  : Plot steady-state priors
 - [`stochastic_volatility_plot()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/stochastic_volatility_plot.md)
   : Plot stochastic volatility estimates and forecasts
 - [`summary(`*`<bvar>`*`)`](https://markjwbecker.github.io/SteadyStateBVAR/reference/summary.bvar.md)
-  : Summarise a fitted steady-state BVAR model
+  : Summarize a fitted steady-state BVAR model

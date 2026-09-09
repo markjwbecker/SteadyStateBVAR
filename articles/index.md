@@ -8,3 +8,5 @@
   2009)](https://markjwbecker.github.io/SteadyStateBVAR/articles/Homoscedastic-steady-state-BVAR.md):
 - [Random Walk stochastic volatility steady-state BVAR (Clark,
   2011)](https://markjwbecker.github.io/SteadyStateBVAR/articles/RW-stochastic-volatility-steady-state-BVAR.md):
+- [Steady-state BVAR
+  models](https://markjwbecker.github.io/SteadyStateBVAR/articles/SteadyStateBVAR-intro.md):
