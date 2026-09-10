@@ -12,10 +12,7 @@
 #'
 #' is the unconditional mean, or the \strong{steady state} of the process.
 #' 
-#' For the autoregressive parameters, the Minnesota prior is used. For the steady-state parameters,
-#' a normal prior is used (which is hopefully informative, at least for some of the parameters, otherwise there is no point in using this model)
-#'
-#' The package currently supports three specifications for the (reduced-form) innovations \eqn{u_t}
+#' Regarding the (reduced-form) innovations \eqn{u_t}, this package supports three specifications
 #' 
 #' \enumerate{
 #'   \item \eqn{u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)}
@@ -26,7 +23,7 @@
 #' For more information, please see the package vignettes
 #' 
 #' \enumerate{
-#'   \item \code{vignette("steady-state-BVAR-intro")}
+#'   \item \code{vignette("SteadyStateBVAR-intro")}
 #'   \item \code{vignette("Homoscedastic-steady-state-BVAR")}
 #'   \item \code{vignette("RW-stochastic-volatility-steady-state-BVAR")}
 #'   \item \code{vignette("AR1-stochastic-volatility-steady-state-BVAR")}

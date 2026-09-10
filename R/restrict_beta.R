@@ -28,6 +28,7 @@
 #'
 #' @examples
 #' yt <- matrix(rnorm(50), 25, 2)
+#' colnames(yt) <- c("y1", "y2")
 #'
 #' bvar_obj <- bvar(data = yt)
 #'

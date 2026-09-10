@@ -75,7 +75,7 @@ This function prepares the priors. The Minnesota prior is used for the autoregre
 the overall tightness, cross-equation tightness, and the lag decay rate.
 For the steady-state parameters, a normal prior is used. Regarding the covariance matrix of the reduced-form innovations, for the homoscedastic model,
 the user can choose between Jeffreys prior or an uninformative inverse-Wishart prior.
-The user may also choose stochastic volatility specification for the innovations, where the covariance matrix varies over time.
+The user may also choose a stochastic volatility specification for the innovations, where the covariance matrix varies over time.
 }
 \details{
 The goal is to estimate the parameters \eqn{\Theta = \begin{bmatrix} \beta & \Psi & \Sigma_u \end{bmatrix}},
