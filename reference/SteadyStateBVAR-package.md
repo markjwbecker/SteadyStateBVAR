@@ -24,13 +24,8 @@ parameters. Now
 
 is the unconditional mean, or the **steady state** of the process.
 
-For the autoregressive parameters, the Minnesota prior is used. For the
-steady-state parameters, a normal prior is used (which is hopefully
-informative, at least for some of the parameters, otherwise there is no
-point in using this model)
-
-The package currently supports three specifications for the
-(reduced-form) innovations \\u_t\\
+Regarding the (reduced-form) innovations \\u_t\\, this package supports
+three specifications
 
 1.  \\u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)\\
 
@@ -42,7 +37,7 @@ The package currently supports three specifications for the
 
 For more information, please see the package vignettes
 
-1.  `vignette("steady-state-BVAR-intro")`
+1.  [`vignette("SteadyStateBVAR-intro")`](https://markjwbecker.github.io/SteadyStateBVAR/articles/SteadyStateBVAR-intro.md)
 
 2.  [`vignette("Homoscedastic-steady-state-BVAR")`](https://markjwbecker.github.io/SteadyStateBVAR/articles/Homoscedastic-steady-state-BVAR.md)
 

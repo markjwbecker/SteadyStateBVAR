@@ -52,6 +52,7 @@ parameters/coefficients, i.e the elements of \\\beta\\.
 
 ``` r
 yt <- matrix(rnorm(50), 25, 2)
+colnames(yt) <- c("y1", "y2")
 
 bvar_obj <- bvar(data = yt)
 
@@ -74,11 +75,11 @@ restriction_matrix[4, 1] <- 0
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 #> Restrictions applied using restriction matrix:
 #> 
-#>         Var1 Var2
-#> Var1.l1    1    1
-#> Var2.l1    0    1
-#> Var1.l2    1    1
-#> Var2.l2    0    1
+#>       y1 y2
+#> y1.l1  1  1
+#> y2.l1  0  1
+#> y1.l2  1  1
+#> y2.l2  0  1
 #> 
 #> 1 indicates that the parameter is free
 #> 0 indicates that the parameter is restricted to zero

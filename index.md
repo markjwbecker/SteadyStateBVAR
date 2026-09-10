@@ -33,8 +33,8 @@ case.*”
 Times are different now, and with the help of Stan, we are essentially
 limited only by our imagination. At the time of writing, the package
 provides three versions of the steady-state BVAR model: i) the
-homoscedastic model, i.e. the original model in Villani (2009), ii) the
-Random Walk stochastic volatility model, i.e. the one in Clark (2011),
+homoscedastic model, i.e. the original model in Villani (2009); ii) the
+Random Walk stochastic volatility model, i.e. the one in Clark (2011);
 and iii) an AR(1) stochastic volatility model.
 
 ## Installation
@@ -57,7 +57,7 @@ pak::pak("markjwbecker/SteadyStateBVAR")
 
 ## Vignettes
 
-For a general theoretical introduction to steady-state BVAR models run
+For a general theoretical introduction to steady-state BVAR models, run
 
 ``` r
 
@@ -73,8 +73,10 @@ vignette("RW-stochastic-volatility-steady-state-BVAR")
 vignette("AR1-stochastic-volatility-steady-state-BVAR")
 ```
 
-Note that `Homoscedastic-steady-state-BVAR` shows a replication of the
-empirical example in Section 4.1 of Villani (2009).
+Note that
+[`vignette("Homoscedastic-steady-state-BVAR")`](https://markjwbecker.github.io/SteadyStateBVAR/articles/Homoscedastic-steady-state-BVAR.md)
+shows a replication of the empirical example in Section 4.1 of Villani
+(2009).
 
 ## Example
 
@@ -171,6 +173,10 @@ bvar_obj <- priors(bvar_obj,
                    Omega_Psi,
                    Jeffreys=TRUE) #FALSE for uninformative inverse-Wishart
 
+par(mfrow=c(3,3))
+steady_state_priors_plot(bvar_obj, interval = 0.95, growth_rate_idx = c(1,2,4,5))
+par(mfrow=c(1,1))
+
 p <- bvar_obj$setup$p
 k <- bvar_obj$setup$k
 kf <- 3 #first three variables in yt are foreign
@@ -187,9 +193,9 @@ bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
 #fit the model
 bvar_obj <- fit(bvar_obj,
-                H = 12, #forecast horizon
-                iter = 3000,
-                warmup = 1000,
+                H = 12,#forecast horizon
+                iter = 10000,
+                warmup = 2500,
                 chains = 4,
                 cores = 4)
 
@@ -203,14 +209,13 @@ print(stan_fit)
 #plot histogram of the posterior steady-state of inflation mu_t,i at t=102 (last observation)
 #we have effective sample size N=T-p, that is why the index is 98
 
-rstan::plot(stan_fit,
-            pars=c("mu[98,5]"),
-            plotfun="hist")
+rstan::plot(stanfit, pars=c("mu[98,5]"), plotfun="hist")
 
-#note that inflation (pi) is specified as 100*diff(log(pi)) growth in the model, so for annualized steady-state
-posterior <- rstan::extract(stan_fit)
-hist(posterior$mu[,98,5]*4, breaks=30, col="darkred")
-abline(v=mean(posterior$mu[,98,5]*4), col="green")
+#note that inflation (pi) is specified as 100*diff(log(pi)) growth in the model,
+#so for annualized steady-state
+posterior <- rstan::extract(stanfit)
+hist(4*posterior$mu[,98,5], col="darkred", breaks=30)
+abline(v=mean(4*posterior$mu[,98,5]), col="lightgreen")
 
 #unconditional forecasts
 #see last forecasts in Figures 1-3 in Villani (2009)
@@ -221,8 +226,8 @@ fcst <- forecast(bvar_obj,
                  plot_idx = c(4,5,6),
                  ss = TRUE, #plot posterior steady-state
                  ss_type = "mean", #mean as point estimate for posterior steady-state
-                 ss_ci = 0.99 #99% credible interval for steady-state
-)
+                 ss_ci = 0.99, #99% credible interval for steady-state
+                 show_all = FALSE)
 
 #conditional forecasts
 #Toy scenario: inflation gets really high

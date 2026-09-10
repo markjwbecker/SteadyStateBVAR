@@ -64,14 +64,12 @@ Here \(\Pi_\ell\) for \(\ell=1,\dots,p\) is a \((k \times k)\) matrix of autoreg
 and \(\Psi\) is a \((k \times q)\) matrix of steady-state parameters. Now</p>
 <p>$$\mathrm{E}(y_t)=\mu_t=\Psi d_t$$</p>
 <p>is the unconditional mean, or the <strong>steady state</strong> of the process.</p>
-<p>For the autoregressive parameters, the Minnesota prior is used. For the steady-state parameters,
-a normal prior is used (which is hopefully informative, at least for some of the parameters, otherwise there is no point in using this model)</p>
-<p>The package currently supports three specifications for the (reduced-form) innovations \(u_t\)</p>
+<p>Regarding the (reduced-form) innovations \(u_t\), this package supports three specifications</p>
 <ol><li><p>\(u_t \overset{\text{iid}}{\sim} \mathrm{N_k}(0,\Sigma_u)\)</p></li>
 <li><p>\(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\), where \(\Sigma_{u,t}\) is driven by a latent Random Walk process (stochastic volatility)</p></li>
 <li><p>\(u_t \sim \mathrm{N_k}(0,\Sigma_{u,t})\), where \(\Sigma_{u,t}\) is driven by a latent AR(1) process (stochastic volatility)</p></li>
 </ol><p>For more information, please see the package vignettes</p>
-<ol><li><p><code>vignette("steady-state-BVAR-intro")</code></p></li>
+<ol><li><p><code><a href="../articles/SteadyStateBVAR-intro.html">vignette("SteadyStateBVAR-intro")</a></code></p></li>
 <li><p><code><a href="../articles/Homoscedastic-steady-state-BVAR.html">vignette("Homoscedastic-steady-state-BVAR")</a></code></p></li>
 <li><p><code><a href="../articles/RW-stochastic-volatility-steady-state-BVAR.html">vignette("RW-stochastic-volatility-steady-state-BVAR")</a></code></p></li>
 <li><p><code><a href="../articles/AR1-stochastic-volatility-steady-state-BVAR.html">vignette("AR1-stochastic-volatility-steady-state-BVAR")</a></code></p></li>

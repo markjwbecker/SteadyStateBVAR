@@ -70,7 +70,7 @@
 <p>After estimation, the user can produce forecasts (unconditional and conditional) and impulse response functions (orthogonalized and generalized). The goal of <code>SteadyStateBVAR</code> is to use modern Bayesian tools (Stan) to: i) estimate the model as specified in the original paper, and ii) extend the model in different ways. Previously, extensions of the model seemed to be limited by what Mattias Villani had time to derive.</p>
 <p>See for example Clark (2011), which extends the steady-state BVAR model to include Random Walk stochastic volatility: “<em>In a methodological sense, this paper extends the estimator of Villani (2009) to include stochastic volatility.</em>” Later on, he writes: “<em>(Special thanks are due to Mattias Villani for providing the formulas for posterior means and variances of</em> <span class="math inline">\(\Pi\)</span> <em>and</em> <span class="math inline">\(\Psi\)</span><em>, which generalize the constant-variance formulas of Villani 2009.)</em>”</p>
 <p>Another example is Dieppe, Legrand, and van Roye (2016): “<em>Villani (2009) only provides derivation in the case of the normal-diffuse prior distribution, so the incoming analysis will be restricted to this case.</em>”</p>
-<p>Times are different now, and with the help of Stan, we are essentially limited only by our imagination. At the time of writing, the package provides three versions of the steady-state BVAR model: i) the homoscedastic model, i.e. the original model in Villani (2009), ii) the Random Walk stochastic volatility model, i.e. the one in Clark (2011), and iii) an AR(1) stochastic volatility model.</p>
+<p>Times are different now, and with the help of Stan, we are essentially limited only by our imagination. At the time of writing, the package provides three versions of the steady-state BVAR model: i) the homoscedastic model, i.e. the original model in Villani (2009); ii) the Random Walk stochastic volatility model, i.e. the one in Clark (2011); and iii) an AR(1) stochastic volatility model.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -85,7 +85,7 @@
 <div class="section level2">
 <h2 id="vignettes">Vignettes<a class="anchor" aria-label="anchor" href="#vignettes"></a>
 </h2>
-<p>For a general theoretical introduction to steady-state BVAR models run</p>
+<p>For a general theoretical introduction to steady-state BVAR models, run</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"SteadyStateBVAR-intro"</span><span class="op">)</span></span></code></pre></div>
 <p>For examples with real macroeconomic data, run</p>
@@ -93,7 +93,7 @@
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"Homoscedastic-steady-state-BVAR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"RW-stochastic-volatility-steady-state-BVAR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/vignette.html" class="external-link">vignette</a></span><span class="op">(</span><span class="st">"AR1-stochastic-volatility-steady-state-BVAR"</span><span class="op">)</span></span></code></pre></div>
-<p>Note that <code>Homoscedastic-steady-state-BVAR</code> shows a replication of the empirical example in Section 4.1 of Villani (2009).</p>
+<p>Note that <code><a href="articles/Homoscedastic-steady-state-BVAR.html">vignette("Homoscedastic-steady-state-BVAR")</a></code> shows a replication of the empirical example in Section 4.1 of Villani (2009).</p>
 </div>
 <div class="section level2">
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
@@ -187,6 +187,10 @@
 <span>                   <span class="va">Omega_Psi</span>,</span>
 <span>                   Jeffreys<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="co">#FALSE for uninformative inverse-Wishart</span></span>
 <span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/steady_state_priors_plot.html">steady_state_priors_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, interval <span class="op">=</span> <span class="fl">0.95</span>, growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">p</span></span>
 <span><span class="va">k</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">k</span></span>
 <span><span class="va">kf</span> <span class="op">&lt;-</span> <span class="fl">3</span> <span class="co">#first three variables in yt are foreign</span></span>
@@ -203,9 +207,9 @@
 <span></span>
 <span><span class="co">#fit the model</span></span>
 <span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fit.html">fit</a></span><span class="op">(</span><span class="va">bvar_obj</span>,</span>
-<span>                H <span class="op">=</span> <span class="fl">12</span>, <span class="co">#forecast horizon</span></span>
-<span>                iter <span class="op">=</span> <span class="fl">3000</span>,</span>
-<span>                warmup <span class="op">=</span> <span class="fl">1000</span>,</span>
+<span>                H <span class="op">=</span> <span class="fl">12</span>,<span class="co">#forecast horizon</span></span>
+<span>                iter <span class="op">=</span> <span class="fl">10000</span>,</span>
+<span>                warmup <span class="op">=</span> <span class="fl">2500</span>,</span>
 <span>                chains <span class="op">=</span> <span class="fl">4</span>,</span>
 <span>                cores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span>
 <span></span>
@@ -219,14 +223,13 @@
 <span><span class="co">#plot histogram of the posterior steady-state of inflation mu_t,i at t=102 (last observation)</span></span>
 <span><span class="co">#we have effective sample size N=T-p, that is why the index is 98</span></span>
 <span></span>
-<span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">plot</span><span class="op">(</span><span class="va">stan_fit</span>,</span>
-<span>            pars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mu[98,5]"</span><span class="op">)</span>,</span>
-<span>            plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
+<span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">plot</span><span class="op">(</span><span class="va">stanfit</span>, pars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mu[98,5]"</span><span class="op">)</span>, plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#note that inflation (pi) is specified as 100*diff(log(pi)) growth in the model, so for annualized steady-state</span></span>
-<span><span class="va">posterior</span> <span class="op">&lt;-</span> <span class="fu">rstan</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/rstan/reference/stanfit-method-extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">stan_fit</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">98</span>,<span class="fl">5</span><span class="op">]</span><span class="op">*</span><span class="fl">4</span>, breaks<span class="op">=</span><span class="fl">30</span>, col<span class="op">=</span><span class="st">"darkred"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">98</span>,<span class="fl">5</span><span class="op">]</span><span class="op">*</span><span class="fl">4</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"green"</span><span class="op">)</span></span>
+<span><span class="co">#note that inflation (pi) is specified as 100*diff(log(pi)) growth in the model,</span></span>
+<span><span class="co">#so for annualized steady-state</span></span>
+<span><span class="va">posterior</span> <span class="op">&lt;-</span> <span class="fu">rstan</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/rstan/reference/stanfit-method-extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">stanfit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">98</span>,<span class="fl">5</span><span class="op">]</span>, col<span class="op">=</span><span class="st">"darkred"</span>, breaks<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">98</span>,<span class="fl">5</span><span class="op">]</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"lightgreen"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#unconditional forecasts</span></span>
 <span><span class="co">#see last forecasts in Figures 1-3 in Villani (2009)</span></span>
@@ -237,8 +240,8 @@
 <span>                 plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>,</span>
 <span>                 ss <span class="op">=</span> <span class="cn">TRUE</span>, <span class="co">#plot posterior steady-state</span></span>
 <span>                 ss_type <span class="op">=</span> <span class="st">"mean"</span>, <span class="co">#mean as point estimate for posterior steady-state</span></span>
-<span>                 ss_ci <span class="op">=</span> <span class="fl">0.99</span> <span class="co">#99% credible interval for steady-state</span></span>
-<span><span class="op">)</span></span>
+<span>                 ss_ci <span class="op">=</span> <span class="fl">0.99</span>, <span class="co">#99% credible interval for steady-state</span></span>
+<span>                 show_all <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#conditional forecasts</span></span>
 <span><span class="co">#Toy scenario: inflation gets really high</span></span>
