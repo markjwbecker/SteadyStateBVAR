@@ -125,13 +125,13 @@ steady_state_priors_plot(bvar_obj, interval = 0.95)
 ```
 
 Now, let us fit the model. Note that we can use arguments from `rstan::sampling()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
-Let us choose 4 markov chains, with each having 10000 iterations, and where 2500 of those 10000 are warmup/burn-in iterations.
+Let us choose 4 markov chains, with each having 6000 iterations, and where 2000 of those 6000 are warmup/burn-in iterations.
 
 ```{r, fig.width=8, fig.height=8}
 bvar_obj <- fit(bvar_obj,
                 H = 40,
-                iter = 5000,
-                warmup = 2500,
+                iter = 6000,
+                warmup = 2000,
                 chains = 4,
                 cores = 4,
                 control = list(max_treedepth = 14, adapt_delta = 0.95))
