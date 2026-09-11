@@ -66,7 +66,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>With this package, the user can estimate the steady-state BVAR model of Villani (2009). The steady-state BVAR is simply a BVAR rewritten in mean-adjusted form. The benefit of the mean-adjusted parametrization is that it allows the user to specify prior beliefs about the unconditional mean, or <em>steady state</em> of the VAR system. The model has proven very useful for forecasting of macroeconomic variables, and is routinely used in many central banks and other finanicial institutions (Gustafsson and Villani, 2025).</p>
+<p>With this package, the user can estimate the steady-state BVAR model of Villani (2009). The steady-state BVAR is simply a BVAR rewritten in mean-adjusted form. The benefit of the mean-adjusted parametrization is that it allows the user to specify prior beliefs about the unconditional mean, or <em>steady state</em> of the VAR system. The model has proven very useful for forecasting of macroeconomic variables, and is routinely used in many central banks and other financial institutions (Gustafsson and Villani, 2025).</p>
 <p>After estimation, the user can produce forecasts (unconditional and conditional) and impulse response functions (orthogonalized and generalized). The goal of <code>SteadyStateBVAR</code> is to use modern Bayesian tools (Stan) to: i) estimate the model as specified in the original paper, and ii) extend the model in different ways. Previously, extensions of the model seemed to be limited by what Mattias Villani had time to derive.</p>
 <p>See for example Clark (2011), which extends the steady-state BVAR model to include Random Walk stochastic volatility: “<em>In a methodological sense, this paper extends the estimator of Villani (2009) to include stochastic volatility.</em>” Later on, he writes: “<em>(Special thanks are due to Mattias Villani for providing the formulas for posterior means and variances of</em> <span class="math inline">\(\Pi\)</span> <em>and</em> <span class="math inline">\(\Psi\)</span><em>, which generalize the constant-variance formulas of Villani 2009.)</em>”</p>
 <p>Another example is Dieppe, Legrand, and van Roye (2016): “<em>Villani (2009) only provides derivation in the case of the normal-diffuse prior distribution, so the incoming analysis will be restricted to this case.</em>”</p>
@@ -202,7 +202,8 @@
 <span>  <span class="va">cols</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="va">kf</span></span>
 <span>  <span class="va">restriction_matrix</span><span class="op">[</span><span class="va">rows</span>, <span class="va">cols</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="op">}</span></span>
-<span></span>
+<span><span class="co">#block exogeneity for foreign variables</span></span>
+<span><span class="co">#i.e. foreign variables granger-cause domestic variables but not vice versa</span></span>
 <span><span class="va">bvar_obj</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/restrict_beta.html">restrict_beta</a></span><span class="op">(</span><span class="va">bvar_obj</span>, <span class="va">restriction_matrix</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">#fit the model</span></span>
@@ -222,10 +223,9 @@
 <span></span>
 <span><span class="co">#plot histogram of the posterior steady-state of inflation mu_t,i at t=102 (last observation)</span></span>
 <span><span class="co">#we have effective sample size N=T-p, that is why the index is 98</span></span>
-<span></span>
 <span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">plot</span><span class="op">(</span><span class="va">stanfit</span>, pars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mu[98,5]"</span><span class="op">)</span>, plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">#note that inflation (pi) is specified as 100*diff(log(pi)) growth in the model,</span></span>
+<span><span class="co">#note that inflation (pi) is specified as 100*diff(log(CPI)) growth in the model,</span></span>
 <span><span class="co">#so for annualized steady-state</span></span>
 <span><span class="va">posterior</span> <span class="op">&lt;-</span> <span class="fu">rstan</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/rstan/reference/stanfit-method-extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">stanfit</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">98</span>,<span class="fl">5</span><span class="op">]</span>, col<span class="op">=</span><span class="st">"darkred"</span>, breaks<span class="op">=</span><span class="fl">30</span><span class="op">)</span></span>

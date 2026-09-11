@@ -7,7 +7,7 @@ mean-adjusted form. The benefit of the mean-adjusted parametrization is
 that it allows the user to specify prior beliefs about the unconditional
 mean, or *steady state* of the VAR system. The model has proven very
 useful for forecasting of macroeconomic variables, and is routinely used
-in many central banks and other finanicial institutions (Gustafsson and
+in many central banks and other financial institutions (Gustafsson and
 Villani, 2025). The steady-state BVAR(\\p\\) model is
 
 \\ y_t = \Psi d_t + \Pi_1(y\_{t-1}-\Psi

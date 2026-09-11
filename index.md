@@ -6,7 +6,7 @@ mean-adjusted form. The benefit of the mean-adjusted parametrization is
 that it allows the user to specify prior beliefs about the unconditional
 mean, or *steady state* of the VAR system. The model has proven very
 useful for forecasting of macroeconomic variables, and is routinely used
-in many central banks and other finanicial institutions (Gustafsson and
+in many central banks and other financial institutions (Gustafsson and
 Villani, 2025).
 
 After estimation, the user can produce forecasts (unconditional and
@@ -188,7 +188,8 @@ for(i in 1:p){
   cols <- 1:kf
   restriction_matrix[rows, cols] <- 0
 }
-
+#block exogeneity for foreign variables
+#i.e. foreign variables granger-cause domestic variables but not vice versa
 bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 
 #fit the model
@@ -208,10 +209,9 @@ print(stan_fit)
 
 #plot histogram of the posterior steady-state of inflation mu_t,i at t=102 (last observation)
 #we have effective sample size N=T-p, that is why the index is 98
-
 rstan::plot(stanfit, pars=c("mu[98,5]"), plotfun="hist")
 
-#note that inflation (pi) is specified as 100*diff(log(pi)) growth in the model,
+#note that inflation (pi) is specified as 100*diff(log(CPI)) growth in the model,
 #so for annualized steady-state
 posterior <- rstan::extract(stanfit)
 hist(4*posterior$mu[,98,5], col="darkred", breaks=30)
