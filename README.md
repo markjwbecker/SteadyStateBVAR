@@ -208,8 +208,8 @@ bvar_obj <- restrict_beta(bvar_obj, restriction_matrix)
 #fit the model
 bvar_obj <- fit(bvar_obj,
                 H = 12,#forecast horizon
-                iter = 10000,
-                warmup = 2500,
+                iter = 15000,
+                warmup = 5000,
                 chains = 4,
                 cores = 4)
 
