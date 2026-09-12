@@ -61,8 +61,8 @@ $$
 \end{cases}\\
 \kappa&=
 \begin{cases}
-\kappa^{levels} & \text{if} \  \text{variable} \ i \ \text{is in levels} \\
-\kappa^{\Delta} & \text{if} \ \text{variable} \ i \ \text{is differenced}
+\kappa^{levels} & \text{if} \  \text{variable} \ i \ \text{is} \ \text{in} \ \text{levels} \\
+\kappa^{\Delta} & \text{if} \ \text{variable} \ i \ \text{is} \ \text{in} \ \text{differenced}
 \end{cases}\\
 \end{aligned}
 $$
@@ -112,12 +112,14 @@ u_t &= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \epsilon_t &\overset{\text{iid}}{\sim} \mathrm{N}(0, \mathrm{I}_k)
 \end{aligned}
 $$
+
 where $A$ is a lower triangular matrix with ones on the diagonal that describes the contemporaneous interaction of the endogenous variables, and
 
 $$
 \Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
 $$
-contains the time-varying volatilities. Please note that the $\lambda$'s here have nothing to do with the $\lambda$ hyperparameters from the Minnesota prior. Now, for the AR(1) stochastic volatility specification, the log volatilities follow AR(1) processes
+
+contains the time-varying volatilities. Please note that the $\lambda$'s here (volatilities) have nothing to do with the $\lambda$'s (hyperparameters) from the Minnesota prior. Now, for the AR(1) stochastic volatility specification, the log volatilities follow AR(1) processes
 
 $$
 \ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} + \nu_{i,t}, \ i=1,\dots,k

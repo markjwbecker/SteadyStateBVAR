@@ -220,12 +220,11 @@ summary(bvar_obj , stat = "mean")
 stan_fit <- bvar_obj$fit$stan
 print(stan_fit)
 
-#plot histogram of the posterior steady-state of inflation mu_t,i at t=102 (last observation)
-#we have effective sample size N=T-p, that is why the index is 98
-rstan::plot(stanfit, pars=c("mu[98,5]"), plotfun="hist")
+#plot histogram of the posterior steady-state of inflation after 1992Q4
+rstan::plot(stanfit, pars=c("mu[54,5]"), plotfun="hist")
 
-#note that inflation (pi) is specified as 100*diff(log(CPI)) growth in the model,
-#so for annualized steady-state
+#note that inflation (pi) is specified as 100*diff(log(CPI)) in the model,
+#so for annualized steady-state inflation we can do
 posterior <- rstan::extract(stanfit)
 hist(4*posterior$mu[,98,5], col="darkred", breaks=30)
 abline(v=mean(4*posterior$mu[,98,5]), col="lightgreen")

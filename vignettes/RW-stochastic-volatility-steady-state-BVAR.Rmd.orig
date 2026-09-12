@@ -11,7 +11,11 @@ vignette: >
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.cap = NULL
+  fig.width = 7,
+  fig.height = 5,
+  out.width = "100%",
+  fig.align = "center",
+  dpi = 150
 )
 ```
 
@@ -29,7 +33,7 @@ $$
 
 First, let's load the package, then import and plot the data.
 
-```{r RW-1, message=FALSE, warning=FALSE}
+```{r RW-1, message=FALSE, warning=FALSE, fig.width=12, fig.height=12}
 library(SteadyStateBVAR)
 data("KoopKorobilis2010")
 yt <- KoopKorobilis2010
@@ -120,7 +124,7 @@ bvar_obj <- priors(bvar_obj,
 
 We can plot the steady-state priors
 
-```{r RW-2}
+```{r RW-2, fig.width=12, fig.height=12}
 steady_state_priors_plot(bvar_obj, interval = 0.95)
 ```
 
@@ -152,7 +156,7 @@ print(bvar_obj$fit$stan)
 
 Let us plot the posterior of the steady-state $mu_t=mu=\Psi$
 
-```{r RW-3}
+```{r RW-3, fig.width=12, fig.height=12}
 stanfit <- bvar_obj$fit$stan
 
 rstan::plot(stanfit, pars=c("mu[1,1]",
@@ -163,25 +167,25 @@ rstan::plot(stanfit, pars=c("mu[1,1]",
 
 We can forecast
 
-```{r RW-4}
+```{r RW-4, fig.width=12, fig.height=12}
 forecast(bvar_obj, pi = 0.68)
 ```
 
 Let us plot the log volatility estimates and predictions
 
-```{r RW-5}
+```{r RW-5, fig.width=12, fig.height=12}
 stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
 ```
 
 Let us plot the estimates and predictions of the implied reduced-form innovation standard deviations
 
-```{r RW-6}
+```{r RW-6, fig.width=12, fig.height=12}
 stochastic_volatility_plot(bvar_obj, vol = "sd")
 ```
 
 We can also produce orthogonalized IRFs
 
-```{r RW-7}
+```{r RW-7, fig.width=12, fig.height=12}
 IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
 ```
 

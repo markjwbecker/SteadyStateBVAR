@@ -10,7 +10,12 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  fig.width = 7,
+  fig.height = 5,
+  out.width = "100%",
+  fig.align = "center",
+  dpi = 150
 )
 ```
 
@@ -174,7 +179,7 @@ bvar_obj <- priors(bvar_obj,
 
 We can plot our steady-state priors now after we have passed them to `priors()`
                                      
-```{r HOMO-2, fig.width=12, fig.height=12}
+```{r HOMO-2, fig.width=10, fig.height=10}
 par(mfrow=c(3,3))
 steady_state_priors_plot(bvar_obj, interval = 0.95, growth_rate_idx = c(1,2,4,5))
 par(mfrow=c(1,1))
@@ -226,13 +231,13 @@ d_pred <- cbind(rep(1, 12), 0)
 
 However, `fit()` automatically creates `d_pred`, so we do not need to bother with it.
 
-For the estimation, let us choose 4 markov chains, with each having 10000 iterations, and where 3000 of those 10000 are warmup/burn-in iterations.
+For the estimation, let us choose 4 markov chains, with each having 15000 iterations, and where 5000 of those 15000 are warmup/burn-in iterations.
 
 ```{r}
 bvar_obj <- fit(bvar_obj,
                 H = 12,
-                iter = 10000,
-                warmup = 3000,
+                iter = 15000,
+                warmup = 5000,
                 chains = 4,
                 cores = 4)
 ```
@@ -333,6 +338,7 @@ Now for some impulse response analysis. We can choose between the orthogonalized
 
 
 ```{r HOMO-8, fig.width=12, fig.height=12}
+par(mfrow=c(2,1))
 irf <- IRF(bvar_obj,H=20,response=5,impulse=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=5)
 irf <- IRF(bvar_obj,H=20,response=4,impulse=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=4)
 ```
@@ -345,4 +351,4 @@ Dieppe, A., Legrand, R., and van Roye, B. (2016). The BEAR toolbox. *Working Pap
 Karlsson, S. (2013). Forecasting with Bayesian vector autoregression. 
 In: Elliott, G. and Timmermann, A. (eds), *Handbook of Economic Forecasting*. Elsevier B.V., Vol. 2, Part B, pp. 791–897.
 
-Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630-650. 
+Villani, M. (2009). Steady-state priors for vector autoregressions. *Journal of Applied Econometrics*, 24(4), pp. 630-650.

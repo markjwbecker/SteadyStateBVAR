@@ -11,7 +11,7 @@
 #' @param interval Numeric. The prior probability mass within the interval.
 #'   Default \code{0.95}, i.e. 95%.
 #' @param annualized_growthrate Logical. If \code{TRUE}, treats \code{l} and \code{u} as
-#'   bounds on the annualized steady-state growth rate and calculates the implied mean
+#'   bounds of the annualized steady-state growth rate and calculates the implied mean
 #'   and variance on the corresponding quarterly/monthly scale. Useful if you are working with
 #'   a variable specified as \code{100*diff(log(x))}. Default \code{FALSE}.
 #' @param freq Integer. The data frequency (e.g. \code{4} for quarterly, \code{12} for monthly).

@@ -58,8 +58,8 @@ The list must contain the following named elements depending on \code{SV_type}:
 }
 \value{
 The steady-state \code{bvar} object with an appended \code{priors} list containing:
-\item{theta_beta}{Prior mean vector for \eqn{\text{vec}(\beta)} constructed with the Minnesota prior}
-\item{Omega_beta}{Prior covariance matrix for \eqn{\text{vec}(\beta)} constructed with the Minnesota prior}
+\item{theta_beta}{Prior mean vector for \eqn{\text{vec}(\beta)}, i.e. the autoregressive parameters, constructed with the Minnesota prior}
+\item{Omega_beta}{Prior covariance matrix for \eqn{\text{vec}(\beta)}, i.e. the autoregressive parameters, constructed with the Minnesota prior}
 \item{theta_Psi}{Prior mean vector for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters}
 \item{Omega_Psi}{Prior covariance matrix for \eqn{\text{vec}(\Psi)}, i.e. the steady-state parameters}
 \item{Jeffreys}{Indicator for Jeffreys prior usage}
@@ -80,7 +80,7 @@ The user may also choose a stochastic volatility specification for the innovatio
 \details{
 The goal is to estimate the parameters \eqn{\Theta = \begin{bmatrix} \beta & \Psi & \Sigma_u \end{bmatrix}},
 and as such priors are needed. Following Villani (2009), prior independence between \eqn{\beta, \Psi} and \eqn{\Sigma_u} is assumed.
-For \eqn{\beta}, i.e. the autoregressive parameter matrix, the Minnesota prior is used
+For \eqn{\beta}, which contains the autoregressive parameters, the Minnesota prior is used
 
 \deqn{\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)}
 
