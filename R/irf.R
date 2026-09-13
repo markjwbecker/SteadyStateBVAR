@@ -56,7 +56,7 @@
 #'                 chains = 1,
 #'                 cores = 1)
 #'                 
-#' (IRF(bvar_obj))
+#' IRF(bvar_obj)
 #' }
 IRF <- function(x, H = 20, response = NULL, impulse = NULL,
                 type = c("median", "mean"), method = c("OIRF", "GIRF"),

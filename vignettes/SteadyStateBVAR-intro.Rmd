@@ -62,7 +62,7 @@ $$
 \kappa&=
 \begin{cases}
 \kappa^{levels} & \text{if} \  \text{variable} \ i \ \text{is} \ \text{in} \ \text{levels} \\
-\kappa^{\Delta} & \text{if} \ \text{variable} \ i \ \text{is} \ \text{in} \ \text{differenced}
+\kappa^{\Delta} & \text{if} \ \text{variable} \ i \ \text{is} \ \text{differenced}
 \end{cases}\\
 \end{aligned}
 $$

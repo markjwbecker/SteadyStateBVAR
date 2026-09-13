@@ -80,7 +80,7 @@ To formulate a prior on $\Psi$, note that the specification of $d_t$ implies the
 
 
 $$
-\mu_t =
+\Psi d_t = \mu_t =
 \begin{cases}
 \psi_1 + \psi_2 & \text{if } t \le 1992Q4 \\
 \psi_1 & \text{if } t > 1992Q4
@@ -116,7 +116,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$, i.r. the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $x$ which is on a quarterly frequency (`freq=4`), the quarterly growth rate is $100(\ln (x_t) - \ln x_{t-1})$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400(\ln (x_t) - \ln x_{t-1})$.
+Now moving on to $\Psi$, i.r. the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $x$ which is on a quarterly frequency (`freq=4`), the quarterly growth rate is $100(\ln x_t - \ln x_{t-1})$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400(\ln x_t - \ln x_{t-1})$.
 
 The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE` with the correct frequency `freq`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`.
 
@@ -186,7 +186,7 @@ par(mfrow=c(1,1))
 ```
 
 
-Continuing, as in Villani (2009), we incorporate the assumption that Sweden is a small economy and therefore unlikely to affect the foreign economy by restricting the upper-right submatrix of $\Pi_\ell$ for $\ell =1,\dots,p$ or equivalently restricting the bottom-left submatrix of $\Pi_\ell'$ to the zero matrix. This technique is called "block exogeneity" (Dieppe, Legrand, and van Roye, 2016). In essence we treat the foreign economy as exogenous to the domestic economy, although it is not exogenous in the strict sense (Karlsson, 2013).
+Continuing, as in Villani (2009), we incorporate the assumption that Sweden is a small economy and therefore unlikely to affect the foreign economy, by restricting the upper-right submatrix of $\Pi_\ell$ for $\ell =1,\dots,p$, or equivalently restricting the bottom-left submatrix of $\Pi_\ell'$, to the zero matrix. This technique is called "block exogeneity" (Dieppe, Legrand, and van Roye, 2016). In essence we treat the foreign economy as exogenous to the domestic economy. Although, it is not exogenous in the strict sense, it is actually a statement about Granger causality. That, in a small open economy model, we do not expect the domestic variables to be useful for forecasting the variables representing the rest of the world (Karlsson, 2013).
 
 ```{r}
 p <- bvar_obj$setup$p
@@ -256,19 +256,18 @@ Note that `bvar_obj$fit$stan` is an object of class `stanfit`.
 (stanfit <- bvar_obj$fit$stan)
 ```
 
-As such, we can do the usual `rstan` inference on our fitted model. Let us plot the posterior draws of the post-crisis steady-state $\mu_{t,i}$ of inflation
-at t = 102, i.e. $\mu_{t=102, i=5}$ Note that the index in the code is 98 because we have 102 observations where the first $p=4$ are lost due to effective sample size $T=N-p$.
+As such, we can do the usual `rstan` inference on our fitted model. Let us plot the posterior draws of the steady-state of inflation before and after 1992Q4, i.e. $\mu_{t=48,i=5}$ and $\mu_{t=49,i=5}$.
 
 ```{r HOMO-3, fig.width=12, fig.height=12}
-rstan::plot(stanfit, pars=c("mu[98,5]"), plotfun="hist")
+rstan::plot(stanfit, pars=c("mu[48,5]", "mu[49,5]"), plotfun="hist")
 ```
 
-We need to multiply the steady-state coefficient by 4 to obtain the annualized rate.
+To plot posterior draws of the annualized steady-state of inflation after 1992Q4, we can do the following (since inflation is specified as `pi=100*diff(log(CPI))`)
 
 ```{r HOMO-4, fig.width=12, fig.height=12}
 posterior <- rstan::extract(stanfit)
-hist(4*posterior$mu[,98,5], col="darkred", breaks=30, xlab="annualized steady-state of inflation (post 1992Q4)")
-abline(v=mean(4*posterior$mu[,98,5]), col="lightgreen")
+hist(4*posterior$mu[,49,5], col="darkred", breaks=30, xlab="annualized steady-state of inflation (post 1992Q4)")
+abline(v=mean(4*posterior$mu[,49,5]), col="lightgreen", lwd=2)
 ```
 
 We can also look at the model forecasts directly with `rstan`. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate and compare them with the actual values.
@@ -338,7 +337,6 @@ Now for some impulse response analysis. We can choose between the orthogonalized
 
 
 ```{r HOMO-8, fig.width=12, fig.height=12}
-par(mfrow=c(2,1))
 irf <- IRF(bvar_obj,H=20,response=5,impulse=6,type="median",method="OIRF",ci=0.95,growth_rate_idx=5)
 irf <- IRF(bvar_obj,H=20,response=4,impulse=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=4)
 ```

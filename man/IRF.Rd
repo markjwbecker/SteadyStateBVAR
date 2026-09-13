@@ -82,6 +82,6 @@ bvar_obj <- fit(bvar_obj,
                 chains = 1,
                 cores = 1)
                 
-(IRF(bvar_obj))
+IRF(bvar_obj)
 }
 }
