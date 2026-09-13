@@ -60,8 +60,7 @@ according to
 \text{otherwise} \end{cases}\\ \kappa&= \begin{cases} \kappa^{levels} &
 \text{if} \\ \text{variable} \\ i \\ \text{is} \\ \text{in} \\
 \text{levels} \\ \kappa^{\Delta} & \text{if} \\ \text{variable} \\ i \\
-\text{is} \\ \text{in} \\ \text{differenced} \end{cases}\\ \end{aligned}
-\\
+\text{is} \\ \text{differenced} \end{cases}\\ \end{aligned} \\
 
 Here, the autoregressive coefficient \\\Pi\_{\ell}^{(i,j)}\\ is element
 \\\left(i,j\right)\\ of \\\Pi\_{\ell}\\ for \\\ell=1,\dots,p\\. As such,

@@ -204,17 +204,17 @@ bvar_obj <- fit(bvar_obj,
 summary(bvar_obj , stat = "mean")
 
 #you can look at the stanfit object directly
-stan_fit <- bvar_obj$fit$stan
-print(stan_fit)
+stanfit <- bvar_obj$fit$stan
+print(stanfit)
 
-#plot histogram of the posterior steady-state of inflation after 1992Q4
-rstan::plot(stanfit, pars=c("mu[54,5]"), plotfun="hist")
+#plot histogram of the posterior steady-state of inflation before and after 1992Q4
+rstan::plot(stanfit, pars=c("mu[48,5]", "mu[49,5]"), plotfun="hist")
 
 #note that inflation (pi) is specified as 100*diff(log(CPI)) in the model,
-#so for annualized steady-state inflation we can do
+#so for annualized steady-state inflation after 1992Q4 we can do
 posterior <- rstan::extract(stanfit)
-hist(4*posterior$mu[,98,5], col="darkred", breaks=30)
-abline(v=mean(4*posterior$mu[,98,5]), col="lightgreen")
+hist(4*posterior$mu[,49,5], col="darkred", breaks=30)
+abline(v=mean(4*posterior$mu[,49,5]), col="lightgreen")
 
 #unconditional forecasts
 #see last forecasts in Figures 1-3 in Villani (2009)

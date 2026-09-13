@@ -126,11 +126,13 @@ in the series (even though it is a growth rate variable).</p>
 <span>         <span class="fl">0.9</span><span class="op">)</span>  <span class="co">#R</span></span></code></pre></div>
 <p>Now, for the steady-state priors, we specify our prior beliefs with
 the help of 95% prior probability intervals (let us pretend that our
-steady-state priors are expert based). Since we only have a constant
-now, we have <span class="math inline">\(q=1\)</span> and as such <span class="math inline">\(\Psi\)</span> has only one column <span class="math inline">\(\psi_1=\Psi\)</span>. Since <span class="math inline">\(d_t = 1 \ \forall \ t\)</span>, we have <span class="math inline">\(\Psi d_t = \mu_t\)</span> which simplifies to
-<span class="math inline">\(\Psi = \mu\)</span> and as such we can
-directly interpret <span class="math inline">\(\Psi d_t = \mu_t = \Psi =
-\mu\)</span> as the unconditional mean, i.e. the steady state.</p>
+steady-state priors are expert based). Remember that the steady-state is
+<span class="math inline">\(\Psi d_t = \mu_t\)</span>, where <span class="math inline">\(\Psi\)</span> is <span class="math inline">\(k
+\times q\)</span> and <span class="math inline">\(d_t\)</span> is <span class="math inline">\(q \times 1\)</span>. Since we only have a constant
+now, i.e. <span class="math inline">\(d_t = 1 \ \forall \ t\)</span>, we
+have <span class="math inline">\(q=1\)</span> and as such we can
+directly interpret the <span class="math inline">\(k\)</span>-dimensional vector <span class="math inline">\(\Psi d_t = \mu_t = \mu = \Psi\)</span> as the
+unconditional mean, i.e. the steady state.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">theta_Psi</span> <span class="op">&lt;-</span> </span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
@@ -286,8 +288,8 @@ of those 6000 are warmup/burn-in iterations.</p>
 <span><span class="co">#&gt; beta</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------             </span></span>
 <span><span class="co">#&gt;               delta pi     u     r</span></span>
-<span><span class="co">#&gt;   delta pi.l1     1.27  0.02  0.16</span></span>
-<span><span class="co">#&gt;   u.l1           -0.09  1.17 -0.16</span></span>
+<span><span class="co">#&gt;   delta pi.l1     1.27  0.02  0.17</span></span>
+<span><span class="co">#&gt;   u.l1           -0.09  1.17 -0.15</span></span>
 <span><span class="co">#&gt;   r.l1            0.00 -0.01  1.04</span></span>
 <span><span class="co">#&gt;   delta pi.l2    -0.28  0.01 -0.11</span></span>
 <span><span class="co">#&gt;   u.l2            0.07 -0.23  0.17</span></span>
@@ -355,119 +357,123 @@ efficiently.</p>
 <span><span class="co">#&gt; post-warmup draws per chain=4000, total post-warmup draws=16000.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                        mean se_mean    sd  2.5%   25%   50%   75%  97.5% n_eff Rhat</span></span>
-<span><span class="co">#&gt; beta[1,1]              1.27    0.00  0.06  1.16  1.23  1.27  1.31   1.38 23162    1</span></span>
-<span><span class="co">#&gt; beta[1,2]              0.02    0.00  0.04 -0.05  0.00  0.02  0.05   0.10 22052    1</span></span>
-<span><span class="co">#&gt; beta[1,3]              0.16    0.00  0.08  0.00  0.11  0.16  0.22   0.32 22491    1</span></span>
-<span><span class="co">#&gt; beta[2,1]             -0.09    0.00  0.04 -0.16 -0.11 -0.09 -0.06  -0.02 22661    1</span></span>
-<span><span class="co">#&gt; beta[2,2]              1.17    0.00  0.06  1.06  1.13  1.17  1.20   1.28 21389    1</span></span>
-<span><span class="co">#&gt; beta[2,3]             -0.16    0.00  0.08 -0.31 -0.21 -0.16 -0.10   0.00 23565    1</span></span>
-<span><span class="co">#&gt; beta[3,1]              0.00    0.00  0.02 -0.03 -0.01  0.00  0.01   0.04 25236    1</span></span>
-<span><span class="co">#&gt; beta[3,2]             -0.01    0.00  0.02 -0.05 -0.02 -0.01  0.00   0.02 24610    1</span></span>
-<span><span class="co">#&gt; beta[3,3]              1.04    0.00  0.06  0.93  1.00  1.04  1.08   1.16 21037    1</span></span>
-<span><span class="co">#&gt; beta[4,1]             -0.28    0.00  0.06 -0.39 -0.32 -0.28 -0.24  -0.17 22680    1</span></span>
-<span><span class="co">#&gt; beta[4,2]              0.01    0.00  0.04 -0.07 -0.02  0.01  0.03   0.09 23141    1</span></span>
-<span><span class="co">#&gt; beta[4,3]             -0.11    0.00  0.08 -0.27 -0.16 -0.11 -0.05   0.05 22919    1</span></span>
-<span><span class="co">#&gt; beta[5,1]              0.07    0.00  0.03  0.00  0.05  0.07  0.09   0.13 23168    1</span></span>
-<span><span class="co">#&gt; beta[5,2]             -0.23    0.00  0.05 -0.33 -0.26 -0.23 -0.19  -0.12 21328    1</span></span>
-<span><span class="co">#&gt; beta[5,3]              0.17    0.00  0.07  0.02  0.12  0.17  0.22   0.32 24299    1</span></span>
-<span><span class="co">#&gt; beta[6,1]             -0.01    0.00  0.02 -0.04 -0.02 -0.01  0.01   0.03 27689    1</span></span>
-<span><span class="co">#&gt; beta[6,2]              0.02    0.00  0.02 -0.01  0.01  0.03  0.04   0.06 24211    1</span></span>
-<span><span class="co">#&gt; beta[6,3]             -0.11    0.00  0.06 -0.22 -0.15 -0.11 -0.07   0.00 22078    1</span></span>
-<span><span class="co">#&gt; Psi[1,1]               1.99    0.00  0.05  1.89  1.96  1.99  2.03   2.10 37254    1</span></span>
-<span><span class="co">#&gt; Psi[2,1]               4.28    0.00  0.18  3.93  4.16  4.28  4.40   4.62 32984    1</span></span>
-<span><span class="co">#&gt; Psi[3,1]               3.51    0.00  0.33  2.85  3.29  3.51  3.74   4.15 35406    1</span></span>
-<span><span class="co">#&gt; z[1,1]                 0.00    0.00  0.41 -0.74 -0.28 -0.02  0.27   0.86 25900    1</span></span>
-<span><span class="co">#&gt; z[1,2]                 1.25    0.00  0.43  0.44  0.95  1.24  1.53   2.14 24151    1</span></span>
-<span><span class="co">#&gt; z[1,3]                -1.01    0.00  0.53 -2.00 -1.37 -1.02 -0.67   0.06 24199    1</span></span>
-<span><span class="co">#&gt; z[2,1]                 0.00    0.01  0.97 -1.89 -0.67  0.00  0.65   1.89 37832    1</span></span>
-<span><span class="co">#&gt; z[2,2]                 0.24    0.01  0.98 -1.67 -0.42  0.24  0.91   2.14 37459    1</span></span>
-<span><span class="co">#&gt; z[2,3]                -0.08    0.01  0.97 -2.01 -0.73 -0.08  0.56   1.82 37380    1</span></span>
-<span><span class="co">#&gt; z[3,1]                 0.11    0.01  0.96 -1.79 -0.53  0.11  0.75   1.99 35089    1</span></span>
-<span><span class="co">#&gt; z[3,2]                 0.27    0.01  0.99 -1.67 -0.40  0.28  0.93   2.20 37343    1</span></span>
-<span><span class="co">#&gt; z[3,3]                -0.14    0.01  0.98 -2.05 -0.80 -0.13  0.52   1.78 36445    1</span></span>
-<span><span class="co">#&gt; z[4,1]                -0.38    0.00  0.95 -2.24 -1.01 -0.38  0.26   1.51 39659    1</span></span>
-<span><span class="co">#&gt; z[4,2]                -0.23    0.01  0.96 -2.11 -0.88 -0.23  0.42   1.65 34406    1</span></span>
-<span><span class="co">#&gt; z[4,3]                -0.25    0.01  0.98 -2.21 -0.90 -0.25  0.41   1.72 38136    1</span></span>
-<span><span class="co">#&gt; z[5,1]                -0.24    0.01  0.96 -2.14 -0.90 -0.24  0.41   1.62 36428    1</span></span>
-<span><span class="co">#&gt; z[5,2]                -0.22    0.01  0.97 -2.08 -0.89 -0.22  0.45   1.70 35126    1</span></span>
-<span><span class="co">#&gt; z[5,3]                -0.22    0.00  0.98 -2.16 -0.89 -0.22  0.44   1.71 39704    1</span></span>
-<span><span class="co">#&gt; z[6,1]                -0.16    0.01  0.97 -2.07 -0.83 -0.16  0.51   1.74 37685    1</span></span>
-<span><span class="co">#&gt; z[6,2]                -0.11    0.01  0.98 -2.04 -0.76 -0.10  0.54   1.83 37009    1</span></span>
-<span><span class="co">#&gt; z[6,3]                -0.18    0.00  0.98 -2.10 -0.84 -0.18  0.48   1.74 40385    1</span></span>
-<span><span class="co">#&gt; z[7,1]                 0.09    0.00  0.95 -1.77 -0.56  0.10  0.73   1.95 39717    1</span></span>
-<span><span class="co">#&gt; z[7,2]                 0.02    0.00  0.98 -1.90 -0.64  0.02  0.69   1.95 42186    1</span></span>
-<span><span class="co">#&gt; z[7,3]                -0.14    0.00  0.99 -2.09 -0.81 -0.13  0.53   1.81 40404    1</span></span>
-<span><span class="co">#&gt; z[8,1]                 0.27    0.00  0.94 -1.61 -0.35  0.26  0.91   2.11 39463    1</span></span>
-<span><span class="co">#&gt; z[8,2]                 0.05    0.00  0.97 -1.85 -0.61  0.05  0.69   1.95 39203    1</span></span>
-<span><span class="co">#&gt; z[8,3]                -0.08    0.00  0.98 -2.00 -0.74 -0.09  0.58   1.82 42301    1</span></span>
-<span><span class="co">#&gt; z[9,1]                 0.43    0.01  0.94 -1.37 -0.20  0.43  1.07   2.29 34833    1</span></span>
-<span><span class="co">#&gt; z[9,2]                 0.21    0.01  0.96 -1.68 -0.44  0.21  0.86   2.08 35790    1</span></span>
-<span><span class="co">#&gt; z[9,3]                 0.01    0.01  0.98 -1.93 -0.66  0.02  0.68   1.91 36945    1</span></span>
-<span><span class="co">#&gt; z[10,1]               -0.15    0.00  0.92 -1.95 -0.77 -0.15  0.47   1.63 39472    1</span></span>
-<span><span class="co">#&gt; z[10,2]                0.14    0.01  0.97 -1.73 -0.52  0.14  0.80   2.00 37353    1</span></span>
-<span><span class="co">#&gt; z[10,3]               -0.14    0.00  0.99 -2.05 -0.81 -0.14  0.53   1.83 41593    1</span></span>
-<span><span class="co">#&gt; z[11,1]               -0.22    0.00  0.94 -2.03 -0.85 -0.22  0.41   1.63 40320    1</span></span>
-<span><span class="co">#&gt; z[11,2]                0.10    0.00  0.96 -1.79 -0.55  0.10  0.75   1.96 41640    1</span></span>
-<span><span class="co">#&gt; z[11,3]               -0.21    0.00  1.00 -2.17 -0.89 -0.21  0.47   1.74 42347    1</span></span>
-<span><span class="co">#&gt; z[12,1]               -0.34    0.00  0.95 -2.21 -0.98 -0.34  0.30   1.55 42101    1</span></span>
-<span><span class="co">#&gt; z[12,2]                0.21    0.01  0.99 -1.75 -0.45  0.22  0.87   2.12 34740    1</span></span>
-<span><span class="co">#&gt; z[12,3]               -0.17    0.00  0.98 -2.11 -0.83 -0.17  0.49   1.77 38779    1</span></span>
-<span><span class="co">#&gt; z[13,1]               -0.10    0.00  0.94 -1.96 -0.73 -0.11  0.53   1.73 39911    1</span></span>
-<span><span class="co">#&gt; z[13,2]                0.37    0.01  0.96 -1.51 -0.28  0.37  1.03   2.27 36491    1</span></span>
-<span><span class="co">#&gt; z[13,3]               -0.09    0.00  0.98 -2.02 -0.75 -0.09  0.57   1.86 40408    1</span></span>
-<span><span class="co">#&gt; z[14,1]               -0.19    0.00  0.95 -2.08 -0.82 -0.20  0.44   1.68 38146    1</span></span>
-<span><span class="co">#&gt; z[14,2]                0.41    0.01  0.97 -1.49 -0.25  0.41  1.08   2.30 35527    1</span></span>
-<span><span class="co">#&gt; z[14,3]               -0.13    0.01  0.98 -2.08 -0.78 -0.13  0.52   1.81 37814    1</span></span>
-<span><span class="co">#&gt; z[15,1]               -0.14    0.01  0.97 -2.04 -0.79 -0.13  0.52   1.76 37175    1</span></span>
-<span><span class="co">#&gt; z[15,2]                0.36    0.00  0.96 -1.50 -0.30  0.35  1.00   2.27 40775    1</span></span>
-<span><span class="co">#&gt; z[15,3]               -0.08    0.01  1.00 -2.04 -0.76 -0.09  0.59   1.86 36042    1</span></span>
-<span><span class="co">#&gt; z[16,1]                0.07    0.00  0.97 -1.81 -0.58  0.06  0.71   1.96 38051    1</span></span>
-<span><span class="co">#&gt; z[16,2]                0.48    0.00  0.98 -1.41 -0.18  0.48  1.15   2.38 39705    1</span></span>
-<span><span class="co">#&gt; z[16,3]                0.01    0.01  0.98 -1.89 -0.65  0.01  0.67   1.94 38105    1</span></span>
-<span><span class="co">#&gt; z[17,1]                0.11    0.01  0.96 -1.77 -0.53  0.10  0.75   1.99 35221    1</span></span>
-<span><span class="co">#&gt; z[17,2]                0.54    0.01  0.98 -1.37 -0.11  0.55  1.19   2.47 37867    1</span></span>
-<span><span class="co">#&gt; z[17,3]                0.06    0.00  0.99 -1.90 -0.61  0.06  0.73   2.00 40377    1</span></span>
-<span><span class="co">#&gt; z[18,1]                0.18    0.01  0.98 -1.70 -0.48  0.18  0.84   2.09 32945    1</span></span>
-<span><span class="co">#&gt; z[18,2]                0.71    0.00  0.96 -1.17  0.06  0.71  1.37   2.58 39240    1</span></span>
-<span><span class="co">#&gt; z[18,3]                0.14    0.01  0.97 -1.76 -0.52  0.15  0.80   2.03 36028    1</span></span>
-<span><span class="co">#&gt; z[19,1]                0.36    0.01  0.96 -1.54 -0.28  0.36  0.99   2.25 30833    1</span></span>
-<span><span class="co">#&gt; z[19,2]                0.83    0.01  0.97 -1.05  0.17  0.84  1.50   2.72 33821    1</span></span>
-<span><span class="co">#&gt; z[19,3]                0.15    0.01  0.98 -1.76 -0.50  0.15  0.82   2.10 35356    1</span></span>
-<span><span class="co">#&gt; z[20,1]                0.12    0.01  0.95 -1.75 -0.52  0.12  0.77   1.98 35632    1</span></span>
-<span><span class="co">#&gt; z[20,2]                0.51    0.00  0.95 -1.37 -0.12  0.51  1.15   2.36 38252    1</span></span>
-<span><span class="co">#&gt; z[20,3]                0.14    0.00  0.97 -1.76 -0.52  0.14  0.80   2.03 41579    1</span></span>
-<span><span class="co">#&gt; z[21,1]               -0.05    0.01  0.95 -1.94 -0.68 -0.04  0.57   1.82 35685    1</span></span>
-<span><span class="co">#&gt; z[21,2]                0.09    0.00  0.97 -1.83 -0.56  0.09  0.74   1.99 38715    1</span></span>
-<span><span class="co">#&gt; z[21,3]                0.18    0.01  0.98 -1.75 -0.49  0.19  0.85   2.11 36112    1</span></span>
-<span><span class="co">#&gt; z[22,1]                0.15    0.01  0.95 -1.74 -0.49  0.15  0.80   2.01 35739    1</span></span>
-<span><span class="co">#&gt; z[22,2]                0.27    0.01  0.98 -1.65 -0.39  0.27  0.93   2.18 37549    1</span></span>
-<span><span class="co">#&gt; z[22,3]                0.29    0.01  0.95 -1.57 -0.36  0.29  0.92   2.14 35864    1</span></span>
-<span><span class="co">#&gt; z[23,1]               -0.24    0.01  0.96 -2.09 -0.89 -0.25  0.41   1.67 34155    1</span></span>
-<span><span class="co">#&gt; z[23,2]               -0.02    0.01  0.97 -1.89 -0.67 -0.02  0.65   1.90 35104    1</span></span>
-<span><span class="co">#&gt; z[23,3]               -0.11    0.01  0.98 -2.02 -0.79 -0.10  0.57   1.81 36135    1</span></span>
-<span><span class="co">#&gt; z[24,1]               -0.22    0.00  0.95 -2.08 -0.87 -0.21  0.43   1.65 37440    1</span></span>
-<span><span class="co">#&gt; z[24,2]                0.09    0.00  0.98 -1.79 -0.57  0.09  0.75   2.00 39045    1</span></span>
-<span><span class="co">#&gt; z[24,3]               -0.04    0.00  0.98 -1.96 -0.70 -0.03  0.63   1.88 39987    1</span></span>
-<span><span class="co">#&gt; z[25,1]               -0.08    0.00  0.94 -1.89 -0.73 -0.09  0.55   1.73 37104    1</span></span>
-<span><span class="co">#&gt; z[25,2]                0.15    0.00  0.98 -1.76 -0.53  0.16  0.82   2.06 38880    1</span></span>
-<span><span class="co">#&gt; z[25,3]                0.06    0.01  0.98 -1.88 -0.60  0.06  0.71   1.99 37361    1</span></span>
-<span><span class="co">#&gt; z[26,1]                0.21    0.01  0.94 -1.66 -0.42  0.21  0.84   2.04 33805    1</span></span>
-<span><span class="co">#&gt; z[26,2]                0.31    0.01  0.96 -1.56 -0.35  0.31  0.97   2.20 36454    1</span></span>
-<span><span class="co">#&gt; z[26,3]                0.16    0.01  0.99 -1.79 -0.50  0.15  0.82   2.10 34053    1</span></span>
-<span><span class="co">#&gt; z[27,1]               -0.16    0.00  0.94 -2.01 -0.79 -0.16  0.46   1.69 39972    1</span></span>
+<span><span class="co">#&gt; beta[1,1]              1.27    0.00  0.06  1.16  1.23  1.27  1.31   1.38 14066    1</span></span>
+<span><span class="co">#&gt; beta[1,2]              0.02    0.00  0.04 -0.05  0.00  0.02  0.05   0.10 15903    1</span></span>
+<span><span class="co">#&gt; beta[1,3]              0.17    0.00  0.08  0.00  0.11  0.17  0.22   0.33 16452    1</span></span>
+<span><span class="co">#&gt; beta[2,1]             -0.09    0.00  0.04 -0.16 -0.11 -0.09 -0.06  -0.02 17232    1</span></span>
+<span><span class="co">#&gt; beta[2,2]              1.17    0.00  0.06  1.05  1.13  1.17  1.20   1.28 13449    1</span></span>
+<span><span class="co">#&gt; beta[2,3]             -0.15    0.00  0.08 -0.31 -0.21 -0.15 -0.10   0.00 14510    1</span></span>
+<span><span class="co">#&gt; beta[3,1]              0.00    0.00  0.02 -0.03 -0.01  0.00  0.01   0.04 18255    1</span></span>
+<span><span class="co">#&gt; beta[3,2]             -0.01    0.00  0.02 -0.05 -0.02 -0.01  0.00   0.02 15827    1</span></span>
+<span><span class="co">#&gt; beta[3,3]              1.04    0.00  0.06  0.92  1.00  1.04  1.09   1.16 13701    1</span></span>
+<span><span class="co">#&gt; beta[4,1]             -0.28    0.00  0.06 -0.39 -0.32 -0.28 -0.24  -0.17 13932    1</span></span>
+<span><span class="co">#&gt; beta[4,2]              0.01    0.00  0.04 -0.07 -0.02  0.01  0.03   0.08 16459    1</span></span>
+<span><span class="co">#&gt; beta[4,3]             -0.11    0.00  0.08 -0.27 -0.17 -0.11 -0.06   0.05 16562    1</span></span>
+<span><span class="co">#&gt; beta[5,1]              0.07    0.00  0.03  0.00  0.05  0.07  0.09   0.13 17416    1</span></span>
+<span><span class="co">#&gt; beta[5,2]             -0.23    0.00  0.05 -0.33 -0.26 -0.23 -0.19  -0.12 13647    1</span></span>
+<span><span class="co">#&gt; beta[5,3]              0.17    0.00  0.07  0.03  0.12  0.17  0.22   0.31 14818    1</span></span>
+<span><span class="co">#&gt; beta[6,1]             -0.01    0.00  0.02 -0.04 -0.02 -0.01  0.00   0.03 18372    1</span></span>
+<span><span class="co">#&gt; beta[6,2]              0.02    0.00  0.02 -0.01  0.01  0.03  0.04   0.06 16317    1</span></span>
+<span><span class="co">#&gt; beta[6,3]             -0.11    0.00  0.06 -0.22 -0.15 -0.11 -0.07   0.01 14196    1</span></span>
+<span><span class="co">#&gt; Psi[1,1]               1.99    0.00  0.05  1.90  1.96  1.99  2.03   2.09 35470    1</span></span>
+<span><span class="co">#&gt; Psi[2,1]               4.28    0.00  0.18  3.93  4.16  4.28  4.40   4.62 30550    1</span></span>
+<span><span class="co">#&gt; Psi[3,1]               3.51    0.00  0.33  2.85  3.29  3.51  3.74   4.15 28413    1</span></span>
+<span><span class="co">#&gt; z[1,1]                 0.00    0.00  0.42 -0.76 -0.29 -0.01  0.26   0.88 21380    1</span></span>
+<span><span class="co">#&gt; z[1,2]                 1.25    0.00  0.43  0.44  0.95  1.23  1.53   2.15 18102    1</span></span>
+<span><span class="co">#&gt; z[1,3]                -1.01    0.00  0.52 -1.99 -1.37 -1.02 -0.66   0.06 18861    1</span></span>
+<span><span class="co">#&gt; z[2,1]                 0.00    0.01  0.97 -1.89 -0.66  0.01  0.66   1.89 29520    1</span></span>
+<span><span class="co">#&gt; z[2,2]                 0.24    0.01  0.98 -1.71 -0.42  0.24  0.91   2.17 30935    1</span></span>
+<span><span class="co">#&gt; z[2,3]                -0.09    0.01  1.00 -2.05 -0.76 -0.08  0.58   1.87 32086    1</span></span>
+<span><span class="co">#&gt; z[3,1]                 0.12    0.01  0.96 -1.77 -0.53  0.12  0.77   1.99 27113    1</span></span>
+<span><span class="co">#&gt; z[3,2]                 0.29    0.01  0.99 -1.67 -0.37  0.30  0.96   2.22 27765    1</span></span>
+<span><span class="co">#&gt; z[3,3]                -0.13    0.01  0.98 -2.10 -0.78 -0.14  0.53   1.82 28264    1</span></span>
+<span><span class="co">#&gt; z[4,1]                -0.38    0.01  0.96 -2.26 -1.02 -0.38  0.26   1.52 29974    1</span></span>
+<span><span class="co">#&gt; z[4,2]                -0.22    0.01  0.98 -2.11 -0.90 -0.23  0.44   1.71 33098    1</span></span>
+<span><span class="co">#&gt; z[4,3]                -0.25    0.01  0.99 -2.17 -0.93 -0.26  0.41   1.71 33027    1</span></span>
+<span><span class="co">#&gt; z[5,1]                -0.25    0.01  0.96 -2.14 -0.89 -0.25  0.41   1.65 27551    1</span></span>
+<span><span class="co">#&gt; z[5,2]                -0.22    0.01  0.98 -2.12 -0.88 -0.21  0.43   1.68 31035    1</span></span>
+<span><span class="co">#&gt; z[5,3]                -0.23    0.01  0.98 -2.13 -0.88 -0.23  0.44   1.67 33325    1</span></span>
+<span><span class="co">#&gt; z[6,1]                -0.16    0.01  0.94 -2.01 -0.79 -0.15  0.48   1.72 29154    1</span></span>
+<span><span class="co">#&gt; z[6,2]                -0.10    0.01  0.97 -1.99 -0.76 -0.11  0.55   1.80 31825    1</span></span>
+<span><span class="co">#&gt; z[6,3]                -0.19    0.01  0.99 -2.12 -0.85 -0.18  0.48   1.74 33195    1</span></span>
+<span><span class="co">#&gt; z[7,1]                 0.09    0.01  0.95 -1.74 -0.56  0.10  0.73   1.94 31657    1</span></span>
+<span><span class="co">#&gt; z[7,2]                 0.03    0.01  0.97 -1.88 -0.63  0.03  0.68   1.92 34254    1</span></span>
+<span><span class="co">#&gt; z[7,3]                -0.14    0.01  0.97 -2.02 -0.79 -0.15  0.51   1.77 33720    1</span></span>
+<span><span class="co">#&gt; z[8,1]                 0.25    0.01  0.96 -1.61 -0.40  0.26  0.89   2.12 33034    1</span></span>
+<span><span class="co">#&gt; z[8,2]                 0.05    0.01  0.99 -1.89 -0.62  0.05  0.72   1.97 32116    1</span></span>
+<span><span class="co">#&gt; z[8,3]                -0.08    0.01  0.99 -2.00 -0.75 -0.08  0.59   1.86 29828    1</span></span>
+<span><span class="co">#&gt; z[9,1]                 0.43    0.01  0.95 -1.41 -0.20  0.43  1.08   2.30 27060    1</span></span>
+<span><span class="co">#&gt; z[9,2]                 0.21    0.01  0.97 -1.71 -0.44  0.21  0.87   2.11 31123    1</span></span>
+<span><span class="co">#&gt; z[9,3]                 0.01    0.01  0.97 -1.88 -0.65  0.01  0.67   1.91 33318    1</span></span>
+<span><span class="co">#&gt; z[10,1]               -0.16    0.01  0.93 -1.97 -0.79 -0.15  0.48   1.68 31255    1</span></span>
+<span><span class="co">#&gt; z[10,2]                0.13    0.01  0.97 -1.77 -0.51  0.14  0.78   2.05 36698    1</span></span>
+<span><span class="co">#&gt; z[10,3]               -0.15    0.01  0.98 -2.05 -0.80 -0.15  0.52   1.77 32999    1</span></span>
+<span><span class="co">#&gt; z[11,1]               -0.21    0.01  0.93 -2.04 -0.84 -0.21  0.41   1.63 31574    1</span></span>
+<span><span class="co">#&gt; z[11,2]                0.10    0.01  0.97 -1.82 -0.55  0.10  0.74   2.02 30823    1</span></span>
+<span><span class="co">#&gt; z[11,3]               -0.22    0.01  0.97 -2.15 -0.88 -0.23  0.44   1.68 33355    1</span></span>
+<span><span class="co">#&gt; z[12,1]               -0.35    0.01  0.96 -2.25 -1.00 -0.34  0.31   1.52 32709    1</span></span>
+<span><span class="co">#&gt; z[12,2]                0.21    0.01  0.97 -1.72 -0.44  0.21  0.86   2.13 32200    1</span></span>
+<span><span class="co">#&gt; z[12,3]               -0.18    0.01  0.99 -2.11 -0.84 -0.18  0.49   1.78 28951    1</span></span>
+<span><span class="co">#&gt; z[13,1]               -0.12    0.01  0.96 -2.01 -0.76 -0.12  0.52   1.79 28205    1</span></span>
+<span><span class="co">#&gt; z[13,2]                0.37    0.01  0.97 -1.55 -0.28  0.38  1.02   2.26 27596    1</span></span>
+<span><span class="co">#&gt; z[13,3]               -0.09    0.01  0.98 -2.02 -0.76 -0.08  0.56   1.83 32654    1</span></span>
+<span><span class="co">#&gt; z[14,1]               -0.19    0.01  0.93 -2.02 -0.83 -0.20  0.44   1.62 29242    1</span></span>
+<span><span class="co">#&gt; z[14,2]                0.41    0.01  0.97 -1.51 -0.24  0.41  1.06   2.34 31420    1</span></span>
+<span><span class="co">#&gt; z[14,3]               -0.13    0.01  0.99 -2.03 -0.80 -0.13  0.55   1.78 35216    1</span></span>
+<span><span class="co">#&gt; z[15,1]               -0.14    0.01  0.96 -2.04 -0.78 -0.14  0.51   1.73 31608    1</span></span>
+<span><span class="co">#&gt; z[15,2]                0.36    0.01  0.98 -1.55 -0.30  0.35  1.02   2.24 33620    1</span></span>
+<span><span class="co">#&gt; z[15,3]               -0.08    0.01  0.98 -1.98 -0.75 -0.08  0.59   1.81 32666    1</span></span>
+<span><span class="co">#&gt; z[16,1]                0.06    0.01  0.95 -1.81 -0.58  0.06  0.71   1.91 30268    1</span></span>
+<span><span class="co">#&gt; z[16,2]                0.49    0.01  0.98 -1.43 -0.17  0.49  1.15   2.40 32842    1</span></span>
+<span><span class="co">#&gt; z[16,3]                0.02    0.01  0.98 -1.90 -0.65  0.01  0.68   1.92 31473    1</span></span>
+<span><span class="co">#&gt; z[17,1]                0.12    0.01  0.96 -1.78 -0.54  0.12  0.77   2.00 31722    1</span></span>
+<span><span class="co">#&gt; z[17,2]                0.54    0.01  0.97 -1.36 -0.11  0.55  1.19   2.48 32008    1</span></span>
+<span><span class="co">#&gt; z[17,3]                0.05    0.01  0.97 -1.85 -0.59  0.05  0.70   1.93 33489    1</span></span>
+<span><span class="co">#&gt; z[18,1]                0.18    0.01  0.97 -1.75 -0.47  0.18  0.83   2.06 28533    1</span></span>
+<span><span class="co">#&gt; z[18,2]                0.72    0.01  0.96 -1.16  0.07  0.71  1.38   2.57 28147    1</span></span>
+<span><span class="co">#&gt; z[18,3]                0.16    0.01  0.98 -1.74 -0.51  0.16  0.82   2.08 34396    1</span></span>
+<span><span class="co">#&gt; z[19,1]                0.37    0.01  0.97 -1.53 -0.28  0.37  1.03   2.27 24720    1</span></span>
+<span><span class="co">#&gt; z[19,2]                0.85    0.01  0.97 -1.03  0.20  0.84  1.51   2.76 26377    1</span></span>
+<span><span class="co">#&gt; z[19,3]                0.15    0.01  0.98 -1.77 -0.51  0.15  0.81   2.03 29858    1</span></span>
+<span><span class="co">#&gt; z[20,1]                0.12    0.01  0.95 -1.74 -0.51  0.12  0.75   2.00 27785    1</span></span>
+<span><span class="co">#&gt; z[20,2]                0.52    0.01  0.95 -1.33 -0.13  0.51  1.16   2.39 30797    1</span></span>
+<span><span class="co">#&gt; z[20,3]                0.13    0.01  0.99 -1.82 -0.54  0.12  0.80   2.08 33690    1</span></span>
+<span><span class="co">#&gt; z[21,1]               -0.06    0.01  0.93 -1.90 -0.69 -0.06  0.56   1.79 33436    1</span></span>
+<span><span class="co">#&gt; z[21,2]                0.10    0.01  0.97 -1.82 -0.55  0.10  0.76   2.00 32469    1</span></span>
+<span><span class="co">#&gt; z[21,3]                0.17    0.01  0.98 -1.74 -0.49  0.18  0.83   2.08 32190    1</span></span>
+<span><span class="co">#&gt; z[22,1]                0.15    0.01  0.94 -1.69 -0.48  0.14  0.78   1.96 28240    1</span></span>
+<span><span class="co">#&gt; z[22,2]                0.28    0.01  0.98 -1.66 -0.37  0.28  0.94   2.19 29974    1</span></span>
+<span><span class="co">#&gt; z[22,3]                0.29    0.01  0.97 -1.61 -0.37  0.28  0.94   2.21 31245    1</span></span>
+<span><span class="co">#&gt; z[23,1]               -0.25    0.01  0.95 -2.11 -0.90 -0.24  0.38   1.63 31295    1</span></span>
+<span><span class="co">#&gt; z[23,2]               -0.01    0.01  0.97 -1.92 -0.66 -0.01  0.63   1.87 30675    1</span></span>
+<span><span class="co">#&gt; z[23,3]               -0.11    0.01  0.98 -2.04 -0.77 -0.10  0.54   1.78 35920    1</span></span>
+<span><span class="co">#&gt; z[24,1]               -0.22    0.01  0.95 -2.07 -0.86 -0.22  0.42   1.64 31136    1</span></span>
+<span><span class="co">#&gt; z[24,2]                0.09    0.01  0.96 -1.78 -0.55  0.09  0.74   1.95 31881    1</span></span>
+<span><span class="co">#&gt; z[24,3]               -0.03    0.01  0.98 -1.94 -0.71 -0.03  0.63   1.89 30165    1</span></span>
+<span><span class="co">#&gt; z[25,1]               -0.09    0.01  0.95 -1.98 -0.73 -0.10  0.55   1.77 29844    1</span></span>
+<span><span class="co">#&gt; z[25,2]                0.15    0.01  0.98 -1.77 -0.52  0.15  0.81   2.07 30523    1</span></span>
+<span><span class="co">#&gt; z[25,3]                0.06    0.01  0.97 -1.90 -0.58  0.06  0.70   1.99 35061    1</span></span>
+<span><span class="co">#&gt; z[26,1]                0.20    0.01  0.94 -1.65 -0.43  0.20  0.84   2.03 28978    1</span></span>
+<span><span class="co">#&gt; z[26,2]                0.32    0.01  0.97 -1.60 -0.33  0.33  0.97   2.25 28160    1</span></span>
+<span><span class="co">#&gt; z[26,3]                0.16    0.01  0.97 -1.73 -0.50  0.15  0.82   2.09 31333    1</span></span>
+<span><span class="co">#&gt; z[27,1]               -0.15    0.01  0.96 -2.04 -0.79 -0.15  0.49   1.73 31550    1</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 6459 rows ]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Sat Sep 12 22:34:51 2026.</span></span>
+<span><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Sun Sep 13 19:16:30 2026.</span></span>
 <span><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></span>
 <span><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></span>
 <span><span class="co">#&gt; convergence, Rhat=1).</span></span></code></pre></div>
-<p>Let us plot the posterior of the steady-state <span class="math inline">\(mu_t=mu\)</span></p>
+<p>Let us plot the posterior steady-state. We can see that <span class="math inline">\(\mu_t=\Psi\)</span> in the constant only case, as
+discussed. Note that in the Stan code the <span class="math inline">\(\mu_t\)</span>’s are stacked row-wise in the <span class="math inline">\(T \times k\)</span> matrix <code>mu</code>.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stanfit</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">fit</span><span class="op">$</span><span class="va">stan</span></span>
 <span></span>
 <span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">plot</span><span class="op">(</span><span class="va">stanfit</span>, pars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mu[1,1]"</span>,</span>
 <span>                            <span class="st">"mu[1,2]"</span>,</span>
-<span>                            <span class="st">"mu[1,3]"</span><span class="op">)</span>, plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
+<span>                            <span class="st">"mu[1,3]"</span>,</span>
+<span>                            <span class="st">"Psi[1,1]"</span>,</span>
+<span>                            <span class="st">"Psi[2,1]"</span>,</span>
+<span>                            <span class="st">"Psi[3,1]"</span><span class="op">)</span>, plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="figure/AR(1)-3-1.png" alt="plot of chunk AR(1)-3" width="100%"><p class="caption">

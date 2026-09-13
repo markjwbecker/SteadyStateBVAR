@@ -141,7 +141,7 @@ d_{t}' =
 note that the specification of <span class="math inline">\(d_t\)</span>
 implies the following parametrization of the steady state:</p>
 <p><span class="math display">\[
-\mu_t =
+\Psi d_t = \mu_t =
 \begin{cases}
 \psi_1 + \psi_2 &amp; \text{if } t \le 1992Q4 \\
 \psi_1 &amp; \text{if } t &gt; 1992Q4
@@ -185,9 +185,10 @@ note that for our data here, the growth rate variables (<span class="math inline
 specified in terms of quarterly rates of change/quarter-on-quarter
 growth, i.e. for a variable <span class="math inline">\(x\)</span> which
 is on a quarterly frequency (<code>freq=4</code>), the quarterly growth
-rate is <span class="math inline">\(100(\ln (x_t) - \ln
-x_{t-1})\)</span>. The 95% prior probability intervals in Table I are
-specified in terms of annualized quarterly growth rates <span class="math inline">\(400(\ln (x_t) - \ln x_{t-1})\)</span>.</p>
+rate is <span class="math inline">\(100(\ln x_t - \ln x_{t-1})\)</span>.
+The 95% prior probability intervals in Table I are specified in terms of
+annualized quarterly growth rates <span class="math inline">\(400(\ln
+x_t - \ln x_{t-1})\)</span>.</p>
 <p>The <code><a href="../reference/ppi.html">ppi()</a></code> function is useful here. Simply input the
 desired 95% prior probability interval (normal distribution) on the
 annualized scale with <code>annualized_growthrate=TRUE</code> with the
@@ -262,12 +263,15 @@ plot of chunk HOMO-2
 </div>
 <p>Continuing, as in Villani (2009), we incorporate the assumption that
 Sweden is a small economy and therefore unlikely to affect the foreign
-economy by restricting the upper-right submatrix of <span class="math inline">\(\Pi_\ell\)</span> for <span class="math inline">\(\ell =1,\dots,p\)</span> or equivalently
-restricting the bottom-left submatrix of <span class="math inline">\(\Pi_\ell'\)</span> to the zero matrix. This
+economy, by restricting the upper-right submatrix of <span class="math inline">\(\Pi_\ell\)</span> for <span class="math inline">\(\ell =1,\dots,p\)</span>, or equivalently
+restricting the bottom-left submatrix of <span class="math inline">\(\Pi_\ell'\)</span>, to the zero matrix. This
 technique is called “block exogeneity” (Dieppe, Legrand, and van Roye,
 2016). In essence we treat the foreign economy as exogenous to the
-domestic economy, although it is not exogenous in the strict sense
-(Karlsson, 2013).</p>
+domestic economy. Although, it is not exogenous in the strict sense, it
+is actually a statement about Granger causality. That, in a small open
+economy model, we do not expect the domestic variables to be useful for
+forecasting the variables representing the rest of the world (Karlsson,
+2013).</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">p</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">p</span></span>
 <span><span class="va">k</span> <span class="op">&lt;-</span> <span class="va">bvar_obj</span><span class="op">$</span><span class="va">setup</span><span class="op">$</span><span class="va">k</span></span>
@@ -394,28 +398,28 @@ iterations.</p>
 <span><span class="co">#&gt;   delta y.l1        0.00  0.00  0.00    0.23 -0.09 -0.10  0.00</span></span>
 <span><span class="co">#&gt;   pi.l1             0.00  0.00  0.00    0.00  0.08  0.06  0.00</span></span>
 <span><span class="co">#&gt;   i.l1              0.00  0.00  0.00    0.00  0.02  0.76  0.00</span></span>
-<span><span class="co">#&gt;   q.l1              0.00  0.00  0.00    1.21  3.95  0.73  0.93</span></span>
-<span><span class="co">#&gt;   delta y_f.l2      0.03 -0.01  0.09    0.02 -0.02  0.10  0.00</span></span>
+<span><span class="co">#&gt;   q.l1              0.00  0.00  0.00    1.21  3.95  0.75  0.93</span></span>
+<span><span class="co">#&gt;   delta y_f.l2      0.03 -0.01  0.09    0.02 -0.02  0.09  0.00</span></span>
 <span><span class="co">#&gt;   pi_f.l2           0.01  0.02  0.04    0.00 -0.03 -0.15  0.00</span></span>
 <span><span class="co">#&gt;   i_f.l2           -0.02 -0.01 -0.01    0.00  0.04  0.07  0.00</span></span>
 <span><span class="co">#&gt;   delta y.l2        0.00  0.00  0.00    0.11 -0.01  0.15  0.00</span></span>
 <span><span class="co">#&gt;   pi.l2             0.00  0.00  0.00    0.01 -0.04 -0.05  0.00</span></span>
 <span><span class="co">#&gt;   i.l2              0.00  0.00  0.00   -0.01  0.01  0.04  0.00</span></span>
-<span><span class="co">#&gt;   q.l2              0.00  0.00  0.00    0.55 -0.38  0.29 -0.04</span></span>
+<span><span class="co">#&gt;   q.l2              0.00  0.00  0.00    0.55 -0.37  0.30 -0.04</span></span>
 <span><span class="co">#&gt;   delta y_f.l3      0.01 -0.01  0.00    0.02 -0.01  0.00  0.00</span></span>
 <span><span class="co">#&gt;   pi_f.l3          -0.02  0.06 -0.01    0.00  0.08  0.02  0.00</span></span>
 <span><span class="co">#&gt;   i_f.l3            0.00  0.00  0.02    0.00  0.00  0.03  0.00</span></span>
 <span><span class="co">#&gt;   delta y.l3        0.00  0.00  0.00    0.06  0.01 -0.02  0.00</span></span>
 <span><span class="co">#&gt;   pi.l3             0.00  0.00  0.00    0.00  0.02 -0.02  0.00</span></span>
 <span><span class="co">#&gt;   i.l3              0.00  0.00  0.00    0.01  0.00  0.01  0.00</span></span>
-<span><span class="co">#&gt;   q.l3              0.00  0.00  0.00   -0.13 -0.02 -0.58  0.00</span></span>
+<span><span class="co">#&gt;   q.l3              0.00  0.00  0.00   -0.14 -0.02 -0.58  0.00</span></span>
 <span><span class="co">#&gt;   delta y_f.l4      0.03 -0.01  0.00   -0.01  0.03  0.02  0.00</span></span>
 <span><span class="co">#&gt;   pi_f.l4           0.00  0.16 -0.03    0.00  0.01  0.01  0.00</span></span>
 <span><span class="co">#&gt;   i_f.l4            0.00  0.00 -0.02    0.00  0.00  0.03  0.00</span></span>
 <span><span class="co">#&gt;   delta y.l4        0.00  0.00  0.00   -0.08  0.01  0.03  0.00</span></span>
 <span><span class="co">#&gt;   pi.l4             0.00  0.00  0.00    0.00  0.06 -0.01  0.00</span></span>
 <span><span class="co">#&gt;   i.l4              0.00  0.00  0.00    0.00 -0.01  0.00  0.00</span></span>
-<span><span class="co">#&gt;   q.l4              0.00  0.00  0.00   -0.15 -0.06 -0.17 -0.01</span></span>
+<span><span class="co">#&gt;   q.l4              0.00  0.00  0.00   -0.15 -0.06 -0.18 -0.01</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; </span></span>
@@ -425,7 +429,7 @@ iterations.</p>
 <span><span class="co">#&gt;   delta y_f 0.58  0.08</span></span>
 <span><span class="co">#&gt;   pi_f      0.50  0.46</span></span>
 <span><span class="co">#&gt;   i_f       4.95  2.02</span></span>
-<span><span class="co">#&gt;   delta y   0.58 -0.04</span></span>
+<span><span class="co">#&gt;   delta y   0.58 -0.03</span></span>
 <span><span class="co">#&gt;   pi        0.49  1.15</span></span>
 <span><span class="co">#&gt;   i         4.29  4.46</span></span>
 <span><span class="co">#&gt;   q         3.92 -0.10</span></span>
@@ -440,7 +444,7 @@ iterations.</p>
 <span><span class="co">#&gt;   i_f            0.01  0.05 0.52    0.01  0.18  0.11  0.00</span></span>
 <span><span class="co">#&gt;   delta y        0.07  0.01 0.01    0.19 -0.05 -0.01  0.00</span></span>
 <span><span class="co">#&gt;   pi            -0.01  0.13 0.18   -0.05  0.59  0.12  0.00</span></span>
-<span><span class="co">#&gt;   i              0.00  0.04 0.11   -0.01  0.12  1.57 -0.01</span></span>
+<span><span class="co">#&gt;   i              0.00  0.04 0.11   -0.01  0.12  1.56 -0.01</span></span>
 <span><span class="co">#&gt;   q              0.00  0.00 0.00    0.00  0.00 -0.01  0.00</span></span>
 <span><span class="co">#&gt; --------------------------------------------------------------------------------</span></span></code></pre></div>
 <p>We can access the elementwise posterior means or medians with
@@ -455,133 +459,130 @@ if needed.</p>
 <span><span class="co">#&gt; post-warmup draws per chain=10000, total post-warmup draws=40000.</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt;                  mean se_mean    sd   2.5%    25%    50%    75%  97.5% n_eff Rhat</span></span>
-<span><span class="co">#&gt; beta[1,1]        0.18    0.00  0.09   0.00   0.12   0.18   0.24   0.36 39576    1</span></span>
-<span><span class="co">#&gt; beta[1,2]        0.03    0.00  0.05  -0.07   0.00   0.03   0.06   0.13 46665    1</span></span>
-<span><span class="co">#&gt; beta[1,3]       -0.01    0.00  0.13  -0.27  -0.10  -0.01   0.07   0.24 46387    1</span></span>
-<span><span class="co">#&gt; beta[1,4]        0.12    0.00  0.08  -0.05   0.06   0.12   0.18   0.28 42138    1</span></span>
-<span><span class="co">#&gt; beta[1,5]        0.07    0.00  0.14  -0.21  -0.02   0.07   0.17   0.35 41315    1</span></span>
-<span><span class="co">#&gt; beta[1,6]       -0.12    0.00  0.24  -0.60  -0.28  -0.12   0.04   0.35 46585    1</span></span>
-<span><span class="co">#&gt; beta[1,7]        0.00    0.00  0.01  -0.01  -0.01   0.00   0.00   0.01 49057    1</span></span>
-<span><span class="co">#&gt; beta[2,1]       -0.02    0.00  0.09  -0.20  -0.08  -0.02   0.04   0.16 40902    1</span></span>
-<span><span class="co">#&gt; beta[2,2]        0.32    0.00  0.08   0.16   0.26   0.32   0.37   0.47 35934    1</span></span>
-<span><span class="co">#&gt; beta[2,3]        0.25    0.00  0.17  -0.08   0.14   0.25   0.37   0.58 40587    1</span></span>
-<span><span class="co">#&gt; beta[2,4]        0.12    0.00  0.11  -0.09   0.05   0.12   0.19   0.33 37835    1</span></span>
-<span><span class="co">#&gt; beta[2,5]       -0.07    0.00  0.19  -0.44  -0.20  -0.07   0.06   0.30 32511    1</span></span>
-<span><span class="co">#&gt; beta[2,6]        0.01    0.00  0.32  -0.62  -0.21   0.01   0.23   0.64 40509    1</span></span>
-<span><span class="co">#&gt; beta[2,7]        0.00    0.00  0.01  -0.01   0.00   0.00   0.01   0.02 40843    1</span></span>
-<span><span class="co">#&gt; beta[3,1]        0.00    0.00  0.03  -0.06  -0.02   0.00   0.02   0.05 31853    1</span></span>
-<span><span class="co">#&gt; beta[3,2]        0.04    0.00  0.02   0.00   0.03   0.04   0.05   0.08 33204    1</span></span>
-<span><span class="co">#&gt; beta[3,3]        0.92    0.00  0.08   0.77   0.87   0.92   0.97   1.07 32160    1</span></span>
-<span><span class="co">#&gt; beta[3,4]       -0.04    0.00  0.04  -0.11  -0.06  -0.04  -0.01   0.03 30103    1</span></span>
-<span><span class="co">#&gt; beta[3,5]        0.06    0.00  0.06  -0.07   0.01   0.06   0.10   0.18 29708    1</span></span>
-<span><span class="co">#&gt; beta[3,6]        0.05    0.00  0.11  -0.16  -0.03   0.05   0.12   0.26 31952    1</span></span>
-<span><span class="co">#&gt; beta[3,7]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.01 42664    1</span></span>
-<span><span class="co">#&gt; beta[4,1]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40487    1</span></span>
-<span><span class="co">#&gt; beta[4,2]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 41501    1</span></span>
-<span><span class="co">#&gt; beta[4,3]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40106    1</span></span>
-<span><span class="co">#&gt; beta[4,4]        0.23    0.00  0.09   0.05   0.17   0.23   0.29   0.40 32679    1</span></span>
-<span><span class="co">#&gt; beta[4,5]       -0.09    0.00  0.12  -0.32  -0.17  -0.09  -0.01   0.14 37070    1</span></span>
-<span><span class="co">#&gt; beta[4,6]       -0.10    0.00  0.21  -0.51  -0.24  -0.10   0.04   0.31 40598    1</span></span>
-<span><span class="co">#&gt; beta[4,7]        0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01 46931    1</span></span>
-<span><span class="co">#&gt; beta[5,1]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40132    1</span></span>
-<span><span class="co">#&gt; beta[5,2]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40828    1</span></span>
-<span><span class="co">#&gt; beta[5,3]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40288    1</span></span>
-<span><span class="co">#&gt; beta[5,4]        0.00    0.00  0.04  -0.08  -0.02   0.00   0.03   0.08 41489    1</span></span>
-<span><span class="co">#&gt; beta[5,5]        0.08    0.00  0.09  -0.09   0.02   0.08   0.13   0.24 37384    1</span></span>
-<span><span class="co">#&gt; beta[5,6]        0.06    0.00  0.12  -0.18  -0.02   0.06   0.14   0.30 42573    1</span></span>
-<span><span class="co">#&gt; beta[5,7]        0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.00 48750    1</span></span>
-<span><span class="co">#&gt; beta[6,1]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39113    1</span></span>
-<span><span class="co">#&gt; beta[6,2]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40756    1</span></span>
-<span><span class="co">#&gt; beta[6,3]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40154    1</span></span>
-<span><span class="co">#&gt; beta[6,4]        0.00    0.00  0.02  -0.04  -0.01   0.00   0.01   0.04 37979    1</span></span>
-<span><span class="co">#&gt; beta[6,5]        0.02    0.00  0.04  -0.05   0.00   0.02   0.04   0.09 35396    1</span></span>
-<span><span class="co">#&gt; beta[6,6]        0.76    0.00  0.08   0.59   0.70   0.76   0.82   0.93 33704    1</span></span>
-<span><span class="co">#&gt; beta[6,7]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 57254    1</span></span>
-<span><span class="co">#&gt; beta[7,1]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40339    1</span></span>
-<span><span class="co">#&gt; beta[7,2]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 38950    1</span></span>
-<span><span class="co">#&gt; beta[7,3]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40045    1</span></span>
-<span><span class="co">#&gt; beta[7,4]        1.21    0.00  0.87  -0.50   0.63   1.22   1.80   2.92 31111    1</span></span>
-<span><span class="co">#&gt; beta[7,5]        3.95    0.01  1.45   1.09   2.98   3.96   4.94   6.76 33832    1</span></span>
-<span><span class="co">#&gt; beta[7,6]        0.73    0.01  2.61  -4.39  -1.02   0.73   2.51   5.83 34761    1</span></span>
-<span><span class="co">#&gt; beta[7,7]        0.93    0.00  0.08   0.78   0.88   0.93   0.99   1.09 31752    1</span></span>
-<span><span class="co">#&gt; beta[8,1]        0.03    0.00  0.07  -0.11  -0.02   0.03   0.08   0.17 49147    1</span></span>
-<span><span class="co">#&gt; beta[8,2]       -0.01    0.00  0.03  -0.07  -0.03  -0.01   0.01   0.05 48806    1</span></span>
-<span><span class="co">#&gt; beta[8,3]        0.09    0.00  0.08  -0.07   0.04   0.09   0.15   0.25 49825    1</span></span>
-<span><span class="co">#&gt; beta[8,4]        0.02    0.00  0.05  -0.07  -0.01   0.02   0.06   0.12 48736    1</span></span>
-<span><span class="co">#&gt; beta[8,5]       -0.02    0.00  0.09  -0.18  -0.07  -0.02   0.04   0.15 44918    1</span></span>
-<span><span class="co">#&gt; beta[8,6]        0.10    0.00  0.15  -0.19   0.00   0.10   0.20   0.39 50165    1</span></span>
-<span><span class="co">#&gt; beta[8,7]        0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01 57723    1</span></span>
-<span><span class="co">#&gt; beta[9,1]        0.01    0.00  0.06  -0.12  -0.03   0.01   0.05   0.13 46973    1</span></span>
-<span><span class="co">#&gt; beta[9,2]        0.02    0.00  0.07  -0.11  -0.02   0.02   0.07   0.15 41264    1</span></span>
-<span><span class="co">#&gt; beta[9,3]        0.04    0.00  0.11  -0.18  -0.04   0.04   0.12   0.27 49804    1</span></span>
-<span><span class="co">#&gt; beta[9,4]        0.00    0.00  0.07  -0.14  -0.05   0.00   0.05   0.14 46112    1</span></span>
-<span><span class="co">#&gt; beta[9,5]       -0.03    0.00  0.12  -0.28  -0.11  -0.03   0.05   0.21 44446    1</span></span>
-<span><span class="co">#&gt; beta[9,6]       -0.15    0.00  0.21  -0.56  -0.29  -0.15  -0.01   0.26 48643    1</span></span>
-<span><span class="co">#&gt; beta[9,7]        0.00    0.00  0.00  -0.01   0.00   0.00   0.01   0.01 49111    1</span></span>
-<span><span class="co">#&gt; beta[10,1]      -0.02    0.00  0.02  -0.06  -0.03  -0.02   0.00   0.03 37921    1</span></span>
-<span><span class="co">#&gt; beta[10,2]      -0.01    0.00  0.02  -0.04  -0.02  -0.01   0.00   0.02 41684    1</span></span>
-<span><span class="co">#&gt; beta[10,3]      -0.01    0.00  0.07  -0.15  -0.06  -0.01   0.04   0.14 33177    1</span></span>
-<span><span class="co">#&gt; beta[10,4]       0.00    0.00  0.03  -0.05  -0.02   0.00   0.02   0.05 39394    1</span></span>
-<span><span class="co">#&gt; beta[10,5]       0.04    0.00  0.05  -0.05   0.01   0.04   0.07   0.13 39763    1</span></span>
-<span><span class="co">#&gt; beta[10,6]       0.07    0.00  0.08  -0.08   0.02   0.07   0.12   0.22 38707    1</span></span>
-<span><span class="co">#&gt; beta[10,7]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 60545    1</span></span>
-<span><span class="co">#&gt; beta[11,1]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39552    1</span></span>
-<span><span class="co">#&gt; beta[11,2]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 38559    1</span></span>
-<span><span class="co">#&gt; beta[11,3]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40931    1</span></span>
-<span><span class="co">#&gt; beta[11,4]       0.11    0.00  0.07  -0.02   0.07   0.11   0.16   0.25 43687    1</span></span>
-<span><span class="co">#&gt; beta[11,5]      -0.01    0.00  0.08  -0.16  -0.06  -0.01   0.04   0.14 46924    1</span></span>
-<span><span class="co">#&gt; beta[11,6]       0.15    0.00  0.13  -0.11   0.06   0.15   0.24   0.42 46719    1</span></span>
-<span><span class="co">#&gt; beta[11,7]       0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01 59657    1</span></span>
-<span><span class="co">#&gt; beta[12,1]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40527    1</span></span>
-<span><span class="co">#&gt; beta[12,2]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 41186    1</span></span>
-<span><span class="co">#&gt; beta[12,3]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 41395    1</span></span>
-<span><span class="co">#&gt; beta[12,4]       0.01    0.00  0.03  -0.04  -0.01   0.01   0.03   0.06 49499    1</span></span>
-<span><span class="co">#&gt; beta[12,5]      -0.04    0.00  0.07  -0.18  -0.09  -0.04   0.00   0.09 42252    1</span></span>
-<span><span class="co">#&gt; beta[12,6]      -0.05    0.00  0.08  -0.20  -0.10  -0.05   0.00   0.10 50627    1</span></span>
-<span><span class="co">#&gt; beta[12,7]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 73026    1</span></span>
-<span><span class="co">#&gt; beta[13,1]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 41058    1</span></span>
-<span><span class="co">#&gt; beta[13,2]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39860    1</span></span>
-<span><span class="co">#&gt; beta[13,3]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40186    1</span></span>
-<span><span class="co">#&gt; beta[13,4]      -0.01    0.00  0.01  -0.04  -0.02  -0.01   0.00   0.02 45771    1</span></span>
-<span><span class="co">#&gt; beta[13,5]       0.01    0.00  0.03  -0.04   0.00   0.01   0.03   0.06 42566    1</span></span>
-<span><span class="co">#&gt; beta[13,6]       0.04    0.00  0.07  -0.10  -0.01   0.04   0.09   0.18 37670    1</span></span>
-<span><span class="co">#&gt; beta[13,7]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 69104    1</span></span>
-<span><span class="co">#&gt; beta[14,1]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39879    1</span></span>
-<span><span class="co">#&gt; beta[14,2]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40858    1</span></span>
-<span><span class="co">#&gt; beta[14,3]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40473    1</span></span>
-<span><span class="co">#&gt; beta[14,4]       0.55    0.00  0.65  -0.73   0.11   0.55   0.99   1.83 40788    1</span></span>
-<span><span class="co">#&gt; beta[14,5]      -0.38    0.01  1.14  -2.61  -1.15  -0.38   0.39   1.86 38386    1</span></span>
-<span><span class="co">#&gt; beta[14,6]       0.29    0.01  1.98  -3.61  -1.05   0.28   1.61   4.19 40580    1</span></span>
-<span><span class="co">#&gt; beta[14,7]      -0.04    0.00  0.08  -0.19  -0.09  -0.04   0.01   0.11 32765    1</span></span>
-<span><span class="co">#&gt; beta[15,1]       0.01    0.00  0.05  -0.10  -0.03   0.01   0.05   0.12 48124    1</span></span>
-<span><span class="co">#&gt; beta[15,2]      -0.01    0.00  0.02  -0.05  -0.03  -0.01   0.00   0.03 50767    1</span></span>
+<span><span class="co">#&gt; beta[1,1]        0.18    0.00  0.09   0.00   0.12   0.18   0.24   0.36 39646    1</span></span>
+<span><span class="co">#&gt; beta[1,2]        0.03    0.00  0.05  -0.07   0.00   0.03   0.06   0.13 43344    1</span></span>
+<span><span class="co">#&gt; beta[1,3]       -0.01    0.00  0.13  -0.27  -0.10  -0.01   0.08   0.24 46124    1</span></span>
+<span><span class="co">#&gt; beta[1,4]        0.12    0.00  0.08  -0.04   0.06   0.12   0.17   0.28 40600    1</span></span>
+<span><span class="co">#&gt; beta[1,5]        0.07    0.00  0.14  -0.21  -0.02   0.07   0.17   0.34 39421    1</span></span>
+<span><span class="co">#&gt; beta[1,6]       -0.12    0.00  0.24  -0.60  -0.29  -0.12   0.04   0.36 45344    1</span></span>
+<span><span class="co">#&gt; beta[1,7]        0.00    0.00  0.01  -0.02  -0.01   0.00   0.00   0.01 46098    1</span></span>
+<span><span class="co">#&gt; beta[2,1]       -0.02    0.00  0.09  -0.20  -0.08  -0.02   0.04   0.16 39124    1</span></span>
+<span><span class="co">#&gt; beta[2,2]        0.32    0.00  0.08   0.16   0.26   0.32   0.37   0.47 36429    1</span></span>
+<span><span class="co">#&gt; beta[2,3]        0.25    0.00  0.17  -0.08   0.14   0.25   0.36   0.58 40252    1</span></span>
+<span><span class="co">#&gt; beta[2,4]        0.12    0.00  0.11  -0.09   0.05   0.12   0.19   0.33 37093    1</span></span>
+<span><span class="co">#&gt; beta[2,5]       -0.07    0.00  0.19  -0.45  -0.20  -0.07   0.06   0.31 34145    1</span></span>
+<span><span class="co">#&gt; beta[2,6]        0.01    0.00  0.32  -0.62  -0.21   0.01   0.23   0.63 38392    1</span></span>
+<span><span class="co">#&gt; beta[2,7]        0.00    0.00  0.01  -0.01   0.00   0.00   0.01   0.02 38712    1</span></span>
+<span><span class="co">#&gt; beta[3,1]        0.00    0.00  0.03  -0.06  -0.03   0.00   0.02   0.05 30778    1</span></span>
+<span><span class="co">#&gt; beta[3,2]        0.04    0.00  0.02   0.00   0.03   0.04   0.05   0.08 32492    1</span></span>
+<span><span class="co">#&gt; beta[3,3]        0.92    0.00  0.08   0.78   0.87   0.92   0.97   1.07 30611    1</span></span>
+<span><span class="co">#&gt; beta[3,4]       -0.04    0.00  0.04  -0.11  -0.06  -0.04  -0.01   0.03 28930    1</span></span>
+<span><span class="co">#&gt; beta[3,5]        0.06    0.00  0.06  -0.07   0.02   0.06   0.10   0.18 28196    1</span></span>
+<span><span class="co">#&gt; beta[3,6]        0.05    0.00  0.11  -0.16  -0.02   0.05   0.12   0.26 32477    1</span></span>
+<span><span class="co">#&gt; beta[3,7]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.01 42446    1</span></span>
+<span><span class="co">#&gt; beta[4,1]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39555    1</span></span>
+<span><span class="co">#&gt; beta[4,2]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 37897    1</span></span>
+<span><span class="co">#&gt; beta[4,3]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39871    1</span></span>
+<span><span class="co">#&gt; beta[4,4]        0.23    0.00  0.09   0.06   0.17   0.23   0.29   0.40 34535    1</span></span>
+<span><span class="co">#&gt; beta[4,5]       -0.09    0.00  0.12  -0.32  -0.17  -0.09  -0.01   0.14 37092    1</span></span>
+<span><span class="co">#&gt; beta[4,6]       -0.10    0.00  0.21  -0.51  -0.24  -0.10   0.04   0.31 41415    1</span></span>
+<span><span class="co">#&gt; beta[4,7]        0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01 40269    1</span></span>
+<span><span class="co">#&gt; beta[5,1]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39081    1</span></span>
+<span><span class="co">#&gt; beta[5,2]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40387    1</span></span>
+<span><span class="co">#&gt; beta[5,3]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39474    1</span></span>
+<span><span class="co">#&gt; beta[5,4]        0.00    0.00  0.04  -0.08  -0.02   0.00   0.03   0.08 41273    1</span></span>
+<span><span class="co">#&gt; beta[5,5]        0.08    0.00  0.09  -0.09   0.02   0.08   0.13   0.24 37093    1</span></span>
+<span><span class="co">#&gt; beta[5,6]        0.06    0.00  0.12  -0.18  -0.02   0.06   0.14   0.30 40237    1</span></span>
+<span><span class="co">#&gt; beta[5,7]        0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.00 49115    1</span></span>
+<span><span class="co">#&gt; beta[6,1]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39804    1</span></span>
+<span><span class="co">#&gt; beta[6,2]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39715    1</span></span>
+<span><span class="co">#&gt; beta[6,3]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39829    1</span></span>
+<span><span class="co">#&gt; beta[6,4]        0.00    0.00  0.02  -0.04  -0.01   0.00   0.01   0.04 38107    1</span></span>
+<span><span class="co">#&gt; beta[6,5]        0.02    0.00  0.04  -0.05   0.00   0.02   0.04   0.09 34662    1</span></span>
+<span><span class="co">#&gt; beta[6,6]        0.76    0.00  0.08   0.60   0.70   0.76   0.82   0.93 32832    1</span></span>
+<span><span class="co">#&gt; beta[6,7]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 57927    1</span></span>
+<span><span class="co">#&gt; beta[7,1]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 38707    1</span></span>
+<span><span class="co">#&gt; beta[7,2]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40034    1</span></span>
+<span><span class="co">#&gt; beta[7,3]        0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39503    1</span></span>
+<span><span class="co">#&gt; beta[7,4]        1.21    0.00  0.87  -0.48   0.62   1.22   1.80   2.90 30538    1</span></span>
+<span><span class="co">#&gt; beta[7,5]        3.95    0.01  1.44   1.10   2.98   3.96   4.93   6.75 29306    1</span></span>
+<span><span class="co">#&gt; beta[7,6]        0.75    0.01  2.60  -4.34  -1.02   0.76   2.50   5.82 32254    1</span></span>
+<span><span class="co">#&gt; beta[7,7]        0.93    0.00  0.08   0.78   0.88   0.93   0.98   1.09 30846    1</span></span>
+<span><span class="co">#&gt; beta[8,1]        0.03    0.00  0.07  -0.11  -0.02   0.03   0.08   0.17 44783    1</span></span>
+<span><span class="co">#&gt; beta[8,2]       -0.01    0.00  0.03  -0.07  -0.03  -0.01   0.01   0.05 48140    1</span></span>
+<span><span class="co">#&gt; beta[8,3]        0.09    0.00  0.08  -0.07   0.04   0.09   0.15   0.25 48829    1</span></span>
+<span><span class="co">#&gt; beta[8,4]        0.02    0.00  0.05  -0.07  -0.01   0.02   0.06   0.12 49927    1</span></span>
+<span><span class="co">#&gt; beta[8,5]       -0.02    0.00  0.09  -0.19  -0.07  -0.02   0.04   0.15 48236    1</span></span>
+<span><span class="co">#&gt; beta[8,6]        0.09    0.00  0.15  -0.20  -0.01   0.09   0.19   0.39 48725    1</span></span>
+<span><span class="co">#&gt; beta[8,7]        0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01 56212    1</span></span>
+<span><span class="co">#&gt; beta[9,1]        0.01    0.00  0.06  -0.12  -0.03   0.01   0.05   0.13 45427    1</span></span>
+<span><span class="co">#&gt; beta[9,2]        0.02    0.00  0.07  -0.11  -0.02   0.02   0.07   0.15 38997    1</span></span>
+<span><span class="co">#&gt; beta[9,3]        0.04    0.00  0.11  -0.18  -0.03   0.04   0.12   0.27 44546    1</span></span>
+<span><span class="co">#&gt; beta[9,4]        0.00    0.00  0.07  -0.14  -0.05   0.00   0.05   0.13 45300    1</span></span>
+<span><span class="co">#&gt; beta[9,5]       -0.03    0.00  0.12  -0.28  -0.11  -0.03   0.05   0.21 43196    1</span></span>
+<span><span class="co">#&gt; beta[9,6]       -0.15    0.00  0.21  -0.56  -0.29  -0.15  -0.01   0.27 44098    1</span></span>
+<span><span class="co">#&gt; beta[9,7]        0.00    0.00  0.00  -0.01   0.00   0.00   0.01   0.01 47517    1</span></span>
+<span><span class="co">#&gt; beta[10,1]      -0.02    0.00  0.02  -0.06  -0.03  -0.02   0.00   0.03 37145    1</span></span>
+<span><span class="co">#&gt; beta[10,2]      -0.01    0.00  0.02  -0.04  -0.02  -0.01   0.00   0.02 38639    1</span></span>
+<span><span class="co">#&gt; beta[10,3]      -0.01    0.00  0.07  -0.15  -0.05  -0.01   0.04   0.14 31756    1</span></span>
+<span><span class="co">#&gt; beta[10,4]       0.00    0.00  0.03  -0.05  -0.02   0.00   0.02   0.05 38607    1</span></span>
+<span><span class="co">#&gt; beta[10,5]       0.04    0.00  0.05  -0.05   0.01   0.04   0.08   0.13 38285    1</span></span>
+<span><span class="co">#&gt; beta[10,6]       0.07    0.00  0.08  -0.09   0.02   0.07   0.12   0.22 38603    1</span></span>
+<span><span class="co">#&gt; beta[10,7]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 56696    1</span></span>
+<span><span class="co">#&gt; beta[11,1]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39313    1</span></span>
+<span><span class="co">#&gt; beta[11,2]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39212    1</span></span>
+<span><span class="co">#&gt; beta[11,3]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 37884    1</span></span>
+<span><span class="co">#&gt; beta[11,4]       0.11    0.00  0.07  -0.02   0.07   0.11   0.16   0.25 41594    1</span></span>
+<span><span class="co">#&gt; beta[11,5]      -0.01    0.00  0.08  -0.16  -0.06  -0.01   0.04   0.14 48129    1</span></span>
+<span><span class="co">#&gt; beta[11,6]       0.15    0.00  0.13  -0.11   0.06   0.15   0.24   0.41 46140    1</span></span>
+<span><span class="co">#&gt; beta[11,7]       0.00    0.00  0.00  -0.01   0.00   0.00   0.00   0.01 54334    1</span></span>
+<span><span class="co">#&gt; beta[12,1]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39840    1</span></span>
+<span><span class="co">#&gt; beta[12,2]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40055    1</span></span>
+<span><span class="co">#&gt; beta[12,3]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 40125    1</span></span>
+<span><span class="co">#&gt; beta[12,4]       0.01    0.00  0.02  -0.04  -0.01   0.01   0.03   0.06 49056    1</span></span>
+<span><span class="co">#&gt; beta[12,5]      -0.04    0.00  0.07  -0.17  -0.09  -0.04   0.00   0.09 42555    1</span></span>
+<span><span class="co">#&gt; beta[12,6]      -0.05    0.00  0.08  -0.20  -0.10  -0.05   0.00   0.10 49321    1</span></span>
+<span><span class="co">#&gt; beta[12,7]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 68310    1</span></span>
+<span><span class="co">#&gt; beta[13,1]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 38969    1</span></span>
+<span><span class="co">#&gt; beta[13,2]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39171    1</span></span>
+<span><span class="co">#&gt; beta[13,3]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39574    1</span></span>
+<span><span class="co">#&gt; beta[13,4]      -0.01    0.00  0.01  -0.04  -0.02  -0.01   0.00   0.02 44773    1</span></span>
+<span><span class="co">#&gt; beta[13,5]       0.01    0.00  0.03  -0.04   0.00   0.01   0.03   0.06 42903    1</span></span>
+<span><span class="co">#&gt; beta[13,6]       0.04    0.00  0.07  -0.10  -0.01   0.04   0.09   0.18 34943    1</span></span>
+<span><span class="co">#&gt; beta[13,7]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 71082    1</span></span>
+<span><span class="co">#&gt; beta[14,1]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 38247    1</span></span>
+<span><span class="co">#&gt; beta[14,2]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 39845    1</span></span>
+<span><span class="co">#&gt; beta[14,3]       0.00    0.00  0.00   0.00   0.00   0.00   0.00   0.00 38714    1</span></span>
+<span><span class="co">#&gt; beta[14,4]       0.55    0.00  0.65  -0.72   0.11   0.55   0.99   1.82 38905    1</span></span>
+<span><span class="co">#&gt; beta[14,5]      -0.37    0.01  1.15  -2.64  -1.15  -0.37   0.41   1.86 35708    1</span></span>
+<span><span class="co">#&gt; beta[14,6]       0.30    0.01  1.98  -3.57  -1.03   0.30   1.64   4.16 37474    1</span></span>
+<span><span class="co">#&gt; beta[14,7]      -0.04    0.00  0.08  -0.18  -0.09  -0.04   0.01   0.11 32232    1</span></span>
+<span><span class="co">#&gt; beta[15,1]       0.01    0.00  0.05  -0.10  -0.03   0.01   0.05   0.11 46738    1</span></span>
+<span><span class="co">#&gt; beta[15,2]      -0.01    0.00  0.02  -0.05  -0.03  -0.01   0.00   0.03 49518    1</span></span>
 <span><span class="co">#&gt;  [ reached 'max' / getOption("max.print") -- omitted 1259 rows ]</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Sat Sep 12 18:54:31 2026.</span></span>
+<span><span class="co">#&gt; Samples were drawn using NUTS(diag_e) at Sun Sep 13 15:44:03 2026.</span></span>
 <span><span class="co">#&gt; For each parameter, n_eff is a crude measure of effective sample size,</span></span>
 <span><span class="co">#&gt; and Rhat is the potential scale reduction factor on split chains (at </span></span>
 <span><span class="co">#&gt; convergence, Rhat=1).</span></span></code></pre></div>
 <p>As such, we can do the usual <code>rstan</code> inference on our
-fitted model. Let us plot the posterior draws of the post-crisis
-steady-state <span class="math inline">\(\mu_{t,i}\)</span> of inflation
-at t = 102, i.e. <span class="math inline">\(\mu_{t=102, i=5}\)</span>
-Note that the index in the code is 98 because we have 102 observations
-where the first <span class="math inline">\(p=4\)</span> are lost due to
-effective sample size <span class="math inline">\(T=N-p\)</span>.</p>
+fitted model. Let us plot the posterior draws of the steady-state of
+inflation before and after 1992Q4, i.e. <span class="math inline">\(\mu_{t=48,i=5}\)</span> and <span class="math inline">\(\mu_{t=49,i=5}\)</span>.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">plot</span><span class="op">(</span><span class="va">stanfit</span>, pars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mu[98,5]"</span><span class="op">)</span>, plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">plot</span><span class="op">(</span><span class="va">stanfit</span>, pars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mu[48,5]"</span>, <span class="st">"mu[49,5]"</span><span class="op">)</span>, plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-3-1.png" alt="plot of chunk HOMO-3" width="100%"><p class="caption">
 plot of chunk HOMO-3
 </p>
 </div>
-<p>We need to multiply the steady-state coefficient by 4 to obtain the
-annualized rate.</p>
+<p>To plot posterior draws of the annualized steady-state of inflation
+after 1992Q4, we can do the following (since inflation is specified as
+<code>pi=100*diff(log(CPI))</code>)</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">posterior</span> <span class="op">&lt;-</span> <span class="fu">rstan</span><span class="fu">::</span><span class="fu"><a href="https://mc-stan.org/rstan/reference/stanfit-method-extract.html" class="external-link">extract</a></span><span class="op">(</span><span class="va">stanfit</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">98</span>,<span class="fl">5</span><span class="op">]</span>, col<span class="op">=</span><span class="st">"darkred"</span>, breaks<span class="op">=</span><span class="fl">30</span>, xlab<span class="op">=</span><span class="st">"annualized steady-state of inflation (post 1992Q4)"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">98</span>,<span class="fl">5</span><span class="op">]</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"lightgreen"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">49</span>,<span class="fl">5</span><span class="op">]</span>, col<span class="op">=</span><span class="st">"darkred"</span>, breaks<span class="op">=</span><span class="fl">30</span>, xlab<span class="op">=</span><span class="st">"annualized steady-state of inflation (post 1992Q4)"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">49</span>,<span class="fl">5</span><span class="op">]</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"lightgreen"</span>, lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-4-1.png" alt="plot of chunk HOMO-4" width="100%"><p class="caption">
 plot of chunk HOMO-4
@@ -645,19 +646,19 @@ plot of chunk HOMO-6
 <p>For further inspection, we can print the point forecasts</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">fcst</span><span class="op">$</span><span class="va">forecast</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       delta y_f      pi_f      i_f  delta y       pi        i        q</span></span>
-<span><span class="co">#&gt;  [1,] 0.6224395 0.5252168 2.825553 2.775955 0.939800 2.028498 3.994533</span></span>
-<span><span class="co">#&gt;  [2,] 0.6460535 0.4504554 3.021885 3.053406 0.980147 2.062756 3.990943</span></span>
-<span><span class="co">#&gt;  [3,] 0.6317087 0.4218485 3.164706 3.355527 1.770788 2.174393 3.986293</span></span>
-<span><span class="co">#&gt;  [4,] 0.6365547 0.4984722 3.277336 3.432581 1.772954 2.284228 3.980713</span></span>
-<span><span class="co">#&gt;  [5,] 0.6334024 0.4533127 3.402387 3.378690 1.789154 2.394648 3.975720</span></span>
-<span><span class="co">#&gt;  [6,] 0.6357301 0.4338463 3.511511 3.296115 1.856415 2.482354 3.971464</span></span>
-<span><span class="co">#&gt;  [7,] 0.6302694 0.4250743 3.613291 3.192812 1.890103 2.576857 3.967223</span></span>
-<span><span class="co">#&gt;  [8,] 0.6267361 0.4345869 3.690218 3.103153 1.865188 2.676220 3.963153</span></span>
-<span><span class="co">#&gt;  [9,] 0.6280385 0.4335440 3.770410 3.023761 1.874517 2.765454 3.959710</span></span>
-<span><span class="co">#&gt; [10,] 0.6235564 0.4340851 3.838940 2.955551 1.885409 2.842249 3.956679</span></span>
-<span><span class="co">#&gt; [11,] 0.6210800 0.4302764 3.903957 2.903316 1.875684 2.912973 3.953817</span></span>
-<span><span class="co">#&gt; [12,] 0.6163016 0.4335828 3.963848 2.858657 1.871071 2.988510 3.951211</span></span></code></pre></div>
+<span><span class="co">#&gt;       delta y_f      pi_f      i_f  delta y        pi        i        q</span></span>
+<span><span class="co">#&gt;  [1,] 0.6229552 0.5239441 2.825753 2.776752 0.9308177 2.034988 3.994741</span></span>
+<span><span class="co">#&gt;  [2,] 0.6425528 0.4524628 3.022822 3.051652 0.9774635 2.058652 3.991056</span></span>
+<span><span class="co">#&gt;  [3,] 0.6373503 0.4237020 3.164512 3.355600 1.7725163 2.157463 3.986453</span></span>
+<span><span class="co">#&gt;  [4,] 0.6388480 0.4964234 3.271770 3.435742 1.7684109 2.277657 3.980926</span></span>
+<span><span class="co">#&gt;  [5,] 0.6369266 0.4525416 3.401193 3.382367 1.8012857 2.395325 3.975853</span></span>
+<span><span class="co">#&gt;  [6,] 0.6372510 0.4346553 3.519122 3.305370 1.8700041 2.489924 3.971318</span></span>
+<span><span class="co">#&gt;  [7,] 0.6297528 0.4279400 3.608532 3.203255 1.8990881 2.581525 3.967060</span></span>
+<span><span class="co">#&gt;  [8,] 0.6279368 0.4382882 3.695498 3.116768 1.8855474 2.693337 3.962863</span></span>
+<span><span class="co">#&gt;  [9,] 0.6319770 0.4316135 3.773836 3.040633 1.8774528 2.778072 3.959400</span></span>
+<span><span class="co">#&gt; [10,] 0.6221018 0.4303737 3.841712 2.970782 1.8748423 2.852890 3.956563</span></span>
+<span><span class="co">#&gt; [11,] 0.6221260 0.4338167 3.913323 2.916621 1.8704680 2.934060 3.953681</span></span>
+<span><span class="co">#&gt; [12,] 0.6156351 0.4364113 3.970823 2.867140 1.8602187 3.011217 3.951221</span></span></code></pre></div>
 <p>We can also perform conditional forecasting by following Algorithm
 3.3.1 in Dieppe, Legrand, and van Roye (2016). Note that for the
 structural shocks, identification is based on the Cholesky
@@ -709,8 +710,7 @@ either the mean or the median (the default is the median), and we can
 also transform the IRFs for the quarter-on-quarter growth rate variables
 to the annual/yearly scale.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">5</span>,impulse<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"OIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">5</span>,impulse<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"OIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-8-1.png" alt="plot of chunk HOMO-8" width="100%"><p class="caption">
 plot of chunk HOMO-8
