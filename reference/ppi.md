@@ -29,7 +29,7 @@ ppi(l, u, interval = 0.95, annualized_growthrate = FALSE, freq = NULL)
 
 - annualized_growthrate:
 
-  Logical. If `TRUE`, treats `l` and `u` as bounds on the annualized
+  Logical. If `TRUE`, treats `l` and `u` as bounds of the annualized
   steady-state growth rate and calculates the implied mean and variance
   on the corresponding quarterly/monthly scale. Useful if you are
   working with a variable specified as `100*diff(log(x))`. Default

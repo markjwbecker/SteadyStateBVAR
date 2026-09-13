@@ -144,10 +144,10 @@ The list must contain the following named elements depending on <code>SV_type</c
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>The steady-state <code>bvar</code> object with an appended <code>priors</code> list containing:</p>
 <dl><dt>theta_beta</dt>
-<dd><p>Prior mean vector for \(\text{vec}(\beta)\) constructed with the Minnesota prior</p></dd>
+<dd><p>Prior mean vector for \(\text{vec}(\beta)\), i.e. the autoregressive parameters, constructed with the Minnesota prior</p></dd>
 
 <dt>Omega_beta</dt>
-<dd><p>Prior covariance matrix for \(\text{vec}(\beta)\) constructed with the Minnesota prior</p></dd>
+<dd><p>Prior covariance matrix for \(\text{vec}(\beta)\), i.e. the autoregressive parameters, constructed with the Minnesota prior</p></dd>
 
 <dt>theta_Psi</dt>
 <dd><p>Prior mean vector for \(\text{vec}(\Psi)\), i.e. the steady-state parameters</p></dd>
@@ -181,7 +181,7 @@ The list must contain the following named elements depending on <code>SV_type</c
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The goal is to estimate the parameters \(\Theta = \begin{bmatrix} \beta &amp; \Psi &amp; \Sigma_u \end{bmatrix}\),
 and as such priors are needed. Following Villani (2009), prior independence between \(\beta, \Psi\) and \(\Sigma_u\) is assumed.
-For \(\beta\), i.e. the autoregressive parameter matrix, the Minnesota prior is used</p>
+For \(\beta\), which contains the autoregressive parameters, the Minnesota prior is used</p>
 <p>$$\mathrm{vec}(\beta) \sim \mathrm{N}_{kpk} (\theta_\beta,\Omega_\beta)$$</p>
 <p>The prior means (the elements of \(\theta_\beta\)) are specified according to</p>
 <p>$$

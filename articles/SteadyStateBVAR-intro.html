@@ -143,10 +143,10 @@ to</p>
 \end{cases}\\
 \kappa&amp;=
 \begin{cases}
-\kappa^{levels} &amp; \text{if} \  \text{variable} \ i \ \text{is in
-levels} \\
-\kappa^{\Delta} &amp; \text{if} \ \text{variable} \ i \ \text{is
-differenced}
+\kappa^{levels} &amp; \text{if} \  \text{variable} \ i \ \text{is} \
+\text{in} \ \text{levels} \\
+\kappa^{\Delta} &amp; \text{if} \ \text{variable} \ i \ \text{is} \
+\text{in} \ \text{differenced}
 \end{cases}\\
 \end{aligned}
 \]</span></p>
@@ -221,16 +221,18 @@ innovations are instead specified as</p>
 u_t &amp;= A^{-1} \Lambda^{0.5}_t \epsilon_t \\
 \epsilon_t &amp;\overset{\text{iid}}{\sim} \mathrm{N}(0, \mathrm{I}_k)
 \end{aligned}
-\]</span> where <span class="math inline">\(A\)</span> is a lower
-triangular matrix with ones on the diagonal that describes the
-contemporaneous interaction of the endogenous variables, and</p>
+\]</span></p>
+<p>where <span class="math inline">\(A\)</span> is a lower triangular
+matrix with ones on the diagonal that describes the contemporaneous
+interaction of the endogenous variables, and</p>
 <p><span class="math display">\[
 \Lambda_t = \mathrm{diag}(\lambda_{1,t},\dots,\lambda_{k,t})
-\]</span> contains the time-varying volatilities. Please note that the
-<span class="math inline">\(\lambda\)</span>’s here have nothing to do
-with the <span class="math inline">\(\lambda\)</span> hyperparameters
-from the Minnesota prior. Now, for the AR(1) stochastic volatility
-specification, the log volatilities follow AR(1) processes</p>
+\]</span></p>
+<p>contains the time-varying volatilities. Please note that the <span class="math inline">\(\lambda\)</span>’s here (volatilities) have
+nothing to do with the <span class="math inline">\(\lambda\)</span>’s
+(hyperparameters) from the Minnesota prior. Now, for the AR(1)
+stochastic volatility specification, the log volatilities follow AR(1)
+processes</p>
 <p><span class="math display">\[
 \ln \lambda_{i,t} = \gamma_{0,i} + \gamma_{1,i} \ln \lambda_{i,t-1} +
 \nu_{i,t}, \ i=1,\dots,k

@@ -58,9 +58,10 @@ according to
 \\ \begin{aligned} \mathrm{E}\left(\Pi\_{\ell}^{(i,j)}\right)&=
 \begin{cases} \kappa & \text{if } \ell = 1 \\ \text{and} \\ i = j \\ 0 &
 \text{otherwise} \end{cases}\\ \kappa&= \begin{cases} \kappa^{levels} &
-\text{if} \\ \text{variable} \\ i \\ \text{is in levels} \\
-\kappa^{\Delta} & \text{if} \\ \text{variable} \\ i \\ \text{is
-differenced} \end{cases}\\ \end{aligned} \\
+\text{if} \\ \text{variable} \\ i \\ \text{is} \\ \text{in} \\
+\text{levels} \\ \kappa^{\Delta} & \text{if} \\ \text{variable} \\ i \\
+\text{is} \\ \text{in} \\ \text{differenced} \end{cases}\\ \end{aligned}
+\\
 
 Here, the autoregressive coefficient \\\Pi\_{\ell}^{(i,j)}\\ is element
 \\\left(i,j\right)\\ of \\\Pi\_{\ell}\\ for \\\ell=1,\dots,p\\. As such,
@@ -127,15 +128,19 @@ the reduced-form innovations are instead specified as
 
 \\ \begin{aligned} u_t &= A^{-1} \Lambda^{0.5}\_t \epsilon_t \\
 \epsilon_t &\overset{\text{iid}}{\sim} \mathrm{N}(0, \mathrm{I}\_k)
-\end{aligned} \\ where \\A\\ is a lower triangular matrix with ones on
-the diagonal that describes the contemporaneous interaction of the
-endogenous variables, and
+\end{aligned} \\
+
+where \\A\\ is a lower triangular matrix with ones on the diagonal that
+describes the contemporaneous interaction of the endogenous variables,
+and
 
 \\ \Lambda_t = \mathrm{diag}(\lambda\_{1,t},\dots,\lambda\_{k,t}) \\
+
 contains the time-varying volatilities. Please note that the
-\\\lambda\\’s here have nothing to do with the \\\lambda\\
-hyperparameters from the Minnesota prior. Now, for the AR(1) stochastic
-volatility specification, the log volatilities follow AR(1) processes
+\\\lambda\\’s here (volatilities) have nothing to do with the
+\\\lambda\\’s (hyperparameters) from the Minnesota prior. Now, for the
+AR(1) stochastic volatility specification, the log volatilities follow
+AR(1) processes
 
 \\ \ln \lambda\_{i,t} = \gamma\_{0,i} + \gamma\_{1,i} \ln
 \lambda\_{i,t-1} + \nu\_{i,t}, \\ i=1,\dots,k \\ where the log

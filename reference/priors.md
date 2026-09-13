@@ -100,13 +100,13 @@ containing:
 
 - theta_beta:
 
-  Prior mean vector for \\\text{vec}(\beta)\\ constructed with the
-  Minnesota prior
+  Prior mean vector for \\\text{vec}(\beta)\\, i.e. the autoregressive
+  parameters, constructed with the Minnesota prior
 
 - Omega_beta:
 
-  Prior covariance matrix for \\\text{vec}(\beta)\\ constructed with the
-  Minnesota prior
+  Prior covariance matrix for \\\text{vec}(\beta)\\, i.e. the
+  autoregressive parameters, constructed with the Minnesota prior
 
 - theta_Psi:
 
@@ -154,8 +154,8 @@ containing:
 The goal is to estimate the parameters \\\Theta = \begin{bmatrix} \beta
 & \Psi & \Sigma_u \end{bmatrix}\\, and as such priors are needed.
 Following Villani (2009), prior independence between \\\beta, \Psi\\ and
-\\\Sigma_u\\ is assumed. For \\\beta\\, i.e. the autoregressive
-parameter matrix, the Minnesota prior is used
+\\\Sigma_u\\ is assumed. For \\\beta\\, which contains the
+autoregressive parameters, the Minnesota prior is used
 
 \$\$\mathrm{vec}(\beta) \sim \mathrm{N}\_{kpk}
 (\theta\_\beta,\Omega\_\beta)\$\$
