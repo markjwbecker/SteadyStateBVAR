@@ -6,9 +6,9 @@
 #'
 #' @param x A steady-state \code{bvar} object that has been passed through \code{\link{fit}}.
 #' @param H Integer. The forecast horizon for the IRF. Default \code{20}.
-#' @param response Integer. Index of the response variable to plot. If
+#' @param response Integer vector. Indices of the response variables to plot. If
 #'   \code{NULL} (default), all responses are plotted.
-#' @param impulse Integer. Index of the impulse variable to plot. If \code{NULL}
+#' @param impulse Integer vector. Indices of the impulse variables to plot. If \code{NULL}
 #'   (default), all impulses are plotted.
 #' @param type Character. Whether to use \code{"median"} or \code{"mean"} as
 #'   the point estimate. Default \code{"median"}.

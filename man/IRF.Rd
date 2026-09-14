@@ -21,10 +21,10 @@ IRF(
 
 \item{H}{Integer. The forecast horizon for the IRF. Default \code{20}.}
 
-\item{response}{Integer. Index of the response variable to plot. If
+\item{response}{Integer vector. Indices of the response variables to plot. If
 \code{NULL} (default), all responses are plotted.}
 
-\item{impulse}{Integer. Index of the impulse variable to plot. If \code{NULL}
+\item{impulse}{Integer vector. Indices of the impulse variables to plot. If \code{NULL}
 (default), all impulses are plotted.}
 
 \item{type}{Character. Whether to use \code{"median"} or \code{"mean"} as
