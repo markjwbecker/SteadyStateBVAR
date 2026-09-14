@@ -33,7 +33,6 @@ plot.ts(yt)
 
 <div class="figure" style="text-align: center">
 <img src="figure/AR(1)-1-1.png" alt="plot of chunk AR(1)-1" width="100%" />
-<p class="caption">plot of chunk AR(1)-1</p>
 </div>
 
 Let's create the bvar object which we will use throughout here.
@@ -138,7 +137,6 @@ steady_state_priors_plot(bvar_obj, interval = 0.95)
 
 <div class="figure" style="text-align: center">
 <img src="figure/AR(1)-2-1.png" alt="plot of chunk AR(1)-2" width="100%" />
-<p class="caption">plot of chunk AR(1)-2</p>
 </div>
 
 ``` r
@@ -422,7 +420,6 @@ rstan::plot(stanfit, pars=c("mu[1,1]",
 
 <div class="figure" style="text-align: center">
 <img src="figure/AR(1)-3-1.png" alt="plot of chunk AR(1)-3" width="100%" />
-<p class="caption">plot of chunk AR(1)-3</p>
 </div>
 
 We can forecast
@@ -435,7 +432,6 @@ forecast(bvar_obj, pi = 0.68)
 
 <div class="figure" style="text-align: center">
 <img src="figure/AR(1)-4-1.png" alt="plot of chunk AR(1)-4" width="100%" />
-<p class="caption">plot of chunk AR(1)-4</p>
 </div>
 
 ``` r
@@ -451,13 +447,10 @@ stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
 
 <div class="figure" style="text-align: center">
 <img src="figure/AR(1)-5-1.png" alt="plot of chunk AR(1)-5" width="100%" />
-<p class="caption">plot of chunk AR(1)-5</p>
 </div><div class="figure" style="text-align: center">
 <img src="figure/AR(1)-5-2.png" alt="plot of chunk AR(1)-5" width="100%" />
-<p class="caption">plot of chunk AR(1)-5</p>
 </div><div class="figure" style="text-align: center">
 <img src="figure/AR(1)-5-3.png" alt="plot of chunk AR(1)-5" width="100%" />
-<p class="caption">plot of chunk AR(1)-5</p>
 </div>
 
 Let us plot the estimates and predictions of the implied innovation standard deviations
@@ -469,13 +462,10 @@ stochastic_volatility_plot(bvar_obj, vol = "sd")
 
 <div class="figure" style="text-align: center">
 <img src="figure/AR(1)-6-1.png" alt="plot of chunk AR(1)-6" width="100%" />
-<p class="caption">plot of chunk AR(1)-6</p>
 </div><div class="figure" style="text-align: center">
 <img src="figure/AR(1)-6-2.png" alt="plot of chunk AR(1)-6" width="100%" />
-<p class="caption">plot of chunk AR(1)-6</p>
 </div><div class="figure" style="text-align: center">
 <img src="figure/AR(1)-6-3.png" alt="plot of chunk AR(1)-6" width="100%" />
-<p class="caption">plot of chunk AR(1)-6</p>
 </div>
 
 We can also produce orthogonalized IRFs
@@ -487,7 +477,6 @@ IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #using Sigma_u,t=215
 
 <div class="figure" style="text-align: center">
 <img src="figure/AR(1)-7-1.png" alt="plot of chunk AR(1)-7" width="100%" />
-<p class="caption">plot of chunk AR(1)-7</p>
 </div>
 
 

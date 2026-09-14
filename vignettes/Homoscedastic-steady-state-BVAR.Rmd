@@ -46,7 +46,6 @@ plot.ts(yt)
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-1-1.png" alt="plot of chunk HOMO-1" width="100%" />
-<p class="caption">plot of chunk HOMO-1</p>
 </div>
 
 Also, let us create the bvar object which we will use throughout here.
@@ -115,7 +114,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$, i.r. the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $x$ which is on a quarterly frequency (`freq=4`), the quarterly growth rate is $100(\ln x_t - \ln x_{t-1})$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400(\ln x_t - \ln x_{t-1})$.
+Now moving on to $\Psi$, for the steady-state priors (see `?priors`), we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $x$ which is on a quarterly frequency (`freq=4`), the quarterly growth rate is $100(\ln x_t - \ln x_{t-1})$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400(\ln x_t - \ln x_{t-1})$.
 
 The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE` with the correct frequency `freq`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`.
 
@@ -189,7 +188,6 @@ par(mfrow=c(1,1))
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-2-1.png" alt="plot of chunk HOMO-2" width="100%" />
-<p class="caption">plot of chunk HOMO-2</p>
 </div>
 
 
@@ -514,7 +512,6 @@ rstan::plot(stanfit, pars=c("mu[48,5]", "mu[49,5]"), plotfun="hist")
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-3-1.png" alt="plot of chunk HOMO-3" width="100%" />
-<p class="caption">plot of chunk HOMO-3</p>
 </div>
 
 To plot posterior draws of the annualized steady-state of inflation after 1992Q4, we can do the following (since inflation is specified as `pi=100*diff(log(CPI))`)
@@ -528,7 +525,6 @@ abline(v=mean(4*posterior$mu[,49,5]), col="lightgreen", lwd=2)
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-4-1.png" alt="plot of chunk HOMO-4" width="100%" />
-<p class="caption">plot of chunk HOMO-4</p>
 </div>
 
 We can also look at the model forecasts directly with `rstan`. Remember that we left out the last two observations/quarters, so let us look at our forecasts of the domestic interest rate and compare them with the actual values.
@@ -549,10 +545,9 @@ rstan::plot(stanfit,
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-5-1.png" alt="plot of chunk HOMO-5" width="100%" />
-<p class="caption">plot of chunk HOMO-5</p>
 </div>
 
-So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval ("pi") and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100(\ln x_t - \ln x_{t-4})$, i.e. the annual growth rate, by summing up to fourth differences.
+So the model overshot a bit, but the true values are within the 95\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 95\% prediction interval ("pi") and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100(\ln x_t - \ln x_{t-4})$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
 
@@ -570,13 +565,10 @@ fcst <- forecast(bvar_obj,
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-6-1.png" alt="plot of chunk HOMO-6" width="100%" />
-<p class="caption">plot of chunk HOMO-6</p>
 </div><div class="figure" style="text-align: center">
 <img src="figure/HOMO-6-2.png" alt="plot of chunk HOMO-6" width="100%" />
-<p class="caption">plot of chunk HOMO-6</p>
 </div><div class="figure" style="text-align: center">
 <img src="figure/HOMO-6-3.png" alt="plot of chunk HOMO-6" width="100%" />
-<p class="caption">plot of chunk HOMO-6</p>
 </div>
 
 For further inspection, we can print the point forecasts
@@ -631,10 +623,8 @@ cond_fcst <- conditional_forecast(bvar_obj,
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-7-1.png" alt="plot of chunk HOMO-7" width="100%" />
-<p class="caption">plot of chunk HOMO-7</p>
 </div><div class="figure" style="text-align: center">
 <img src="figure/HOMO-7-2.png" alt="plot of chunk HOMO-7" width="100%" />
-<p class="caption">plot of chunk HOMO-7</p>
 </div>
 
 The short interest rate rises more dramatically compared to the unconditional case. Makes sense.  
@@ -649,7 +639,6 @@ irf <- IRF(bvar_obj,H=20,response=5,impulse=6,type="median",method="OIRF",ci=0.9
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-8-1.png" alt="plot of chunk HOMO-8" width="100%" />
-<p class="caption">plot of chunk HOMO-8</p>
 </div>
 
 ``` r
@@ -658,7 +647,6 @@ irf <- IRF(bvar_obj,H=20,response=4,impulse=6,type="median",method="GIRF",ci=0.9
 
 <div class="figure" style="text-align: center">
 <img src="figure/HOMO-8-2.png" alt="plot of chunk HOMO-8" width="100%" />
-<p class="caption">plot of chunk HOMO-8</p>
 </div>
 
 

@@ -116,7 +116,7 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to $\Psi$, i.r. the steady-state priors, we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $x$ which is on a quarterly frequency (`freq=4`), the quarterly growth rate is $100(\ln x_t - \ln x_{t-1})$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400(\ln x_t - \ln x_{t-1})$.
+Now moving on to $\Psi$, for the steady-state priors (see `?priors`), we set them according to the 95\% prior probability intervals (normal distribution) in Table I in Villani (2009). We first note that for our data here, the growth rate variables ($\Delta y_f, \pi_f, \Delta y, \pi$) are specified in terms of quarterly rates of change/quarter-on-quarter growth, i.e. for a variable $x$ which is on a quarterly frequency (`freq=4`), the quarterly growth rate is $100(\ln x_t - \ln x_{t-1})$. The 95% prior probability intervals in Table I are specified in terms of annualized quarterly growth rates $400(\ln x_t - \ln x_{t-1})$.
 
 The `ppi()` function is useful here. Simply input the desired 95\% prior probability interval (normal distribution) on the annualized scale with `annualized_growthrate=TRUE` with the correct frequency `freq`, and the function returns the corresponding prior mean and variance on the original scale (quarter-on-quarter growth). Of course, we could also just annualize our data beforehand, and set `annualized_growthrate=FALSE`.
 
@@ -282,7 +282,7 @@ rstan::plot(stanfit,
             fill_color = "blue")
 ```
 
-So the model overshot a bit, but the true values are within the 68\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 68\% prediction interval ("pi") and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100(\ln x_t - \ln x_{t-4})$, i.e. the annual growth rate, by summing up to fourth differences.
+So the model overshot a bit, but the true values are within the 95\% prediction interval. Now let us plot the forecasts along with the historical data. We will choose a 95\% prediction interval ("pi") and the mean of the predictive distribution as the point forecast. For variables in quarter-on-quarter growth rates, we transform the historical data and predictions to yearly growth rates with 'growth_rate_idx' where we specify the index of the growth rate variables in $y_t$. Note that this is not annualization, but we are now computing $100(\ln x_t - \ln x_{t-4})$, i.e. the annual growth rate, by summing up to fourth differences.
 
 
 ```{r HOMO-6, fig.width=10, fig.height=10}
