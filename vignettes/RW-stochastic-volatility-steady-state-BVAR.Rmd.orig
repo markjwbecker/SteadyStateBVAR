@@ -124,8 +124,10 @@ bvar_obj <- priors(bvar_obj,
 
 We can plot the steady-state priors
 
-```{r RW-2, fig.width=12, fig.height=12}
+```{r RW-2, fig.width=10, fig.height=12}
+par(mfrow=c(3,1))
 steady_state_priors_plot(bvar_obj, interval = 0.95)
+par(mfrow=c(1,1))
 ```
 
 Now, let us fit the model. Note that we can use arguments from `rstan::sampling()` such as `control` where we can tweak `max_treedepth` and `adapt_delta`.
@@ -171,26 +173,28 @@ rstan::plot(stanfit, pars=c("mu[1,1]",
 
 We can forecast
 
-```{r RW-4, fig.width=12, fig.height=12}
+```{r RW-4, fig.width=10, fig.height=12}
+par(mfrow=c(3,1))
 forecast(bvar_obj, pi = 0.68)
+par(mfrow=c(1,1))
 ```
 
 Let us plot the log volatility estimates and predictions
 
-```{r RW-5, fig.width=12, fig.height=12}
+```{r RW-5, fig.width=10, fig.height=8}
 stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
 ```
 
 Let us plot the estimates and predictions of the implied reduced-form innovation standard deviations
 
-```{r RW-6, fig.width=12, fig.height=12}
+```{r RW-6, fig.width=10, fig.height=8}
 stochastic_volatility_plot(bvar_obj, vol = "sd")
 ```
 
 We can also produce orthogonalized IRFs
 
-```{r RW-7, fig.width=12, fig.height=12}
-IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #latest t
+```{r RW-7, fig.width=10, fig.height=8}
+IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #using Sigma_u,t=215
 ```
 
 
