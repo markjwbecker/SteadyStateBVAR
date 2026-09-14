@@ -28,8 +28,6 @@ plot.ts(yt)
 
 ![plot of chunk RW-1](figure/RW-1-1.png)
 
-plot of chunk RW-1
-
 Let’s create the bvar object which we will use throughout here.
 
 ``` r
@@ -151,8 +149,6 @@ steady_state_priors_plot(bvar_obj, interval = 0.95)
 ```
 
 ![plot of chunk RW-2](figure/RW-2-1.png)
-
-plot of chunk RW-2
 
 ``` r
 
@@ -425,8 +421,6 @@ rstan::plot(stanfit, pars=c("mu[1,1]",
 
 ![plot of chunk RW-3](figure/RW-3-1.png)
 
-plot of chunk RW-3
-
 We can forecast
 
 ``` r
@@ -436,8 +430,6 @@ forecast(bvar_obj, pi = 0.68)
 ```
 
 ![plot of chunk RW-4](figure/RW-4-1.png)
-
-plot of chunk RW-4
 
 ``` r
 
@@ -453,15 +445,9 @@ stochastic_volatility_plot(bvar_obj, ci = 0.95, vol = "log_lambda")
 
 ![plot of chunk RW-5](figure/RW-5-1.png)
 
-plot of chunk RW-5
-
 ![plot of chunk RW-5](figure/RW-5-2.png)
 
-plot of chunk RW-5
-
 ![plot of chunk RW-5](figure/RW-5-3.png)
-
-plot of chunk RW-5
 
 Let us plot the estimates and predictions of the implied reduced-form
 innovation standard deviations
@@ -473,15 +459,9 @@ stochastic_volatility_plot(bvar_obj, vol = "sd")
 
 ![plot of chunk RW-6](figure/RW-6-1.png)
 
-plot of chunk RW-6
-
 ![plot of chunk RW-6](figure/RW-6-2.png)
 
-plot of chunk RW-6
-
 ![plot of chunk RW-6](figure/RW-6-3.png)
-
-plot of chunk RW-6
 
 We can also produce orthogonalized IRFs
 
@@ -491,8 +471,6 @@ IRF(bvar_obj, method = "OIRF", t=215, ci=0.68) #using Sigma_u,t=215
 ```
 
 ![plot of chunk RW-7](figure/RW-7-1.png)
-
-plot of chunk RW-7
 
 ## References
 

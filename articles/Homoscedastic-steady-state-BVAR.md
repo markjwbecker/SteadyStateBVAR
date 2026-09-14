@@ -40,8 +40,6 @@ plot.ts(yt)
 
 ![plot of chunk HOMO-1](figure/HOMO-1-1.png)
 
-plot of chunk HOMO-1
-
 Also, let us create the bvar object which we will use throughout here.
 
 ``` r
@@ -108,16 +106,17 @@ fol_pm=c(0,   #delta y_f
          )
 ```
 
-Now moving on to \\\Psi\\, i.r. the steady-state priors, we set them
-according to the 95% prior probability intervals (normal distribution)
-in Table I in Villani (2009). We first note that for our data here, the
-growth rate variables (\\\Delta y_f, \pi_f, \Delta y, \pi\\) are
-specified in terms of quarterly rates of change/quarter-on-quarter
-growth, i.e. for a variable \\x\\ which is on a quarterly frequency
-(`freq=4`), the quarterly growth rate is \\100(\ln x_t - \ln
-x\_{t-1})\\. The 95% prior probability intervals in Table I are
-specified in terms of annualized quarterly growth rates \\400(\ln x_t -
-\ln x\_{t-1})\\.
+Now moving on to \\\Psi\\, for the steady-state priors (see
+[`?priors`](https://markjwbecker.github.io/SteadyStateBVAR/reference/priors.md)),
+we set them according to the 95% prior probability intervals (normal
+distribution) in Table I in Villani (2009). We first note that for our
+data here, the growth rate variables (\\\Delta y_f, \pi_f, \Delta y,
+\pi\\) are specified in terms of quarterly rates of
+change/quarter-on-quarter growth, i.e. for a variable \\x\\ which is on
+a quarterly frequency (`freq=4`), the quarterly growth rate is \\100(\ln
+x_t - \ln x\_{t-1})\\. The 95% prior probability intervals in Table I
+are specified in terms of annualized quarterly growth rates \\400(\ln
+x_t - \ln x\_{t-1})\\.
 
 The
 [`ppi()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/ppi.md)
@@ -202,8 +201,6 @@ par(mfrow=c(1,1))
 ```
 
 ![plot of chunk HOMO-2](figure/HOMO-2-1.png)
-
-plot of chunk HOMO-2
 
 Continuing, as in Villani (2009), we incorporate the assumption that
 Sweden is a small economy and therefore unlikely to affect the foreign
@@ -548,8 +545,6 @@ rstan::plot(stanfit, pars=c("mu[48,5]", "mu[49,5]"), plotfun="hist")
 
 ![plot of chunk HOMO-3](figure/HOMO-3-1.png)
 
-plot of chunk HOMO-3
-
 To plot posterior draws of the annualized steady-state of inflation
 after 1992Q4, we can do the following (since inflation is specified as
 `pi=100*diff(log(CPI))`)
@@ -562,8 +557,6 @@ abline(v=mean(4*posterior$mu[,49,5]), col="lightgreen", lwd=2)
 ```
 
 ![plot of chunk HOMO-4](figure/HOMO-4-1.png)
-
-plot of chunk HOMO-4
 
 We can also look at the model forecasts directly with `rstan`. Remember
 that we left out the last two observations/quarters, so let us look at
@@ -586,11 +579,9 @@ rstan::plot(stanfit,
 
 ![plot of chunk HOMO-5](figure/HOMO-5-1.png)
 
-plot of chunk HOMO-5
-
-So the model overshot a bit, but the true values are within the 68%
+So the model overshot a bit, but the true values are within the 95%
 prediction interval. Now let us plot the forecasts along with the
-historical data. We will choose a 68% prediction interval (“pi”) and the
+historical data. We will choose a 95% prediction interval (“pi”) and the
 mean of the predictive distribution as the point forecast. For variables
 in quarter-on-quarter growth rates, we transform the historical data and
 predictions to yearly growth rates with ‘growth_rate_idx’ where we
@@ -614,15 +605,9 @@ fcst <- forecast(bvar_obj,
 
 ![plot of chunk HOMO-6](figure/HOMO-6-1.png)
 
-plot of chunk HOMO-6
-
 ![plot of chunk HOMO-6](figure/HOMO-6-2.png)
 
-plot of chunk HOMO-6
-
 ![plot of chunk HOMO-6](figure/HOMO-6-3.png)
-
-plot of chunk HOMO-6
 
 For further inspection, we can print the point forecasts
 
@@ -687,11 +672,7 @@ cond_fcst <- conditional_forecast(bvar_obj,
 
 ![plot of chunk HOMO-7](figure/HOMO-7-1.png)
 
-plot of chunk HOMO-7
-
 ![plot of chunk HOMO-7](figure/HOMO-7-2.png)
-
-plot of chunk HOMO-7
 
 The short interest rate rises more dramatically compared to the
 unconditional case. Makes sense.
@@ -710,16 +691,12 @@ irf <- IRF(bvar_obj,H=20,response=5,impulse=6,type="median",method="OIRF",ci=0.9
 
 ![plot of chunk HOMO-8](figure/HOMO-8-1.png)
 
-plot of chunk HOMO-8
-
 ``` r
 
 irf <- IRF(bvar_obj,H=20,response=4,impulse=6,type="median",method="GIRF",ci=0.95,growth_rate_idx=4)
 ```
 
 ![plot of chunk HOMO-8](figure/HOMO-8-2.png)
-
-plot of chunk HOMO-8
 
 ## References
 

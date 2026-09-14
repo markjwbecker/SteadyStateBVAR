@@ -114,9 +114,7 @@ correctly.</p>
 <code class="sourceCode R"><span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html" class="external-link">ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">102</span>, <span class="op">]</span>, start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/start.html" class="external-link">start</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span>, frequency <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/time.html" class="external-link">frequency</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">plot.ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-1-1.png" alt="plot of chunk HOMO-1" width="100%"><p class="caption">
-plot of chunk HOMO-1
-</p>
+<p><img src="figure/HOMO-1-1.png" alt="plot of chunk HOMO-1" width="100%"></p>
 </div>
 <p>Also, let us create the bvar object which we will use throughout
 here.</p>
@@ -178,17 +176,17 @@ set the prior mean to <span class="math inline">\(0.9\)</span>.</p>
 <span>         <span class="fl">0.9</span>, <span class="co">#i</span></span>
 <span>         <span class="fl">0.9</span>  <span class="co">#q</span></span>
 <span>         <span class="op">)</span></span></code></pre></div>
-<p>Now moving on to <span class="math inline">\(\Psi\)</span>, i.r. the
-steady-state priors, we set them according to the 95% prior probability
-intervals (normal distribution) in Table I in Villani (2009). We first
-note that for our data here, the growth rate variables (<span class="math inline">\(\Delta y_f, \pi_f, \Delta y, \pi\)</span>) are
-specified in terms of quarterly rates of change/quarter-on-quarter
-growth, i.e. for a variable <span class="math inline">\(x\)</span> which
-is on a quarterly frequency (<code>freq=4</code>), the quarterly growth
-rate is <span class="math inline">\(100(\ln x_t - \ln x_{t-1})\)</span>.
-The 95% prior probability intervals in Table I are specified in terms of
-annualized quarterly growth rates <span class="math inline">\(400(\ln
-x_t - \ln x_{t-1})\)</span>.</p>
+<p>Now moving on to <span class="math inline">\(\Psi\)</span>, for the
+steady-state priors (see <code><a href="../reference/priors.html">?priors</a></code>), we set them according to
+the 95% prior probability intervals (normal distribution) in Table I in
+Villani (2009). We first note that for our data here, the growth rate
+variables (<span class="math inline">\(\Delta y_f, \pi_f, \Delta y,
+\pi\)</span>) are specified in terms of quarterly rates of
+change/quarter-on-quarter growth, i.e. for a variable <span class="math inline">\(x\)</span> which is on a quarterly frequency
+(<code>freq=4</code>), the quarterly growth rate is <span class="math inline">\(100(\ln x_t - \ln x_{t-1})\)</span>. The 95% prior
+probability intervals in Table I are specified in terms of annualized
+quarterly growth rates <span class="math inline">\(400(\ln x_t - \ln
+x_{t-1})\)</span>.</p>
 <p>The <code><a href="../reference/ppi.html">ppi()</a></code> function is useful here. Simply input the
 desired 95% prior probability interval (normal distribution) on the
 annualized scale with <code>annualized_growthrate=TRUE</code> with the
@@ -257,9 +255,7 @@ done in Villani (2009). Now we simply pass everything to the
 <span><span class="fu"><a href="../reference/steady_state_priors_plot.html">steady_state_priors_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, interval <span class="op">=</span> <span class="fl">0.95</span>, growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-2-1.png" alt="plot of chunk HOMO-2" width="100%"><p class="caption">
-plot of chunk HOMO-2
-</p>
+<p><img src="figure/HOMO-2-1.png" alt="plot of chunk HOMO-2" width="100%"></p>
 </div>
 <p>Continuing, as in Villani (2009), we incorporate the assumption that
 Sweden is a small economy and therefore unlikely to affect the foreign
@@ -572,9 +568,7 @@ inflation before and after 1992Q4, i.e. <span class="math inline">\(\mu_{t=48,i
 <code class="sourceCode R"><span><span class="fu">rstan</span><span class="fu">::</span><span class="fu">plot</span><span class="op">(</span><span class="va">stanfit</span>, pars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mu[48,5]"</span>, <span class="st">"mu[49,5]"</span><span class="op">)</span>, plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-3-1.png" alt="plot of chunk HOMO-3" width="100%"><p class="caption">
-plot of chunk HOMO-3
-</p>
+<p><img src="figure/HOMO-3-1.png" alt="plot of chunk HOMO-3" width="100%"></p>
 </div>
 <p>To plot posterior draws of the annualized steady-state of inflation
 after 1992Q4, we can do the following (since inflation is specified as
@@ -584,9 +578,7 @@ after 1992Q4, we can do the following (since inflation is specified as
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html" class="external-link">hist</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">49</span>,<span class="fl">5</span><span class="op">]</span>, col<span class="op">=</span><span class="st">"darkred"</span>, breaks<span class="op">=</span><span class="fl">30</span>, xlab<span class="op">=</span><span class="st">"annualized steady-state of inflation (post 1992Q4)"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html" class="external-link">abline</a></span><span class="op">(</span>v<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fl">4</span><span class="op">*</span><span class="va">posterior</span><span class="op">$</span><span class="va">mu</span><span class="op">[</span>,<span class="fl">49</span>,<span class="fl">5</span><span class="op">]</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"lightgreen"</span>, lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-4-1.png" alt="plot of chunk HOMO-4" width="100%"><p class="caption">
-plot of chunk HOMO-4
-</p>
+<p><img src="figure/HOMO-4-1.png" alt="plot of chunk HOMO-4" width="100%"></p>
 </div>
 <p>We can also look at the model forecasts directly with
 <code>rstan</code>. Remember that we left out the last two
@@ -604,13 +596,11 @@ interest rate and compare them with the actual values.</p>
 <span><span class="co">#&gt; ci_level: 0.95 (95% intervals)</span></span>
 <span><span class="co">#&gt; outer_level: 0.95 (95% intervals)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-5-1.png" alt="plot of chunk HOMO-5" width="100%"><p class="caption">
-plot of chunk HOMO-5
-</p>
+<p><img src="figure/HOMO-5-1.png" alt="plot of chunk HOMO-5" width="100%"></p>
 </div>
-<p>So the model overshot a bit, but the true values are within the 68%
+<p>So the model overshot a bit, but the true values are within the 95%
 prediction interval. Now let us plot the forecasts along with the
-historical data. We will choose a 68% prediction interval (“pi”) and the
+historical data. We will choose a 95% prediction interval (“pi”) and the
 mean of the predictive distribution as the point forecast. For variables
 in quarter-on-quarter growth rates, we transform the historical data and
 predictions to yearly growth rates with ‘growth_rate_idx’ where we
@@ -629,19 +619,13 @@ differences.</p>
 <span>                 ss_ci <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>                 show_all <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-6-1.png" alt="plot of chunk HOMO-6" width="100%"><p class="caption">
-plot of chunk HOMO-6
-</p>
+<p><img src="figure/HOMO-6-1.png" alt="plot of chunk HOMO-6" width="100%"></p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-6-2.png" alt="plot of chunk HOMO-6" width="100%"><p class="caption">
-plot of chunk HOMO-6
-</p>
+<p><img src="figure/HOMO-6-2.png" alt="plot of chunk HOMO-6" width="100%"></p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-6-3.png" alt="plot of chunk HOMO-6" width="100%"><p class="caption">
-plot of chunk HOMO-6
-</p>
+<p><img src="figure/HOMO-6-3.png" alt="plot of chunk HOMO-6" width="100%"></p>
 </div>
 <p>For further inspection, we can print the point forecasts</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
@@ -692,14 +676,10 @@ point forecast.</p>
 <span>                                  plot_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span>,<span class="fl">6</span><span class="op">)</span>,</span>
 <span>                                  growth_rate_idx <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-7-1.png" alt="plot of chunk HOMO-7" width="100%"><p class="caption">
-plot of chunk HOMO-7
-</p>
+<p><img src="figure/HOMO-7-1.png" alt="plot of chunk HOMO-7" width="100%"></p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-7-2.png" alt="plot of chunk HOMO-7" width="100%"><p class="caption">
-plot of chunk HOMO-7
-</p>
+<p><img src="figure/HOMO-7-2.png" alt="plot of chunk HOMO-7" width="100%"></p>
 </div>
 <p>The short interest rate rises more dramatically compared to the
 unconditional case. Makes sense.</p>
@@ -712,16 +692,12 @@ to the annual/yearly scale.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">5</span>,impulse<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"OIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">5</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-8-1.png" alt="plot of chunk HOMO-8" width="100%"><p class="caption">
-plot of chunk HOMO-8
-</p>
+<p><img src="figure/HOMO-8-1.png" alt="plot of chunk HOMO-8" width="100%"></p>
 </div>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">irf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>,H<span class="op">=</span><span class="fl">20</span>,response<span class="op">=</span><span class="fl">4</span>,impulse<span class="op">=</span><span class="fl">6</span>,type<span class="op">=</span><span class="st">"median"</span>,method<span class="op">=</span><span class="st">"GIRF"</span>,ci<span class="op">=</span><span class="fl">0.95</span>,growth_rate_idx<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/HOMO-8-2.png" alt="plot of chunk HOMO-8" width="100%"><p class="caption">
-plot of chunk HOMO-8
-</p>
+<p><img src="figure/HOMO-8-2.png" alt="plot of chunk HOMO-8" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

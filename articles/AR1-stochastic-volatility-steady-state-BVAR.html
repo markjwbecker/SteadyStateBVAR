@@ -97,9 +97,7 @@ r_t
 <span><span class="va">yt</span> <span class="op">&lt;-</span> <span class="va">KoopKorobilis2010</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/stats/plot.ts.html" class="external-link">plot.ts</a></span><span class="op">(</span><span class="va">yt</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-1-1.png" alt="plot of chunk AR(1)-1" width="100%"><p class="caption">
-plot of chunk AR(1)-1
-</p>
+<p><img src="figure/AR(1)-1-1.png" alt="plot of chunk AR(1)-1" width="100%"></p>
 </div>
 <p>Let’s create the bvar object which we will use throughout here.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
@@ -198,9 +196,7 @@ specification.</p>
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/steady_state_priors_plot.html">steady_state_priors_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, interval <span class="op">=</span> <span class="fl">0.95</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-2-1.png" alt="plot of chunk AR(1)-2" width="100%"><p class="caption">
-plot of chunk AR(1)-2
-</p>
+<p><img src="figure/AR(1)-2-1.png" alt="plot of chunk AR(1)-2" width="100%"></p>
 </div>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -469,18 +465,14 @@ discussed. Note that in the Stan code the <span class="math inline">\(\mu_t\)</s
 <span>                            <span class="st">"Psi[3,1]"</span><span class="op">)</span>, plotfun<span class="op">=</span><span class="st">"hist"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-3-1.png" alt="plot of chunk AR(1)-3" width="100%"><p class="caption">
-plot of chunk AR(1)-3
-</p>
+<p><img src="figure/AR(1)-3-1.png" alt="plot of chunk AR(1)-3" width="100%"></p>
 </div>
 <p>We can forecast</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">bvar_obj</span>, pi <span class="op">=</span> <span class="fl">0.68</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-4-1.png" alt="plot of chunk AR(1)-4" width="100%"><p class="caption">
-plot of chunk AR(1)-4
-</p>
+<p><img src="figure/AR(1)-4-1.png" alt="plot of chunk AR(1)-4" width="100%"></p>
 </div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
@@ -488,46 +480,32 @@ plot of chunk AR(1)-4
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, ci <span class="op">=</span> <span class="fl">0.95</span>, vol <span class="op">=</span> <span class="st">"log_lambda"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-5-1.png" alt="plot of chunk AR(1)-5" width="100%"><p class="caption">
-plot of chunk AR(1)-5
-</p>
+<p><img src="figure/AR(1)-5-1.png" alt="plot of chunk AR(1)-5" width="100%"></p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-5-2.png" alt="plot of chunk AR(1)-5" width="100%"><p class="caption">
-plot of chunk AR(1)-5
-</p>
+<p><img src="figure/AR(1)-5-2.png" alt="plot of chunk AR(1)-5" width="100%"></p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-5-3.png" alt="plot of chunk AR(1)-5" width="100%"><p class="caption">
-plot of chunk AR(1)-5
-</p>
+<p><img src="figure/AR(1)-5-3.png" alt="plot of chunk AR(1)-5" width="100%"></p>
 </div>
 <p>Let us plot the estimates and predictions of the implied innovation
 standard deviations</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/stochastic_volatility_plot.html">stochastic_volatility_plot</a></span><span class="op">(</span><span class="va">bvar_obj</span>, vol <span class="op">=</span> <span class="st">"sd"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-6-1.png" alt="plot of chunk AR(1)-6" width="100%"><p class="caption">
-plot of chunk AR(1)-6
-</p>
+<p><img src="figure/AR(1)-6-1.png" alt="plot of chunk AR(1)-6" width="100%"></p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-6-2.png" alt="plot of chunk AR(1)-6" width="100%"><p class="caption">
-plot of chunk AR(1)-6
-</p>
+<p><img src="figure/AR(1)-6-2.png" alt="plot of chunk AR(1)-6" width="100%"></p>
 </div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-6-3.png" alt="plot of chunk AR(1)-6" width="100%"><p class="caption">
-plot of chunk AR(1)-6
-</p>
+<p><img src="figure/AR(1)-6-3.png" alt="plot of chunk AR(1)-6" width="100%"></p>
 </div>
 <p>We can also produce orthogonalized IRFs</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/IRF.html">IRF</a></span><span class="op">(</span><span class="va">bvar_obj</span>, method <span class="op">=</span> <span class="st">"OIRF"</span>, t<span class="op">=</span><span class="fl">215</span>, ci<span class="op">=</span><span class="fl">0.68</span><span class="op">)</span> <span class="co">#using Sigma_u,t=215</span></span></code></pre></div>
 <div class="figure" style="text-align: center">
-<img src="figure/AR(1)-7-1.png" alt="plot of chunk AR(1)-7" width="100%"><p class="caption">
-plot of chunk AR(1)-7
-</p>
+<p><img src="figure/AR(1)-7-1.png" alt="plot of chunk AR(1)-7" width="100%"></p>
 </div>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
