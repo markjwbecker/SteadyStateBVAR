@@ -1,6 +1,8 @@
 # Changelog
 
-## SteadyStateBVAR (development version)
+## SteadyStateBVAR 0.2.0
+
+CRAN release: 2026-09-15
 
 - [`IRF()`](https://markjwbecker.github.io/SteadyStateBVAR/reference/IRF.md)
   argument `shock` renamed to `impulse`, for better clarity. If you have
