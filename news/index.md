@@ -1,5 +1,7 @@
 # Changelog
 
+## SteadyStateBVAR (development version)
+
 ## SteadyStateBVAR 0.2.0
 
 CRAN release: 2026-09-15
