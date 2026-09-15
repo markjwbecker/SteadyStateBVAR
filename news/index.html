@@ -47,7 +47,16 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="development version" id="steadystatebvar-development-version">SteadyStateBVAR (development version)<a class="anchor" aria-label="anchor" href="#steadystatebvar-development-version"></a></h2>
-</div>
+<ul><li><p><code><a href="../reference/IRF.html">IRF()</a></code> argument <code>shock</code> renamed to <code>impulse</code>, for better clarity. If you have <code>shock =</code> in existing calls to <code><a href="../reference/IRF.html">IRF()</a></code>, rename it to <code>impulse =</code>.</p></li>
+<li><p><code><a href="../reference/forecast.html">forecast()</a></code>, <code><a href="../reference/conditional_forecast.html">conditional_forecast()</a></code>, and <code><a href="../reference/IRF.html">IRF()</a></code> now transform each posterior draw before summarizing, rather than summarizing and then transforming. This fixes incorrect prediction/credible intervals and median point estimates/predictions when using <code>growth_rate_idx</code> argument. Mean point estimates/predictions are unaffected.</p></li>
+<li><p>Now <code>d_pred</code> is automatically created in <code><a href="../reference/fit.html">fit()</a></code> to make the user-experience smoother. However, it is still left as an argument.</p></li>
+<li><p>Fixed <code><a href="../reference/IRF.html">IRF()</a></code> plotting: specifying only one of <code>response</code>/<code>impulse</code> (leaving the other <code>NULL</code>) previously ignored the specified index and plotted all response-impulse combinations. Now the specified index is correctly held fixed while the other dimension varies.</p></li>
+<li><p>New <code><a href="../reference/steady_state_priors_plot.html">steady_state_priors_plot()</a></code> function for visualizing steady-state priors.</p></li>
+<li><p><code><a href="../reference/forecast.html">forecast()</a></code> now overlays posterior steady-state estimates on forecast plots.</p></li>
+<li><p>Stan code has been optimized. This includes assuming that all prior covariance matrices are diagonal.</p></li>
+<li><p>Added a vignette <code><a href="../articles/SteadyStateBVAR-intro.html">vignette("SteadyStateBVAR-intro")</a></code></p></li>
+<li><p>Function documentations, vignettes, and the README have been revamped quite extensively.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.1" id="steadystatebvar-011">SteadyStateBVAR 0.1.1<a class="anchor" aria-label="anchor" href="#steadystatebvar-011"></a></h2><p class="text-muted">CRAN release: 2026-07-28</p>
 <ul><li><p>Stan code now uses the new array syntax (<a href="https://github.com/andrjohns" class="external-link">@andrjohns</a>, <a href="https://github.com/markjwbecker/SteadyStateBVAR/issues/4" class="external-link">#4</a>).</p></li>
