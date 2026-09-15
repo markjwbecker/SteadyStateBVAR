@@ -1,3 +1,5 @@
+# SteadyStateBVAR (development version)
+
 # SteadyStateBVAR 0.2.0
 
 * `IRF()` argument `shock` renamed to `impulse`, for better clarity.
